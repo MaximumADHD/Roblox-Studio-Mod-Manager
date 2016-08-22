@@ -1,0 +1,28 @@
+c:\users\maxwell\documents\visual studio 2013\Projects\RobloxModManager\RobloxModManager\bin\Debug\RobloxModManager.exe.config
+c:\users\maxwell\documents\visual studio 2013\Projects\RobloxModManager\RobloxModManager\bin\Debug\RobloxModManager.exe
+c:\users\maxwell\documents\visual studio 2013\Projects\RobloxModManager\RobloxModManager\bin\Debug\RobloxModManager.pdb
+c:\users\maxwell\documents\visual studio 2013\Projects\RobloxModManager\RobloxModManager\obj\Debug\RobloxModManager.csprojResolveAssemblyReference.cache
+c:\users\maxwell\documents\visual studio 2013\Projects\RobloxModManager\RobloxModManager\obj\Debug\RobloxModManager.Launcher.resources
+c:\users\maxwell\documents\visual studio 2013\Projects\RobloxModManager\RobloxModManager\obj\Debug\RobloxModManager.Properties.Resources.resources
+c:\users\maxwell\documents\visual studio 2013\Projects\RobloxModManager\RobloxModManager\obj\Debug\RobloxModManager.csproj.GenerateResource.Cache
+c:\users\maxwell\documents\visual studio 2013\Projects\RobloxModManager\RobloxModManager\obj\Debug\RobloxModManager.exe
+c:\users\maxwell\documents\visual studio 2013\Projects\RobloxModManager\RobloxModManager\obj\Debug\RobloxModManager.pdb
+C:\Users\Maxwell\Documents\Visual Studio 2013\Projects\RobloxModManager\Roblox-Studio-Mod-Manager\src\bin\Debug\RobloxModManager.exe.config
+C:\Users\Maxwell\Documents\Visual Studio 2013\Projects\RobloxModManager\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.exe
+C:\Users\Maxwell\Documents\Visual Studio 2013\Projects\RobloxModManager\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.pdb
+C:\Users\Maxwell\Documents\Visual Studio 2013\Projects\RobloxModManager\Roblox-Studio-Mod-Manager\src\bin\Debug\RobloxModManager.exe
+C:\Users\Maxwell\Documents\Visual Studio 2013\Projects\RobloxModManager\Roblox-Studio-Mod-Manager\src\bin\Debug\RobloxModManager.pdb
+C:\Users\Maxwell\Documents\Visual Studio 2013\Projects\RobloxModManager\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.csprojResolveAssemblyReference.cache
+C:\Users\Maxwell\Documents\Visual Studio 2013\Projects\RobloxModManager\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.Launcher.resources
+C:\Users\Maxwell\Documents\Visual Studio 2013\Projects\RobloxModManager\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.Properties.Resources.resources
+C:\Users\Maxwell\Documents\Visual Studio 2013\Projects\RobloxModManager\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.csproj.GenerateResource.Cache
+C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\bin\Debug\RobloxModManager.exe.config
+C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.exe
+C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.pdb
+C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\bin\Debug\RobloxModManager.exe
+C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\bin\Debug\RobloxModManager.pdb
+C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.csprojResolveAssemblyReference.cache
+C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.Launcher.resources
+C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.Properties.Resources.resources
+C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.csproj.GenerateResource.Cache
+C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.RobloxInstaller.resources
