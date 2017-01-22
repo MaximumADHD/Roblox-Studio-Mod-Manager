@@ -8,3 +8,13 @@ C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManage
 C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.Launcher.resources
 C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.Properties.Resources.resources
 C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxStudioModManager.csproj.GenerateResource.Cache
+C:\Users\gartung\Documents\Roblox-Studio-Mod-Manager\src\bin\Debug\RobloxModManager.exe.config
+C:\Users\gartung\Documents\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.exe
+C:\Users\gartung\Documents\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.pdb
+C:\Users\gartung\Documents\Roblox-Studio-Mod-Manager\src\bin\Debug\RobloxModManager.exe
+C:\Users\gartung\Documents\Roblox-Studio-Mod-Manager\src\bin\Debug\RobloxModManager.pdb
+C:\Users\gartung\Documents\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxStudioModManager.csprojResolveAssemblyReference.cache
+C:\Users\gartung\Documents\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.RobloxInstaller.resources
+C:\Users\gartung\Documents\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.Launcher.resources
+C:\Users\gartung\Documents\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.Properties.Resources.resources
+C:\Users\gartung\Documents\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxStudioModManager.csproj.GenerateResource.Cache

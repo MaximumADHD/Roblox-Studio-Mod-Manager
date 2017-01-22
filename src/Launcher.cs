@@ -190,11 +190,11 @@ namespace RobloxModManager
             string msg = null;
             if (sender.Equals(pictureBox1))
             {
-                msg = "This is just the ROBLOX Studio logo.\nNothing special here.";
+                msg = "This is just the Roblox Studio logo.\nNothing special here.";
             }
             else if (sender.Equals(launchStudio))
             {
-                msg = "Click to Launch ROBLOX Studio!";
+                msg = "Click to Launch Roblox Studio!";
             }
             else if (sender.Equals(manageMods))
             {
@@ -202,7 +202,7 @@ namespace RobloxModManager
             }
             else if (sender.Equals(dataBaseSelect))
             {
-                msg = "Indicates which setup web-domain we should use to download ROBLOX Studio.\nThe gametest domains are prototype versions of ROBLOX Studio,\nthat are not available on the main site yet.";
+                msg = "Indicates which setup web-domain we should use to download Roblox Studio.\nThe gametest domains are prototype versions of ROBLOX Studio,\nthat are not available on the main site yet.";
             }
             else if (sender.Equals(forceRebuild))
             {
@@ -210,11 +210,11 @@ namespace RobloxModManager
             }
             else if (sender.Equals(disableVR))
             {
-                msg = "Should ROBLOX Studio use Virtual Reality while you are in Play Solo?\n\n(This only applies to users who actively have an Oculus Rift/HTC Vive plugged in)";
+                msg = "Should Roblox Studio use Virtual Reality while you are in Play Solo?\n\n(This only applies to users who actively have an Oculus Rift/HTC Vive plugged in)";
             }
             else if (sender.Equals(openStudioDirectory))
             {
-                msg = "Should we also open the directory of ROBLOX Studio after launching?\nThis may come in handy for users who want to run .bat on Studio's files.";
+                msg = "Should we also open the directory of Roblox Studio after launching?\nThis may come in handy for users who want to run .bat on Studio's files.";
             }
             else
             {

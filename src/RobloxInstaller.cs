@@ -143,7 +143,7 @@ namespace RobloxModManager
 
         public void registryUpdate()
         {
-            // Handle ROBLOX Studio Registry stuff.
+            // Handle Roblox Studio Registry stuff.
             // Theres a lot here, bare with it.
 
             Assembly self = Assembly.GetExecutingAssembly();
@@ -157,7 +157,7 @@ namespace RobloxModManager
             RegistryKeyResult studioQTGet = getRegistry(Registry.CurrentUser, "Software", "StudioQTRobloxReg");
             if (studioQTGet.Completed)
             {
-                // Standard ROBLOX Studio registration (for whatever it needs this for)
+                // Standard Roblox Studio registration (for whatever it needs this for)
                 RegistryKey studioQT = studioQTGet.Result;
                 if (!isDebugging)
                 {
@@ -230,7 +230,7 @@ namespace RobloxModManager
         public async Task<string> RunInstaller(string database, bool forceInstall)
         {
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
-            string rootDir = getDirectory(localAppData, "ROBLOX Studio");
+            string rootDir = getDirectory(localAppData, "Roblox Studio");
             string downloads = getDirectory(rootDir, "downloads");
 
             this.Show();
@@ -249,7 +249,7 @@ namespace RobloxModManager
             if (!File.Exists(appSettings) || forceInstall)
             {
                 await echo("This build hasn't been installed!");
-                await setStatus("Loading latest ROBLOX Studio build from " + database + ".com");
+                await setStatus("Loading latest Roblox Studio build from " + database + ".com");
                 progressBar.Maximum = instructions.Count*30;
                 progressBar.Value = 0;
                 progressBar.Style = ProgressBarStyle.Continuous;
@@ -294,17 +294,17 @@ namespace RobloxModManager
                 progressBar.Style = ProgressBarStyle.Marquee;
                 await echo("Writing AppSettings.xml");
                 File.WriteAllText(appSettings, "<Settings><ContentFolder>content</ContentFolder><BaseUrl>http://www.roblox.com</BaseUrl></Settings>");
-                await echo("ROBLOX Studio " + buildName + " successfully installed!");
+                await echo("Roblox Studio " + buildName + " successfully installed!");
             }
             else
             {
-                await echo("This version of ROBLOX Studio has been installed!");
+                await echo("This version of Roblox Studio has been installed!");
             }
 
-            await setStatus("Configuring ROBLOX Studio...");
+            await setStatus("Configuring Roblox Studio...");
             registryUpdate();
 
-            await setStatus("Starting ROBLOX Studio...");
+            await setStatus("Starting Roblox Studio...");
             return robloxStudioBetaPath;
         }
     }

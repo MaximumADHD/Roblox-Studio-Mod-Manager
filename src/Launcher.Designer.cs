@@ -44,12 +44,11 @@
             // 
             this.launchStudio.AccessibleName = "Launch ROBLOX Studio";
             this.launchStudio.Cursor = System.Windows.Forms.Cursors.Default;
-            this.launchStudio.Location = new System.Drawing.Point(33, 146);
-            this.launchStudio.Margin = new System.Windows.Forms.Padding(4);
+            this.launchStudio.Location = new System.Drawing.Point(25, 119);
             this.launchStudio.Name = "launchStudio";
-            this.launchStudio.Size = new System.Drawing.Size(186, 28);
+            this.launchStudio.Size = new System.Drawing.Size(140, 23);
             this.launchStudio.TabIndex = 6;
-            this.launchStudio.Text = "Launch ROBLOX Studio";
+            this.launchStudio.Text = "Launch Roblox Studio";
             this.launchStudio.UseVisualStyleBackColor = true;
             this.launchStudio.Click += new System.EventHandler(this.launchStudio_Click);
             this.launchStudio.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
@@ -60,12 +59,11 @@
             this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(63, 6);
-            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4);
+            this.pictureBox1.Location = new System.Drawing.Point(25, -7);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(125, 125);
+            this.pictureBox1.Size = new System.Drawing.Size(140, 128);
             this.pictureBox1.TabIndex = 8;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
@@ -74,10 +72,9 @@
             // 
             this.manageMods.AccessibleName = "Manage Mod Files";
             this.manageMods.Cursor = System.Windows.Forms.Cursors.Default;
-            this.manageMods.Location = new System.Drawing.Point(33, 182);
-            this.manageMods.Margin = new System.Windows.Forms.Padding(4);
+            this.manageMods.Location = new System.Drawing.Point(25, 148);
             this.manageMods.Name = "manageMods";
-            this.manageMods.Size = new System.Drawing.Size(186, 28);
+            this.manageMods.Size = new System.Drawing.Size(140, 23);
             this.manageMods.TabIndex = 9;
             this.manageMods.Text = "Manage Mod Files";
             this.manageMods.UseVisualStyleBackColor = true;
@@ -96,10 +93,9 @@
             "gametest3.robloxlabs",
             "gametest4.robloxlabs",
             "gametest5.robloxlabs"});
-            this.dataBaseSelect.Location = new System.Drawing.Point(33, 236);
-            this.dataBaseSelect.Margin = new System.Windows.Forms.Padding(4);
+            this.dataBaseSelect.Location = new System.Drawing.Point(25, 192);
             this.dataBaseSelect.Name = "dataBaseSelect";
-            this.dataBaseSelect.Size = new System.Drawing.Size(186, 24);
+            this.dataBaseSelect.Size = new System.Drawing.Size(140, 21);
             this.dataBaseSelect.TabIndex = 10;
             this.dataBaseSelect.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             this.dataBaseSelect.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
@@ -111,10 +107,9 @@
             this.label1.CausesValidation = false;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label1.Location = new System.Drawing.Point(30, 214);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(22, 174);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(124, 18);
+            this.label1.Size = new System.Drawing.Size(91, 13);
             this.label1.TabIndex = 11;
             this.label1.Text = "Database to use: ";
             // 
@@ -122,9 +117,10 @@
             // 
             this.forceRebuild.AccessibleName = "Force Client Rebuild";
             this.forceRebuild.AutoSize = true;
-            this.forceRebuild.Location = new System.Drawing.Point(33, 268);
+            this.forceRebuild.Location = new System.Drawing.Point(25, 218);
+            this.forceRebuild.Margin = new System.Windows.Forms.Padding(2);
             this.forceRebuild.Name = "forceRebuild";
-            this.forceRebuild.Size = new System.Drawing.Size(157, 21);
+            this.forceRebuild.Size = new System.Drawing.Size(121, 17);
             this.forceRebuild.TabIndex = 12;
             this.forceRebuild.Text = "Force Client Rebuild";
             this.forceRebuild.UseVisualStyleBackColor = true;
@@ -136,21 +132,24 @@
             this.disableVR.AutoSize = true;
             this.disableVR.Checked = true;
             this.disableVR.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.disableVR.Location = new System.Drawing.Point(33, 295);
+            this.disableVR.Location = new System.Drawing.Point(25, 260);
+            this.disableVR.Margin = new System.Windows.Forms.Padding(2);
             this.disableVR.Name = "disableVR";
-            this.disableVR.Size = new System.Drawing.Size(100, 21);
+            this.disableVR.Size = new System.Drawing.Size(79, 17);
             this.disableVR.TabIndex = 13;
             this.disableVR.Text = "Disable VR";
             this.disableVR.UseVisualStyleBackColor = true;
+            this.disableVR.Visible = false;
             this.disableVR.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
             // openStudioDirectory
             // 
             this.openStudioDirectory.AccessibleName = "Open Studio Directory";
             this.openStudioDirectory.AutoSize = true;
-            this.openStudioDirectory.Location = new System.Drawing.Point(33, 322);
+            this.openStudioDirectory.Location = new System.Drawing.Point(25, 239);
+            this.openStudioDirectory.Margin = new System.Windows.Forms.Padding(2);
             this.openStudioDirectory.Name = "openStudioDirectory";
-            this.openStudioDirectory.Size = new System.Drawing.Size(170, 21);
+            this.openStudioDirectory.Size = new System.Drawing.Size(130, 17);
             this.openStudioDirectory.TabIndex = 14;
             this.openStudioDirectory.Text = "Open Studio Directory";
             this.openStudioDirectory.UseVisualStyleBackColor = true;
@@ -158,10 +157,10 @@
             // 
             // Launcher
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(252, 354);
+            this.ClientSize = new System.Drawing.Size(189, 265);
             this.Controls.Add(this.openStudioDirectory);
             this.Controls.Add(this.disableVR);
             this.Controls.Add(this.forceRebuild);
@@ -173,12 +172,11 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.HelpButton = true;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Launcher";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "ROBLOX Studio Mod Manager";
+            this.Text = "Roblox Studio Mod Manager";
             this.Load += new System.EventHandler(this.Launcher_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
