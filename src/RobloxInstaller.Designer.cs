@@ -38,11 +38,11 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(9, 122);
-            this.progressBar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.progressBar.Location = new System.Drawing.Point(4, 121);
+            this.progressBar.Margin = new System.Windows.Forms.Padding(2);
             this.progressBar.MarqueeAnimationSpeed = 1;
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(464, 31);
+            this.progressBar.Size = new System.Drawing.Size(470, 31);
             this.progressBar.Step = 1;
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBar.TabIndex = 1;
@@ -53,10 +53,11 @@
             this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.pictureBox1.Location = new System.Drawing.Point(10, 11);
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox1.Location = new System.Drawing.Point(4, 11);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(75, 81);
+            this.pictureBox1.Size = new System.Drawing.Size(81, 81);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 9;
             this.pictureBox1.TabStop = false;
             // 
@@ -65,7 +66,7 @@
             this.log.FormattingEnabled = true;
             this.log.HorizontalScrollbar = true;
             this.log.Location = new System.Drawing.Point(90, 11);
-            this.log.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.log.Margin = new System.Windows.Forms.Padding(2);
             this.log.Name = "log";
             this.log.Size = new System.Drawing.Size(384, 82);
             this.log.TabIndex = 10;
@@ -74,7 +75,7 @@
             // 
             this.statusLbl.AutoSize = true;
             this.statusLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.070867F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.statusLbl.Location = new System.Drawing.Point(6, 103);
+            this.statusLbl.Location = new System.Drawing.Point(1, 103);
             this.statusLbl.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.statusLbl.Name = "statusLbl";
             this.statusLbl.Size = new System.Drawing.Size(166, 16);
@@ -92,7 +93,8 @@
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.progressBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "RobloxInstaller";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

@@ -106,29 +106,6 @@ namespace RobloxModManager
                     Console.WriteLine("Failed to overwrite " + modFile + "\nMight be open in another program\nThats their problem, not mine <3");
                 }
             }
-            try
-            {
-                string openVR = getOpenVR(studioRoot);
-                FileInfo file = new FileInfo(openVR);
-                if (disableVR.Checked)
-                {
-                    if (!openVR.EndsWith("_disabled"))
-                    {
-                        file.MoveTo(Path.Combine(studioRoot,file.Name + "_disabled"));
-                    }
-                }
-                else
-                {
-                    if (openVR.EndsWith("_disabled"))
-                    {
-                        file.MoveTo(Path.Combine(studioRoot,"openvr_api.dll"));
-                    }
-                }
-            }
-            catch
-            {
-                Console.WriteLine("Couldn't change VR state...");
-            }
             ProcessStartInfo robloxStudioInfo = new ProcessStartInfo();
             robloxStudioInfo.FileName = studioPath;
             if (args != null)
@@ -198,7 +175,7 @@ namespace RobloxModManager
             }
             else if (sender.Equals(manageMods))
             {
-                msg = "Opens your ModFolder directory, which contains all of the files to be overridden in ROBLOX Studio's client directory.";
+                msg = "Opens your ModFolder directory, which contains all of the files to be overridden in Roblox Studio's client directory.";
             }
             else if (sender.Equals(dataBaseSelect))
             {
@@ -206,11 +183,7 @@ namespace RobloxModManager
             }
             else if (sender.Equals(forceRebuild))
             {
-                msg = "Should we forcefully reinstall this version of the client, even if its already installed?\nThis can be used if you are experiencing a problem with launching ROBLOX Studio.";
-            }
-            else if (sender.Equals(disableVR))
-            {
-                msg = "Should Roblox Studio use Virtual Reality while you are in Play Solo?\n\n(This only applies to users who actively have an Oculus Rift/HTC Vive plugged in)";
+                msg = "Should we forcefully reinstall this version of the client, even if its already installed?\nThis can be used if you are experiencing a problem with launching Roblox Studio.";
             }
             else if (sender.Equals(openStudioDirectory))
             {

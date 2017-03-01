@@ -15,6 +15,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace RobloxModManager
 {
@@ -50,8 +52,8 @@ namespace RobloxModManager
         {
             new RbxInstallProtocol("RobloxStudio"),
             new RbxInstallProtocol("Libraries"),
+            new RbxInstallProtocol("LibrariesQt5"),
             new RbxInstallProtocol("redist"),
-            new RbxInstallProtocol("imageformats"),
 
             new RbxInstallProtocol("content-fonts",        @"content\fonts"),
             new RbxInstallProtocol("content-music",        @"content\music"),
@@ -67,6 +69,8 @@ namespace RobloxModManager
 
             new RbxInstallProtocol("BuiltInPlugins",       @"BuiltInPlugins"),
             new RbxInstallProtocol("shaders",              @"shaders"),
+            new RbxInstallProtocol("Qml",                  @"Qml"),
+            new RbxInstallProtocol("Plugins",              @"Plugins")
         };
 
         public async Task setStatus(string status)
@@ -157,7 +161,7 @@ namespace RobloxModManager
             RegistryKeyResult studioQTGet = getRegistry(Registry.CurrentUser, "Software", "StudioQTRobloxReg");
             if (studioQTGet.Completed)
             {
-                // Standard Roblox Studio registration (for whatever it needs this for)
+                // Standard ROBLOX Studio registration (for whatever it needs this for)
                 RegistryKey studioQT = studioQTGet.Result;
                 if (!isDebugging)
                 {
@@ -176,7 +180,7 @@ namespace RobloxModManager
             if (!isDebugging)
             {
                 // Register the base "Roblox.Place" open protocol.
-                RegistryKeyResult robloxPlaceGet = getRegistry(Registry.ClassesRoot, "Roblox.Place");
+                RegistryKeyResult robloxPlaceGet = getRegistry(Registry.CurrentUser, "Roblox.Place");
                 RegistryKey robloxPlace = robloxPlaceGet.Result;
                 if (robloxPlaceGet.Completed)
                 {
@@ -184,7 +188,7 @@ namespace RobloxModManager
                 }
 
                 // Register the url protocol
-                RegistryKeyResult robloxStudioUrlGet = getRegistry(Registry.ClassesRoot, "roblox-studio");
+                RegistryKeyResult robloxStudioUrlGet = getRegistry(Registry.CurrentUser, "roblox-studio");
                 RegistryKey robloxStudioUrl = robloxStudioUrlGet.Result;
                 if (robloxStudioUrlGet.Completed)
                 {
@@ -210,8 +214,8 @@ namespace RobloxModManager
                 }
 
                 // Pass the .rbxl and .rbxlx file formats to Roblox.Place
-                RegistryKeyResult rbxlGet = getRegistry(Registry.ClassesRoot, ".rbxl");
-                RegistryKeyResult rbxlxGet = getRegistry(Registry.ClassesRoot, ".rbxlx");
+                RegistryKeyResult rbxlGet = getRegistry(Registry.CurrentUser, ".rbxl");
+                RegistryKeyResult rbxlxGet = getRegistry(Registry.CurrentUser, ".rbxlx");
                 RegistryKeyResult[] robloxLevelPass = { rbxlGet, rbxlxGet };
 
                 foreach (RegistryKeyResult rbxLevelGet in robloxLevelPass)
@@ -229,17 +233,22 @@ namespace RobloxModManager
 
         public async Task<string> RunInstaller(string database, bool forceInstall)
         {
+            ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => true;
+
+            http.Headers.Set(HttpRequestHeader.UserAgent, "Roblox");
+            http.UseDefaultCredentials = true;
+
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             string rootDir = getDirectory(localAppData, "Roblox Studio");
             string downloads = getDirectory(rootDir, "downloads");
 
-            this.Show();
-            this.BringToFront();
+            Show();
+            BringToFront();
 
             await setStatus("Checking for updates");
 
-            setupDir = "http://setup." + database + ".com/";
-            buildName = await http.DownloadStringTaskAsync(setupDir + "versionQTStudio");
+            setupDir = "setup." + database + ".com/";
+            buildName = await http.DownloadStringTaskAsync("http://" + setupDir + "versionQTStudio");
             buildPath = getDirectory(rootDir, buildName);
             robloxStudioBetaPath = Path.Combine(buildPath, "RobloxStudioBeta.exe");
 
@@ -255,42 +264,49 @@ namespace RobloxModManager
                 progressBar.Style = ProgressBarStyle.Continuous;
                 foreach (RbxInstallProtocol protocol in instructions)
                 {
-                    string zipFileUrl = setupDir + buildName + "-" + protocol.FileName + ".zip";
+                    string zipFileUrl = "https://" + setupDir + buildName + "-" + protocol.FileName + ".zip";
                     string extractDir = getDirectory(buildPath, protocol.LocalDirectory);
                     Console.WriteLine(extractDir);
                     string downloadPath = Path.Combine(downloads, protocol.FileName + ".zip");
                     Console.WriteLine(downloadPath);
                     await echo("Fetching: " + zipFileUrl);
-                    byte[] downloadedFile = await http.DownloadDataTaskAsync(zipFileUrl);
-                    FileStream writeFile = File.Create(downloadPath);
-                    writeFile.Write(downloadedFile,0,downloadedFile.Length);
-                    writeFile.Close();
-                    ZipArchive archive = ZipFile.Open(downloadPath, ZipArchiveMode.Read);
-                    foreach (ZipArchiveEntry entry in archive.Entries)
+                    try
                     {
-                        if (string.IsNullOrEmpty(entry.Name))
+                        byte[] downloadedFile = await http.DownloadDataTaskAsync(zipFileUrl);
+                        FileStream writeFile = File.Create(downloadPath);
+                        writeFile.Write(downloadedFile, 0, downloadedFile.Length);
+                        writeFile.Close();
+                        ZipArchive archive = ZipFile.Open(downloadPath, ZipArchiveMode.Read);
+                        foreach (ZipArchiveEntry entry in archive.Entries)
                         {
-                            string localPath = Path.Combine(protocol.LocalDirectory, entry.FullName);
-                            string path = Path.Combine(buildPath,localPath);
-                            await echo("Creating directory " + localPath);
-                            getDirectory(path);
-                        }
-                        else
-                        {
-                            string entryName = entry.FullName;
-                            await echo("Extracting " + entryName + " to " + buildName + "\\" + protocol.LocalDirectory);
-                            string relativePath = Path.Combine(extractDir, entryName);
-                            string directoryParent = Directory.GetParent(relativePath).ToString();
-                            getDirectory(directoryParent);
-                            if (!File.Exists(relativePath))
+                            if (string.IsNullOrEmpty(entry.Name))
                             {
-                                entry.ExtractToFile(relativePath);
+                                string localPath = Path.Combine(protocol.LocalDirectory, entry.FullName);
+                                string path = Path.Combine(buildPath, localPath);
+                                await echo("Creating directory " + localPath);
+                                getDirectory(path);
+                            }
+                            else
+                            {
+                                string entryName = entry.FullName;
+                                await echo("Extracting " + entryName + " to " + buildName + "\\" + protocol.LocalDirectory);
+                                string relativePath = Path.Combine(extractDir, entryName);
+                                string directoryParent = Directory.GetParent(relativePath).ToString();
+                                getDirectory(directoryParent);
+                                if (!File.Exists(relativePath))
+                                {
+                                    entry.ExtractToFile(relativePath);
+                                }
                             }
                         }
                     }
+                    catch
+                    {
+                        await echo("Something went wrong while installing" + zipFileUrl);
+                    }
                     progressBar.Increment(30);
                 }
-                await setStatus("Configuring ROBLOX Studio");
+                await setStatus("Configuring Roblox Studio");
                 progressBar.Style = ProgressBarStyle.Marquee;
                 await echo("Writing AppSettings.xml");
                 File.WriteAllText(appSettings, "<Settings><ContentFolder>content</ContentFolder><BaseUrl>http://www.roblox.com</BaseUrl></Settings>");

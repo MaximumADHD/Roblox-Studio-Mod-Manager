@@ -35,7 +35,6 @@
             this.dataBaseSelect = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.forceRebuild = new System.Windows.Forms.CheckBox();
-            this.disableVR = new System.Windows.Forms.CheckBox();
             this.openStudioDirectory = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -55,15 +54,16 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.AccessibleName = "ROBLOX Studio Logo";
+            this.pictureBox1.AccessibleName = "Roblox Studio Logo";
             this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(25, -7);
+            this.pictureBox1.Location = new System.Drawing.Point(47, 11);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(140, 128);
+            this.pictureBox1.Size = new System.Drawing.Size(99, 102);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 8;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
@@ -126,22 +126,6 @@
             this.forceRebuild.UseVisualStyleBackColor = true;
             this.forceRebuild.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
-            // disableVR
-            // 
-            this.disableVR.AccessibleName = "Disable VR";
-            this.disableVR.AutoSize = true;
-            this.disableVR.Checked = true;
-            this.disableVR.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.disableVR.Location = new System.Drawing.Point(25, 260);
-            this.disableVR.Margin = new System.Windows.Forms.Padding(2);
-            this.disableVR.Name = "disableVR";
-            this.disableVR.Size = new System.Drawing.Size(79, 17);
-            this.disableVR.TabIndex = 13;
-            this.disableVR.Text = "Disable VR";
-            this.disableVR.UseVisualStyleBackColor = true;
-            this.disableVR.Visible = false;
-            this.disableVR.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
-            // 
             // openStudioDirectory
             // 
             this.openStudioDirectory.AccessibleName = "Open Studio Directory";
@@ -160,9 +144,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(189, 265);
+            this.ClientSize = new System.Drawing.Size(189, 267);
             this.Controls.Add(this.openStudioDirectory);
-            this.Controls.Add(this.disableVR);
             this.Controls.Add(this.forceRebuild);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.dataBaseSelect);
@@ -176,7 +159,7 @@
             this.MinimizeBox = false;
             this.Name = "Launcher";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Roblox Studio Mod Manager";
+            this.Text = "Roblox Studio";
             this.Load += new System.EventHandler(this.Launcher_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
@@ -192,7 +175,6 @@
         private System.Windows.Forms.ComboBox dataBaseSelect;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox forceRebuild;
-        private System.Windows.Forms.CheckBox disableVR;
         private System.Windows.Forms.CheckBox openStudioDirectory;
     }
 }
