@@ -18,7 +18,7 @@
 			<addaction name="fileNewAction"/>
 			<addaction name="fileOpenAction"/>
 			<addaction name="filePublishedProjectsAction"/>
-			<addaction name="fileCloseAction" style="textundericon"/>
+			<addaction name="fileCloseAction" style="icononly"/>
 			<addseparator/>
 			<addaction name="fileSaveAction"/>
 			<addaction name="fileSaveAsAction"/>
@@ -46,102 +46,91 @@
 				<addaction name="testNetworkStatsAction" action="testNetworkStatsAction" text="Network" style="textbesideicon"/>
 			</Group>
 			<Group name="Windows">
-				<addaction name="actionStartPage" text="" icon=":/RibbonBar/images/RibbonIcons/View/Start-Page.png" tooltip="Login, view places you own, browse your roblox catalog" height="32" width="32"/>
-				<addaction name="gameExplorerAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Explorer.png" tooltip="View Game Explorer" height="32" width="32"/>
-				<addaction name="viewToolboxAction" text="" icon=":/images/ToolboxIcon.png" tooltip="Insert items from the toolbox" height="32" width="32"/>
-				<addaction name="viewContextualHelpAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Help-Wiki.png" tooltip="View context-sensitive help" height="32" width="32"/>
-				<addaction name="objectBrowserAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Object-Browser.png" tooltip="View Lua API objects that can be accessed through scripting" height="32" width="32"/>
-				<addaction name="viewOutputWindowAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Output.png" tooltip="See the output feed of your scripts" height="32" width="32"/>
-				<addaction fflag="StudioUseScriptAnalyzer" name="viewScriptAnalysisAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Output.png" tooltip="View Script Analysis" height="32" width="32"/>
-				<addaction name="viewFindResultsWindowAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Find-Results.png" tooltip="Find results window" height="32" width="32"/>
-				<addaction fflag="LuaDebugger" name="breakpointsDockWidgetAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Breakpoint.png" tooltip="View existing breakpoints" height="32" width="32"/>
-				<addaction fflag="LuaDebugger" name="callStackDockWidgetAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Call-Stack.png" tooltip="View current call stack" height="32" width="32"/>
-				<addaction fflag="LuaDebugger" name="watchDockWidgetAction" text="" icon=":/RibbonBar/images/RibbonIcons/Test/Watch-Window.png" tooltip="View currently watched variables" height="32" width="32"/>
-				<addaction name="viewDiagnosticsAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Diagnostics.png" tooltip="View diagnostic information of your game" height="32" width="32"/>
-				<addaction name="viewTaskSchedulerAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Task-Scheduler.png" tooltip="View task execution information" height="32" width="32"/>
-				<addaction name="viewScriptPerformanceAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Script-Performance.png" tooltip="View script performance information" height="32" width="32"/>
-				<addaction name="viewObjectExplorerAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Explorer.png" tooltip="View a list of objects in the workspace" height="32" width="32"/>
-				<addaction name="viewPropertiesAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Properties.png" tooltip="View properties of objects" height="32" width="32"/>
-				<addaction name="actionInsertAdvancedObject" iscommonslot="true" text="" tooltip="Insert scripts and other advanced objects into the game" ischeckable="true" icon=":/RibbonBar/images/RibbonIcons/Insert/Advanced-Objects.png" width="32" height="32"/>
-				<addaction name="viewTeamCreateAction" icon=":/RibbonBar/images/RibbonIcons/View/TeamCreate.png" tooltip="View Team Create Window" height="32" width="32"/>
-			</Group>
-			<Group name="Terrain" controlsCentering="true">
-				<addaction name="Generate.Smooth Terrain.Terrain." isProxy="true" text="    "  tooltip="Generate landscapes of terrain." type="plugin" width="32" height="32"/>
-				<addaction name="Add.Smooth Terrain.Terrain." isProxy="true" text="    " tooltip="Click and hold to add terrain." type="plugin" width="32" height="32"/>
-				<addseparator visible="false"/>
-				<addaction name="Subtract.Smooth Terrain.Terrain." isProxy="true" text="    " tooltip="Click and hold to subtract terrain." type="plugin" width="32" height="32"/>
-				<addaction name="Paint.Smooth Terrain.Terrain." isProxy="true" text="    " tooltip="Paint the material of the terrain." type="plugin" width="32" height="32"/>
-				<addseparator visible="false"/>
-				<addaction name="Grow.Smooth Terrain.Terrain." isProxy="true" text="    " type="plugin" tooltip="Click and hold to grow and expand terrain." width="32" height="32"/>
-				<addaction name="Erode.Smooth Terrain.Terrain." isProxy="true" text="    " type="plugin" tooltip="Click and hold to erode and remove terrain." width="32" height="32"/>
-				<addseparator visible="false"/>
-				<addaction name="Smooth.Smooth Terrain.Terrain." isProxy="true" text="    " type="plugin" tooltip="Brush to smooth out rough or jagged terrain." width="32" height="32"/>
-				<addaction name="Regions.Smooth Terrain.Terrain." isProxy="true" text="    " type="plugin" tooltip="Brush to smooth out rough or jagged terrain." width="32" height="32"/>
+				<addaction name="actionStartPage" text="" icon=":/RibbonBar/images/RibbonIcons/View/Start-Page.png" tooltip="Login, view places you own, browse your roblox catalog" height="16" width="16"/>
+				<addaction name="gameExplorerAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Explorer.png" tooltip="View Game Explorer" height="16" width="16"/>
+				<addaction name="viewToolboxAction" text="" icon=":/images/ToolboxIcon.png" tooltip="Insert items from the toolbox" height="16" width="16"/>
+				<addaction name="viewContextualHelpAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Help-Wiki.png" tooltip="View context-sensitive help" height="16" width="16"/>
+				<addaction name="objectBrowserAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Object-Browser.png" tooltip="View Lua API objects that can be accessed through scripting" height="16" width="16"/>
+				<addaction name="viewOutputWindowAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Output.png" tooltip="See the output feed of your scripts" height="16" width="16"/>
+				<addaction fflag="StudioUseScriptAnalyzer" name="viewScriptAnalysisAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Output.png" tooltip="View Script Analysis" height="16" width="16"/>
+				<addaction name="viewFindResultsWindowAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Find-Results.png" tooltip="Find results window" height="16" width="16"/>
+				<addaction fflag="LuaDebugger" name="breakpointsDockWidgetAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Breakpoint.png" tooltip="View existing breakpoints" height="16" width="16"/>
+				<addaction fflag="LuaDebugger" name="callStackDockWidgetAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Call-Stack.png" tooltip="View current call stack" height="16" width="16"/>
+				<addaction fflag="LuaDebugger" name="watchDockWidgetAction" text="" icon=":/RibbonBar/images/RibbonIcons/Test/Watch-Window.png" tooltip="View currently watched variables" height="16" width="16"/>
+				<addaction name="viewDiagnosticsAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Diagnostics.png" tooltip="View diagnostic information of your game" height="16" width="16"/>
+				<addaction name="viewTaskSchedulerAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Task-Scheduler.png" tooltip="View task execution information" height="16" width="16"/>
+				<addaction name="viewScriptPerformanceAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Script-Performance.png" tooltip="View script performance information" height="16" width="16"/>
+				<addaction name="viewObjectExplorerAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Explorer.png" tooltip="View a list of objects in the workspace" height="16" width="16"/>
+				<addaction name="viewPropertiesAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Properties.png" tooltip="View properties of objects" height="16" width="16"/>
+				<addaction name="actionInsertAdvancedObject" iscommonslot="true" text="" tooltip="Insert scripts and other advanced objects into the game" ischeckable="true" icon=":/RibbonBar/images/RibbonIcons/Insert/Advanced-Objects.png" width="16" height="16"/>
+				<addaction name="viewTeamCreateAction" icon=":/RibbonBar/images/RibbonIcons/View/TeamCreate.png" tooltip="View Team Create Window" height="16" width="16"/>
 			</Group>
 			<Group name="Tools" controlsCentering="true">
 				<addseperator visible="false"/>
-				<addaction name="advArrowToolAction" tooltip="Select an Object" icon=":/RibbonBar/images/RibbonIcons/Home/Drag.png" width="32" height="32"/>
-				<addaction name="advTranslateAction" tooltip="Move an Object" icon=":/RibbonBar/images/RibbonIcons/Home/Translate.png" width="32" height="32"/>
-				<addaction name="Transform" instancename="Transform" tooltip="Precisely Manipulate an Object" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Home/Plane.png" width="32" height="32"/>
-				<addaction name="resizeAction" tooltip="Resize an Object" icon=":/RibbonBar/images/RibbonIcons/Home/Resize.png" width="32" height="32"/>
-				<addaction name="advRotateAction" tooltip="Rotate an Object" icon=":/RibbonBar/images/RibbonIcons/Home/Rotate.png" width="32" height="32"/>'
+				<addaction name="advArrowToolAction" tooltip="Select an Object" icon=":/RibbonBar/images/RibbonIcons/Home/Drag.png" width="16" height="16"/>
+				<addaction name="advTranslateAction" tooltip="Move an Object" icon=":/RibbonBar/images/RibbonIcons/Home/Translate.png" width="16" height="16"/>
+				<addaction name="Transform" instancename="Transform" tooltip="Precisely Manipulate an Object" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Home/Plane.png" width="16" height="16"/>
+				<addaction name="resizeAction" tooltip="Resize an Object" icon=":/RibbonBar/images/RibbonIcons/Home/Resize.png" width="16" height="16"/>
+				<addaction name="advRotateAction" tooltip="Rotate an Object" icon=":/RibbonBar/images/RibbonIcons/Home/Rotate.png" width="16" height="16"/>'
 				<addaction name="toggleCollisionCheckAction" tooltip="Check for collisions when dragging" icon=":/RibbonBar/images/RibbonIcons/Home/Collisions-Enabled-16x16.png" width="16" height="16"/>
 				<MenuPopupButton name="lockMenu" text="  " icon=":/RibbonBar/images/RibbonIcons/Home/Lock-16x16.png" tooltip="Click on parts to lock/unlock" width="16" height="16">
 					<addaction name="lockAction" text="Lock Tool" />
 					<addaction name="unlockAllAction" />
 				</MenuPopupButton>
-				<MenuButton handleMenuTrigger="false" name="jointCreationMode" text=" " icon=":/RibbonBar/images/RibbonIcons/Home/Join.png" tooltip="Choose how parts are joined together" width="16" height="16">
-					<ActionGroup name="jointCreationMode" style="textundericon" ischeckable="true">
-						<addaction name="Always" text="Always" value="Always" icon=":/RibbonBar/images/RibbonIcons/Home/Join.png" tooltip="Always join adjacent parts" width="32" height="32"/>
-						<addaction name="Surface only" text="Surface only" value="Surface only" icon=":/images/t_surfaceSmooth_old.png" tooltip="Join based on surface type" width="32" height="32"/>
-						<addaction name="Never" text="Never" value="Never" icon=":/images/t_surfaceWeld_old.png" tooltip="Never join parts automatically" width="32" height="32"/>
+				<MenuButton handleMenuTrigger="false" name="jointCreationMode" style="icononly" text="Joint Mode" icon=":/RibbonBar/images/RibbonIcons/Home/Join.png" tooltip="Choose how parts are joined together" width="24" height="24">
+					<ActionGroup name="jointCreationMode" style="icononly" ischeckable="true">
+						<addaction name="Always" text="Always" value="Always" icon=":/RibbonBar/images/RibbonIcons/Home/Join.png" tooltip="Always join adjacent parts" width="24" height="24"/>
+						<addaction name="Surface only" text="Surface only" value="Surface only" icon=":/images/t_surfaceSmooth_old.png" tooltip="Join based on surface type" width="24" height="24"/>
+						<addaction name="Never" text="Never" value="Never" icon=":/images/t_surfaceWeld_old.png" tooltip="Never join parts automatically" width="24" height="24"/>
 					</ActionGroup>
 				</MenuButton>
-				<MenuPopupButton name="createConstraintAction" text="  " handleMenuTrigger="false" popupStyle="menubutton" ischeckable="true" tooltip="Place a constraint or an attachment" icon=":/RibbonBar/images/RibbonIcons/Physics/constraint-32x32.png" width="32" height="32">
-					<addaction name="drawConstraintDetailsVerb" ischeckable="true" iscommonslot="true" text="Toggle Details" tooltip="Show attachments and constraints" icon=":/RibbonBar/images/RibbonIcons/Physics/show-detail-32x32.png" width="32" height="32" />
+				<MenuPopupButton name="createConstraintAction" text="  " popupStyle="menubutton" ischeckable="true" tooltip="Place a constraint or an attachment" icon=":/RibbonBar/images/RibbonIcons/Physics/constraint-32x32.png" width="16" height="16">
+					<addaction name="drawConstraintDetailsVerb" ischeckable="true" iscommonslot="true" text="Toggle Details" tooltip="Show attachments and constraints" icon=":/RibbonBar/images/RibbonIcons/Physics/show-detail-32x32.png" width="24" height="24" />
 					<addseparator visible="true"/>
-					<addaction name="createBallInSocketConstraintAction" style="textundericon" iscommonslot="true" text="Ball in Socket" tooltip="Create ball in socket" icon=":/RibbonBar/images/RibbonIcons/Physics/ball-in-socket-32x32.png" width="32" height="32" />
-					<addaction name="createHingeConstraintAction" style="textundericon" iscommonslot="true" text="Hinge" tooltip="Create hinge" icon=":/RibbonBar/images/RibbonIcons/Physics/hinge-32x32.png" width="32" height="32" />
-					<addaction name="createPrismaticConstraintAction" style="textundericon" iscommonslot="true" text="Prismatic" tooltip="Create prismatic constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/prismatic-constraint-32x32.png" width="32" height="32" />
-					<addaction name="createRopeConstraintAction" style="textundericon" iscommonslot="true" text="Rope" tooltip="Create rope constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/rope-32x32.png" width="32" height="32" />
-					<addaction name="createRodConstraintAction" style="textundericon" iscommonslot="true" text="Rod" tooltip="Create rod constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/rod-32x32.png" width="32" height="32" />
-					<addaction name="createSpringConstraintAction" style="textundericon" iscommonslot="true" text="Spring" tooltip="Create spring constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/spring-32x32.png" width="32" height="32" />
+					<addaction name="createBallInSocketConstraintAction" style="icononly" iscommonslot="true" text="Ball in Socket" tooltip="Create ball in socket" icon=":/RibbonBar/images/RibbonIcons/Physics/ball-in-socket-32x32.png" width="16" height="16" />
+					<addaction name="createHingeConstraintAction" style="icononly" iscommonslot="true" text="Hinge" tooltip="Create hinge" icon=":/RibbonBar/images/RibbonIcons/Physics/hinge-32x32.png" width="16" height="16" />
+					<addaction name="createPrismaticConstraintAction" style="icononly" iscommonslot="true" text="Prismatic" tooltip="Create prismatic constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/prismatic-constraint-32x32.png" width="16" height="16" />
+					<addaction name="createRopeConstraintAction" style="icononly" iscommonslot="true" text="Rope" tooltip="Create rope constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/rope-32x32.png" width="16" height="16" />
+					<addaction name="createRodConstraintAction" style="icononly" iscommonslot="true" text="Rod" tooltip="Create rod constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/rod-32x32.png" width="16" height="16" />
+					<addaction name="createSpringConstraintAction" style="icononly" iscommonslot="true" text="Spring" tooltip="Create spring constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/spring-32x32.png" width="16" height="16" />
 					<addseparator visible="true"/>
-					<addaction name="createAttachmentAction" style="textundericon" iscommonslot="true" text="Attachment" tooltip="Insert attachment" icon=":/RibbonBar/images/RibbonIcons/Physics/attachment-32x32.png" width="32" height="32" />
+					<addaction name="createAttachmentAction" style="icononly" iscommonslot="true" text="Attachment" tooltip="Insert attachment" icon=":/RibbonBar/images/RibbonIcons/Physics/attachment-32x32.png" width="16" height="16" />
 				</MenuPopupButton>
 				<addseparator/>
 				<addseparator visible="false" fflag="StudioCustomDragIncrements"/>
+				<addseparator visible="false"/>
 				<addspinbox type="spinbox" fflag="StudioCustomDragIncrements" keyboardTracking="true" tooltip="The grid that rotate tools will snap to" name="setRotateIncrementAction" decimals="3" text="" minimum="0" maximum="180" minumumWidth="100" step="5" suffix=" *"/>
 				<addspinbox type="spinbox" fflag="StudioCustomDragIncrements" keyboardTracking="true" tooltip="The grid move and resize tools will snap to" name="setDragGridIncrementAction" decimals="2" text="" minimum="0" maximum="1024" minumumWidth="100" step="0.2" suffix=" studs"/>
+				<addseparator visible="false"/>
 			</Group>
 			<Group name="Edit">
-				<addaction name="unionSelectionAction" icon=":/RibbonBar/images/RibbonIcons/Home/Union.png" tooltip="Fuse parts together to make a single part" width="32" height="32" />
-				<addaction name="negateSelectionAction" icon=":/RibbonBar/images/RibbonIcons/Home/Negate.png" tooltip="Negate parts for making holes" width="32" height="32" />
-				<addaction name="separateSelectionAction" icon=":/RibbonBar/images/RibbonIcons/Home/Separate.png" tooltip="Separate parts from a fused selection" width="32" height="32" />
+				<addaction name="unionSelectionAction" icon=":/RibbonBar/images/RibbonIcons/Home/Union.png" tooltip="Fuse parts together to make a single part" width="16" height="16" />
+				<addaction name="negateSelectionAction" icon=":/RibbonBar/images/RibbonIcons/Home/Negate.png" tooltip="Negate parts for making holes" width="16" height="16" />
+				<addaction name="separateSelectionAction" icon=":/RibbonBar/images/RibbonIcons/Home/Separate.png" tooltip="Separate parts from a fused selection" width="16" height="16" />
 				<addaction name="groupSelectionAction" icon=":/RibbonBar/images/RibbonIcons/Home/Group.png" tooltip="Group the selected parts into a model" width="16" height="16"/>
 				<addaction name="ungroupSelectionAction" icon=":/RibbonBar/images/RibbonIcons/Home/Ungroup.png" tooltip="Ungroup the model into the original parts" width="16" height="16"/>
 				<addaction name="anchorAction" icon=":/RibbonBar/images/RibbonIcons/Home/Anchor.png" tooltip="Anchor/Unanchor the selected parts" width="16" height="16"/>
 				<MenuPopupButton handleMenuTrigger="true" name="actionMaterialSelector" popupStyle="menubutton" tooltip="Select material and apply to parts" icon=":/RibbonBar/images/RibbonIcons/Insert/Advanced-Objects.png" width="16" height="16">
-					<addaction name="ms_Plastic" style="textbesideicon" text="Plastic" value="Plastic" icon=":/RibbonBar/images/Studio Ribbon Icons/plastic.png" width="32" height="32"/>
-					<addaction name="ms_Wood" style="textbesideicon" text="Wood" value="Wood" icon=":/RibbonBar/images/Studio Ribbon Icons/wood.png" width="32" height="32"/>
-					<addaction name="ms_WoodPlanks" style="textbesideicon" text="Wood Planks" value="WoodPlanks" icon=":/RibbonBar/images/Studio Ribbon Icons/woodplanks.png" width="32" height="32"/>
-					<addaction name="ms_Slate" style="textbesideicon" text="Slate" value="Slate" icon=":/RibbonBar/images/Studio Ribbon Icons/slate.png" width="32" height="32"/>
-					<addaction name="ms_Concrete" style="textbesideicon" text="Concrete" value="Concrete" icon=":/RibbonBar/images/Studio Ribbon Icons/concrete.png" width="32" height="32"/>
-					<addaction name="ms_Metal" style="textbesideicon" text="Metal" value="Metal" icon=":/RibbonBar/images/Studio Ribbon Icons/metal.png" width="32" height="32"/>
-					<addaction name="ms_CorrodedMetal" style="textbesideicon" text="Corroded Metal" value="CorrodedMetal" icon=":/RibbonBar/images/Studio Ribbon Icons/corrodedmetal.png" width="32" height="32"/>
-					<addaction name="ms_DiamondPlate" style="textbesideicon" text="Diamond Plate" value="DiamondPlate" icon=":/RibbonBar/images/Studio Ribbon Icons/diamondplate.png" width="32" height="32"/>
-					<addaction name="ms_Foil" style="textbesideicon" text="Foil" value="Foil" icon=":/RibbonBar/images/Studio Ribbon Icons/foil.png" width="32" height="32"/>
-					<addaction name="ms_Grass" style="textbesideicon" text="Grass" value="Grass" icon=":/RibbonBar/images/Studio Ribbon Icons/grass.png" width="32" height="32"/>
-					<addaction name="ms_Ice" style="textbesideicon" text="Ice" value="Ice" icon=":/RibbonBar/images/Studio Ribbon Icons/ice.png" width="32" height="32"/>
-					<addaction name="ms_Brick" style="textbesideicon" text="Brick" value="Brick" icon=":/RibbonBar/images/Studio Ribbon Icons/brick.png" width="32" height="32"/>
-					<addaction name="ms_Sand" style="textbesideicon" text="Sand" value="Sand" icon=":/RibbonBar/images/Studio Ribbon Icons/sand.png" width="32" height="32"/>
-					<addaction name="ms_Fabric" style="textbesideicon" text="Fabric" value="Fabric" icon=":/RibbonBar/images/Studio Ribbon Icons/fabric.png" width="32" height="32"/>
-					<addaction name="ms_Granite" style="textbesideicon" text="Granite" value="Granite" icon=":/RibbonBar/images/Studio Ribbon Icons/granite.png" width="32" height="32"/>
-					<addaction name="ms_Marble" style="textbesideicon" text="Marble" value="Marble" icon=":/RibbonBar/images/Studio Ribbon Icons/marble.png" width="32" height="32"/>
-					<addaction name="ms_Pebble" style="textbesideicon" text="Pebble" value="Pebble" icon=":/RibbonBar/images/Studio Ribbon Icons/pebble.png" width="32" height="32"/>
-					<addaction name="ms_Cobblestone" style="textbesideicon" text="Cobblestone" value="Cobblestone" icon=":/RibbonBar/images/Studio Ribbon Icons/cobblestone.png" width="32" height="32"/>
-					<addaction name="ms_SmoothPlastic" style="textbesideicon" text="SmoothPlastic" value="SmoothPlastic" icon=":/RibbonBar/images/Studio Ribbon Icons/smoothPlastic.png" width="32" height="32"/>
-					<addaction name="ms_Neon" style="textbesideicon" text="Neon" value="Neon" icon=":/RibbonBar/images/Studio Ribbon Icons/neon.png" width="32" height="32"/>
+					<addaction name="ms_Plastic" style="textbesideicon" text="Plastic" value="Plastic" icon=":/RibbonBar/images/Studio Ribbon Icons/plastic.png" width="16" height="16"/>
+					<addaction name="ms_Wood" style="textbesideicon" text="Wood" value="Wood" icon=":/RibbonBar/images/Studio Ribbon Icons/wood.png" width="16" height="16"/>
+					<addaction name="ms_WoodPlanks" style="textbesideicon" text="Wood Planks" value="WoodPlanks" icon=":/RibbonBar/images/Studio Ribbon Icons/woodplanks.png" width="16" height="16"/>
+					<addaction name="ms_Slate" style="textbesideicon" text="Slate" value="Slate" icon=":/RibbonBar/images/Studio Ribbon Icons/slate.png" width="16" height="16"/>
+					<addaction name="ms_Concrete" style="textbesideicon" text="Concrete" value="Concrete" icon=":/RibbonBar/images/Studio Ribbon Icons/concrete.png" width="16" height="16"/>
+					<addaction name="ms_Metal" style="textbesideicon" text="Metal" value="Metal" icon=":/RibbonBar/images/Studio Ribbon Icons/metal.png" width="16" height="16"/>
+					<addaction name="ms_CorrodedMetal" style="textbesideicon" text="Corroded Metal" value="CorrodedMetal" icon=":/RibbonBar/images/Studio Ribbon Icons/corrodedmetal.png" width="16" height="16"/>
+					<addaction name="ms_DiamondPlate" style="textbesideicon" text="Diamond Plate" value="DiamondPlate" icon=":/RibbonBar/images/Studio Ribbon Icons/diamondplate.png" width="16" height="16"/>
+					<addaction name="ms_Foil" style="textbesideicon" text="Foil" value="Foil" icon=":/RibbonBar/images/Studio Ribbon Icons/foil.png" width="16" height="16"/>
+					<addaction name="ms_Grass" style="textbesideicon" text="Grass" value="Grass" icon=":/RibbonBar/images/Studio Ribbon Icons/grass.png" width="16" height="16"/>
+					<addaction name="ms_Ice" style="textbesideicon" text="Ice" value="Ice" icon=":/RibbonBar/images/Studio Ribbon Icons/ice.png" width="16" height="16"/>
+					<addaction name="ms_Brick" style="textbesideicon" text="Brick" value="Brick" icon=":/RibbonBar/images/Studio Ribbon Icons/brick.png" width="16" height="16"/>
+					<addaction name="ms_Sand" style="textbesideicon" text="Sand" value="Sand" icon=":/RibbonBar/images/Studio Ribbon Icons/sand.png" width="16" height="16"/>
+					<addaction name="ms_Fabric" style="textbesideicon" text="Fabric" value="Fabric" icon=":/RibbonBar/images/Studio Ribbon Icons/fabric.png" width="16" height="16"/>
+					<addaction name="ms_Granite" style="textbesideicon" text="Granite" value="Granite" icon=":/RibbonBar/images/Studio Ribbon Icons/granite.png" width="16" height="16"/>
+					<addaction name="ms_Marble" style="textbesideicon" text="Marble" value="Marble" icon=":/RibbonBar/images/Studio Ribbon Icons/marble.png" width="16" height="16"/>
+					<addaction name="ms_Pebble" style="textbesideicon" text="Pebble" value="Pebble" icon=":/RibbonBar/images/Studio Ribbon Icons/pebble.png" width="16" height="16"/>
+					<addaction name="ms_Cobblestone" style="textbesideicon" text="Cobblestone" value="Cobblestone" icon=":/RibbonBar/images/Studio Ribbon Icons/cobblestone.png" width="16" height="16"/>
+					<addaction name="ms_SmoothPlastic" style="textbesideicon" text="SmoothPlastic" value="SmoothPlastic" icon=":/RibbonBar/images/Studio Ribbon Icons/smoothPlastic.png" width="16" height="16"/>
+					<addaction name="ms_Neon" style="textbesideicon" text="Neon" value="Neon" icon=":/RibbonBar/images/Studio Ribbon Icons/neon.png" width="16" height="16"/>
 				</MenuPopupButton>
 				<ColorPicker name="actionColorSelector" type="color" icon=":/RibbonBar/images/RibbonIcons/Home/Color.png" tooltip="Select color and apply to parts" width="16" height="16"/>
 				<MenuPopupButton ischeckable="true" name="actionSurface" tooltip="Pick a surface type, and click on part surfaces to apply" icon=":/RibbonBar/images/RibbonIcons/Home/Surfaces.png" width="16" height="16">
@@ -152,23 +141,27 @@
 					<addaction name="inletAction" text="Inlets"/>
 					<addaction name="universalsAction" text="Universal"/>
 					<addaction name="weldSurfaceAction" text="Add Weld"/>
-					<addaction name="hingeAction" style="textundericon" text="Hinge" icon=":/RibbonBar/images/RibbonIcons/Home/Joint.png" tooltip="Attach a hinge to a part" width="32" height="32"/>
-					<addaction name="motorRightAction" style="textundericon" text="Motor" tooltip="Attach a motor to a part" icon=":/RibbonBar/images/RibbonIcons/Home/Motor.png" width="32" height="32"/>
+					<addaction name="hingeAction" style="icononly" text="Hinge" icon=":/RibbonBar/images/RibbonIcons/Home/Joint.png" tooltip="Attach a hinge to a part" width="16" height="16"/>
+					<addaction name="motorRightAction" style="icononly" text="Motor" tooltip="Attach a motor to a part" icon=":/RibbonBar/images/RibbonIcons/Home/Motor.png" width="16" height="16"/>
 				</MenuPopupButton>
 			</Group>
 			<Group name="Testing" controlsCentering="true">
-				<addaction text="Play" name="simulationPlayAction" style="textundericon" value="simulationPlayAction" icon=":/RibbonBar/images/RibbonIcons/Test/Play-Solo.png" width="32" height="32"/>
-				<addaction text="Run" style="textbesideicon" name="simulationRunAction" value="simulationRunAction" icon=":/RibbonBar/images/RibbonIcons/Test/Run.png" width="32" height="32"/>
-				<addaction text="Pause" style="textbesideicon" name="simulationStopAction" icon=":/RibbonBar/images/RibbonIcons/Test/Pause.png" width="32" height="32"/>
-				<addaction text="Stop" style="textbesideicon" name="simulationResetAction" icon=":/RibbonBar/images/RibbonIcons/Test/Stop.png" width="32" height="32"/>
+				<MenuPopupButton name="playGameActionGroup" style="textundericon" popupStyle="menubutton" text="Play" tooltip="Play the game inside the window" icon=":/RibbonBar/images/RibbonIcons/Test/Run.png" value="simulationPlayAction" width="32" height="32">
+					<addaction text="Play" name="simulationPlayAction" style="icononly"  value="simulationPlayAction" icon=":/RibbonBar/images/RibbonIcons/Test/Play-Solo.png" width="32" height="32"/>
+					<addaction text="Play Here" fflag="StudioPlaySoloFromCameraEnabled" name="simulationPlayFromCameraAction" style="icononly"  value="simulationPlayFromCameraAction" icon=":/RibbonBar/images/RibbonIcons/Test/Play-Solo-Camera.png" width="32" height="32"/>
+				</MenuPopupButton>
+				<addseperator visible="false"/>
+				<addaction text="Run" style="textbesideicon" name="simulationRunAction" value="simulationRunAction" icon=":/RibbonBar/images/RibbonIcons/Test/Run.png" width="16" height="16"/>
+				<addaction text="Pause" style="textbesideicon" name="simulationStopAction" icon=":/RibbonBar/images/RibbonIcons/Test/Pause.png" width="16" height="16"/>
+				<addaction text="Stop" style="textbesideicon" name="simulationResetAction" icon=":/RibbonBar/images/RibbonIcons/Test/Stop.png" width="16" height="16"/>
 				<addseparator/>
-				<MenuButton handleMenuTrigger="true" name="emulateDeviceAction" style="textbesideicon" popupStyle="menubutton" text="Emulate Device" tooltip="Emulate roblox as if it were another device" icon=":/RibbonBar/images/RibbonIcons/Test/EmulateComputer.png" width="32" height="32">
+				<MenuButton handleMenuTrigger="true" name="emulateDeviceAction" style="textbesideicon" popupStyle="menubutton" text="Emulate Device" tooltip="Emulate roblox as if it were another device" icon=":/RibbonBar/images/RibbonIcons/Test/EmulateComputer.png" width="16" height="16">
 					<addaction name="manageEmulationDeviceAction" style="textbesideicon" text="Manage Devices..." icon="images/Studio 2.0 icons/16x16/emulate_device_16.png" width="16" height="16"/>
 				</MenuButton>
-				<addaction name="pairRbxDevDeviceAction" iscommonslot="true" style="textbesideicon" text="Pair Test Device" tooltip="Pair a device to studio for testing" icon=":/RibbonBar/images/RibbonIcons/Test/Pair-Device.png" width="32" height="32"/>
+				<addaction name="pairRbxDevDeviceAction" iscommonslot="true" style="textbesideicon" text="Pair Test Device" tooltip="Pair a device to studio for testing" icon=":/RibbonBar/images/RibbonIcons/Test/Pair-Device.png" width="16" height="16"/>
 				<addseparator/>
-				<addaction name="startServerAndPlayersAction" iscommonslot="true" tooltip="Start server and players" icon=":/RibbonBar/images/RibbonIcons/Test/Start-Server.png" width="32" height="32"/>
-				<addaction name="cleanupServersAndPlayersAction" icon=":/RibbonBar/images/Studio 2.0 icons/32x32/delete_x_32.png" width="32" height="32"/>
+				<addaction name="startServerAndPlayersAction" iscommonslot="true" tooltip="Start server and players" icon=":/RibbonBar/images/RibbonIcons/Test/Start-Server.png" width="16" height="16"/>
+				<addaction name="cleanupServersAndPlayersAction" icon=":/RibbonBar/images/Studio 2.0 icons/32x32/delete_x_32.png" width="16" height="16"/>
 				<addseparator visible="false"/>
 				<addcombobox fflag="StudioTeamTestEnabled" name="serverMode">
 					<comboboxitem text="None" value="0" />
@@ -185,59 +178,72 @@
 					<comboboxitem text="7 Players" value="7"/>
 					<comboboxitem text="8 Players" value="8"/>
 				</addcombobox>
+				<MenuButton handleMenuTrigger="false" name="emulationScalingMode"  text="Toggle Viewport Scaling" tooltip="Scale viewport to fit screen or to match actual device properties." icon=":/RibbonBar/images/RibbonIcons/Test/scale_to_physical_size_32.png" width="32" height="32">
+					<ActionGroup name="emulationScalingMode" style="textundericon" ischeckable="false">
+						<addaction name="scaleToPhysicalSize" text="Scale to Physical Size" value="scaleToPhysicalSize" icon=":/16x16/images/Studio 2.0 icons/16x16/scale_to_physical_size_16.png" tooltip="Scale viewport actual device screen size" width="16" height="16" />
+						<addaction name="actualResolution" text="Actual Resolution" value="actualResolution" icon=":/16x16/images/Studio 2.0 icons/16x16/actual_resolution_16.png" tooltip="Scale viewport to actual device resolution" width="16" height="16" />
+						<addaction name="calibrateDeviceScalingAction" text="Calibrate Physical Scaling" icon=":/16x16/images/Studio 2.0 icons/16x16/calibrate_device_scaling_16.png" tooltip="Calibrate Physical Size scaling for this screen." width="16" height="16" />
+					</ActionGroup>
+				</MenuButton>
+				<MenuButton fflag="StudioEnablePortraitModeForEmulator" handleMenuTrigger="false" name="emulationDeviceOrientation"  text="Toggle Device Orientation" tooltip="Rotate mobile device orientation." icon=":/RibbonBar/images/RibbonIcons/Test/orientation_landscape_32.png" width="32" height="32">
+					<ActionGroup name="emulationDeviceOrientation" style="textundericon" ischeckable="false">
+						<addaction name="orientationLandscape" text="Landscape" value="orientationLandscape" icon=":/16x16/images/Studio 2.0 icons/16x16/orientation_landscape_16.png" tooltip="Landscape orientation" width="16" height="16" />
+						<addaction name="orientationPortrait" text="Portrait" value="orientationPortrait" icon=":/16x16/images/Studio 2.0 icons/16x16/orientation_portrait_16.png" tooltip="Portrait orientation" width="16" height="16" />
+					</ActionGroup>
+				</MenuButton>
 			</Group>
 		</TabPage>
-		<TabPage name="Terrain" visible="false">
+		<TabPage name="Terrain">
 			<Group name="Terrain">
-				<addaction name="Generator" instancename="Generator" text="Generator" style="textundericon" tooltip="Use the random terrain generator" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/terrain.png" width="32" height="32"/>
-				<addaction name="Builder" instancename="Builder" text="Builder" style="textundericon" tooltip="Place terrain blocks on the field" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/builder.png" width="32" height="32"/>
-				<addaction name="Remover" instancename="Remover" text="Remover" style="textundericon" tooltip="Remove terrain blocks from the field" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/destroyer.png" width="32" height="32"/>
-				<addaction name="Elevation Adjuster" instancename="Elevation Adjuster" text="Elevation Adjuster" tooltip="Adjust the elevation of the terrain" type="plugin" style="textundericon" icon=":/RibbonBar/images/RibbonIcons/Terrain/elevation.png" width="32" height="32"/>
-				<addaction name="Brush" instancename="Brush" text="Brush" style="textundericon" type="plugin" tooltip="Paint the world with terrain blocks" icon=":/RibbonBar/images/RibbonIcons/Terrain/brush.png" width="32" height="32"/>
-				<addaction name="Crater" instancename="Crater" text="Crater" style="textundericon" type="plugin" tooltip="Create a terrain crater" icon=":/RibbonBar/images/RibbonIcons/Terrain/crater.png" width="32" height="32"/>
-				<addaction name="Roads" instancename="Roads" text="Roads" style="textundericon" type="plugin" tooltip="Create a road between two points" icon=":/RibbonBar/images/RibbonIcons/Terrain/roads.png" width="32" height="32"/>
-				<addaction name="Material Brush" instancename="Material Brush" text="Material Brush" tooltip="Paint terrain blocks a different material" style="textundericon" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/materialBrush.png" width="32" height="32"/>
-				<addaction name="Stamper" instancename="Stamper" text="Stamper" style="textundericon" tooltip="Stamp objects" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/stamp.png" width="32" height="32"/>
-				<addaction name="Flood Fill" instancename="Flood Fill" text="Flood Fill" style="textundericon" tooltip="Fill a crevice in the terrain" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/floodFill.png" width="32" height="32"/>
-				<addaction name="Convert To Smooth" instancename="Convert To Smooth" text="Convert To Smooth" style="textundericon" tooltip="Switch to smooth terrain and new tools" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/smooth.png" width="32" height="32"/>
+				<addaction name="Generator" instancename="Generator" text="Generator" style="icononly" tooltip="Use the random terrain generator" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/terrain.png" width="16" height="16"/>
+				<addaction name="Builder" instancename="Builder" text="Builder" style="icononly" tooltip="Place terrain blocks on the field" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/builder.png" width="16" height="16"/>
+				<addaction name="Remover" instancename="Remover" text="Remover" style="icononly" tooltip="Remove terrain blocks from the field" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/destroyer.png" width="16" height="16"/>
+				<addaction name="Elevation Adjuster" instancename="Elevation Adjuster" text="Elevation Adjuster" tooltip="Adjust the elevation of the terrain" type="plugin" style="icononly" icon=":/RibbonBar/images/RibbonIcons/Terrain/elevation.png" width="16" height="16"/>
+				<addaction name="Brush" instancename="Brush" text="Brush" style="icononly" type="plugin" tooltip="Paint the world with terrain blocks" icon=":/RibbonBar/images/RibbonIcons/Terrain/brush.png" width="16" height="16"/>
+				<addaction name="Crater" instancename="Crater" text="Crater" style="icononly" type="plugin" tooltip="Create a terrain crater" icon=":/RibbonBar/images/RibbonIcons/Terrain/crater.png" width="16" height="16"/>
+				<addaction name="Roads" instancename="Roads" text="Roads" style="icononly" type="plugin" tooltip="Create a road between two points" icon=":/RibbonBar/images/RibbonIcons/Terrain/roads.png" width="16" height="16"/>
+				<addaction name="Material Brush" instancename="Material Brush" text="Material Brush" tooltip="Paint terrain blocks a different material" style="icononly" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/materialBrush.png" width="16" height="16"/>
+				<addaction name="Stamper" instancename="Stamper" text="Stamper" style="icononly" tooltip="Stamp objects" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/stamp.png" width="16" height="16"/>
+				<addaction name="Flood Fill" instancename="Flood Fill" text="Flood Fill" style="icononly" tooltip="Fill a crevice in the terrain" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/floodFill.png" width="16" height="16"/>
+				<addaction name="Convert To Smooth" instancename="Convert To Smooth" text="Convert To Smooth" style="icononly" tooltip="Switch to smooth terrain and new tools" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/smooth.png" width="16" height="16"/>
 			</Group>
 		</TabPage>
 		<TabPage name="Plugins">
 			<Group name="Tools">
-				<addaction name="managePluginsAction" text="Manage Plugins" style="textundericon" height="32" width="32" tooltip="Manage plugins installed from roblox.com" icon=":/RibbonBar/images/RibbonIcons/AddOns/Manage-Plugins.png"/>
-				<addaction name="openPluginsFolderAction" text="Plugins Folder" style="textundericon" height="32" width="32" tooltip="Open the local plugins folder" icon=":/RibbonBar/images/RibbonIcons/AddOns/Plugins-folder.png"/>
+				<addaction name="managePluginsAction" text="Manage Plugins" style="textundericon" height="16" width="16" tooltip="Manage plugins installed from roblox.com" icon=":/RibbonBar/images/RibbonIcons/AddOns/Manage-Plugins.png"/>
+				<addaction name="openPluginsFolderAction" text="Plugins Folder" style="textundericon" height="16" width="16" tooltip="Open the local plugins folder" icon=":/RibbonBar/images/RibbonIcons/AddOns/Plugins-folder.png"/>
 			</Group>
 		</TabPage>
 		<TabPage name="scriptMenu" text="Script Menu" contextcolor="4" contexttitle="Script tools" visible="false">
 			<Group name="Clipboard">
-				<addaction name="pasteAction" style="textundericon" tooltip="Paste item in clipboard" icon=":/RibbonBar/images/RibbonIcons/Home/Paste.png" width="32" height="32"/>
+				<addaction name="pasteAction" style="icononly" tooltip="Paste item in clipboard" icon=":/RibbonBar/images/RibbonIcons/Home/Paste.png" width="16" height="16"/>
 				<addaction name="cutAction" style="textbesideicon" tooltip="Cut selected text" icon=":/RibbonBar/images/RibbonIcons/Home/Cut-16x16.png"/>
 				<addaction name="copyAction" style="textbesideicon" tooltip="Copy selected text" icon=":/RibbonBar/images/RibbonIcons/Home/Copy-16x16.png"/>
 			</Group>
 			<Group name="Edit">
-				<MenuButton name="actionFindMenu" style="textundericon" text="Find" icon=":/RibbonBar/images/RibbonIcons/Home/Find.png" tooltip="Find text..." width="32" height="32">
+				<MenuButton name="actionFindMenu" style="icononly" text="Find" icon=":/RibbonBar/images/RibbonIcons/Home/Find.png" tooltip="Find text..." width="16" height="16">
 					<addaction name="findAction" icon=":/16x16/images/Studio 2.0 icons/16x16/find.png"/>
 					<addaction name="findNextAction" icon=":/16x16/images/Studio 2.0 icons/16x16/find_next.png"/>
 					<addaction name="findPreviousAction" icon=":/16x16/images/Studio 2.0 icons/16x16/find_previous.png"/>
 					<addaction name="findInScriptsAction" icon=":/16x16/images/Studio 2.0 icons/16x16/find.png"/>
 				</MenuButton>
-				<addaction name="replaceAction" text="Replace" style="textundericon" tooltip="Find text and replace with..." icon=":/RibbonBar/images/RibbonIcons/Home/Replace.png" width="32" height="32"/>
-				<MenuButton name="actionSelectMenu" text="Select" tooltip="Select text..." style="textundericon" icon=":/RibbonBar/images/RibbonIcons/Home/Select.png" width="32" height="32">
+				<addaction name="replaceAction" text="Replace" style="icononly" tooltip="Find text and replace with..." icon=":/RibbonBar/images/RibbonIcons/Home/Replace.png" width="16" height="16"/>
+				<MenuButton name="actionSelectMenu" text="Select" tooltip="Select text..." style="icononly" icon=":/RibbonBar/images/RibbonIcons/Home/Select.png" width="16" height="16">
 					<addaction name="selectAllAction" icon=":/RibbonBar/images/RibbonIcons/Home/Select.png" width="16" height="16"/>
 					<addaction name="selectChildrenAction" icon=":/16x16/images/Studio 2.0 icons/16x16/select_children.png"/>
 				</MenuButton>
 			</Group>
 			<Group name="Test">
-				<addaction text="Play" name="simulationPlayAction" style="textundericon" value="simulationPlayAction" icon=":/RibbonBar/images/RibbonIcons/Test/Play-Solo.png" width="32" height="32"/>
-				<addaction text="Run" name="simulationRunAction" style="textbesideicon" value="simulationRunAction" icon=":/RibbonBar/images/RibbonIcons/Test/Run.png" width="32" height="32"/>
-				<addaction name="simulationStopAction" style="textbesideicon" text="Pause" icon=":/RibbonBar/images/RibbonIcons/Test/Pause.png" width="32" height="32"/>
-				<addaction name="simulationResetAction" style="textbesideicon" text="Stop" icon=":/RibbonBar/images/RibbonIcons/Test/Stop.png" width="32" height="32"/>
+				<addaction text="Play" name="simulationPlayAction" style="icononly" value="simulationPlayAction" icon=":/RibbonBar/images/RibbonIcons/Test/Play-Solo.png" width="16" height="16"/>
+				<addaction text="Run" name="simulationRunAction" style="textbesideicon" value="simulationRunAction" icon=":/RibbonBar/images/RibbonIcons/Test/Run.png" width="16" height="16"/>
+				<addaction name="simulationStopAction" style="textbesideicon" text="Pause" icon=":/RibbonBar/images/RibbonIcons/Test/Pause.png" width="16" height="16"/>
+				<addaction name="simulationResetAction" style="textbesideicon" text="Stop" icon=":/RibbonBar/images/RibbonIcons/Test/Stop.png" width="16" height="16"/>
 			</Group>
 			<Group name="Debugger" fflag="LuaDebugger">
-				<addaction name="stepIntoAction" style="textundericon" icon=":/RibbonBar/images/RibbonIcons/Test/Step-In.png" width="32" height="32"/>
-				<addaction name="stepOverAction" style="textundericon" icon=":/RibbonBar/images/RibbonIcons/Test/Step-Over.png" width="32" height="32"/>
-				<addaction name="stepOutAction" style="textundericon" icon=":/RibbonBar/images/RibbonIcons/Test/Step-Out.png" width="32" height="32"/>
-				<addaction name="addWatchAction" style="textundericon" icon=":/RibbonBar/images/RibbonIcons/Test/Add-Watch.png" tooltip="Watch the highlighted variable's value" width="32" height="32"/>
+				<addaction name="stepIntoAction" style="icononly" icon=":/RibbonBar/images/RibbonIcons/Test/Step-In.png" width="16" height="16"/>
+				<addaction name="stepOverAction" style="icononly" icon=":/RibbonBar/images/RibbonIcons/Test/Step-Over.png" width="16" height="16"/>
+				<addaction name="stepOutAction" style="icononly" icon=":/RibbonBar/images/RibbonIcons/Test/Step-Out.png" width="16" height="16"/>
+				<addaction name="addWatchAction" style="icononly" icon=":/RibbonBar/images/RibbonIcons/Test/Add-Watch.png" tooltip="Watch the highlighted variable's value" width="16" height="16"/>
 			</Group>
 			<Group fflag="LuaDebuggerBreakOnError" name="Debug Errors">
 				<addaction type="radio" name="neverBreakOnScriptErrorsAction" style="textbesideicon" text="Never" tooltip="Never break errors into debugger"/>
