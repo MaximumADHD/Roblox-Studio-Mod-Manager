@@ -42,6 +42,7 @@
             // launchStudio
             // 
             this.launchStudio.AccessibleName = "Launch ROBLOX Studio";
+            this.launchStudio.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
             this.launchStudio.Cursor = System.Windows.Forms.Cursors.Default;
             this.launchStudio.Location = new System.Drawing.Point(25, 119);
             this.launchStudio.Name = "launchStudio";
@@ -62,11 +63,10 @@
             this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
             this.pictureBox1.Location = new System.Drawing.Point(47, 11);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(99, 102);
+            this.pictureBox1.Size = new System.Drawing.Size(99, 99);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
             this.pictureBox1.TabIndex = 8;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
             // manageMods
             // 
@@ -144,7 +144,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(189, 267);
+            this.ClientSize = new System.Drawing.Size(189, 263);
             this.Controls.Add(this.openStudioDirectory);
             this.Controls.Add(this.forceRebuild);
             this.Controls.Add(this.label1);
@@ -159,7 +159,6 @@
             this.MinimizeBox = false;
             this.Name = "Launcher";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Roblox Studio";
             this.Load += new System.EventHandler(this.Launcher_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

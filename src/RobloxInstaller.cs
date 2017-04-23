@@ -158,76 +158,46 @@ namespace RobloxModManager
             string modManagerPath = Path.Combine(modManagerDir, processName + ".exe");
             bool isDebugging = processName.EndsWith(".vshost");
 
-            RegistryKeyResult studioQTGet = getRegistry(Registry.CurrentUser, "Software", "StudioQTRobloxReg");
-            if (studioQTGet.Completed)
+            RegistryKey studioQT = createSubKey(Registry.CurrentUser, "SOFTWARE","StudioQTRobloxReg");
+            studioQT.SetValue(_, modManagerPath);
+            studioQT.SetValue("protocol handler scheme", "roblox-studio");
+            studioQT.SetValue("install host", setupDir);
+            studioQT.SetValue("version", buildName);
+
+            RegistryKey versions = createSubKey(studioQT, "Versions");
+            versions.SetValue("version0", buildName);
+
+            // Register the base "Roblox.Place" open protocol.
+            RegistryKey classes = createSubKey(Registry.CurrentUser, "SOFTWARE","Classes");
+            RegistryKey robloxPlace = createSubKey(classes,"Roblox.Place");
+            robloxPlace.SetValue(_,"Roblox Place");
+
+            RegistryKey robloxStudioUrl = createSubKey(classes,"roblox-studio");
+            robloxStudioUrl.SetValue(_, "URL: Roblox Protocol");
+            robloxStudioUrl.SetValue("URL Protocol", _);
+
+            RegistryKey[] appReg = { robloxPlace, robloxStudioUrl };
+            foreach (RegistryKey app in appReg)
             {
-                // Standard ROBLOX Studio registration (for whatever it needs this for)
-                RegistryKey studioQT = studioQTGet.Result;
-                if (!isDebugging)
-                {
-                    studioQT.SetValue(_, modManagerPath);
-                }
-                studioQT.SetValue("protocol handler scheme", "roblox-studio");
-                studioQT.SetValue("install host", setupDir);
-                studioQT.SetValue("version", buildName);
-
-                RegistryKey versions = createSubKey(studioQT, "Versions");
-                versions.SetValue("version0", buildName);
-
-                Registry.CurrentUser.Close();
+                RegistryKey defaultIcon = createSubKey(app, "DefaultIcon");
+                defaultIcon.SetValue(_, robloxStudioBetaPath + ",0");
+                defaultIcon.Close();
+                RegistryKey command = createSubKey(app, "shell", "open", "command");
+                command.SetValue(_, "\"" + robloxStudioBetaPath + "\" %1");
+                command.SetValue(_, modManagerPath + " \"%1\"");
+                app.Close();
             }
 
-            if (!isDebugging)
+            // Pass the .rbxl and .rbxlx file formats to Roblox.Place
+            RegistryKey rbxl = createSubKey(classes, ".rbxl");
+            RegistryKey rbxlx = createSubKey(classes, ".rbxlx");
+            RegistryKey[] robloxLevelPass = { rbxl, rbxlx };
+
+            foreach (RegistryKey rbxLevel in robloxLevelPass)
             {
-                // Register the base "Roblox.Place" open protocol.
-                RegistryKeyResult robloxPlaceGet = getRegistry(Registry.CurrentUser, "Roblox.Place");
-                RegistryKey robloxPlace = robloxPlaceGet.Result;
-                if (robloxPlaceGet.Completed)
-                {
-                    robloxPlace.SetValue(_, "Roblox Place");
-                }
-
-                // Register the url protocol
-                RegistryKeyResult robloxStudioUrlGet = getRegistry(Registry.CurrentUser, "roblox-studio");
-                RegistryKey robloxStudioUrl = robloxStudioUrlGet.Result;
-                if (robloxStudioUrlGet.Completed)
-                {
-                    robloxStudioUrl.SetValue(_, "URL: Roblox Protocol");
-                    robloxStudioUrl.SetValue("URL Protocol", "");
-                }
-
-                // Register both of these protocols to open with the mod manager.
-                RegistryKeyResult[] appGetReg = { robloxPlaceGet, robloxStudioUrlGet };
-                foreach (RegistryKeyResult appGet in appGetReg)
-                {
-                    if (appGet.Completed)
-                    {
-                        RegistryKey app = appGet.Result;
-                        RegistryKey defaultIcon = createSubKey(app, "DefaultIcon");
-                        defaultIcon.SetValue(_, robloxStudioBetaPath + ",0");
-                        defaultIcon.Close();
-                        RegistryKey command = createSubKey(app, "shell", "open", "command");
-                        command.SetValue(_, "\"" + robloxStudioBetaPath + "\" %1");
-                        command.SetValue(_, modManagerPath + " \"%1\"");
-                        app.Close();
-                    }
-                }
-
-                // Pass the .rbxl and .rbxlx file formats to Roblox.Place
-                RegistryKeyResult rbxlGet = getRegistry(Registry.CurrentUser, ".rbxl");
-                RegistryKeyResult rbxlxGet = getRegistry(Registry.CurrentUser, ".rbxlx");
-                RegistryKeyResult[] robloxLevelPass = { rbxlGet, rbxlxGet };
-
-                foreach (RegistryKeyResult rbxLevelGet in robloxLevelPass)
-                {
-                    if (rbxLevelGet.Completed)
-                    {
-                        RegistryKey rbxLevel = rbxLevelGet.Result;
-                        rbxLevel.SetValue("", "Roblox.Place");
-                        createSubKey(rbxLevel, "Roblox.Place", "ShellNew");
-                        rbxLevel.Close();
-                    }
-                }
+                rbxLevel.SetValue("", "Roblox.Place");
+                createSubKey(rbxLevel, "Roblox.Place", "ShellNew");
+                rbxLevel.Close();
             }
         }
 

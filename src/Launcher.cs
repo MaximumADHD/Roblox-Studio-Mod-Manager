@@ -165,39 +165,21 @@ namespace RobloxModManager
         {
             Control controller = sender as Control;
             string msg = null;
-            if (sender.Equals(pictureBox1))
-            {
-                msg = "This is just the Roblox Studio logo.\nNothing special here.";
-            }
-            else if (sender.Equals(launchStudio))
-            {
+            if (sender.Equals(launchStudio))
                 msg = "Click to Launch Roblox Studio!";
-            }
             else if (sender.Equals(manageMods))
-            {
                 msg = "Opens your ModFolder directory, which contains all of the files to be overridden in Roblox Studio's client directory.";
-            }
             else if (sender.Equals(dataBaseSelect))
-            {
                 msg = "Indicates which setup web-domain we should use to download Roblox Studio.\nThe gametest domains are prototype versions of ROBLOX Studio,\nthat are not available on the main site yet.";
-            }
             else if (sender.Equals(forceRebuild))
-            {
                 msg = "Should we forcefully reinstall this version of the client, even if its already installed?\nThis can be used if you are experiencing a problem with launching Roblox Studio.";
-            }
             else if (sender.Equals(openStudioDirectory))
-            {
                 msg = "Should we also open the directory of Roblox Studio after launching?\nThis may come in handy for users who want to run .bat on Studio's files.";
-            }
-            else
-            {
-                msg = "Error: Unknown Sender " + controller.Name;
-            }
+
             if (msg != null)
-            {
                 MessageBox.Show(msg, "Information about the \"" + controller.AccessibleName + "\" " + sender.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Information);
-                e.Handled = true;
-            }
+
+            e.Handled = true;
         }
 
         public Launcher(params string[] mainArgs)
