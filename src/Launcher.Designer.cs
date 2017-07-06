@@ -128,14 +128,14 @@
             // 
             // openStudioDirectory
             // 
-            this.openStudioDirectory.AccessibleName = "Open Studio Directory";
+            this.openStudioDirectory.AccessibleName = "Just Open Studio Path";
             this.openStudioDirectory.AutoSize = true;
             this.openStudioDirectory.Location = new System.Drawing.Point(25, 239);
             this.openStudioDirectory.Margin = new System.Windows.Forms.Padding(2);
             this.openStudioDirectory.Name = "openStudioDirectory";
-            this.openStudioDirectory.Size = new System.Drawing.Size(130, 17);
+            this.openStudioDirectory.Size = new System.Drawing.Size(132, 17);
             this.openStudioDirectory.TabIndex = 14;
-            this.openStudioDirectory.Text = "Open Studio Directory";
+            this.openStudioDirectory.Text = "Just Open Studio Path";
             this.openStudioDirectory.UseVisualStyleBackColor = true;
             this.openStudioDirectory.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 

@@ -1,22 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.IO;
 using System.IO.Compression;
 using System.Reflection;
-using System.Security;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
-using System.Security.Cryptography.X509Certificates;
-using System.Net.Security;
 
 namespace RobloxModManager
 {
@@ -40,12 +34,13 @@ namespace RobloxModManager
 
     public partial class RobloxInstaller : Form
     {
-        private int echoSteps = 0;
         private static string _ = "";
         public string buildName;
-        public string buildPath;
         public string setupDir;
         public string robloxStudioBetaPath;
+
+        public delegate void EchoDelegator(string text);
+        public delegate void IncrementDelegator(int count);
 
         WebClient http = new WebClient();
         List<RbxInstallProtocol> instructions = new List<RbxInstallProtocol>()
@@ -80,16 +75,25 @@ namespace RobloxModManager
         }
 
 
-        public async Task echo(string text)
+        private void echo(string text)
         {
-            echoSteps++;
-            if (echoSteps % 20 == 0)
+            if (InvokeRequired)
+                Invoke(new EchoDelegator(echo), text);
+            else
             {
-                await Task.Delay(1);
+                if (log.Text != "")
+                    log.AppendText("\n");
+
+                log.AppendText(text);
             }
-            log.Items.Add(text);
-            log.SelectedIndex = log.Items.Count - 1;
-            log.SelectedIndex = -1;
+        }
+
+        private void incrementProgress()
+        {
+            if (progressBar.InvokeRequired)
+                progressBar.Invoke(new IncrementDelegator(progressBar.Increment), 30);
+            else
+                progressBar.Increment(30);
         }
 
         public RobloxInstaller()
@@ -97,7 +101,7 @@ namespace RobloxModManager
             InitializeComponent();
         }
 
-        public string getDirectory(params string[] paths)
+        private static string getDirectory(params string[] paths)
         {
             string basePath = "";
             foreach (string path in paths)
@@ -111,7 +115,7 @@ namespace RobloxModManager
             return basePath;
         }
 
-        public RegistryKey createSubKey(RegistryKey key, params string[] path)
+        private static RegistryKey createSubKey(RegistryKey key, params string[] path)
         {
             string constructedPath = "";
             foreach (string p in path)
@@ -121,7 +125,7 @@ namespace RobloxModManager
             return key.CreateSubKey(constructedPath, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryOptions.None);
         }
 
-        public RegistryKeyResult getRegistry(RegistryKey dir, params string[] traverse)
+        private static RegistryKeyResult getRegistry(RegistryKey dir, params string[] traverse)
         {
             RegistryKeyResult result = new RegistryKeyResult();
             result.Completed = true;
@@ -203,14 +207,14 @@ namespace RobloxModManager
 
         public async Task<string> RunInstaller(string database, bool forceInstall)
         {
-            ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => true;
-
-            http.Headers.Set(HttpRequestHeader.UserAgent, "Roblox");
-            http.UseDefaultCredentials = true;
+            ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => true; // Unlocks https for the WebClient
 
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             string rootDir = getDirectory(localAppData, "Roblox Studio");
             string downloads = getDirectory(rootDir, "downloads");
+
+            RegistryKey managerRegistry = createSubKey(Registry.CurrentUser, "SOFTWARE", "Roblox Studio Mod Manager");
+            RegistryKey checkSum = createSubKey(managerRegistry, "Checksum");
 
             Show();
             BringToFront();
@@ -219,79 +223,155 @@ namespace RobloxModManager
 
             setupDir = "setup." + database + ".com/";
             buildName = await http.DownloadStringTaskAsync("http://" + setupDir + "versionQTStudio");
-            buildPath = getDirectory(rootDir, buildName);
-            robloxStudioBetaPath = Path.Combine(buildPath, "RobloxStudioBeta.exe");
+            robloxStudioBetaPath = Path.Combine(rootDir, "RobloxStudioBeta.exe");
 
-            string appSettings = Path.Combine(buildPath, "AppSettings.xml");
-            await echo("Checking build installation...");
+            echo("Checking build installation...");
 
-            if (!File.Exists(appSettings) || forceInstall)
+            string currentBuildDatabase = managerRegistry.GetValue("BuildDatabase","") as string;
+            string currentBuildVersion = managerRegistry.GetValue("BuildVersion", "") as string;
+
+            if (currentBuildDatabase != database || currentBuildVersion != buildName || forceInstall)
             {
-                await echo("This build hasn't been installed!");
+                echo("This build needs to be installed!");
                 await setStatus("Loading latest Roblox Studio build from " + database + ".com");
                 progressBar.Maximum = instructions.Count*30;
                 progressBar.Value = 0;
                 progressBar.Style = ProgressBarStyle.Continuous;
-                foreach (RbxInstallProtocol protocol in instructions)
+
+                bool safeToContinue = false;
+                bool cancelled = false;
+                int attempts = 0;
+
+                while (!safeToContinue)
                 {
-                    string zipFileUrl = "https://" + setupDir + buildName + "-" + protocol.FileName + ".zip";
-                    string extractDir = getDirectory(buildPath, protocol.LocalDirectory);
-                    Console.WriteLine(extractDir);
-                    string downloadPath = Path.Combine(downloads, protocol.FileName + ".zip");
-                    Console.WriteLine(downloadPath);
-                    await echo("Fetching: " + zipFileUrl);
-                    try
+                    Process[] running = Process.GetProcessesByName("RobloxStudioBeta");
+                    if (running.Length > 0)
                     {
-                        byte[] downloadedFile = await http.DownloadDataTaskAsync(zipFileUrl);
-                        FileStream writeFile = File.Create(downloadPath);
-                        writeFile.Write(downloadedFile, 0, downloadedFile.Length);
-                        writeFile.Close();
-                        ZipArchive archive = ZipFile.Open(downloadPath, ZipArchiveMode.Read);
-                        foreach (ZipArchiveEntry entry in archive.Entries)
+                        foreach (Process p in running)
+                            p.CloseMainWindow();
+
+                        attempts++;
+                        await Task.Delay(1);
+
+                        if (attempts > 50)
                         {
-                            if (string.IsNullOrEmpty(entry.Name))
+                            echo("Running apps detected, action on the user's part is needed.");
+                            attempts = 0;
+                            Hide();
+                            DialogResult result = MessageBox.Show("All Roblox Studio instances needs to be closed in order to install the new version.\nPress Ok once you've saved your work and the windows are closed, or\nPress Cancel to skip the update for this launch.", "Notice", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                            Show();
+                            if (result == DialogResult.Cancel)
                             {
-                                string localPath = Path.Combine(protocol.LocalDirectory, entry.FullName);
-                                string path = Path.Combine(buildPath, localPath);
-                                await echo("Creating directory " + localPath);
-                                getDirectory(path);
-                            }
-                            else
-                            {
-                                string entryName = entry.FullName;
-                                await echo("Extracting " + entryName + " to " + buildName + "\\" + protocol.LocalDirectory);
-                                string relativePath = Path.Combine(extractDir, entryName);
-                                string directoryParent = Directory.GetParent(relativePath).ToString();
-                                getDirectory(directoryParent);
-                                if (!File.Exists(relativePath))
-                                {
-                                    entry.ExtractToFile(relativePath);
-                                }
+                                safeToContinue = true;
+                                cancelled = true;
                             }
                         }
                     }
-                    catch
-                    {
-                        await echo("Something went wrong while installing" + zipFileUrl);
-                    }
-                    progressBar.Increment(30);
+                    else
+                        safeToContinue = true;
                 }
-                await setStatus("Configuring Roblox Studio");
-                progressBar.Style = ProgressBarStyle.Marquee;
-                await echo("Writing AppSettings.xml");
-                File.WriteAllText(appSettings, "<Settings><ContentFolder>content</ContentFolder><BaseUrl>http://www.roblox.com</BaseUrl></Settings>");
-                await echo("Roblox Studio " + buildName + " successfully installed!");
+
+                if (!cancelled)
+                {
+                    List<Task> taskQueue = new List<Task>();
+
+                    foreach (RbxInstallProtocol protocol in instructions)
+                    {
+                        Task installer = Task.Run(async () =>
+                        {
+                            string zipFileUrl = "https://" + setupDir + buildName + "-" + protocol.FileName + ".zip";
+                            string extractDir = getDirectory(rootDir, protocol.LocalDirectory);
+                            Console.WriteLine(extractDir);
+                            string downloadPath = Path.Combine(downloads, protocol.FileName + ".zip");
+                            Console.WriteLine(downloadPath);
+                            echo("Fetching: " + zipFileUrl);
+                            try
+                            {
+                                WebClient localHttp = new WebClient();
+                                localHttp.Headers.Set(HttpRequestHeader.UserAgent, "Roblox");
+                                byte[] downloadedFile = await localHttp.DownloadDataTaskAsync(zipFileUrl);
+                                bool doInstall = true;
+                                if (!forceInstall)
+                                {
+                                    string fileHash = downloadedFile.Length.ToString(); // Cheap and probably won't work that well, but it's pretty slow to do an actual hash check.
+                                    string currentHash = checkSum.GetValue(protocol.FileName, "") as string;
+                                    if (fileHash == currentHash)
+                                    {
+                                        echo(protocol.FileName + ".zip hasn't changed between builds, skipping.");
+                                        doInstall = false;
+                                    }
+                                    else checkSum.SetValue(protocol.FileName, fileHash);
+                                }
+                                if (doInstall)
+                                {
+                                    FileStream writeFile = File.Create(downloadPath);
+                                    writeFile.Write(downloadedFile, 0, downloadedFile.Length);
+                                    writeFile.Close();
+                                    ZipArchive archive = ZipFile.Open(downloadPath, ZipArchiveMode.Read);
+                                    foreach (ZipArchiveEntry entry in archive.Entries)
+                                    {
+                                        if (string.IsNullOrEmpty(entry.Name))
+                                        {
+                                            string localPath = Path.Combine(protocol.LocalDirectory, entry.FullName);
+                                            string path = Path.Combine(rootDir, localPath);
+                                            echo("Creating directory " + localPath);
+                                            getDirectory(path);
+                                        }
+                                        else
+                                        {
+                                            string entryName = entry.FullName;
+                                            echo("Extracting " + entryName + " to " + buildName + "\\" + protocol.LocalDirectory);
+                                            string relativePath = Path.Combine(extractDir, entryName);
+                                            string directoryParent = Directory.GetParent(relativePath).ToString();
+                                            getDirectory(directoryParent);
+                                            if (!File.Exists(relativePath))
+                                                entry.ExtractToFile(relativePath);
+                                        }
+                                    }
+                                }
+                                localHttp.Dispose();
+                            }
+                            catch
+                            {
+                                echo("Something went wrong while installing. This build may not install correctly. File: " + zipFileUrl);
+                            }
+                            incrementProgress();
+                        });
+                        taskQueue.Add(installer);
+                    }
+                    await Task.WhenAll(taskQueue.ToArray());
+
+                    await setStatus("Configuring Roblox Studio");
+                    progressBar.Style = ProgressBarStyle.Marquee;
+                    echo("Writing AppSettings.xml");
+
+                    string appSettings = Path.Combine(rootDir, "AppSettings.xml");
+                    File.WriteAllText(appSettings, "<Settings><ContentFolder>content</ContentFolder><BaseUrl>http://www.roblox.com</BaseUrl></Settings>");
+
+                    echo("Roblox Studio " + buildName + " successfully installed!");
+                }
+                else
+                {
+                    echo("Update cancelled. Proceeding with launch on current database and version.");
+                }
             }
             else
             {
-                await echo("This version of Roblox Studio has been installed!");
+                echo("This version of Roblox Studio has been installed!");
             }
 
             await setStatus("Configuring Roblox Studio...");
+            managerRegistry.SetValue("BuildDatabase", database);
+            managerRegistry.SetValue("BuildVersion", buildName);
             registryUpdate();
 
             await setStatus("Starting Roblox Studio...");
             return robloxStudioBetaPath;
+        }
+
+        private void RobloxInstaller_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

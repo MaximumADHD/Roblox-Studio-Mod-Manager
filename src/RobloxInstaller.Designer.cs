@@ -31,8 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RobloxInstaller));
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.log = new System.Windows.Forms.ListBox();
             this.statusLbl = new System.Windows.Forms.Label();
+            this.log = new System.Windows.Forms.RichTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -61,16 +61,6 @@
             this.pictureBox1.TabIndex = 9;
             this.pictureBox1.TabStop = false;
             // 
-            // log
-            // 
-            this.log.FormattingEnabled = true;
-            this.log.HorizontalScrollbar = true;
-            this.log.Location = new System.Drawing.Point(90, 11);
-            this.log.Margin = new System.Windows.Forms.Padding(2);
-            this.log.Name = "log";
-            this.log.Size = new System.Drawing.Size(384, 82);
-            this.log.TabIndex = 10;
-            // 
             // statusLbl
             // 
             this.statusLbl.AutoSize = true;
@@ -82,23 +72,35 @@
             this.statusLbl.TabIndex = 11;
             this.statusLbl.Text = "Checking for updates...";
             // 
+            // log
+            // 
+            this.log.Location = new System.Drawing.Point(91, 11);
+            this.log.Name = "log";
+            this.log.ReadOnly = true;
+            this.log.Size = new System.Drawing.Size(383, 81);
+            this.log.TabIndex = 12;
+            this.log.Text = "";
+            // 
             // RobloxInstaller
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(482, 163);
-            this.ControlBox = false;
-            this.Controls.Add(this.statusLbl);
             this.Controls.Add(this.log);
+            this.Controls.Add(this.statusLbl);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.progressBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "RobloxInstaller";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Roblox Studio Installer";
             this.TopMost = true;
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.RobloxInstaller_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -109,7 +111,7 @@
 
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.ListBox log;
         private System.Windows.Forms.Label statusLbl;
+        private System.Windows.Forms.RichTextBox log;
     }
 }

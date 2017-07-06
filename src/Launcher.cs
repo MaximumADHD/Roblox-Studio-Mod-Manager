@@ -70,7 +70,7 @@ namespace RobloxModManager
 
         private async void launchStudio_Click(object sender = null, EventArgs e = null)
         {
-            this.Hide();
+            Hide();
             string dataBase = (string)dataBaseSelect.Items[Properties.Settings.Default.Database];
             RobloxInstaller installer = new RobloxInstaller();
             string studioPath = await installer.RunInstaller(dataBase,forceRebuild.Checked);
@@ -136,17 +136,12 @@ namespace RobloxModManager
                     }
                 }
             }
-            else
-            {
-                this.Dispose();
-            }
-            Process robloxStudio = Process.Start(robloxStudioInfo);
+
             if (openStudioDirectory.Checked)
-            {
                 Process.Start(studioRoot);
-            }
-            installer.Dispose();
-            robloxStudio.WaitForExit();
+            else
+                Process.Start(robloxStudioInfo);
+
             Application.Exit();
         }
 
@@ -159,6 +154,7 @@ namespace RobloxModManager
         {
             Properties.Settings.Default.Database = dataBaseSelect.SelectedIndex;
             Properties.Settings.Default.Save();
+            
         }
 
         private void onHelpRequested(object sender, HelpEventArgs e)
@@ -174,7 +170,7 @@ namespace RobloxModManager
             else if (sender.Equals(forceRebuild))
                 msg = "Should we forcefully reinstall this version of the client, even if its already installed?\nThis can be used if you are experiencing a problem with launching Roblox Studio.";
             else if (sender.Equals(openStudioDirectory))
-                msg = "Should we also open the directory of Roblox Studio after launching?\nThis may come in handy for users who want to run .bat on Studio's files.";
+                msg = "Should we just open the directory of Roblox Studio after installing?\nThis may come in handy for users who want to run .bat on Studio's files.";
 
             if (msg != null)
                 MessageBox.Show(msg, "Information about the \"" + controller.AccessibleName + "\" " + sender.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -188,7 +184,11 @@ namespace RobloxModManager
             {
                 args = mainArgs;
             }
+
             InitializeComponent();
+
+            if (mainArgs.Length == 1 && mainArgs[0].StartsWith("roblox-studio")) // If we were launched from a URI, don't show the directory-only option.
+                openStudioDirectory.Visible = false;
         }
     }
 }
