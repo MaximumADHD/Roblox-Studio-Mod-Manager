@@ -28,3 +28,4 @@ C:\Users\gartung\Downloads\Roblox-Studio-Mod-Manager-master\src\obj\Debug\Roblox
 C:\Users\gartung\Downloads\Roblox-Studio-Mod-Manager-master\src\obj\Debug\RobloxModManager.Launcher.resources
 C:\Users\gartung\Downloads\Roblox-Studio-Mod-Manager-master\src\obj\Debug\RobloxModManager.Properties.Resources.resources
 C:\Users\gartung\Downloads\Roblox-Studio-Mod-Manager-master\src\obj\Debug\RobloxStudioModManager.csproj.GenerateResource.Cache
+C:\Users\gartung\Desktop\Roblox-Studio-Mod-Manager\src\obj\Debug\RobloxModManager.FFlagEditor.resources

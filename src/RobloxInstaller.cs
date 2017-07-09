@@ -19,17 +19,17 @@ namespace RobloxModManager
         public string FileName;
         public string LocalDirectory;
 
-        public RbxInstallProtocol(string fileName, string localDirectory = "")
+        public RbxInstallProtocol(string fileName, string localDirectory)
         {
             FileName = fileName;
             LocalDirectory = localDirectory;
         }
-    }
 
-    public struct RegistryKeyResult
-    {
-        public RegistryKey Result;
-        public bool Completed;
+        public RbxInstallProtocol(string fileName, bool newFolderWithFileName)
+        {
+            FileName = fileName;
+            LocalDirectory = (newFolderWithFileName ? fileName : "");
+        }
     }
 
     public partial class RobloxInstaller : Form
@@ -45,11 +45,7 @@ namespace RobloxModManager
         WebClient http = new WebClient();
         List<RbxInstallProtocol> instructions = new List<RbxInstallProtocol>()
         {
-            new RbxInstallProtocol("RobloxStudio"),
-            new RbxInstallProtocol("Libraries"),
-            new RbxInstallProtocol("LibrariesQt5"),
-            new RbxInstallProtocol("redist"),
-
+            // Extracted to specific directories relative to the root directory
             new RbxInstallProtocol("content-fonts",        @"content\fonts"),
             new RbxInstallProtocol("content-music",        @"content\music"),
             new RbxInstallProtocol("content-particles",    @"content\particles"),
@@ -58,14 +54,22 @@ namespace RobloxModManager
             new RbxInstallProtocol("content-sounds",       @"content\sounds"),
             new RbxInstallProtocol("content-textures",     @"content\textures"),
             new RbxInstallProtocol("content-textures2",    @"content\textures"),
+            new RbxInstallProtocol("content-translations", @"content\translations"),
 
             new RbxInstallProtocol("content-terrain",      @"PlatformContent\pc\terrain"),
             new RbxInstallProtocol("content-textures3",    @"PlatformContent\pc\textures"),
 
-            new RbxInstallProtocol("BuiltInPlugins",       @"BuiltInPlugins"),
-            new RbxInstallProtocol("shaders",              @"shaders"),
-            new RbxInstallProtocol("Qml",                  @"Qml"),
-            new RbxInstallProtocol("Plugins",              @"Plugins")
+            // Extracted directly into the root directory
+            new RbxInstallProtocol("RobloxStudio",         false),
+            new RbxInstallProtocol("Libraries",            false),
+            new RbxInstallProtocol("LibrariesQt5",         false),
+            new RbxInstallProtocol("redist",               false),
+
+            // Extracted into folders in the root directory, with the same name as their zip file
+            new RbxInstallProtocol("BuiltInPlugins",       true),
+            new RbxInstallProtocol("shaders",              true),
+            new RbxInstallProtocol("Qml",                  true),
+            new RbxInstallProtocol("Plugins",              true)
         };
 
         public async Task setStatus(string status)
@@ -119,34 +123,31 @@ namespace RobloxModManager
         {
             string constructedPath = "";
             foreach (string p in path)
-            {
                 constructedPath = Path.Combine(constructedPath, p);
-            }
+
             return key.CreateSubKey(constructedPath, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryOptions.None);
         }
 
-        private static RegistryKeyResult getRegistry(RegistryKey dir, params string[] traverse)
+        public void applyFFlagConfiguration(RegistryKey fflagRegistry, string filePath)
         {
-            RegistryKeyResult result = new RegistryKeyResult();
-            result.Completed = true;
-            foreach (string subKey in traverse)
+            List<string> prefixes = new List<string>() { "FFlag", "DFFlag", "SFFlag" }; // List of possible prefixes that the fast flags will use, given they are actually flags.
+            try 
             {
-                RegistryKey nextDir;
-                try
+                List<string> configs = new List<string>();
+                foreach (string key in fflagRegistry.GetValueNames())
                 {
-                    nextDir = createSubKey(dir,subKey);
-                }
-                catch
-                {
-                    result.Completed = false;
-                    break;
-                }
-                if (nextDir != null)
-                {
-                    result.Result = nextDir;
-                }
+                    string value = fflagRegistry.GetValue(key) as string;
+                    foreach (string prefix in prefixes)
+                        configs.Add('"' + prefix + key + "\":\"" + value + '"');
+                };
+
+                string json = "{" + string.Join(",", configs.ToArray()) + "}";
+                File.WriteAllText(filePath, json);
             }
-            return result;
+            catch
+            {
+                echo("Failed to apply FFlag configuration!");
+            }
         }
 
         public void registryUpdate()
@@ -207,15 +208,13 @@ namespace RobloxModManager
 
         public async Task<string> RunInstaller(string database, bool forceInstall)
         {
-            ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => true; // Unlocks https for the WebClient
-
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             string rootDir = getDirectory(localAppData, "Roblox Studio");
             string downloads = getDirectory(rootDir, "downloads");
 
             RegistryKey managerRegistry = createSubKey(Registry.CurrentUser, "SOFTWARE", "Roblox Studio Mod Manager");
             RegistryKey checkSum = createSubKey(managerRegistry, "Checksum");
-
+            
             Show();
             BringToFront();
 
@@ -333,7 +332,7 @@ namespace RobloxModManager
                             }
                             catch
                             {
-                                echo("Something went wrong while installing. This build may not install correctly. File: " + zipFileUrl);
+                                echo("Something went wrong while installing " + zipFileUrl + "; This build may not run correctly.");
                             }
                             incrementProgress();
                         });
@@ -343,6 +342,10 @@ namespace RobloxModManager
 
                     await setStatus("Configuring Roblox Studio");
                     progressBar.Style = ProgressBarStyle.Marquee;
+
+                    managerRegistry.SetValue("BuildDatabase", database);
+                    managerRegistry.SetValue("BuildVersion", buildName);
+
                     echo("Writing AppSettings.xml");
 
                     string appSettings = Path.Combine(rootDir, "AppSettings.xml");
@@ -359,11 +362,13 @@ namespace RobloxModManager
             {
                 echo("This version of Roblox Studio has been installed!");
             }
-
+            
             await setStatus("Configuring Roblox Studio...");
-            managerRegistry.SetValue("BuildDatabase", database);
-            managerRegistry.SetValue("BuildVersion", buildName);
             registryUpdate();
+
+            RegistryKey fflagRegistry = createSubKey(managerRegistry, "FFlags");
+            string clientAppSettings = Path.Combine(rootDir, "ClientSettings","ClientAppSettings.json");
+            applyFFlagConfiguration(fflagRegistry, clientAppSettings);
 
             await setStatus("Starting Roblox Studio...");
             return robloxStudioBetaPath;

@@ -36,6 +36,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.forceRebuild = new System.Windows.Forms.CheckBox();
             this.openStudioDirectory = new System.Windows.Forms.CheckBox();
+            this.editFFlags = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -139,12 +140,24 @@
             this.openStudioDirectory.UseVisualStyleBackColor = true;
             this.openStudioDirectory.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
+            // editFFlags
+            // 
+            this.editFFlags.AccessibleName = "Edit FFlags";
+            this.editFFlags.Location = new System.Drawing.Point(25, 257);
+            this.editFFlags.Name = "editFFlags";
+            this.editFFlags.Size = new System.Drawing.Size(140, 23);
+            this.editFFlags.TabIndex = 15;
+            this.editFFlags.Text = "Edit FFlags";
+            this.editFFlags.UseVisualStyleBackColor = true;
+            this.editFFlags.Click += new System.EventHandler(this.editFFlags_Click);
+            // 
             // Launcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(189, 263);
+            this.ClientSize = new System.Drawing.Size(189, 288);
+            this.Controls.Add(this.editFFlags);
             this.Controls.Add(this.openStudioDirectory);
             this.Controls.Add(this.forceRebuild);
             this.Controls.Add(this.label1);
@@ -175,6 +188,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox forceRebuild;
         private System.Windows.Forms.CheckBox openStudioDirectory;
+        private System.Windows.Forms.Button editFFlags;
     }
 }
 

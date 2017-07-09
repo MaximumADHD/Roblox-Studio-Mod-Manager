@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net;
 using System.Windows.Forms;
 
 namespace RobloxModManager
@@ -11,6 +9,8 @@ namespace RobloxModManager
         [STAThread]
         static void Main(string[] args)
         {
+            ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => true; // Unlocks https for the WebClient
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Launcher(args));

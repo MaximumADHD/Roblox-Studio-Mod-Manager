@@ -47,25 +47,21 @@ namespace RobloxModManager
             return root;
         }
 
-        public string getOpenVR(string directory)
-        {
-            string openVR = Path.Combine(directory, "openvr_api.dll");
-            if (!File.Exists(openVR))
-            {
-                openVR = openVR + "_disabled";
-                if (!File.Exists(openVR))
-                {
-                    Console.WriteLine("ERROR: Could not find openvr_api");
-                    throw new Exception();
-                }
-            }
-            return openVR;
-        }
-
         private void manageMods_Click(object sender, EventArgs e)
         {
             string modPath = getModPath();
             Process.Start(modPath);
+        }
+
+        private void editFFlags_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Editing FFlags can make Roblox Studio unstable.\nYou should only change them if you know what you're doing.\nAre you sure you would like to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                string dataBase = (string)dataBaseSelect.Items[Properties.Settings.Default.Database];
+                FFlagEditor editor = new FFlagEditor(this, dataBase);
+                editor.Show();
+            }
         }
 
         private async void launchStudio_Click(object sender = null, EventArgs e = null)
@@ -84,21 +80,31 @@ namespace RobloxModManager
                 {
                     byte[] fileContents = File.ReadAllBytes(modFile);
                     FileInfo modFileControl = new FileInfo(modFile);
-                    string relativeFile = modFile.Replace(modPath, studioRoot);
-                    string relativeDir = Directory.GetParent(relativeFile).ToString();
-                    if (!Directory.Exists(relativeDir))
+                    bool allow = true;
+                    if (modFileControl.Name == "ClientAppSettings.json")
                     {
-                        Directory.CreateDirectory(relativeDir);
+                        DialogResult result = MessageBox.Show("A custom ClientAppSettings configuration was detected in your mods folder. This will override the configuration provided by the FFlag Editor.\nAre you sure you want to use this one instead?", "Notice", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                        if (result == DialogResult.No)
+                            allow = false;
                     }
-                    if (!File.Exists(relativeFile))
+                    if (allow)
                     {
-                        FileStream currentStream = File.Create(relativeFile);
-                        currentStream.Close();
-                    }
-                    byte[] studioFile = File.ReadAllBytes(relativeFile);
-                    if (!fileContents.SequenceEqual(studioFile))
-                    {
-                        modFileControl.CopyTo(relativeFile, true);
+                        string relativeFile = modFile.Replace(modPath, studioRoot);
+                        string relativeDir = Directory.GetParent(relativeFile).ToString();
+                        if (!Directory.Exists(relativeDir))
+                        {
+                            Directory.CreateDirectory(relativeDir);
+                        }
+                        if (!File.Exists(relativeFile))
+                        {
+                            FileStream currentStream = File.Create(relativeFile);
+                            currentStream.Close();
+                        }
+                        byte[] studioFile = File.ReadAllBytes(relativeFile);
+                        if (!fileContents.SequenceEqual(studioFile))
+                        {
+                            modFileControl.CopyTo(relativeFile, true);
+                        }
                     }
                 }
                 catch
@@ -171,6 +177,8 @@ namespace RobloxModManager
                 msg = "Should we forcefully reinstall this version of the client, even if its already installed?\nThis can be used if you are experiencing a problem with launching Roblox Studio.";
             else if (sender.Equals(openStudioDirectory))
                 msg = "Should we just open the directory of Roblox Studio after installing?\nThis may come in handy for users who want to run .bat on Studio's files.";
+            else if (sender.Equals(editFFlags))
+                msg = "Allows you to enable certain Roblox engine features before they are available.\nThis is for expert users only, and you should avoid using this if you don't know how to.";
 
             if (msg != null)
                 MessageBox.Show(msg, "Information about the \"" + controller.AccessibleName + "\" " + sender.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Information);
