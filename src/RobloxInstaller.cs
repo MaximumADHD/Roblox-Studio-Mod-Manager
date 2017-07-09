@@ -119,19 +119,10 @@ namespace RobloxModManager
             return basePath;
         }
 
-        private static RegistryKey createSubKey(RegistryKey key, params string[] path)
-        {
-            string constructedPath = "";
-            foreach (string p in path)
-                constructedPath = Path.Combine(constructedPath, p);
-
-            return key.CreateSubKey(constructedPath, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryOptions.None);
-        }
-
         public void applyFFlagConfiguration(RegistryKey fflagRegistry, string filePath)
         {
             List<string> prefixes = new List<string>() { "FFlag", "DFFlag", "SFFlag" }; // List of possible prefixes that the fast flags will use, given they are actually flags.
-            try 
+            try
             {
                 List<string> configs = new List<string>();
                 foreach (string key in fflagRegistry.GetValueNames())
@@ -150,70 +141,13 @@ namespace RobloxModManager
             }
         }
 
-        public void registryUpdate()
-        {
-            // Handle Roblox Studio Registry stuff.
-            // Theres a lot here, bare with it.
-
-            Assembly self = Assembly.GetExecutingAssembly();
-            AssemblyName selfName = self.GetName();
-            string modManagerDir = Path.GetDirectoryName(selfName.CodeBase).Substring(6);
-            Process myProcess = Process.GetCurrentProcess();
-            string processName = myProcess.ProcessName;
-            string modManagerPath = Path.Combine(modManagerDir, processName + ".exe");
-            bool isDebugging = processName.EndsWith(".vshost");
-
-            RegistryKey studioQT = createSubKey(Registry.CurrentUser, "SOFTWARE","StudioQTRobloxReg");
-            studioQT.SetValue(_, modManagerPath);
-            studioQT.SetValue("protocol handler scheme", "roblox-studio");
-            studioQT.SetValue("install host", setupDir);
-            studioQT.SetValue("version", buildName);
-
-            RegistryKey versions = createSubKey(studioQT, "Versions");
-            versions.SetValue("version0", buildName);
-
-            // Register the base "Roblox.Place" open protocol.
-            RegistryKey classes = createSubKey(Registry.CurrentUser, "SOFTWARE","Classes");
-            RegistryKey robloxPlace = createSubKey(classes,"Roblox.Place");
-            robloxPlace.SetValue(_,"Roblox Place");
-
-            RegistryKey robloxStudioUrl = createSubKey(classes,"roblox-studio");
-            robloxStudioUrl.SetValue(_, "URL: Roblox Protocol");
-            robloxStudioUrl.SetValue("URL Protocol", _);
-
-            RegistryKey[] appReg = { robloxPlace, robloxStudioUrl };
-            foreach (RegistryKey app in appReg)
-            {
-                RegistryKey defaultIcon = createSubKey(app, "DefaultIcon");
-                defaultIcon.SetValue(_, robloxStudioBetaPath + ",0");
-                defaultIcon.Close();
-                RegistryKey command = createSubKey(app, "shell", "open", "command");
-                command.SetValue(_, "\"" + robloxStudioBetaPath + "\" %1");
-                command.SetValue(_, modManagerPath + " \"%1\"");
-                app.Close();
-            }
-
-            // Pass the .rbxl and .rbxlx file formats to Roblox.Place
-            RegistryKey rbxl = createSubKey(classes, ".rbxl");
-            RegistryKey rbxlx = createSubKey(classes, ".rbxlx");
-            RegistryKey[] robloxLevelPass = { rbxl, rbxlx };
-
-            foreach (RegistryKey rbxLevel in robloxLevelPass)
-            {
-                rbxLevel.SetValue("", "Roblox.Place");
-                createSubKey(rbxLevel, "Roblox.Place", "ShellNew");
-                rbxLevel.Close();
-            }
-        }
-
         public async Task<string> RunInstaller(string database, bool forceInstall)
         {
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             string rootDir = getDirectory(localAppData, "Roblox Studio");
             string downloads = getDirectory(rootDir, "downloads");
 
-            RegistryKey managerRegistry = createSubKey(Registry.CurrentUser, "SOFTWARE", "Roblox Studio Mod Manager");
-            RegistryKey checkSum = createSubKey(managerRegistry, "Checksum");
+            RegistryKey checkSum = Program.GetSubKey(Program.ModManagerRegistry, "Checksum");
             
             Show();
             BringToFront();
@@ -226,8 +160,8 @@ namespace RobloxModManager
 
             echo("Checking build installation...");
 
-            string currentBuildDatabase = managerRegistry.GetValue("BuildDatabase","") as string;
-            string currentBuildVersion = managerRegistry.GetValue("BuildVersion", "") as string;
+            string currentBuildDatabase = Program.ModManagerRegistry.GetValue("BuildDatabase","") as string;
+            string currentBuildVersion = Program.ModManagerRegistry.GetValue("BuildVersion", "") as string;
 
             if (currentBuildDatabase != database || currentBuildVersion != buildName || forceInstall)
             {
@@ -343,8 +277,8 @@ namespace RobloxModManager
                     await setStatus("Configuring Roblox Studio");
                     progressBar.Style = ProgressBarStyle.Marquee;
 
-                    managerRegistry.SetValue("BuildDatabase", database);
-                    managerRegistry.SetValue("BuildVersion", buildName);
+                    Program.ModManagerRegistry.SetValue("BuildDatabase", database);
+                    Program.ModManagerRegistry.SetValue("BuildVersion", buildName);
 
                     echo("Writing AppSettings.xml");
 
@@ -364,9 +298,9 @@ namespace RobloxModManager
             }
             
             await setStatus("Configuring Roblox Studio...");
-            registryUpdate();
+            Program.UpdateStudioRegistryProtocols(setupDir, buildName, robloxStudioBetaPath);
 
-            RegistryKey fflagRegistry = createSubKey(managerRegistry, "FFlags");
+            RegistryKey fflagRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FFlags");
             string clientAppSettings = Path.Combine(rootDir, "ClientSettings","ClientAppSettings.json");
             applyFFlagConfiguration(fflagRegistry, clientAppSettings);
 

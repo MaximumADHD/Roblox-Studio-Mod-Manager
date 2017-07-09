@@ -17,7 +17,7 @@ namespace RobloxModManager
         private string database;
         private static List<string> fflags;
         private static bool fflagsLoaded = false;
-        private static RegistryKey fflagRegistry = createSubKey(Registry.CurrentUser, "SOFTWARE", "Roblox Studio Mod Manager", "FFlags");
+        private static RegistryKey fflagRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FFlags");
 
         public FFlagEditor(Launcher launcher, string database)
         {
@@ -38,15 +38,6 @@ namespace RobloxModManager
         {
             statusLbl.Text = msg;
             await Task.Delay(1);
-        }
-
-        private static RegistryKey createSubKey(RegistryKey key, params string[] path)
-        {
-            string constructedPath = "";
-            foreach (string p in path)
-                constructedPath = Path.Combine(constructedPath, p);
-
-            return key.CreateSubKey(constructedPath, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryOptions.None);
         }
 
         private void reassembleListings()
