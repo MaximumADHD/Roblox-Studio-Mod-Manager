@@ -53,13 +53,13 @@ namespace RobloxModManager
             Process.Start(modPath);
         }
 
-        private void editFFlags_Click(object sender, EventArgs e)
+        private void editFVariables_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Editing FFlags can make Roblox Studio unstable.\nYou should only change them if you know what you're doing.\nAre you sure you would like to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult result = MessageBox.Show("Editing FVariables can make Roblox Studio unstable.\nYou should only change them if you know what you're doing.\nAre you sure you would like to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (result == DialogResult.Yes)
             {
                 string dataBase = (string)dataBaseSelect.Items[Properties.Settings.Default.Database];
-                FFlagEditor editor = new FFlagEditor(this, dataBase);
+                FVariableEditor editor = new FVariableEditor(this, dataBase);
                 editor.Show();
             }
         }
@@ -83,7 +83,7 @@ namespace RobloxModManager
                     bool allow = true;
                     if (modFileControl.Name == "ClientAppSettings.json")
                     {
-                        DialogResult result = MessageBox.Show("A custom ClientAppSettings configuration was detected in your mods folder. This will override the configuration provided by the FFlag Editor.\nAre you sure you want to use this one instead?", "Notice", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                        DialogResult result = MessageBox.Show("A custom ClientAppSettings configuration was detected in your mods folder. This will override the configuration provided by the FVariable Editor.\nAre you sure you want to use this one instead?", "Notice", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                         if (result == DialogResult.No)
                             allow = false;
                     }
@@ -177,7 +177,7 @@ namespace RobloxModManager
                 msg = "Should we forcefully reinstall this version of the client, even if its already installed?\nThis can be used if you are experiencing a problem with launching Roblox Studio.";
             else if (sender.Equals(openStudioDirectory))
                 msg = "Should we just open the directory of Roblox Studio after installing?\nThis may come in handy for users who want to run .bat on Studio's files.";
-            else if (sender.Equals(editFFlags))
+            else if (sender.Equals(editFVariables))
                 msg = "Allows you to enable certain Roblox engine features before they are available.\nThis is for expert users only, and you should avoid using this if you don't know how to.";
 
             if (msg != null)
@@ -189,9 +189,7 @@ namespace RobloxModManager
         public Launcher(params string[] mainArgs)
         {
             if (mainArgs.Length > 0)
-            {
                 args = mainArgs;
-            }
 
             InitializeComponent();
 

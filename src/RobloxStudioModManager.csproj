@@ -77,11 +77,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FFlagEditor.cs">
+    <Compile Include="FVariableEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FFlagEditor.Designer.cs">
-      <DependentUpon>FFlagEditor.cs</DependentUpon>
+    <Compile Include="FVariableEditor.Designer.cs">
+      <DependentUpon>FVariableEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="RobloxInstaller.cs">
       <SubType>Form</SubType>
@@ -97,8 +97,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="FFlagEditor.resx">
-      <DependentUpon>FFlagEditor.cs</DependentUpon>
+    <EmbeddedResource Include="FVariableEditor.resx">
+      <DependentUpon>FVariableEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="RobloxInstaller.resx">
       <DependentUpon>RobloxInstaller.cs</DependentUpon>

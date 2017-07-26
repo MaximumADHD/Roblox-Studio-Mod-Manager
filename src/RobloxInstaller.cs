@@ -18,23 +18,36 @@ namespace RobloxModManager
     {
         public string FileName;
         public string LocalDirectory;
+        public bool FetchDirectly;
+        public string DirectUrl;
 
         public RbxInstallProtocol(string fileName, string localDirectory)
         {
             FileName = fileName;
             LocalDirectory = localDirectory;
+            FetchDirectly = false;
+            DirectUrl = null;
         }
 
         public RbxInstallProtocol(string fileName, bool newFolderWithFileName)
         {
             FileName = fileName;
             LocalDirectory = (newFolderWithFileName ? fileName : "");
+            FetchDirectly = false;
+            DirectUrl = null;
+        }
+
+        public RbxInstallProtocol(string fileName, string directUrl, bool fetchDirectly = true)
+        {
+            FileName = fileName;
+            LocalDirectory = "";
+            FetchDirectly = fetchDirectly;
+            DirectUrl = directUrl;
         }
     }
 
     public partial class RobloxInstaller : Form
     {
-        private static string _ = "";
         public string buildName;
         public string setupDir;
         public string robloxStudioBetaPath;
@@ -103,31 +116,32 @@ namespace RobloxModManager
         public RobloxInstaller()
         {
             InitializeComponent();
+            http.Headers.Set(HttpRequestHeader.UserAgent, "Roblox");
         }
 
         private static string getDirectory(params string[] paths)
         {
             string basePath = "";
             foreach (string path in paths)
-            {
                 basePath = Path.Combine(basePath, path);
-            }
+
             if (!Directory.Exists(basePath))
-            {
                 Directory.CreateDirectory(basePath);
-            }
             return basePath;
         }
 
-        public void applyFFlagConfiguration(RegistryKey fflagRegistry, string filePath)
+        public void applyFVariableConfiguration(RegistryKey fvarRegistry, string filePath)
         {
-            List<string> prefixes = new List<string>() { "FFlag", "DFFlag", "SFFlag" }; // List of possible prefixes that the fast flags will use, given they are actually flags.
+            List<string> prefixes = new List<string>() { "F", "DF", "SF" }; // List of possible prefixes that the fvars will use.
             try
             {
                 List<string> configs = new List<string>();
-                foreach (string key in fflagRegistry.GetValueNames())
+                foreach (string fvar in fvarRegistry.GetSubKeyNames())
                 {
-                    string value = fflagRegistry.GetValue(key) as string;
+                    RegistryKey fvarEntry = Program.GetSubKey(fvarRegistry, fvar);
+                    string type = fvarEntry.GetValue("Type") as string;
+                    string value = fvarEntry.GetValue("Value") as string;
+                    string key = type + fvar;
                     foreach (string prefix in prefixes)
                         configs.Add('"' + prefix + key + "\":\"" + value + '"');
                 };
@@ -137,7 +151,7 @@ namespace RobloxModManager
             }
             catch
             {
-                echo("Failed to apply FFlag configuration!");
+                echo("Failed to apply FVariable configuration!");
             }
         }
 
@@ -154,8 +168,30 @@ namespace RobloxModManager
 
             await setStatus("Checking for updates");
 
-            setupDir = "setup." + database + ".com/";
-            buildName = await http.DownloadStringTaskAsync("http://" + setupDir + "versionQTStudio");
+            if (database == "future-is-bright")
+            {
+                // This is an ugly hack, but it doesn't require as much special casing for the installation protocol.
+
+                string latestRelease = await http.DownloadStringTaskAsync("https://api.github.com/repos/roblox/future-is-bright/releases/latest");
+                int urlBegin = latestRelease.IndexOf("https://github.com/Roblox/future-is-bright/releases/download/");
+                int urlEnd = latestRelease.IndexOf(".zip", urlBegin + 1)+4;
+
+                string url = latestRelease.Substring(urlBegin, urlEnd - urlBegin);
+                int lastSlash = url.LastIndexOf('/');
+                string zipFileName = url.Substring(lastSlash + 1, url.Length - lastSlash - 5);
+
+                buildName = zipFileName;
+                setupDir = "github";
+
+                instructions.Clear();
+                instructions.Add(new RbxInstallProtocol(zipFileName, url, true));
+            }
+            else
+            {
+                setupDir = "setup." + database + ".com/";
+                buildName = await http.DownloadStringTaskAsync("http://" + setupDir + "versionQTStudio");
+            }
+
             robloxStudioBetaPath = Path.Combine(rootDir, "RobloxStudioBeta.exe");
 
             echo("Checking build installation...");
@@ -166,7 +202,7 @@ namespace RobloxModManager
             if (currentBuildDatabase != database || currentBuildVersion != buildName || forceInstall)
             {
                 echo("This build needs to be installed!");
-                await setStatus("Loading latest Roblox Studio build from " + database + ".com");
+                await setStatus("Loading the latest " + database + " Roblox Studio build...");
                 progressBar.Maximum = instructions.Count*30;
                 progressBar.Value = 0;
                 progressBar.Style = ProgressBarStyle.Continuous;
@@ -207,12 +243,18 @@ namespace RobloxModManager
                 if (!cancelled)
                 {
                     List<Task> taskQueue = new List<Task>();
+                    List<RbxInstallProtocol> installProtocol = instructions;
 
                     foreach (RbxInstallProtocol protocol in instructions)
                     {
                         Task installer = Task.Run(async () =>
                         {
-                            string zipFileUrl = "https://" + setupDir + buildName + "-" + protocol.FileName + ".zip";
+                            string zipFileUrl;
+                            if (protocol.FetchDirectly)
+                                zipFileUrl = protocol.DirectUrl;
+                            else
+                                zipFileUrl = "https://" + setupDir + buildName + "-" + protocol.FileName + ".zip";
+
                             string extractDir = getDirectory(rootDir, protocol.LocalDirectory);
                             Console.WriteLine(extractDir);
                             string downloadPath = Path.Combine(downloads, protocol.FileName + ".zip");
@@ -224,7 +266,7 @@ namespace RobloxModManager
                                 localHttp.Headers.Set(HttpRequestHeader.UserAgent, "Roblox");
                                 byte[] downloadedFile = await localHttp.DownloadDataTaskAsync(zipFileUrl);
                                 bool doInstall = true;
-                                if (!forceInstall)
+                                if (!(forceInstall || database == "future-is-bright"))
                                 {
                                     string fileHash = downloadedFile.Length.ToString(); // Cheap and probably won't work that well, but it's pretty slow to do an actual hash check.
                                     string currentHash = checkSum.GetValue(protocol.FileName, "") as string;
@@ -243,22 +285,26 @@ namespace RobloxModManager
                                     ZipArchive archive = ZipFile.Open(downloadPath, ZipArchiveMode.Read);
                                     foreach (ZipArchiveEntry entry in archive.Entries)
                                     {
-                                        if (string.IsNullOrEmpty(entry.Name))
+                                        string name = entry.Name.Replace(protocol.FileName + "/", "");
+                                        string entryName = entry.FullName.Replace(protocol.FileName + "/", "");
+                                        if (entryName.Length > 0)
                                         {
-                                            string localPath = Path.Combine(protocol.LocalDirectory, entry.FullName);
-                                            string path = Path.Combine(rootDir, localPath);
-                                            echo("Creating directory " + localPath);
-                                            getDirectory(path);
-                                        }
-                                        else
-                                        {
-                                            string entryName = entry.FullName;
-                                            echo("Extracting " + entryName + " to " + buildName + "\\" + protocol.LocalDirectory);
-                                            string relativePath = Path.Combine(extractDir, entryName);
-                                            string directoryParent = Directory.GetParent(relativePath).ToString();
-                                            getDirectory(directoryParent);
-                                            if (!File.Exists(relativePath))
-                                                entry.ExtractToFile(relativePath);
+                                            if (string.IsNullOrEmpty(name))
+                                            {
+                                                string localPath = Path.Combine(protocol.LocalDirectory, entryName);
+                                                string path = Path.Combine(rootDir, localPath);
+                                                echo("Creating directory " + localPath);
+                                                getDirectory(path);
+                                            }
+                                            else
+                                            {
+                                                echo("Extracting " + entryName + " to " + extractDir);
+                                                string relativePath = Path.Combine(extractDir, entryName);
+                                                string directoryParent = Directory.GetParent(relativePath).ToString();
+                                                getDirectory(directoryParent);
+                                                if (!File.Exists(relativePath))
+                                                    entry.ExtractToFile(relativePath);
+                                            }
                                         }
                                     }
                                 }
@@ -300,11 +346,13 @@ namespace RobloxModManager
             await setStatus("Configuring Roblox Studio...");
             Program.UpdateStudioRegistryProtocols(setupDir, buildName, robloxStudioBetaPath);
 
-            RegistryKey fflagRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FFlags");
-            string clientAppSettings = Path.Combine(rootDir, "ClientSettings","ClientAppSettings.json");
-            applyFFlagConfiguration(fflagRegistry, clientAppSettings);
+            RegistryKey fvarRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FVariables");
+            string clientSettings = getDirectory(rootDir, "ClientSettings");
+            string clientAppSettings = Path.Combine(clientSettings, "ClientAppSettings.json");
+            applyFVariableConfiguration(fvarRegistry, clientAppSettings);
 
             await setStatus("Starting Roblox Studio...");
+
             return robloxStudioBetaPath;
         }
 

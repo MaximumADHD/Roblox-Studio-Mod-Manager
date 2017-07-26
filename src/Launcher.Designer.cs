@@ -36,7 +36,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.forceRebuild = new System.Windows.Forms.CheckBox();
             this.openStudioDirectory = new System.Windows.Forms.CheckBox();
-            this.editFFlags = new System.Windows.Forms.Button();
+            this.editFVariables = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -93,7 +93,8 @@
             "gametest2.robloxlabs",
             "gametest3.robloxlabs",
             "gametest4.robloxlabs",
-            "gametest5.robloxlabs"});
+            "gametest5.robloxlabs",
+            "future-is-bright"});
             this.dataBaseSelect.Location = new System.Drawing.Point(25, 192);
             this.dataBaseSelect.Name = "dataBaseSelect";
             this.dataBaseSelect.Size = new System.Drawing.Size(140, 21);
@@ -110,9 +111,9 @@
             this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label1.Location = new System.Drawing.Point(22, 174);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(91, 13);
+            this.label1.Size = new System.Drawing.Size(68, 13);
             this.label1.TabIndex = 11;
-            this.label1.Text = "Database to use: ";
+            this.label1.Text = "Build to use: ";
             // 
             // forceRebuild
             // 
@@ -140,16 +141,17 @@
             this.openStudioDirectory.UseVisualStyleBackColor = true;
             this.openStudioDirectory.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
-            // editFFlags
+            // editFVariables
             // 
-            this.editFFlags.AccessibleName = "Edit FFlags";
-            this.editFFlags.Location = new System.Drawing.Point(25, 257);
-            this.editFFlags.Name = "editFFlags";
-            this.editFFlags.Size = new System.Drawing.Size(140, 23);
-            this.editFFlags.TabIndex = 15;
-            this.editFFlags.Text = "Edit FFlags";
-            this.editFFlags.UseVisualStyleBackColor = true;
-            this.editFFlags.Click += new System.EventHandler(this.editFFlags_Click);
+            this.editFVariables.AccessibleName = "Edit FVariables";
+            this.editFVariables.Location = new System.Drawing.Point(25, 257);
+            this.editFVariables.Name = "editFVariables";
+            this.editFVariables.Size = new System.Drawing.Size(140, 23);
+            this.editFVariables.TabIndex = 15;
+            this.editFVariables.Text = "Edit FVariables";
+            this.editFVariables.UseVisualStyleBackColor = true;
+            this.editFVariables.Click += new System.EventHandler(this.editFVariables_Click);
+            this.editFVariables.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
             // Launcher
             // 
@@ -157,7 +159,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(189, 288);
-            this.Controls.Add(this.editFFlags);
+            this.Controls.Add(this.editFVariables);
             this.Controls.Add(this.openStudioDirectory);
             this.Controls.Add(this.forceRebuild);
             this.Controls.Add(this.label1);
@@ -188,7 +190,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox forceRebuild;
         private System.Windows.Forms.CheckBox openStudioDirectory;
-        private System.Windows.Forms.Button editFFlags;
+        private System.Windows.Forms.Button editFVariables;
     }
 }
 
