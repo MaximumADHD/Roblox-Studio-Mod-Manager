@@ -43,7 +43,7 @@
             this.progressBar.MarqueeAnimationSpeed = 1;
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(470, 31);
-            this.progressBar.Step = 1;
+            this.progressBar.Step = 0;
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBar.TabIndex = 1;
             this.progressBar.Value = 100;

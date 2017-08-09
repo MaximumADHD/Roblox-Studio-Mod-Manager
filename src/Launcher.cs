@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace RobloxModManager
@@ -12,9 +11,6 @@ namespace RobloxModManager
     {
         private WebClient http = new WebClient();
         private string[] args = null;
-
-        [DllImport("USER32.DLL")]
-        public static extern bool SetForegroundWindow(IntPtr hWnd);
 
         public string getModPath()
         {
@@ -148,8 +144,8 @@ namespace RobloxModManager
 
             try
             {
-                IntPtr handle = process.Handle;
-                SetForegroundWindow(handle);
+                IntPtr handle = process.MainWindowHandle;
+                Program.SetForegroundWindow(handle);
             }
             catch
             {
@@ -168,7 +164,6 @@ namespace RobloxModManager
         {
             Properties.Settings.Default.Database = dataBaseSelect.SelectedIndex;
             Properties.Settings.Default.Save();
-            
         }
 
         private void onHelpRequested(object sender, HelpEventArgs e)

@@ -55,6 +55,8 @@ namespace RobloxModManager
         public delegate void EchoDelegator(string text);
         public delegate void IncrementDelegator(int count);
 
+        private int actualProgressBarSum = 0;
+
         WebClient http = new WebClient();
         List<RbxInstallProtocol> instructions = new List<RbxInstallProtocol>()
         {
@@ -105,12 +107,16 @@ namespace RobloxModManager
             }
         }
 
-        private void setProgressBarMax(int count)
+        private void incrementProgressBarMax(int count)
         {
             if (progressBar.InvokeRequired)
-                progressBar.Invoke(new IncrementDelegator(setProgressBarMax), count);
+                progressBar.Invoke(new IncrementDelegator(incrementProgressBarMax), count);
             else
-                progressBar.Maximum = count;
+            {
+                actualProgressBarSum += count;
+                if (actualProgressBarSum > progressBar.Maximum)
+                    progressBar.Maximum = actualProgressBarSum;
+            }
         }
 
         private void incrementProgress(int count = 1)
@@ -219,13 +225,12 @@ namespace RobloxModManager
             {
                 echo("This build needs to be installed!");
                 await setStatus("Loading the latest " + database + " Roblox Studio build...");
-                progressBar.Maximum = instructions.Count*30;
+                progressBar.Maximum = 1300; // Rough estimate of how many files to expect.
                 progressBar.Value = 0;
                 progressBar.Style = ProgressBarStyle.Continuous;
 
                 bool safeToContinue = false;
                 bool cancelled = false;
-                int attempts = 0;
 
                 while (!safeToContinue)
                 {
@@ -233,15 +238,17 @@ namespace RobloxModManager
                     if (running.Length > 0)
                     {
                         foreach (Process p in running)
+                        {
                             p.CloseMainWindow();
-
-                        attempts++;
-                        await Task.Delay(1);
-
-                        if (attempts > 50)
+                            Program.SetForegroundWindow(p.MainWindowHandle);
+                            await Task.Delay(50);
+                        }
+                        await Task.Delay(1000);
+                        Process[] runningNow = Process.GetProcessesByName("RobloxStudioBeta");
+                        BringToFront();
+                        if (runningNow.Length > 0)
                         {
                             echo("Running apps detected, action on the user's part is needed.");
-                            attempts = 0;
                             Hide();
                             DialogResult result = MessageBox.Show("All Roblox Studio instances needs to be closed in order to install the new version.\nPress Ok once you've saved your work and the windows are closed, or\nPress Cancel to skip the update for this launch.", "Notice", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                             Show();
@@ -295,16 +302,15 @@ namespace RobloxModManager
                                     {
                                         echo(protocol.FileName + ".zip hasn't changed between builds, skipping.");
                                         doInstall = false;
-                                        incrementProgress(30);
                                     }
                                 }
+                                FileStream writeFile = File.Create(downloadPath);
+                                writeFile.Write(downloadedFile, 0, downloadedFile.Length);
+                                writeFile.Close();
+                                ZipArchive archive = ZipFile.Open(downloadPath, ZipArchiveMode.Read);
+                                incrementProgressBarMax(archive.Entries.Count);
                                 if (doInstall)
                                 {
-                                    FileStream writeFile = File.Create(downloadPath);
-                                    writeFile.Write(downloadedFile, 0, downloadedFile.Length);
-                                    writeFile.Close();
-                                    ZipArchive archive = ZipFile.Open(downloadPath, ZipArchiveMode.Read);
-                                    setProgressBarMax(archive.Entries.Count);
                                     foreach (ZipArchiveEntry entry in archive.Entries)
                                     {
                                         string name = entry.Name.Replace(protocol.FileName + "/", "");
@@ -341,6 +347,10 @@ namespace RobloxModManager
 
                                     if (fileHash != null)
                                         checkSum.SetValue(protocol.FileName, fileHash);
+                                }
+                                else
+                                {
+                                    incrementProgress(archive.Entries.Count);
                                 }
                                 localHttp.Dispose();
                             }
