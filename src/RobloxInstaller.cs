@@ -105,12 +105,20 @@ namespace RobloxModManager
             }
         }
 
-        private void incrementProgress()
+        private void setProgressBarMax(int count)
         {
             if (progressBar.InvokeRequired)
-                progressBar.Invoke(new IncrementDelegator(progressBar.Increment), 30);
+                progressBar.Invoke(new IncrementDelegator(setProgressBarMax), count);
             else
-                progressBar.Increment(30);
+                progressBar.Maximum = count;
+        }
+
+        private void incrementProgress(int count = 1)
+        {
+            if (progressBar.InvokeRequired)
+                progressBar.Invoke(new IncrementDelegator(progressBar.Increment), count);
+            else
+                progressBar.Increment(count);
         }
 
         public RobloxInstaller()
@@ -168,6 +176,8 @@ namespace RobloxModManager
 
             await setStatus("Checking for updates");
 
+            List<string> checkSumKeys = new List<string>(checkSum.GetValueNames());
+
             if (database == "future-is-bright")
             {
                 // This is an ugly hack, but it doesn't require as much special casing for the installation protocol.
@@ -185,11 +195,17 @@ namespace RobloxModManager
 
                 instructions.Clear();
                 instructions.Add(new RbxInstallProtocol(zipFileName, url, true));
+
+                foreach (string key in checkSumKeys)
+                    if (key != "future-is-bright")
+                        checkSum.DeleteValue(key);
             }
             else
             {
                 setupDir = "setup." + database + ".com/";
                 buildName = await http.DownloadStringTaskAsync("http://" + setupDir + "versionQTStudio");
+                if (checkSumKeys.Contains("future-is-bright"))
+                    checkSum.DeleteSubKey("future-is-bright");
             }
 
             robloxStudioBetaPath = Path.Combine(rootDir, "RobloxStudioBeta.exe");
@@ -266,16 +282,21 @@ namespace RobloxModManager
                                 localHttp.Headers.Set(HttpRequestHeader.UserAgent, "Roblox");
                                 byte[] downloadedFile = await localHttp.DownloadDataTaskAsync(zipFileUrl);
                                 bool doInstall = true;
+                                string fileHash = null;
                                 if (!(forceInstall || database == "future-is-bright"))
                                 {
-                                    string fileHash = downloadedFile.Length.ToString(); // Cheap and probably won't work that well, but it's pretty slow to do an actual hash check.
+                                    SHA256Managed sha = new SHA256Managed();
+                                    MemoryStream fileStream = new MemoryStream(downloadedFile);
+                                    BufferedStream buffered = new BufferedStream(fileStream, 1200000);
+                                    byte[] hash = sha.ComputeHash(buffered);
+                                    fileHash = Convert.ToBase64String(hash);
                                     string currentHash = checkSum.GetValue(protocol.FileName, "") as string;
                                     if (fileHash == currentHash)
                                     {
                                         echo(protocol.FileName + ".zip hasn't changed between builds, skipping.");
                                         doInstall = false;
+                                        incrementProgress(30);
                                     }
-                                    else checkSum.SetValue(protocol.FileName, fileHash);
                                 }
                                 if (doInstall)
                                 {
@@ -283,6 +304,7 @@ namespace RobloxModManager
                                     writeFile.Write(downloadedFile, 0, downloadedFile.Length);
                                     writeFile.Close();
                                     ZipArchive archive = ZipFile.Open(downloadPath, ZipArchiveMode.Read);
+                                    setProgressBarMax(archive.Entries.Count);
                                     foreach (ZipArchiveEntry entry in archive.Entries)
                                     {
                                         string name = entry.Name.Replace(protocol.FileName + "/", "");
@@ -302,11 +324,23 @@ namespace RobloxModManager
                                                 string relativePath = Path.Combine(extractDir, entryName);
                                                 string directoryParent = Directory.GetParent(relativePath).ToString();
                                                 getDirectory(directoryParent);
-                                                if (!File.Exists(relativePath))
+                                                try
+                                                {
+                                                    if (File.Exists(relativePath))
+                                                        File.Delete(relativePath);
                                                     entry.ExtractToFile(relativePath);
+                                                }
+                                                catch
+                                                {
+                                                    echo("Couldn't update " + entryName);
+                                                }
                                             }
                                         }
+                                        incrementProgress();
                                     }
+
+                                    if (fileHash != null)
+                                        checkSum.SetValue(protocol.FileName, fileHash);
                                 }
                                 localHttp.Dispose();
                             }
@@ -314,7 +348,6 @@ namespace RobloxModManager
                             {
                                 echo("Something went wrong while installing " + zipFileUrl + "; This build may not run correctly.");
                             }
-                            incrementProgress();
                         });
                         taskQueue.Add(installer);
                     }

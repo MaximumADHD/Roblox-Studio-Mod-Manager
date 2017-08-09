@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Web;
 
 namespace RobloxModManager
 {
@@ -18,6 +12,9 @@ namespace RobloxModManager
     {
         private WebClient http = new WebClient();
         private string[] args = null;
+
+        [DllImport("USER32.DLL")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
 
         public string getModPath()
         {
@@ -143,10 +140,21 @@ namespace RobloxModManager
                 }
             }
 
+            Process process;
             if (openStudioDirectory.Checked)
-                Process.Start(studioRoot);
+                process = Process.Start(studioRoot);
             else
-                Process.Start(robloxStudioInfo);
+                process = Process.Start(robloxStudioInfo);
+
+            try
+            {
+                IntPtr handle = process.Handle;
+                SetForegroundWindow(handle);
+            }
+            catch
+            {
+                Console.WriteLine("Can't bring this window to the foreground.");
+            }
 
             Application.Exit();
         }
