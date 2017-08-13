@@ -4,9 +4,8 @@ using System.Diagnostics;
 using System.Net;
 using System.IO;
 using System.IO.Compression;
-using System.Reflection;
 using System.Security.Cryptography;
-using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -58,41 +57,13 @@ namespace RobloxModManager
         private int actualProgressBarSum = 0;
 
         WebClient http = new WebClient();
-        List<RbxInstallProtocol> instructions = new List<RbxInstallProtocol>()
-        {
-            // Extracted to specific directories relative to the root directory
-            new RbxInstallProtocol("content-fonts",        @"content\fonts"),
-            new RbxInstallProtocol("content-music",        @"content\music"),
-            new RbxInstallProtocol("content-particles",    @"content\particles"),
-            new RbxInstallProtocol("content-scripts",      @"content\scripts"),
-            new RbxInstallProtocol("content-sky",          @"content\sky"),
-            new RbxInstallProtocol("content-sounds",       @"content\sounds"),
-            new RbxInstallProtocol("content-textures",     @"content\textures"),
-            new RbxInstallProtocol("content-textures2",    @"content\textures"),
-            new RbxInstallProtocol("content-translations", @"content\translations"),
-
-            new RbxInstallProtocol("content-terrain",      @"PlatformContent\pc\terrain"),
-            new RbxInstallProtocol("content-textures3",    @"PlatformContent\pc\textures"),
-
-            // Extracted directly into the root directory
-            new RbxInstallProtocol("RobloxStudio",         false),
-            new RbxInstallProtocol("Libraries",            false),
-            new RbxInstallProtocol("LibrariesQt5",         false),
-            new RbxInstallProtocol("redist",               false),
-
-            // Extracted into folders in the root directory, with the same name as their zip file
-            new RbxInstallProtocol("BuiltInPlugins",       true),
-            new RbxInstallProtocol("shaders",              true),
-            new RbxInstallProtocol("Qml",                  true),
-            new RbxInstallProtocol("Plugins",              true)
-        };
+        List<RbxInstallProtocol> instructions = new List<RbxInstallProtocol>();
 
         public async Task setStatus(string status)
         {
             await Task.Delay(500);
             statusLbl.Text = status;
         }
-
 
         private void echo(string text)
         {
@@ -125,6 +96,32 @@ namespace RobloxModManager
                 progressBar.Invoke(new IncrementDelegator(progressBar.Increment), count);
             else
                 progressBar.Increment(count);
+        }
+
+        private void loadInstructions(StringReader installProtocol)
+        {
+            string currentCmd = null;
+            string line = null;
+            while ((line = installProtocol.ReadLine()) != null)
+            {
+                if (line.Length > 0 && !line.StartsWith("--")) // No comments or empty lines
+                {
+                    if (line.StartsWith("/"))
+                        currentCmd = line.Substring(1);
+                    else
+                    {
+                        string directoryLine = Regex.Replace(line, @"[\d-]", "");
+                        if (currentCmd == "ExtractContent")
+                            instructions.Add(new RbxInstallProtocol("content-" + line, @"content\" + directoryLine));
+                        else if (currentCmd == "ExtractPlatformContent")
+                            instructions.Add(new RbxInstallProtocol("content-" + line, @"PlatformContent\pc\" + directoryLine));
+                        else if (currentCmd == "ExtractDirect")
+                            instructions.Add(new RbxInstallProtocol(line, false));
+                        else if (currentCmd == "ExtractAsFolder")
+                            instructions.Add(new RbxInstallProtocol(line, true));
+                    }
+                }
+            }
         }
 
         public RobloxInstaller()
@@ -199,7 +196,6 @@ namespace RobloxModManager
                 buildName = zipFileName;
                 setupDir = "github";
 
-                instructions.Clear();
                 instructions.Add(new RbxInstallProtocol(zipFileName, url, true));
 
                 foreach (string key in checkSumKeys)
@@ -266,7 +262,12 @@ namespace RobloxModManager
                 if (!cancelled)
                 {
                     List<Task> taskQueue = new List<Task>();
-                    List<RbxInstallProtocol> installProtocol = instructions;
+                    if (buildName != "future-is-bright")
+                    {
+                        string installerProtocol = await http.DownloadStringTaskAsync("https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/master/InstallerProtocol");
+                        StringReader protocolReader = new StringReader(installerProtocol);
+                        loadInstructions(protocolReader);
+                    }
 
                     foreach (RbxInstallProtocol protocol in instructions)
                     {
@@ -356,10 +357,11 @@ namespace RobloxModManager
                             }
                             catch
                             {
-                                echo("Something went wrong while installing " + zipFileUrl + "; This build may not run correctly.");
+                                echo(zipFileUrl + " is currently not available. This build may not run correctly?");
                             }
                         });
                         taskQueue.Add(installer);
+                        await Task.Delay(50);
                     }
                     await Task.WhenAll(taskQueue.ToArray());
 
