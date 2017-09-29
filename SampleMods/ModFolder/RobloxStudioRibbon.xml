@@ -37,7 +37,7 @@
 	<RibbonBar minimizeButton="true" themeoptions="true" font="">
 		<TabPage name="Model" text="Home">
 			<addseperator />
-			<Group name="Stats">
+			<Group name="Engine Stats">
 				<addaction name="testClearStatsAction" action="testClearStatsAction" text="Clear" style="textbesideicon" />
 				<addaction name="testStatsAction" action="testStatsAction" text="General" style="textbesideicon" />
 				<addaction name="testSummaryStatsAction" action="testSummaryStatsAction" text="Summary" style="textbesideicon" />
@@ -46,24 +46,27 @@
 				<addaction name="testNetworkStatsAction" action="testNetworkStatsAction" text="Network" style="textbesideicon" />
 			</Group>
 			<Group name="Windows">
-				<addaction name="actionStartPage" text="" icon=":/RibbonBar/images/RibbonIcons/View/Start-Page.png" tooltip="Login, view places you own, browse your roblox catalog" height="16" width="16" />
-				<addaction name="gameExplorerAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Explorer.png" tooltip="View Game Explorer" height="16" width="16" />
-				<addaction name="viewToolboxAction" text="" icon=":/images/ToolboxIcon.png" tooltip="Insert items from the toolbox" height="16" width="16" />
-				<addaction name="viewContextualHelpAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Help-Wiki.png" tooltip="View context-sensitive help" height="16" width="16" />
-				<addaction name="objectBrowserAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Object-Browser.png" tooltip="View Lua API objects that can be accessed through scripting" height="16" width="16" />
-				<addaction name="viewOutputWindowAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Output.png" tooltip="See the output feed of your scripts" height="16" width="16" />
-				<addaction fflag="StudioUseScriptAnalyzer" name="viewScriptAnalysisAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Output.png" tooltip="View Script Analysis" height="16" width="16" />
-				<addaction name="viewFindResultsWindowAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Find-Results.png" tooltip="Find results window" height="16" width="16" />
-				<addaction fflag="LuaDebugger" name="breakpointsDockWidgetAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Breakpoint.png" tooltip="View existing breakpoints" height="16" width="16" />
-				<addaction fflag="LuaDebugger" name="callStackDockWidgetAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Call-Stack.png" tooltip="View current call stack" height="16" width="16" />
-				<addaction fflag="LuaDebugger" name="watchDockWidgetAction" text="" icon=":/RibbonBar/images/RibbonIcons/Test/Watch-Window.png" tooltip="View currently watched variables" height="16" width="16" />
-				<addaction name="viewDiagnosticsAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Diagnostics.png" tooltip="View diagnostic information of your game" height="16" width="16" />
-				<addaction name="viewTaskSchedulerAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Task-Scheduler.png" tooltip="View task execution information" height="16" width="16" />
-				<addaction name="viewScriptPerformanceAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Script-Performance.png" tooltip="View script performance information" height="16" width="16" />
-				<addaction name="viewObjectExplorerAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Explorer.png" tooltip="View a list of objects in the workspace" height="16" width="16" />
-				<addaction name="viewPropertiesAction" text="" icon=":/RibbonBar/images/RibbonIcons/View/Properties.png" tooltip="View properties of objects" height="16" width="16" />
-				<addaction name="actionInsertAdvancedObject" iscommonslot="true" text="" tooltip="Insert scripts and other advanced objects into the game" ischeckable="true" icon=":/RibbonBar/images/RibbonIcons/Insert/Advanced-Objects.png" width="16" height="16" />
+				<addaction name="actionStartPage" icon=":/RibbonBar/images/RibbonIcons/View/Start-Page.png" tooltip="Login, view places you own, browse your roblox catalog" height="16" width="16" />
+				<addaction name="gameExplorerAction" icon=":/RibbonBar/images/RibbonIcons/View/Explorer.png" tooltip="View Game Explorer" height="16" width="16" />
+				<addaction name="viewToolboxAction" icon=":/images/ToolboxIcon.png" tooltip="Insert items from the toolbox" height="16" width="16" />
+				<addaction name="viewContextualHelpAction" icon=":/RibbonBar/images/RibbonIcons/View/Help-Wiki.png" tooltip="View context-sensitive help" height="16" width="16" />
+				<addaction name="objectBrowserAction" icon=":/RibbonBar/images/RibbonIcons/View/Object-Browser.png" tooltip="View Lua API objects that can be accessed through scripting" height="16" width="16" />
+				<addaction name="viewOutputWindowAction" icon=":/RibbonBar/images/RibbonIcons/View/Output.png" tooltip="See the output feed of your scripts" height="16" width="16" />
+				<addaction name="viewScriptAnalysisAction" icon=":/RibbonBar/images/RibbonIcons/View/Output.png" tooltip="View Script Analysis" height="16" width="16" />
+				<addaction name="viewFindResultsWindowAction" icon=":/RibbonBar/images/RibbonIcons/View/Find-Results.png" tooltip="Find results window" height="16" width="16" />
+				<addaction name="breakpointsDockWidgetAction" icon=":/RibbonBar/images/RibbonIcons/View/Breakpoint.png" tooltip="View existing breakpoints" height="16" width="16" />
+				<addaction name="callStackDockWidgetAction" icon=":/RibbonBar/images/RibbonIcons/View/Call-Stack.png" tooltip="View current call stack" height="16" width="16" />
+				<addaction name="watchDockWidgetAction" icon=":/RibbonBar/images/RibbonIcons/Test/Watch-Window.png" tooltip="View currently watched variables" height="16" width="16" />
+				<addaction name="viewDiagnosticsAction" icon=":/RibbonBar/images/RibbonIcons/View/Diagnostics.png" tooltip="View diagnostic information of your game" height="16" width="16" />
+				<addaction name="viewTaskSchedulerAction" icon=":/RibbonBar/images/RibbonIcons/View/Task-Scheduler.png" tooltip="View task execution information" height="16" width="16" />
+				<addaction name="viewScriptPerformanceAction" icon=":/RibbonBar/images/RibbonIcons/View/Script-Performance.png" tooltip="View script performance information" height="16" width="16" />
+				<addaction name="gameSettingsAction" icon=":/RibbonBar/images/RibbonIcons/Home/GameSettings.png" tooltip="Update settings related to current game" width="16" height="16"/>
+				<addaction name="viewObjectExplorerAction" icon=":/RibbonBar/images/RibbonIcons/View/Explorer.png" tooltip="View a list of objects in the workspace" height="16" width="16" />
+				<addaction name="viewPropertiesAction" icon=":/RibbonBar/images/RibbonIcons/View/Properties.png" tooltip="View properties of objects" height="16" width="16" />
 				<addaction name="viewTeamCreateAction" icon=":/RibbonBar/images/RibbonIcons/View/TeamCreate.png" tooltip="View Team Create Window" height="16" width="16" />
+				<addaction name="actionInsertAdvancedObject" tooltip="Insert scripts and other advanced objects into the game" ischeckable="true" icon=":/RibbonBar/images/RibbonIcons/Insert/Advanced-Objects.png" width="16" height="16" />
+				<addaction name="insertModelAction"  icon=":/RibbonBar/images/RibbonIcons/Insert/Import-Model.png" tooltip="Insert a model from local files" width="16" height="16"/>
+				<addaction name="insertServiceAction" icon=":/RibbonBar/images/RibbonIcons/Insert/Service.png" tooltip="Insert service from a service selection" width="16" height="16"/>
 			</Group>
 			<Group name="Tools" controlsCentering="true">
 				<addseperator visible="false" />
@@ -72,11 +75,49 @@
 				<addaction name="Transform" instancename="Transform" tooltip="Precisely Manipulate an Object" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Home/Plane.png" width="16" height="16" />
 				<addaction name="resizeAction" tooltip="Resize an Object" icon=":/RibbonBar/images/RibbonIcons/Home/Resize.png" width="16" height="16" />
 				<addaction name="advRotateAction" tooltip="Rotate an Object" icon=":/RibbonBar/images/RibbonIcons/Home/Rotate.png" width="16" height="16" />'
-				<addaction name="toggleCollisionCheckAction" tooltip="Check for collisions when dragging" icon=":/RibbonBar/images/RibbonIcons/Home/Collisions-Enabled-16x16.png" width="16" height="16" /><MenuPopupButton name="lockMenu" text="  " icon=":/RibbonBar/images/RibbonIcons/Home/Lock-16x16.png" tooltip="Click on parts to lock/unlock" width="16" height="16"><addaction name="lockAction" text="Lock Tool" /><addaction name="unlockAllAction" /></MenuPopupButton><MenuButton handleMenuTrigger="false" name="jointCreationMode" style="icononly" text="Joint Mode" icon=":/RibbonBar/images/RibbonIcons/Home/Join.png" tooltip="Choose how parts are joined together" width="24" height="24"><ActionGroup name="jointCreationMode" style="icononly" ischeckable="true"><addaction name="Always" text="Always" value="Always" icon=":/RibbonBar/images/RibbonIcons/Home/Join.png" tooltip="Always join adjacent parts" width="24" height="24" /><addaction name="Surface only" text="Surface only" value="Surface only" icon=":/images/t_surfaceSmooth_old.png" tooltip="Join based on surface type" width="24" height="24" /><addaction name="Never" text="Never" value="Never" icon=":/images/t_surfaceWeld_old.png" tooltip="Never join parts automatically" width="24" height="24" /></ActionGroup></MenuButton><MenuPopupButton handleMenuTrigger="false" name="createConstraintAction" text="  " popupStyle="menubutton" tooltip="Place a constraint or an attachment" icon=":/RibbonBar/images/RibbonIcons/Physics/constraint-32x32.png" width="16" height="16"><addaction name="drawConstraintDetailsVerb" ischeckable="true" iscommonslot="true" text="Toggle Details" tooltip="Show attachments and constraints" icon=":/RibbonBar/images/RibbonIcons/Physics/show-detail-32x32.png" width="24" height="24" /><addseparator visible="true" /><addaction name="createBallInSocketConstraintAction" style="icononly" iscommonslot="true" text="Ball in Socket" tooltip="Create ball in socket" icon=":/RibbonBar/images/RibbonIcons/Physics/ball-in-socket-32x32.png" width="16" height="16" /><addaction name="createHingeConstraintAction" style="icononly" iscommonslot="true" text="Hinge" tooltip="Create hinge" icon=":/RibbonBar/images/RibbonIcons/Physics/hinge-32x32.png" width="16" height="16" /><addaction name="createPrismaticConstraintAction" style="icononly" iscommonslot="true" text="Prismatic" tooltip="Create prismatic constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/prismatic-constraint-32x32.png" width="16" height="16" /><addaction name="createRopeConstraintAction" style="icononly" iscommonslot="true" text="Rope" tooltip="Create rope constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/rope-32x32.png" width="16" height="16" /><addaction name="createRodConstraintAction" style="icononly" iscommonslot="true" text="Rod" tooltip="Create rod constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/rod-32x32.png" width="16" height="16" /><addaction name="createSpringConstraintAction" style="icononly" iscommonslot="true" text="Spring" tooltip="Create spring constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/spring-32x32.png" width="16" height="16" /><addseparator visible="true" /><addaction name="createAlignOrientationAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Align Orientation" tooltip="Create align orientation" icon=":/RibbonBar/images/RibbonIcons/Physics/align-orientation-32x32.png" width="32" height="32" /><addaction name="createAlignPositionAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Align Position" tooltip="Create align position" icon=":/RibbonBar/images/RibbonIcons/Physics/align-position-32x32.png" width="32" height="32" /><addaction name="createVectorForceAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Vector Force" tooltip="Create vector force" icon=":/RibbonBar/images/RibbonIcons/Physics/force-32x32.png" width="32" height="32" /><addaction name="createLineForceAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Line Force" tooltip="Create line force" icon=":/RibbonBar/images/RibbonIcons/Physics/line-force-32x32.png" width="32" height="32" /><addaction name="createTorqueAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Torque" tooltip="Create torque" icon=":/RibbonBar/images/RibbonIcons/Physics/torque-32x32.png" width="32" height="32" /><addseparator visible="true" fflag="AttachmentBasedMoversEnabled" /><addaction name="createAttachmentAction" style="icononly" iscommonslot="true" text="Attachment" tooltip="Insert attachment" icon=":/RibbonBar/images/RibbonIcons/Physics/attachment-32x32.png" width="16" height="16" /></MenuPopupButton><addseparator /><addseparator visible="false" fflag="StudioCustomDragIncrements" /><addseparator visible="false" /><addspinbox type="spinbox" fflag="StudioCustomDragIncrements" keyboardTracking="true" tooltip="The grid that rotate tools will snap to" name="setRotateIncrementAction" decimals="3" text="" minimum="0" maximum="180" minumumWidth="100" step="5" suffix=" *" /><addspinbox type="spinbox" fflag="StudioCustomDragIncrements" keyboardTracking="true" tooltip="The grid move and resize tools will snap to" name="setDragGridIncrementAction" decimals="2" text="" minimum="0" maximum="1024" minumumWidth="100" step="0.2" suffix=" studs" /><addseparator visible="false" /></Group>
-			<Group name="UI" fflag="UserUIEditorEnabled" controlsCentering="true">
-				<addaction name="RobloxUIEditor" instancename="UIEditor" style="textundericon" text="UI Editor" tooltip="UI Editor v1.0" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Home/UIEditor.png" width="32" height="32" />
+				<addaction name="toggleCollisionCheckAction" tooltip="Check for collisions when dragging" icon=":/RibbonBar/images/RibbonIcons/Home/Collisions-Enabled-16x16.png" width="16" height="16" />
+				<MenuPopupButton name="lockMenu" text="  " icon=":/RibbonBar/images/RibbonIcons/Home/Lock-16x16.png" tooltip="Click on parts to lock/unlock" width="16" height="16">
+					<addaction name="lockAction" text="Lock Tool"/>
+					<addaction name="unlockAllAction"/>
+				</MenuPopupButton>
+				<MenuButton handleMenuTrigger="false" name="jointCreationMode" style="icononly" text="Joint Mode" icon=":/RibbonBar/images/RibbonIcons/Home/Join.png" tooltip="Choose how parts are joined together" width="24" height="24">
+					<ActionGroup name="jointCreationMode" style="icononly" ischeckable="true">
+						<addaction name="Always" text="Always" value="Always" icon=":/RibbonBar/images/RibbonIcons/Home/Join.png" tooltip="Always join adjacent parts" width="24" height="24" />
+						<addaction name="Surface only" text="Surface only" value="Surface only" icon=":/images/t_surfaceSmooth_old.png" tooltip="Join based on surface type" width="24" height="24" />
+						<addaction name="Never" text="Never" value="Never" icon=":/images/t_surfaceWeld_old.png" tooltip="Never join parts automatically" width="24" height="24" />
+					</ActionGroup>
+				</MenuButton>
+				<MenuPopupButton handleMenuTrigger="false" name="createConstraintAction" text="  " popupStyle="menubutton" tooltip="Place a constraint or an attachment" icon=":/RibbonBar/images/RibbonIcons/Physics/constraint-32x32.png" width="16" height="16">
+					<addaction name="drawConstraintDetailsVerb" ischeckable="true" iscommonslot="true" text="Toggle Details" tooltip="Show attachments and constraints" icon=":/RibbonBar/images/RibbonIcons/Physics/show-detail-32x32.png" width="24" height="24" />
+					<addseparator visible="true"/>
+					<addaction name="createBallInSocketConstraintAction" style="icononly" iscommonslot="true" text="Ball in Socket" tooltip="Create ball in socket" icon=":/RibbonBar/images/RibbonIcons/Physics/ball-in-socket-32x32.png" width="16" height="16" />
+					<addaction name="createHingeConstraintAction" style="icononly" iscommonslot="true" text="Hinge" tooltip="Create hinge" icon=":/RibbonBar/images/RibbonIcons/Physics/hinge-32x32.png" width="16" height="16" />
+					<addaction name="createPrismaticConstraintAction" style="icononly" iscommonslot="true" text="Prismatic" tooltip="Create prismatic constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/prismatic-constraint-32x32.png" width="16" height="16" />
+					<addaction name="createRopeConstraintAction" style="icononly" iscommonslot="true" text="Rope" tooltip="Create rope constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/rope-32x32.png" width="16" height="16" />
+					<addaction name="createRodConstraintAction" style="icononly" iscommonslot="true" text="Rod" tooltip="Create rod constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/rod-32x32.png" width="16" height="16" />
+					<addaction name="createSpringConstraintAction" style="icononly" iscommonslot="true" text="Spring" tooltip="Create spring constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/spring-32x32.png" width="16" height="16" />
+					<addaction fflag="EnableWeldConstraint2" name="createWeldConstraintAction" style="textundericon" iscommonslot="true" text="Weld" tooltip="Create weld constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/weld-32x32.png" width="32" height="32" />
+					<addseparator visible="true"/>
+					<addaction name="createAlignOrientationAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Align Orientation" tooltip="Create align orientation" icon=":/RibbonBar/images/RibbonIcons/Physics/align-orientation-32x32.png" width="32" height="32" />
+					<addaction name="createAlignPositionAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Align Position" tooltip="Create align position" icon=":/RibbonBar/images/RibbonIcons/Physics/align-position-32x32.png" width="32" height="32" />
+					<addaction name="createVectorForceAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Vector Force" tooltip="Create vector force" icon=":/RibbonBar/images/RibbonIcons/Physics/force-32x32.png" width="32" height="32" />
+					<addaction name="createLineForceAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Line Force" tooltip="Create line force" icon=":/RibbonBar/images/RibbonIcons/Physics/line-force-32x32.png" width="32" height="32" />
+					<addaction name="createTorqueAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Torque" tooltip="Create torque" icon=":/RibbonBar/images/RibbonIcons/Physics/torque-32x32.png" width="32" height="32" />
+					<addseparator visible="true" fflag="AttachmentBasedMoversEnabled" />
+					<addaction name="createAttachmentAction" style="icononly" iscommonslot="true" text="Attachment" tooltip="Insert attachment" icon=":/RibbonBar/images/RibbonIcons/Physics/attachment-32x32.png" width="16" height="16" />
+				</MenuPopupButton>
+				<addseparator/>
+				<addseparator visible="false" fflag="StudioCustomDragIncrements" />
+				<addseparator visible="false"/>
+				<addspinbox type="spinbox" fflag="StudioCustomDragIncrements" keyboardTracking="true" tooltip="The grid that rotate tools will snap to" name="setRotateIncrementAction" decimals="3" text="" minimum="0" maximum="180" minumumWidth="100" step="5" suffix=" *" />
+				<addspinbox type="spinbox" fflag="StudioCustomDragIncrements" keyboardTracking="true" tooltip="The grid move and resize tools will snap to" name="setDragGridIncrementAction" decimals="2" text="" minimum="0" maximum="1024" minumumWidth="100" step="0.2" suffix=" studs" />
+				<addseparator visible="false"/>
 			</Group>
 			<Group name="Edit">
+				<groupoptionsmenu tooltip="Actions as Tools" handleMenuTrigger="true">
+					<addaction name="materialActionAsTool" text="Material Action as Tool" ischeckable="true" tooltip="Toggles material action as tool"/>
+					<addaction name="colorFillActionAsTool" text="Color Action as Tool" ischeckable="true" tooltip="Toggles color action as tool"/>
+				</groupoptionsmenu>
 				<addaction name="unionSelectionAction" icon=":/RibbonBar/images/RibbonIcons/Home/Union.png" tooltip="Fuse parts together to make a single part" width="16" height="16" />
 				<addaction name="negateSelectionAction" icon=":/RibbonBar/images/RibbonIcons/Home/Negate.png" tooltip="Negate parts for making holes" width="16" height="16" />
 				<addaction name="separateSelectionAction" icon=":/RibbonBar/images/RibbonIcons/Home/Separate.png" tooltip="Separate parts from a fused selection" width="16" height="16" />
@@ -118,6 +159,9 @@
 					<addaction name="motorRightAction" style="icononly" text="Motor" tooltip="Attach a motor to a part" icon=":/RibbonBar/images/RibbonIcons/Home/Motor.png" width="16" height="16" />
 				</MenuPopupButton>
 			</Group>
+			<Group name="UI" fflag="UserUIEditorEnabled" controlsCentering="true">
+				<addaction name="RobloxUIEditor" instancename="UIEditor" style="textundericon" text="UI Editor" tooltip="UI Editor v1.0" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Home/UIEditor.png" width="32" height="32" />
+			</Group>
 			<Group name="Terrain" controlsCentering="true">
 				<addaction name="Generate" instancename="Generate" text="Generate" style="icononly" tooltip="Generate landscapes of terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/generate.png" width="32" height="32" />
 				<addaction name="Add" instancename="Add" text="Add" style="icononly" tooltip="Click and hold to add terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/add.png" width="32" height="32" />
@@ -141,10 +185,12 @@
 				<addaction text="Pause" style="textbesideicon" name="simulationStopAction" icon=":/RibbonBar/images/RibbonIcons/Test/Pause.png" width="16" height="16" />
 				<addaction text="Stop" style="textbesideicon" name="simulationResetAction" icon=":/RibbonBar/images/RibbonIcons/Test/Stop.png" width="16" height="16" />
 				<addseparator />
-				<addaction fflag="StudioEnhancedEmulatorUIEnabled" name="deviceEmulatorToggleAction" style="textundericon" text="Emulator" ischeckable="true" icon=":/RibbonBar/images/RibbonIcons/Test/emulator_32.png" width="32" height="32" />
+				<addaction name="deviceEmulatorToggleAction"  text="Emulator" style="textbesideicon" ischeckable="true" icon=":/RibbonBar/images/RibbonIcons/Test/emulator_32.png" width="16" height="16" />
+				<addaction name="simulationDiabolicalModeAction" text="Diabolical Mode" style="textbesideicon" icon=":/RibbonBar/images/RibbonIcons/Test/Diabolical-Mode.png" width="16" height="16"/>
+				<addaction name="analyzePhysicsToggleAction" iscommonslot="true" ischeckable="true" style="textbesideicon" icon=":/RibbonBar/images/RibbonIcons/Test/Physics-Test.png" width="16" height="16" text="Physics Test" tooltip="Toggle Physics Analyzer"/>
 				<addseparator />
-				<addaction name="startServerAndPlayersAction" text="Start Server" iscommonslot="true" tooltip="Start server and players" icon=":/RibbonBar/images/RibbonIcons/Test/Start-Server.png" width="16" height="16" />
-				<addaction name="cleanupServersAndPlayersAction" text = "Clear Server" icon=":/RibbonBar/images/Studio 2.0 icons/32x32/delete_x_32.png" width="16" height="16" />
+				<addaction name="startServerAndPlayersAction" text="Start" style="textbesideicon" iscommonslot="true" tooltip="Start server and players" icon=":/RibbonBar/images/RibbonIcons/Test/Start-Server.png" width="16" height="16" />
+				<addaction name="cleanupServersAndPlayersAction" text = "Clear" style="textbesideicon" icon=":/RibbonBar/images/Studio 2.0 icons/32x32/delete_x_32.png" width="16" height="16" />
 				<addseparator visible="false" />
 				<addcombobox fflag="StudioTeamTestEnabled" name="serverMode">
 					<comboboxitem text="None" value="0" />
@@ -178,8 +224,8 @@
 		</TabPage>
 		<TabPage name="Plugins">
 			<Group name="Tools">
-				<addaction name="managePluginsAction" text="Manage Plugins" style="textundericon" height="16" width="16" tooltip="Manage plugins installed from roblox.com" icon=":/RibbonBar/images/RibbonIcons/AddOns/Manage-Plugins.png" />
-				<addaction name="openPluginsFolderAction" text="Plugins Folder" style="textundericon" height="16" width="16" tooltip="Open the local plugins folder" icon=":/RibbonBar/images/RibbonIcons/AddOns/Plugins-folder.png" />
+				<addaction name="managePluginsAction" text="Manage Plugins" style="textundericon" height="32" width="32" tooltip="Manage plugins installed from roblox.com" icon=":/RibbonBar/images/RibbonIcons/AddOns/Manage-Plugins.png" />
+				<addaction name="openPluginsFolderAction" text="Plugins Folder" style="textundericon" height="32" width="32" tooltip="Open the local plugins folder" icon=":/RibbonBar/images/RibbonIcons/AddOns/Plugins-folder.png" />
 			</Group>
 		</TabPage>
 		<TabPage name="scriptMenu" text="Script Menu" contextcolor="4" contexttitle="Script tools" visible="false">
