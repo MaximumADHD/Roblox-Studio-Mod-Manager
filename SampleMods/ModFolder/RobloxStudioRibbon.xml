@@ -60,7 +60,7 @@
 				<addaction name="viewDiagnosticsAction" icon=":/RibbonBar/images/RibbonIcons/View/Diagnostics.png" tooltip="View diagnostic information of your game" height="16" width="16" />
 				<addaction name="viewTaskSchedulerAction" icon=":/RibbonBar/images/RibbonIcons/View/Task-Scheduler.png" tooltip="View task execution information" height="16" width="16" />
 				<addaction name="viewScriptPerformanceAction" icon=":/RibbonBar/images/RibbonIcons/View/Script-Performance.png" tooltip="View script performance information" height="16" width="16" />
-				<addaction name="gameSettingsAction" icon=":/RibbonBar/images/RibbonIcons/Home/GameSettings.png" tooltip="Update settings related to current game" width="16" height="16"/>
+				<addaction name="gameSettingsAction" icon=":/RibbonBar/images/RibbonIcons/Home/GameSettings.png" tooltip="Update settings related to current game" width="16" height="16" iscommonslot="true"/>
 				<addaction name="viewObjectExplorerAction" icon=":/RibbonBar/images/RibbonIcons/View/Explorer.png" tooltip="View a list of objects in the workspace" height="16" width="16" />
 				<addaction name="viewPropertiesAction" icon=":/RibbonBar/images/RibbonIcons/View/Properties.png" tooltip="View properties of objects" height="16" width="16" />
 				<addaction name="viewTeamCreateAction" icon=":/RibbonBar/images/RibbonIcons/View/TeamCreate.png" tooltip="View Team Create Window" height="16" width="16" />
