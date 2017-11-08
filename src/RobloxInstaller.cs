@@ -272,7 +272,7 @@ namespace RobloxModManager
                 if (!cancelled)
                 {
                     List<Task> taskQueue = new List<Task>();
-                    if (buildName.Substring(0,16) != "future-is-bright")
+                    if (buildName.Substring(0, 16) != "future-is-bright")
                     {
                         string installerProtocol = await http.DownloadStringTaskAsync(gitContentUrl + "InstallerProtocol");
                         StringReader protocolReader = new StringReader(installerProtocol);
@@ -324,8 +324,13 @@ namespace RobloxModManager
                                 {
                                     foreach (ZipArchiveEntry entry in archive.Entries)
                                     {
-                                        string name = entry.Name.Replace(protocol.FileName + "/", "");
-                                        string entryName = entry.FullName.Replace(protocol.FileName + "/", "");
+                                        string name = entry.Name;
+                                        string entryName = entry.FullName;
+                                        if (protocol.FileName.Contains("future-is-bright"))
+                                        {
+                                            name = name.Replace(protocol.FileName + "/", "");
+                                            entryName = entryName.Replace(protocol.FileName + "/", "");
+                                        }
                                         if (entryName.Length > 0)
                                         {
                                             if (string.IsNullOrEmpty(name))
