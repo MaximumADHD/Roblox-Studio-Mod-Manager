@@ -55,6 +55,7 @@ namespace RobloxModManager
         public delegate void IncrementDelegator(int count);
 
         private int actualProgressBarSum = 0;
+        private static string gitContentUrl = "https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/master/";
 
         WebClient http = new WebClient();
         List<RbxInstallProtocol> instructions = new List<RbxInstallProtocol>();
@@ -110,7 +111,8 @@ namespace RobloxModManager
                         currentCmd = line.Substring(1);
                     else
                     {
-                        string directoryLine = Regex.Replace(line, @"[\d-]", "");
+                        string[] dashSplit = line.Split('-');
+                        string directoryLine = Regex.Replace(dashSplit[dashSplit.Length - 1], @"[\d-]", ""); // oof
                         if (currentCmd == "ExtractContent")
                             instructions.Add(new RbxInstallProtocol("content-" + line, @"content\" + directoryLine));
                         else if (currentCmd == "ExtractPlatformContent")
@@ -204,8 +206,16 @@ namespace RobloxModManager
             }
             else
             {
+                echo("Fetching API Key for Version Fetch...");
+                string apiKey = await http.DownloadStringTaskAsync(gitContentUrl + "VersionCompatibilityApiKey");
+                string versionUrl = "http://versioncompatibility.api." + database + 
+                                    ".com/GetCurrentClientVersionUpload/?apiKey=" + apiKey + 
+                                    "&binaryType=WindowsStudio";
+
+                echo("Fetching Version GUID...");
                 setupDir = "setup." + database + ".com/";
-                buildName = await http.DownloadStringTaskAsync("http://" + setupDir + "versionQTStudio");
+                buildName = await http.DownloadStringTaskAsync(versionUrl);
+                buildName = buildName.Replace('"', ' ').Trim();
                 if (checkSumKeys.Contains("future-is-bright"))
                     checkSum.DeleteSubKey("future-is-bright");
             }
@@ -220,7 +230,7 @@ namespace RobloxModManager
             if (currentBuildDatabase != database || currentBuildVersion != buildName || forceInstall)
             {
                 echo("This build needs to be installed!");
-                await setStatus("Loading the latest " + database + " Roblox Studio build...");
+                await setStatus("Loading the latest '" + database + "' build of Roblox Studio...");
                 progressBar.Maximum = 1300; // Rough estimate of how many files to expect.
                 progressBar.Value = 0;
                 progressBar.Style = ProgressBarStyle.Continuous;
@@ -262,9 +272,9 @@ namespace RobloxModManager
                 if (!cancelled)
                 {
                     List<Task> taskQueue = new List<Task>();
-                    if (buildName != "future-is-bright")
+                    if (buildName.Substring(0,16) != "future-is-bright")
                     {
-                        string installerProtocol = await http.DownloadStringTaskAsync("https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/master/InstallerProtocol");
+                        string installerProtocol = await http.DownloadStringTaskAsync(gitContentUrl + "InstallerProtocol");
                         StringReader protocolReader = new StringReader(installerProtocol);
                         loadInstructions(protocolReader);
                     }

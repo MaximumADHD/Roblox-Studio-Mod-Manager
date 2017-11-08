@@ -263,7 +263,7 @@ namespace RobloxModManager
             string fvar = fvarConfig.Items[e.Index] as string;
             RegistryKey fvarEntry = getFVarEntry(fvar);
             string type = fvarEntry.GetValue("Type") as string;
-            if (type != "Flag")
+            if (type != "Flag" && type != null)
             {
                 if (e.NewValue != CheckState.Indeterminate)
                 {
@@ -278,6 +278,7 @@ namespace RobloxModManager
             {
                 bool value = (e.NewValue == CheckState.Checked ? true : false);
                 fvarEntry.SetValue("Value", value);
+                fvarEntry.SetValue("Type", "Flag");
             }
         }
 
