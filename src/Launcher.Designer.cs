@@ -1,4 +1,4 @@
-﻿namespace RobloxModManager
+﻿namespace RobloxStudioModManager
 {
     partial class Launcher
     {
@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Launcher));
             this.launchStudio = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.manageMods = new System.Windows.Forms.Button();
@@ -42,7 +41,7 @@
             // 
             // launchStudio
             // 
-            this.launchStudio.AccessibleName = "Launch ROBLOX Studio";
+            this.launchStudio.AccessibleName = "Launch Roblox Studio";
             this.launchStudio.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
             this.launchStudio.Cursor = System.Windows.Forms.Cursors.Default;
             this.launchStudio.Location = new System.Drawing.Point(25, 119);
@@ -59,13 +58,13 @@
             this.pictureBox1.AccessibleName = "Roblox Studio Logo";
             this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
-            this.pictureBox1.Location = new System.Drawing.Point(47, 11);
+            this.pictureBox1.Image = global::RobloxStudioModManager.Properties.Resources.Logo;
+            this.pictureBox1.InitialImage = null;
+            this.pictureBox1.Location = new System.Drawing.Point(25, 12);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(99, 99);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pictureBox1.Size = new System.Drawing.Size(140, 101);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 8;
             this.pictureBox1.TabStop = false;
             // 
@@ -99,7 +98,6 @@
             this.dataBaseSelect.Name = "dataBaseSelect";
             this.dataBaseSelect.Size = new System.Drawing.Size(140, 21);
             this.dataBaseSelect.TabIndex = 10;
-            this.dataBaseSelect.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             this.dataBaseSelect.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
             // label1
@@ -111,9 +109,9 @@
             this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
             this.label1.Location = new System.Drawing.Point(22, 174);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(68, 13);
+            this.label1.Size = new System.Drawing.Size(79, 13);
             this.label1.TabIndex = 11;
-            this.label1.Text = "Build to use: ";
+            this.label1.Text = "Branch to use: ";
             // 
             // forceRebuild
             // 
@@ -169,9 +167,8 @@
             this.Controls.Add(this.launchStudio);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.HelpButton = true;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = global::RobloxStudioModManager.Properties.Resources.Icon;
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "Launcher";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Load += new System.EventHandler(this.Launcher_Load);

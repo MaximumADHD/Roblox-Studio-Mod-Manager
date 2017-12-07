@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net;
 using System.IO;
 using System.IO.Compression;
+using System.Net;
+
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
+using System.Text;
 
-namespace RobloxModManager
+namespace RobloxStudioModManager
 {
     public struct RbxInstallProtocol
     {
@@ -36,14 +38,16 @@ namespace RobloxModManager
             DirectUrl = null;
         }
 
-        public RbxInstallProtocol(string fileName, string directUrl, bool fetchDirectly = true)
+        public RbxInstallProtocol(GitHubReleaseAsset asset)
         {
-            FileName = fileName;
+            FileName = asset.name.Replace(".zip","");
             LocalDirectory = "";
-            FetchDirectly = fetchDirectly;
-            DirectUrl = directUrl;
+            FetchDirectly = true;
+            DirectUrl = asset.browser_download_url;
         }
     }
+
+    
 
     public partial class RobloxInstaller : Form
     {
@@ -188,36 +192,36 @@ namespace RobloxModManager
                 // This is an ugly hack, but it doesn't require as much special casing for the installation protocol.
 
                 string latestRelease = await http.DownloadStringTaskAsync("https://api.github.com/repos/roblox/future-is-bright/releases/latest");
-                int urlBegin = latestRelease.IndexOf("https://github.com/Roblox/future-is-bright/releases/download/");
-                int urlEnd = latestRelease.IndexOf(".zip", urlBegin + 1)+4;
+                GitHubRelease release = GitHubRelease.Get(latestRelease);
+                GitHubReleaseAsset[] assets = release.assets;
 
-                string url = latestRelease.Substring(urlBegin, urlEnd - urlBegin);
-                int lastSlash = url.LastIndexOf('/');
-                string zipFileName = url.Substring(lastSlash + 1, url.Length - lastSlash - 5);
+                for (int i = 0; i < assets.Length; i++)
+                {
+                    GitHubReleaseAsset asset = release.assets[i];
+                    string name = asset.name;
+                    if (name.StartsWith("future-is-bright") && name.EndsWith(".zip") && !name.Contains("-mac"))
+                    {
+                        buildName = name;
+                        setupDir = "github";
+                        instructions.Add(new RbxInstallProtocol(asset));
+                        break;
+                    }
+                }
 
-                buildName = zipFileName;
-                setupDir = "github";
-
-                instructions.Add(new RbxInstallProtocol(zipFileName, url, true));
-
+                // Invalidate the current file cache since this will be overwriting everything.
                 foreach (string key in checkSumKeys)
-                    if (key != "future-is-bright")
-                        checkSum.DeleteValue(key);
+                    checkSum.DeleteValue(key);
             }
             else
             {
-                echo("Fetching API Key for Version Fetch...");
                 string apiKey = await http.DownloadStringTaskAsync(gitContentUrl + "VersionCompatibilityApiKey");
                 string versionUrl = "http://versioncompatibility.api." + database + 
                                     ".com/GetCurrentClientVersionUpload/?apiKey=" + apiKey + 
                                     "&binaryType=WindowsStudio";
 
-                echo("Fetching Version GUID...");
                 setupDir = "setup." + database + ".com/";
                 buildName = await http.DownloadStringTaskAsync(versionUrl);
                 buildName = buildName.Replace('"', ' ').Trim();
-                if (checkSumKeys.Contains("future-is-bright"))
-                    checkSum.DeleteSubKey("future-is-bright");
             }
 
             robloxStudioBetaPath = Path.Combine(rootDir, "RobloxStudioBeta.exe");
@@ -230,7 +234,8 @@ namespace RobloxModManager
             if (currentBuildDatabase != database || currentBuildVersion != buildName || forceInstall)
             {
                 echo("This build needs to be installed!");
-                await setStatus("Loading the latest '" + database + "' build of Roblox Studio...");
+
+                await setStatus("Installing the latest '" + (database == "roblox" ? "production" : database) + "' branch of Roblox Studio...");
                 progressBar.Maximum = 1300; // Rough estimate of how many files to expect.
                 progressBar.Value = 0;
                 progressBar.Style = ProgressBarStyle.Continuous;
@@ -301,7 +306,7 @@ namespace RobloxModManager
                                 byte[] downloadedFile = await localHttp.DownloadDataTaskAsync(zipFileUrl);
                                 bool doInstall = true;
                                 string fileHash = null;
-                                if (!(forceInstall || database == "future-is-bright"))
+                                if (!(forceInstall || protocol.FetchDirectly))
                                 {
                                     SHA256Managed sha = new SHA256Managed();
                                     MemoryStream fileStream = new MemoryStream(downloadedFile);

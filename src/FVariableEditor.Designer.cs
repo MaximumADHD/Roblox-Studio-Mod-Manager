@@ -1,4 +1,4 @@
-﻿namespace RobloxModManager
+﻿namespace RobloxStudioModManager
 {
     partial class FVariableEditor
     {
@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FVariableEditor));
             this.fvarConfig = new System.Windows.Forms.CheckedListBox();
             this.availableFVariables = new System.Windows.Forms.ListBox();
             this.add = new System.Windows.Forms.Button();
@@ -52,7 +53,6 @@
             this.fvarConfigTabs.SuspendLayout();
             this.basicFVariableConfig.SuspendLayout();
             this.advFVariableConfig.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // fvarConfig
@@ -257,8 +257,6 @@
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.statusLbl});
             this.statusStrip1.Location = new System.Drawing.Point(0, 321);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(410, 22);
@@ -295,10 +293,12 @@
             this.Controls.Add(this.remove);
             this.Controls.Add(this.add);
             this.Controls.Add(this.availableFVariables);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = Properties.Resources.Icon;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FVariableEditor";
+            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FVariable Editor";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FVariableEditor_FormClosed);
@@ -307,8 +307,6 @@
             this.basicFVariableConfig.ResumeLayout(false);
             this.advFVariableConfig.ResumeLayout(false);
             this.advFVariableConfig.PerformLayout();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 using Microsoft.Win32;
 
-namespace RobloxModManager
+namespace RobloxStudioModManager
 {
     static class Program
     {

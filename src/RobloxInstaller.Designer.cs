@@ -1,4 +1,4 @@
-﻿namespace RobloxModManager
+﻿namespace RobloxStudioModManager
 {
     partial class RobloxInstaller
     {
@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RobloxInstaller));
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.statusLbl = new System.Windows.Forms.Label();
@@ -52,28 +51,29 @@
             // 
             this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
+            this.pictureBox1.BackgroundImage = global::RobloxStudioModManager.Properties.Resources.Logo;
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox1.InitialImage = null;
             this.pictureBox1.Location = new System.Drawing.Point(4, 11);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(81, 81);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 9;
             this.pictureBox1.TabStop = false;
             // 
             // statusLbl
             // 
             this.statusLbl.AutoSize = true;
-            this.statusLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.070867F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.statusLbl.Location = new System.Drawing.Point(1, 103);
+            this.statusLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.statusLbl.Location = new System.Drawing.Point(0, 100);
             this.statusLbl.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.statusLbl.Name = "statusLbl";
-            this.statusLbl.Size = new System.Drawing.Size(166, 16);
+            this.statusLbl.Size = new System.Drawing.Size(183, 18);
             this.statusLbl.TabIndex = 11;
             this.statusLbl.Text = "Checking for updates...";
             // 
             // log
             // 
+            this.log.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.log.Location = new System.Drawing.Point(91, 11);
             this.log.Name = "log";
             this.log.ReadOnly = true;
@@ -90,15 +90,15 @@
             this.Controls.Add(this.statusLbl);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.progressBar);
+            this.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = global::RobloxStudioModManager.Properties.Resources.Icon;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "RobloxInstaller";
-            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Roblox Studio Installer";
+            this.Text = "Roblox Studio Updater";
             this.TopMost = true;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.RobloxInstaller_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();

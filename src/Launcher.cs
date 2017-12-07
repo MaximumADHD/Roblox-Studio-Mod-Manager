@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Windows.Forms;
 
-namespace RobloxModManager
+namespace RobloxStudioModManager
 {
     public partial class Launcher : Form
     {
@@ -51,7 +51,7 @@ namespace RobloxModManager
             DialogResult result = MessageBox.Show("Editing FVariables can make Roblox Studio unstable.\nYou should only change them if you know what you're doing.\nAre you sure you would like to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (result == DialogResult.Yes)
             {
-                string dataBase = (string)dataBaseSelect.Items[Properties.Settings.Default.Database];
+                string dataBase = (string)dataBaseSelect.SelectedItem;
                 FVariableEditor editor = new FVariableEditor(this, dataBase);
                 editor.Show();
             }
@@ -60,7 +60,7 @@ namespace RobloxModManager
         private async void launchStudio_Click(object sender = null, EventArgs e = null)
         {
             Hide();
-            string dataBase = (string)dataBaseSelect.Items[Properties.Settings.Default.Database];
+            string dataBase = (string)dataBaseSelect.SelectedItem;
             RobloxInstaller installer = new RobloxInstaller();
             string studioPath = await installer.RunInstaller(dataBase,forceRebuild.Checked);
             string studioRoot = Directory.GetParent(studioPath).ToString();
@@ -85,18 +85,17 @@ namespace RobloxModManager
                         string relativeFile = modFile.Replace(modPath, studioRoot);
                         string relativeDir = Directory.GetParent(relativeFile).ToString();
                         if (!Directory.Exists(relativeDir))
-                        {
                             Directory.CreateDirectory(relativeDir);
-                        }
-                        if (!File.Exists(relativeFile))
+
+                        if (File.Exists(relativeFile))
                         {
-                            FileStream currentStream = File.Create(relativeFile);
-                            currentStream.Close();
+                            byte[] relativeContents = File.ReadAllBytes(relativeFile);
+                            if (!fileContents.SequenceEqual(relativeContents))
+                                modFileControl.CopyTo(relativeFile, true);
                         }
-                        byte[] studioFile = File.ReadAllBytes(relativeFile);
-                        if (!fileContents.SequenceEqual(studioFile))
+                        else
                         {
-                            modFileControl.CopyTo(relativeFile, true);
+                            File.WriteAllBytes(relativeFile, fileContents);
                         }
                     }
                 }
@@ -152,18 +151,21 @@ namespace RobloxModManager
                 Console.WriteLine("Can't bring this window to the foreground.");
             }
 
-            Application.Exit();
+            Environment.Exit(0);
         }
 
         private void Launcher_Load(object sender, EventArgs e)
         {
-            dataBaseSelect.SelectedIndex = Properties.Settings.Default.Database;
-        }
-
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Properties.Settings.Default.Database = dataBaseSelect.SelectedIndex;
-            Properties.Settings.Default.Save();
+            object registrySave = Program.ModManagerRegistry.GetValue("BuildDatabase");
+            if (registrySave != null)
+            {
+                string build = registrySave as string;
+                dataBaseSelect.SelectedIndex = dataBaseSelect.Items.IndexOf(build);
+            }
+            else
+            {
+                dataBaseSelect.SelectedIndex = 0;
+            }
         }
 
         private void onHelpRequested(object sender, HelpEventArgs e)

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 using Microsoft.Win32;
 
-namespace RobloxModManager
+namespace RobloxStudioModManager
 {
     public partial class FVariableEditor : Form
     {
