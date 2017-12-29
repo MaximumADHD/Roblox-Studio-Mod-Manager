@@ -9,10 +9,10 @@
 
 # What is this?
 
-The _Roblox Studio Mod Manager_ is an unofficial custom launcher for Roblox Studio that allows you to override files in Roblox Studio's directory. 
+The _Roblox Studio Mod Manager_ is an unofficial custom launcher for Roblox Studio that allows you to override files in Roblox Studio's directory.
 
 # Features
-* Runs and installs 100% independent of Roblox Studio's standard launcher
+* Runs and installs 100% independently of Roblox Studio's standard launcher.
 * Files overrides are sustained between updates.
 * Updates are applied incrementally to a single directory.
 * Provides a flexible FVariable editor, allowing you to toggle engine features.
