@@ -1,8 +1,14 @@
-# Roblox-Studio-Mod-Manager
+<p align="center">
+  <img width="256" height="256" src="https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/master/src/Resources/Logo.png"><br/>
+  <h1>Roblox Studio Mod Manager</h1>
+</p>
 
-This program is a custom launcher for Roblox Studio which allows you to maintain custom files in Roblox Studio 
-without Roblox overwriting them everytime you launch.
+
+This program is an unofficial custom launcher for Roblox Studio that allows you to override files in Roblox Studio's directory.
+It runs and installs 100% independent of Roblox Studio's standard launcher, and it applies updates incrementally to a single directory. 
+It also provides a flexible Fast-Variable editor, smooth transitions between test builds of Roblox Studio (gametest1-gametest5), support for launching from the website, and the option to run on Roblox's 'future-is-bright' lighting prototype.
 
 Download:
 https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/raw/master/RobloxStudioModManager.exe
-(HEADS UP: I haven't setup a certificate for this program yet, so Windows Smartscreen might complain when you try to run this. Just ignore the warning, and you'll be able to use the program. Sorry for the inconvinience)
+
+(Note: I haven't signed the exe yet, so Windows Smartscreen might complain when you try to run it. I'm planning to get this fixed soon. Sorry for any alarm!)
