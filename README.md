@@ -21,8 +21,8 @@ The _Roblox Studio Mod Manager_ is an unofficial custom launcher for Roblox Stud
 
 # Downloads
 
-* <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/archive/master.zip">Download (.exe)</a></h1>
-* <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/raw/master/RobloxStudioModManager.exe">Download (.zip)</a>
+* <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/raw/master/RobloxStudioModManager.exe">Download (.exe)</a></h1>
+* <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/archive/master.zip">Download (.zip)</a>
 
 # (Notice about application signature)
 I haven't signed this exe yet, so Windows Smartscreen might complain when you try to run it.<br/>
