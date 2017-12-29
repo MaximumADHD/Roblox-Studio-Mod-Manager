@@ -1,6 +1,6 @@
 <p align="center">
   <img width="256" height="256" src="https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/master/src/Resources/Logo.png"><br/>
-  <h1>Roblox Studio Mod Manager</h1>
+  <h1 align=center>Roblox Studio Mod Manager</h1>
 </p>
 
 
