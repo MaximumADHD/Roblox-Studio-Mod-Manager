@@ -2,6 +2,8 @@
   <img width="256" height="256" src="https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/master/src/Resources/Logo.png"><h1 align=center>Roblox Studio Mod Manager</h1>
 </p>
 
+<hr/>
+
 # What is this?
 
 The _Roblox Studio Mod Manager_ is an unofficial custom launcher for Roblox Studio that allows you to override files in Roblox Studio's directory.
