@@ -1,0 +1,1 @@
+lua.exe BakeImages.lua %1
