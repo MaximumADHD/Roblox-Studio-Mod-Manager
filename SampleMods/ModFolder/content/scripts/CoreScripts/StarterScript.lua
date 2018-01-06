@@ -6,13 +6,12 @@ local RobloxReplicatedStorage = game:GetService("RobloxReplicatedStorage")
 local requestGetAsync = RobloxReplicatedStorage:WaitForChild("RequestGetAsync")	
 
 local CoreGui = game:GetService("CoreGui")
-local RobloxGui = CoreGui:WaitForChild("RobloxGui")
-local Modules = RobloxGui:WaitForChild("Modules")
-local Custom = Modules:WaitForChild("Custom")
-local Proxies = Custom:WaitForChild("Proxies")
+local Custom = CoreGui.RobloxGui.Modules.Common.Custom
+local Required = Custom.Required
 
-local starterScriptInject = Proxies:WaitForChild("Proxy_StarterScript")
-local starterScript = requestGetAsync:InvokeServer("https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Client-Watch/master/scripts/CoreScripts/StarterScript.lua")
+local gitBaseUrl = require(Required.CoreScriptBaseUrl)
+local starterScriptInject = Required.ProxyStarterScript
+local starterScript = requestGetAsync:InvokeServer(gitBaseUrl .. "scripts/CoreScripts/StarterScript.lua")
 starterScriptInject.Source = starterScript .. "\nreturn 0"
 
 require(starterScriptInject)
@@ -29,7 +28,7 @@ local function executeCustomModule(module)
 				require(module)
 			end)
 			if not success then
-				warn("Error while executing CoreModule",module.Name,"-",errorMsg)
+				warn("Error while executing CoreScript Module",module.Name,"-",errorMsg)
 			end
 		end)
 	end

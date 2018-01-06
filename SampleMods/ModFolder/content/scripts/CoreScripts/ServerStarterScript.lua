@@ -28,15 +28,17 @@ end
 -- Inject Default ServerStarterScript
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+local ScriptContext = game:GetService("ScriptContext")
 local CoreGui = game:GetService("CoreGui")
-local RobloxGui = CoreGui:WaitForChild("RobloxGui")
-local Modules = RobloxGui:WaitForChild("Modules")
-local Custom = Modules:WaitForChild("Custom")
-local Proxies = Custom:WaitForChild("Proxies")
 
-local proxyStarterScript = Proxies:WaitForChild("Proxy_ServerStarterScript")
-local starterScript = requestGetAsyncImpl("https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Client-Watch/master/scripts/CoreScripts/ServerStarterScript.lua")
-proxyStarterScript.Source = starterScript .. "\nreturn 0"
+local Custom = CoreGui.RobloxGui.Modules.Common.Custom
+local Required = Custom.Required
+
+local baseUrl = require(Required.CoreScriptBaseUrl)
+local proxyStarterScript = Required.ProxyServerStarterScript
+local starterScript = requestGetAsyncImpl(baseUrl .. "scripts/CoreScripts/ServerStarterScript.lua")
+proxyStarterScript.Source = starterScript .. "\nscript.Parent = nil\nreturn 0"
+proxyStarterScript.Parent = ScriptContext
 
 require(proxyStarterScript)
 

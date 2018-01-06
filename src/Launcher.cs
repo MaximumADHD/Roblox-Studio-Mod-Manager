@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace RobloxStudioModManager
@@ -104,6 +105,45 @@ namespace RobloxStudioModManager
                     Console.WriteLine("Failed to overwrite " + modFile + "\nMight be open in another program\nThats their problem, not mine <3");
                 }
             }
+
+            // Hack in the metadata plugin.
+            // This is used to provide an end-point to custom StarterScripts that are trying to fork what branch they are on.
+            // It creates a BindableFunction inside of the ScriptContext called GetModManagerBranch, which returns the branch set in the launcher.
+
+            try
+            {
+                Assembly self = Assembly.GetExecutingAssembly();
+                string metaScript;
+
+                using (Stream stream = self.GetManifestResourceStream("RobloxStudioModManager.Resources.ModManagerMetadata.lua"))
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    metaScript = reader.ReadToEnd();
+                    metaScript = metaScript.Replace("%MOD_MANAGER_VERSION%", '"' + dataBase + '"'); // TODO: Make this something more generic?
+                }
+
+                string dir = Path.Combine(studioRoot, "BuiltInPlugins");
+                if (!Directory.Exists(dir))
+                    Directory.CreateDirectory(dir);
+
+                string metaScriptFile = Path.Combine(dir, "__rbxModManagerMetadata.lua");
+                FileInfo info = new FileInfo(metaScriptFile);
+                if (info.Exists)
+                    info.Attributes = FileAttributes.Normal;
+
+                File.WriteAllText(metaScriptFile, metaScript);
+
+                // Make the file as readonly so that it (hopefully) won't be messed with.
+                // I can't hide the file because Roblox Studio will ignore it.
+                // If someone has the file open with write permissions, it will fail to write.
+                
+                info.Attributes = FileAttributes.ReadOnly;
+            }
+            catch
+            {
+                Console.WriteLine("Failed to write __rbxModManagerMetadata.lua");
+            }
+
             ProcessStartInfo robloxStudioInfo = new ProcessStartInfo();
             robloxStudioInfo.FileName = studioPath;
             if (args != null)
