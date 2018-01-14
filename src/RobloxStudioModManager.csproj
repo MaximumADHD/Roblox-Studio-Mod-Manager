@@ -91,6 +91,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FVariableScanner.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FVariableScanner.Designer.cs">
+      <DependentUpon>FVariableScanner.cs</DependentUpon>
+    </Compile>
     <Compile Include="GitJson.cs" />
     <Compile Include="FVariableEditor.cs">
       <SubType>Form</SubType>
@@ -122,9 +128,6 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="RobloxInstaller.resx">
-      <DependentUpon>RobloxInstaller.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="Properties\app.manifest" />
     <EmbeddedResource Include="Resources\ModManagerMetadata.lua" />
   </ItemGroup>
@@ -149,6 +152,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\FVariableExtractor.lua" />
     <None Include="Resources\Logo.png" />
   </ItemGroup>
   <ItemGroup>

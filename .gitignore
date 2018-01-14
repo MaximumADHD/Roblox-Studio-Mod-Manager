@@ -2,3 +2,5 @@
 */obj/*
 *.suo
 *.ide
+*.resx
+src/.vs/*

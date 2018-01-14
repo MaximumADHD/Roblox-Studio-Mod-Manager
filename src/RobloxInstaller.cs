@@ -4,14 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
-
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
-using System.Text;
 
 namespace RobloxStudioModManager
 {
@@ -59,9 +57,13 @@ namespace RobloxStudioModManager
         public delegate void IncrementDelegator(int count);
 
         private int actualProgressBarSum = 0;
+        private bool exitWhenClosed = true;
+
         private static string gitContentUrl = "https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/master/";
 
-        WebClient http = new WebClient();
+        private static WebClient http = new WebClient();
+        private static string versionCompKey;
+
         List<RbxInstallProtocol> instructions = new List<RbxInstallProtocol>();
 
         public async Task setStatus(string status)
@@ -130,10 +132,11 @@ namespace RobloxStudioModManager
             }
         }
 
-        public RobloxInstaller()
+        public RobloxInstaller(bool exitWhenClosed = true)
         {
             InitializeComponent();
             http.Headers.Set(HttpRequestHeader.UserAgent, "Roblox");
+            this.exitWhenClosed = exitWhenClosed;
         }
 
         private static string getDirectory(params string[] paths)
@@ -172,7 +175,54 @@ namespace RobloxStudioModManager
             }
         }
 
-        public async Task<string> RunInstaller(string database, bool forceInstall)
+        private static async Task<string> getCurrentVersionImpl(string database, List<RbxInstallProtocol> instructions = null)
+        {
+            if (database == "future-is-bright")
+            {
+                // This is an ugly hack, but it doesn't require as much special casing for the installation protocol.
+                string latestRelease = await http.DownloadStringTaskAsync("https://api.github.com/repos/roblox/future-is-bright/releases/latest");
+                GitHubRelease release = GitHubRelease.Get(latestRelease);
+                GitHubReleaseAsset[] assets = release.assets;
+
+                string result = "";
+                for (int i = 0; i < assets.Length; i++)
+                {
+                    GitHubReleaseAsset asset = release.assets[i];
+                    string name = asset.name;
+                    if (name.StartsWith("future-is-bright") && name.EndsWith(".zip") && !name.Contains("-mac"))
+                    {
+                        result = name;
+                        if (instructions != null)
+                            instructions.Add(new RbxInstallProtocol(asset));
+
+                        break;
+                    }
+                }
+
+                return result;
+            }
+            else
+            {
+                if (versionCompKey == null)
+                    versionCompKey = await http.DownloadStringTaskAsync(gitContentUrl + "VersionCompatibilityApiKey");
+
+                string versionUrl = "http://versioncompatibility.api." + database +
+                                    ".com/GetCurrentClientVersionUpload/?apiKey=" + versionCompKey +
+                                    "&binaryType=WindowsStudio";
+
+
+                string buildName = await http.DownloadStringTaskAsync(versionUrl);
+                buildName = buildName.Replace('"', ' ').Trim();
+                return buildName;
+            }
+        }
+
+        public static async Task<string> getCurrentVersion(string database)
+        {
+            return await getCurrentVersionImpl(database);
+        }
+
+        public async Task<string> RunInstaller(string database, bool forceInstall = false)
         {
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             string rootDir = getDirectory(localAppData, "Roblox Studio");
@@ -183,30 +233,20 @@ namespace RobloxStudioModManager
             Show();
             BringToFront();
 
+            if (!exitWhenClosed)
+            {
+                TopMost = true;
+                FormBorderStyle = FormBorderStyle.None;
+            }
+
             await setStatus("Checking for updates");
 
             List<string> checkSumKeys = new List<string>(checkSum.GetValueNames());
 
             if (database == "future-is-bright")
             {
-                // This is an ugly hack, but it doesn't require as much special casing for the installation protocol.
-
-                string latestRelease = await http.DownloadStringTaskAsync("https://api.github.com/repos/roblox/future-is-bright/releases/latest");
-                GitHubRelease release = GitHubRelease.Get(latestRelease);
-                GitHubReleaseAsset[] assets = release.assets;
-
-                for (int i = 0; i < assets.Length; i++)
-                {
-                    GitHubReleaseAsset asset = release.assets[i];
-                    string name = asset.name;
-                    if (name.StartsWith("future-is-bright") && name.EndsWith(".zip") && !name.Contains("-mac"))
-                    {
-                        buildName = name;
-                        setupDir = "github";
-                        instructions.Add(new RbxInstallProtocol(asset));
-                        break;
-                    }
-                }
+                setupDir = "github";
+                buildName = await getCurrentVersionImpl(database, instructions);
 
                 // Invalidate the current file cache since this will be overwriting everything.
                 foreach (string key in checkSumKeys)
@@ -214,14 +254,8 @@ namespace RobloxStudioModManager
             }
             else
             {
-                string apiKey = await http.DownloadStringTaskAsync(gitContentUrl + "VersionCompatibilityApiKey");
-                string versionUrl = "http://versioncompatibility.api." + database + 
-                                    ".com/GetCurrentClientVersionUpload/?apiKey=" + apiKey + 
-                                    "&binaryType=WindowsStudio";
-
                 setupDir = "setup." + database + ".com/";
-                buildName = await http.DownloadStringTaskAsync(versionUrl);
-                buildName = buildName.Replace('"', ' ').Trim();
+                buildName = await getCurrentVersionImpl(database);
             }
 
             robloxStudioBetaPath = Path.Combine(rootDir, "RobloxStudioBeta.exe");
@@ -250,8 +284,8 @@ namespace RobloxStudioModManager
                     {
                         foreach (Process p in running)
                         {
+
                             p.CloseMainWindow();
-                            Program.SetForegroundWindow(p.MainWindowHandle);
                             await Task.Delay(50);
                         }
                         await Task.Delay(1000);
@@ -416,14 +450,14 @@ namespace RobloxStudioModManager
             string clientAppSettings = Path.Combine(clientSettings, "ClientAppSettings.json");
             applyFVariableConfiguration(fvarRegistry, clientAppSettings);
 
-            await setStatus("Starting Roblox Studio...");
-
+            await setStatus("Roblox Studio is up to date!");
             return robloxStudioBetaPath;
         }
 
         private void RobloxInstaller_FormClosed(object sender, FormClosedEventArgs e)
         {
-            Application.Exit();
+            if (exitWhenClosed)
+                Application.Exit();
         }
     }
 }

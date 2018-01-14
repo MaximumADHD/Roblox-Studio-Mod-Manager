@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -19,6 +18,9 @@ namespace RobloxStudioModManager
         private static List<string> fvars;
         private static bool fvarsLoaded = false;
         private static RegistryKey fvarRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FVariables");
+
+        private delegate void reassembleListingsDelegate(object sender = null, EventArgs e = null);
+        private delegate void voidDelegate();
 
         public FVariableEditor(Launcher launcher, string database)
         {
@@ -66,7 +68,7 @@ namespace RobloxStudioModManager
             advFVarValue.Text = "";
             advFVarValue.Enabled = false;
 
-            statusLbl.Text = "Select a FVariable to continue.";
+            statusLbl.Text = "Select an FVariable to continue.";
 
             foreach (string fvarName in fvarRegistry.GetSubKeyNames())
             {
@@ -135,22 +137,51 @@ namespace RobloxStudioModManager
 
         private async void FVariableEditor_Load(object sender, EventArgs e)
         {
+            string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
+            string exePath = Path.Combine(localAppData, "Roblox Studio", "RobloxStudioBeta.exe");
+            string installedDatabase = Program.ModManagerRegistry.GetValue("BuildDatabase") as string;
+
+            bool installFirst = true;
+
+            if (!File.Exists(exePath))
+            {
+                MessageBox.Show("Roblox Studio will be installed prior to editing so that FVariable scans can be done.", "Notice", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (database != installedDatabase)
+            {
+                DialogResult result = MessageBox.Show("The branch you have selected hasn't been installed, and thus FVariable scans will not be representative of this branch.\nWould you like to install it now?", "Notice", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (result == DialogResult.No)
+                    installFirst = false;
+            }
+            else
+            {
+                installFirst = false;
+            }
+
+            if (installFirst)
+            {
+                fvarsLoaded = false;
+                using (RobloxInstaller installer = new RobloxInstaller(!File.Exists(exePath)))
+                {
+                    Enabled = false;
+                    SendToBack();
+                    await installer.RunInstaller(database,true);
+                    Enabled = true;
+                    BringToFront();
+                }
+            }
+
             if (!fvarsLoaded)
             {
+                if (!File.Exists(exePath))
+                {
+                    error("Could not find Roblox Studio's exe, did you close the installer before it finished?", true);
+                    return;
+                }
+
                 try
                 {
                     Enabled = false;
-
-                    await setStatus("Fetching current Roblox Studio build, this might take a moment...");
-
-                    WebClient http = new WebClient();
-                    http.Headers.Set(HttpRequestHeader.UserAgent, "Roblox");
-
-                    string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
-                    string exePath = Path.Combine(localAppData, "Roblox Studio", "RobloxStudioBeta.exe");
-                    if (!File.Exists(exePath))
-                        throw new Exception("Roblox Studio hasn't been installed from the mod manager yet, so we can't scan for FVariables.");
-
                     fvars = new List<string>();
 
                     foreach (string fvar in fvarRegistry.GetSubKeyNames())
@@ -163,20 +194,11 @@ namespace RobloxStudioModManager
                         }
                     }
 
-                    using (FileStream studioStream = File.OpenRead(exePath))
+                    RegistryKey fvarScan = Program.ModManagerRegistry.CreateSubKey("SavedFVariableScan");
+                    foreach (string fvar in fvarScan.GetValueNames())
                     {
-                        using (StreamReader reader = new StreamReader(studioStream))
-                        {
-                            string studio = reader.ReadToEnd();
-                            await setStatus("Fetching Available FVariables...");
-                            MatchCollection matches = Regex.Matches(studio, "PlaceFilter_[a-zA-Z0-9_]+");
-                            foreach (Match match in matches)
-                            {
-                                string placeFilterFlag = match.Groups[0].ToString();
-                                string fvar = placeFilterFlag.Replace("PlaceFilter_", "");
-                                fvars.Add(fvar);
-                            }
-                        }
+                        if (!fvars.Contains(fvar))
+                            fvars.Add(fvar);
                     }
 
                     string fvarProtocol = Program.ModManagerRegistry.GetValue("FVariable Protocol Version", "v0") as string;
@@ -441,6 +463,38 @@ namespace RobloxStudioModManager
                 advFVarType.SelectedIndex = -1;
                 advFVarValue.Text = "";
             }
+        }
+
+        private void scanBtn_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("An FVariable scan will run an invisible instance of Roblox Studio that communicates with the program through the HttpService.\n\nThis may take a few moments to scan, but the results will persist between sessions.\n\nDo you want to continue?", "Notice", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                Enabled = false;
+                FVariableScanner fetcher = new FVariableScanner(this);
+                fetcher.Show();
+                fetcher.BringToFront();
+            }
+        }
+
+        private void showSuccessMessage()
+        {
+            MessageBox.Show(this,"Scan completed successfully!", "Done!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        public void receiveFVariableScan(List<string> newFVars)
+        {
+            fvars = newFVars;
+
+            Program.ModManagerRegistry.DeleteSubKey("SavedFVariableScan");
+            RegistryKey fvarScan = Program.ModManagerRegistry.CreateSubKey("SavedFVariableScan");
+            foreach (string fvar in fvars)
+                fvarScan.SetValue(fvar, '\0');
+
+            Invoke(new voidDelegate(Show));
+            Invoke(new voidDelegate(BringToFront));
+            Invoke(new voidDelegate(showSuccessMessage));
+            Invoke(new reassembleListingsDelegate(reassembleListings), null, null);
         }
     }
 }

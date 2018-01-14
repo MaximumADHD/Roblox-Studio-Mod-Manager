@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows.Forms;
 
@@ -12,9 +11,6 @@ namespace RobloxStudioModManager
 {
     static class Program
     {
-        [DllImport("USER32.DLL")]
-        public static extern bool SetForegroundWindow(IntPtr hWnd);
-
         public static RegistryKey ModManagerRegistry = GetSubKey(Registry.CurrentUser, "SOFTWARE", "Roblox Studio Mod Manager");
         private static string _ = ""; // Default key/value used for stuff in UpdateStudioRegistryProtocols.
 

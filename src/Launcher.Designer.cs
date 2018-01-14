@@ -169,6 +169,7 @@
             this.HelpButton = true;
             this.Icon = global::RobloxStudioModManager.Properties.Resources.Icon;
             this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "Launcher";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Load += new System.EventHandler(this.Launcher_Load);

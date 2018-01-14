@@ -49,7 +49,7 @@ namespace RobloxStudioModManager
 
         private void editFVariables_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Editing FVariables can make Roblox Studio unstable.\nYou should only change them if you know what you're doing.\nAre you sure you would like to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult result = MessageBox.Show("Editing FVariables can make Roblox Studio unstable, and could potentially corrupt your places and game data.\n\nYou should not edit them unless you're just experimenting locally, and you know what you're doing.\n\nAre you sure you would like to continue?", "WARNING: HERE BE DRAGONS", MessageBoxButtons.YesNo, MessageBoxIcon.Stop);
             if (result == DialogResult.Yes)
             {
                 string dataBase = (string)dataBaseSelect.SelectedItem;
@@ -181,16 +181,6 @@ namespace RobloxStudioModManager
             else
                 process = Process.Start(robloxStudioInfo);
 
-            try
-            {
-                IntPtr handle = process.MainWindowHandle;
-                Program.SetForegroundWindow(handle);
-            }
-            catch
-            {
-                Console.WriteLine("Can't bring this window to the foreground.");
-            }
-
             Environment.Exit(0);
         }
 
@@ -217,7 +207,7 @@ namespace RobloxStudioModManager
             else if (sender.Equals(manageMods))
                 msg = "Opens your ModFolder directory, which contains all of the files to be overridden in Roblox Studio's client directory.";
             else if (sender.Equals(dataBaseSelect))
-                msg = "Indicates which setup web-domain we should use to download Roblox Studio.\nThe gametest domains are prototype versions of ROBLOX Studio,\nthat are not available on the main site yet.";
+                msg = "Indicates which setup web-domain we should use to download Roblox Studio.\nThe gametest domains are QA testing versions of Roblox Studio that are not available on production yet.";
             else if (sender.Equals(forceRebuild))
                 msg = "Should we forcefully reinstall this version of the client, even if its already installed?\nThis can be used if you are experiencing a problem with launching Roblox Studio.";
             else if (sender.Equals(openStudioDirectory))
