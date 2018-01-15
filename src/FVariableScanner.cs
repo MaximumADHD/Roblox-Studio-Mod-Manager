@@ -165,8 +165,12 @@ namespace RobloxStudioModManager
 
                 string fvarExtractorFile = Path.Combine(dir, "__rbxModManagerFVarExtract.lua");
                 FileInfo info = new FileInfo(fvarExtractorFile);
-                if (info.Exists)
+
+                if (File.Exists(fvarExtractorFile))
+                {
                     info.Attributes = FileAttributes.Normal;
+                    File.Delete(fvarExtractorFile);
+                }
 
                 File.WriteAllText(fvarExtractorFile, fvarExtractor);
                 info.Attributes = FileAttributes.ReadOnly;
@@ -196,7 +200,7 @@ namespace RobloxStudioModManager
                 foreach (Match match in matches)
                 {
                     string word = match.Value;
-                    if (word.Length > 8 && word.Length < 32)
+                    if (word.Length > 8 && word.Length < 60)
                         stringList.Add(word);
                 }
             }
@@ -221,7 +225,7 @@ namespace RobloxStudioModManager
             while (!finished)
             {
                 checkStudioState();
-                checkTimeout(200);
+                checkTimeout(300);
                 progressBar.Value = processed;
                 await Task.Delay(100);
             }

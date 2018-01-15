@@ -63,7 +63,7 @@ for word in strings:gmatch("[^\n]+") do
 	if isFVar and not registeredFvars[word] then
 		registeredFvars[word] = true
 		table.insert(payload,word)
-		if #payload == 50 then
+		if #payload == 80 then
 			pushPayload()
 		end
 	end
