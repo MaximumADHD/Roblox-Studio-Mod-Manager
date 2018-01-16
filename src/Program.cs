@@ -26,51 +26,42 @@ namespace RobloxStudioModManager
         // This sets up the following:
         // 1: The File Protocol to open .rbxl/.rbxlx files using my mod manager.
         // 2: The URI Protcol to open places from the website through my mod manager.
-        // 3: A bunch of other misc(?) things that Roblox might check for.
+
         public static void UpdateStudioRegistryProtocols(string setupDir, string buildName, string robloxStudioBetaPath)
         {
             string modManagerPath = Application.ExecutablePath;
-
-            RegistryKey studioQT = GetSubKey(Registry.CurrentUser, "SOFTWARE", "StudioQTRobloxReg");
-            studioQT.SetValue(_, modManagerPath);
-            studioQT.SetValue("protocol handler scheme", "roblox-studio");
-            studioQT.SetValue("install host", setupDir);
-            studioQT.SetValue("version", buildName);
-
-            RegistryKey versions = GetSubKey(studioQT, "Versions");
-            versions.SetValue("version0", buildName);
 
             // Register the base "Roblox.Place" open protocol.
             RegistryKey classes = GetSubKey(Registry.CurrentUser, "SOFTWARE", "Classes");
             RegistryKey robloxPlace = GetSubKey(classes, "Roblox.Place");
             robloxPlace.SetValue(_, "Roblox Place");
 
-            RegistryKey robloxStudioUrl = GetSubKey(classes, "roblox-studio");
-            robloxStudioUrl.SetValue(_, "URL: Roblox Protocol");
-            robloxStudioUrl.SetValue("URL Protocol", _);
-
-            RegistryKey[] appReg = { robloxPlace, robloxStudioUrl };
-            foreach (RegistryKey app in appReg)
-            {
-                RegistryKey defaultIcon = GetSubKey(app, "DefaultIcon");
-                defaultIcon.SetValue(_, robloxStudioBetaPath + ",0");
-                defaultIcon.Close();
-                RegistryKey command = GetSubKey(app, "shell", "open", "command");
-                command.SetValue(_, "\"" + robloxStudioBetaPath + "\" %1");
-                command.SetValue(_, modManagerPath + " \"%1\"");
-                app.Close();
-            }
+            RegistryKey robloxPlaceCmd = GetSubKey(robloxPlace, "shell", "open", "command");
+            robloxPlaceCmd.SetValue(_, modManagerPath + " -task EditFile -localPlaceFile \"%1\"");
 
             // Pass the .rbxl and .rbxlx file formats to Roblox.Place
-            RegistryKey rbxl = GetSubKey(classes, ".rbxl");
-            RegistryKey rbxlx = GetSubKey(classes, ".rbxlx");
-            RegistryKey[] robloxLevelPass = { rbxl, rbxlx };
-
+            RegistryKey[] robloxLevelPass = { GetSubKey(classes, ".rbxl"), GetSubKey(classes, ".rbxlx") };
             foreach (RegistryKey rbxLevel in robloxLevelPass)
             {
                 rbxLevel.SetValue(_, "Roblox.Place");
                 GetSubKey(rbxLevel, "Roblox.Place", "ShellNew");
                 rbxLevel.Close();
+            }
+
+            // Setup the URI protocol for opening the mod manager through the website.
+            RegistryKey robloxStudioUrl = GetSubKey(classes, "roblox-studio");
+            robloxStudioUrl.SetValue(_, "URL: Roblox Protocol");
+            robloxStudioUrl.SetValue("URL Protocol", _);
+
+            RegistryKey studioUrlCmd = GetSubKey(robloxStudioUrl, "shell", "open", "command");
+            studioUrlCmd.SetValue(_, modManagerPath + " %1");
+
+            // Set the default icon for both protocols.
+            RegistryKey[] appReg = { robloxPlace, robloxStudioUrl };
+            foreach (RegistryKey app in appReg)
+            {
+                RegistryKey defaultIcon = GetSubKey(app, "DefaultIcon");
+                defaultIcon.SetValue(_, modManagerPath + ",0");
             }
         }
 

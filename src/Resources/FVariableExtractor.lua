@@ -49,29 +49,27 @@ local payload = {}
 local function pushPayload()
 	local chunk = table.concat(payload,";")
 	payload = {}
-	queryModManager("SendFVariables",{FVariables = chunk})
+	queryModManager("SendFVariables", {FVariables = chunk})
 end
 
 local function pingProgress()
-	queryModManager("PingProgress",{Count = tostring(at)})
+	queryModManager("PingProgress", {Count = tostring(at)})
 end
 
 for word in strings:gmatch("[^\n]+") do
 	local isFVar,fVar = pcall(function ()
 		return settings():GetFVariable(word)
 	end)
-	if isFVar and not registeredFvars[word] then
+	if isFVar and not registeredFvars[word] and not word:find("PlaceFilter_") then
 		registeredFvars[word] = true
 		table.insert(payload,word)
-		if #payload == 80 then
+		if #payload == 100 then
 			pushPayload()
 		end
 	end
 	at = at + 1
-	if at%100 == 0 then
-		pingProgress()
-	end
 	if at%300 == 0 then
+		pingProgress()
 		wait()
 	end
 end

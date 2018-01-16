@@ -23,7 +23,7 @@ namespace RobloxStudioModManager
         private Process studioProc;
         private bool pingedStudio = false;
 
-        private List<string> stringList;
+        private string[] stringList;
         private List<string> fvars;
         private bool stringListReady = false;
         private int processed = 0;
@@ -68,7 +68,7 @@ namespace RobloxStudioModManager
                             while (!stringListReady)
                                 await Task.Delay(100);
 
-                            string file = string.Join("\n", stringList.ToArray());
+                            string file = string.Join("\n", stringList);
                             Stream outStream = response.OutputStream;
                             byte[] buffer = Encoding.ASCII.GetBytes(file);
                             outStream.Write(buffer, 0, buffer.Length);
@@ -188,21 +188,21 @@ namespace RobloxStudioModManager
             studioProc = Process.Start(studioProcInfo);
 
             // Process the string list we're going to use in the mean time.
-            stringList = new List<string>();
             using (FileStream readStudio = File.OpenRead(studioPath))
             {
                 MatchCollection matches;
                 using (StreamReader reader = new StreamReader(readStudio))
                 {
+                    await setStatus("Reading Roblox Studio's Data...");
                     string studio = reader.ReadToEnd();
-                    matches = Regex.Matches(studio, "[A-Z][a-z][A-z]+");
+                    await setStatus("Scanning for strings...");
+                    matches = Regex.Matches(studio, "([A-Z][a-z][A-z]{8,60})+");
                 }
-                foreach (Match match in matches)
-                {
-                    string word = match.Value;
-                    if (word.Length > 8 && word.Length < 60)
-                        stringList.Add(word);
-                }
+
+                await setStatus("Collecting strings...");
+                stringList = new string[matches.Count];
+                for (int i = 0; i < matches.Count; i++)
+                    stringList[i] = matches[i].Value;
             }
 
             fvars = new List<string>();
@@ -213,19 +213,19 @@ namespace RobloxStudioModManager
             while (!pingedStudio)
             {
                 checkStudioState();
-                checkTimeout(100);
+                checkTimeout(300);
                 await Task.Delay(100);
             }
 
             await setStatus("Collecting FVariables...");
             progressBar.Style = ProgressBarStyle.Blocks;
-            progressBar.Maximum = stringList.Count;
+            progressBar.Maximum = stringList.Length;
             timeout = 0;
 
             while (!finished)
             {
                 checkStudioState();
-                checkTimeout(300);
+                checkTimeout(600);
                 progressBar.Value = processed;
                 await Task.Delay(100);
             }

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Web;
 using System.Windows.Forms;
 
 namespace RobloxStudioModManager
@@ -162,7 +164,10 @@ namespace RobloxStudioModManager
                                 string val = keyVal[1];
                                 if (key == "script")
                                 {
-                                    robloxStudioInfo.Arguments = "-script " + WebUtility.UrlDecode(val);
+                                   
+                                    Uri scriptQuery = new Uri(WebUtility.UrlDecode(val));
+                                    NameValueCollection query = HttpUtility.ParseQueryString(scriptQuery.Query);
+                                    robloxStudioInfo.Arguments = "-task EditPlace -placeId " + query["placeId"];
                                     break;
                                 }
                             }
@@ -228,8 +233,12 @@ namespace RobloxStudioModManager
 
             InitializeComponent();
 
-            if (mainArgs.Length == 1 && mainArgs[0].StartsWith("roblox-studio")) // If we were launched from a URI, don't show the directory-only option.
+            if (mainArgs.Length > 0)
+            {
+                MessageBox.Show(string.Join(" ", mainArgs));
                 openStudioDirectory.Visible = false;
+            }
+                
         }
     }
 }
