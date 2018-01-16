@@ -229,16 +229,12 @@ namespace RobloxStudioModManager
         public Launcher(params string[] mainArgs)
         {
             if (mainArgs.Length > 0)
-                args = mainArgs;
-
-            InitializeComponent();
-
-            if (mainArgs.Length > 0)
             {
-                MessageBox.Show(string.Join(" ", mainArgs));
+                args = mainArgs;
                 openStudioDirectory.Visible = false;
             }
-                
+
+            InitializeComponent();
         }
     }
 }
