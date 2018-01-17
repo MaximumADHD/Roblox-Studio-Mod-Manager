@@ -196,7 +196,7 @@ namespace RobloxStudioModManager
                     await setStatus("Reading Roblox Studio's Data...");
                     string studio = reader.ReadToEnd();
                     await setStatus("Scanning for strings...");
-                    matches = Regex.Matches(studio, "([A-Z][a-z][A-z0-9]{8,60})+");
+                    matches = Regex.Matches(studio, "([A-Z][A-z][A-z0-9]{8,60})+");
                 }
 
                 await setStatus("Collecting strings...");
