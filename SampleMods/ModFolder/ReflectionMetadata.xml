@@ -1196,8 +1196,10 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">LocalizationTable</string>
-				<string name="ExplorerImageIndex">3</string>
-				<string name="ExplorerOrder">0</string>
+				<string name="ExplorerOrder">3</string>
+				<string name="ExplorerImageIndex">97</string>
+				<string name="ClassCategory">Localization</string>
+				<string name="summary">A database of strings used in the game and their translations.</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1283,6 +1285,35 @@
 					</Properties>
 				</Item>
 			</Item>
+			<Item class="ReflectionMetadataMember">
+				<Properties>
+					<string name="Name">ZOffset</string>
+					<double name="UIMinimum">-1</double>
+					<double name="UIMaximum">1</double>
+				</Properties>
+			</Item>
+			<Item class="ReflectionMetadataMember">
+				<Properties>
+					<string name="Name">Lifetime</string>
+					<double name="UIMinimum">0</double>
+					<double name="UIMaximum">20</double>
+				</Properties>
+			</Item>
+			<Item class="ReflectionMetadataMember">
+				<Properties>
+					<string name="Name">TextureLength</string>
+					<double name="UIMinimum">0</double>
+					<double name="UIMaximum">5</double>
+					<double name="UINumTicks">40</double>
+				</Properties>
+			</Item>
+			<Item class="ReflectionMetadataMember">
+				<Properties>
+					<string name="Name">MinLength</string>
+					<double name="UIMinimum">0</double>
+					<double name="UIMaximum">1</double>
+				</Properties>
+			</Item>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
@@ -1297,6 +1328,42 @@
 					<Properties>
 						<string name="Name">LightEmission</string>
 						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">TextureSpeed</string>
+						<double name="UIMinimum">-1</double>
+						<double name="UIMaximum">1</double>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">TextureLength</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">5</double>
+						<double name="UINumTicks">40</double>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">CurveSize0</string>
+						<double name="UIMinimum">-10</double>
+						<double name="UIMaximum">10</double>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">CurveSize1</string>
+						<double name="UIMinimum">-10</double>
+						<double name="UIMaximum">10</double>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">ZOffset</string>
+						<double name="UIMinimum">-1</double>
 						<double name="UIMaximum">1</double>
 					</Properties>
 				</Item>
@@ -2770,6 +2837,13 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">PluginGuiService</string>
+				<string name="ExplorerOrder">99</string>
+				<string name="ExplorerImageIndex">27</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">ContextActionService</string>
 				<string name="summary">A service used to bind input to various lua functions.</string>
 			</Properties>
@@ -3498,6 +3572,12 @@
 					<Properties>
 						<string name="Name">Parent</string>
 						<string name="summary">The Instance that is directly above this Instance in the tree.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">RobloxLocked</string>
+						<bool name="EditingDisabled">true</bool>
 					</Properties>
 				</Item>
 			</Item>
@@ -5156,6 +5236,7 @@
 				<string name="ExplorerImageIndex">47</string>
 			</Properties>
 		</Item>
+
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">LayerCollector</string>
@@ -5865,6 +5946,69 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">SelectionBox</string>
+				<string name="ClassCategory">Adornments</string>
+				<string name="summary">A 3D GUI object to represent the visible selection around an object</string>
+				<string name="ExplorerOrder">21</string>
+				<string name="ExplorerImageIndex">54</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">BoxHandleAdornment</string>
+				<string name="ClassCategory">Adornments</string>
+				<string name="summary">A 3D GUI object to represent the visible selection around an object</string>
+				<string name="ExplorerOrder">21</string>
+				<string name="ExplorerImageIndex">54</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ConeHandleAdornment</string>
+				<string name="ClassCategory">Adornments</string>
+				<string name="summary">A 3D GUI object to represent the visible selection around an object</string>
+				<string name="ExplorerOrder">21</string>
+				<string name="ExplorerImageIndex">54</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">CylinderHandleAdornment</string>
+				<string name="ClassCategory">Adornments</string>
+				<string name="summary">A 3D GUI object to represent the visible selection around an object</string>
+				<string name="ExplorerOrder">21</string>
+				<string name="ExplorerImageIndex">54</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ImageHandleAdornment</string>
+				<string name="ClassCategory">Adornments</string>
+				<string name="summary">A 3D GUI object to represent the visible selection around an object</string>
+				<string name="ExplorerOrder">21</string>
+				<string name="ExplorerImageIndex">54</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ImageHandleAdornment</string>
+				<string name="ClassCategory">Adornments</string>
+				<string name="summary">A 3D GUI object to represent the visible selection around an object</string>
+				<string name="ExplorerOrder">21</string>
+				<string name="ExplorerImageIndex">54</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">LineHandleAdornment</string>
+				<string name="ClassCategory">Adornments</string>
+				<string name="summary">A 3D GUI object to represent the visible selection around an object</string>
+				<string name="ExplorerOrder">21</string>
+				<string name="ExplorerImageIndex">54</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">SphereHandleAdornment</string>
 				<string name="ClassCategory">Adornments</string>
 				<string name="summary">A 3D GUI object to represent the visible selection around an object</string>
 				<string name="ExplorerOrder">21</string>
