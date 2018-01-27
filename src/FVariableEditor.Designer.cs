@@ -57,6 +57,7 @@
             // 
             this.fvarConfig.Dock = System.Windows.Forms.DockStyle.Fill;
             this.fvarConfig.FormattingEnabled = true;
+            this.fvarConfig.HorizontalScrollbar = true;
             this.fvarConfig.Location = new System.Drawing.Point(3, 3);
             this.fvarConfig.Name = "fvarConfig";
             this.fvarConfig.Size = new System.Drawing.Size(170, 207);
@@ -67,6 +68,7 @@
             // availableFVariables
             // 
             this.availableFVariables.FormattingEnabled = true;
+            this.availableFVariables.HorizontalScrollbar = true;
             this.availableFVariables.Location = new System.Drawing.Point(12, 52);
             this.availableFVariables.Name = "availableFVariables";
             this.availableFVariables.Size = new System.Drawing.Size(184, 212);

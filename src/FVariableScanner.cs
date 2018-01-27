@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RobloxStudioModManager
@@ -29,20 +30,25 @@ namespace RobloxStudioModManager
         private int processed = 0;
         private bool finished = false;
 
-        private string errorState = "Scan failed!";
         private int timeout = 0;
+
+        // The goal of these lists is to provide a tighter filter for the strings we use in the FVariable scan.
+        private static List<string> GARBAGE_BEG = new List<string>() { "AM_", "CLSID_", "ABV", "ABCDEF", "AU", "MEDIA", "ReachActor", "IID_", "FORMAT_" };    // Skip if found at the beginning
+        private static List<string> GARBAGE_ANY = new List<string>() { "AV", "PAV", "CLSID_", "ABV", "AU", "XV", "GL_" };                                     // Skip if found anywhere (dangerous)
+        private static List<string> GARBAGE_END = new List<string>() { "ARB", "EXT", "PROP", "NV", "SGIX", "APPLE" };                                         // Skip if found at the end
+
+        private void error(string errorMsg)
+        {
+            MessageBox.Show(editor, errorMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Close();
+        }
 
         private void checkTimeout(int threshold)
         {
             if (timeout > threshold)
-            {
-                errorState = "Roblox Studio timed out!";
-                Close();
-            }
+                error("Roblox Studio timed out!");
             else
-            {
                 timeout++;
-            }
         }
 
         private async void runServerSession()
@@ -112,15 +118,9 @@ namespace RobloxStudioModManager
             if (studioProc != null)
             {
                 if (studioProc.HasExited)
-                {
-                    errorState = "Roblox Studio was closed prematurely!";
-                    Close();
-                }
-                else
-                {
-                    // Hide the window
+                    error("Roblox Studio exited prematurely!");
+                else // Hide the window
                     ShowWindowAsync(studioProc.MainWindowHandle, 0);
-                }
             }
         }
 
@@ -134,15 +134,15 @@ namespace RobloxStudioModManager
 
         private async void FVariableScanner_Load(object sender, EventArgs e)
         {
-            await setStatus("Initializing listener");
+            await setStatus("Initializing listener...");
             server = new HttpListener();
             server.Prefixes.Add("http://localhost:20326/");
             server.Start();
 
-            await setStatus("Initializing listener thread");
+            await setStatus("Initializing listener thread...");
             Task serverThread = Task.Run(() => runServerSession());
 
-            await setStatus("Initializing plugin");
+            await setStatus("Initializing plugin...");
 
             string appData = Environment.GetEnvironmentVariable("LocalAppData");
             string studioRoot = Path.Combine(appData, "Roblox Studio");
@@ -177,7 +177,7 @@ namespace RobloxStudioModManager
             }
             catch
             {
-                Close();
+                error("Failed to initialize plugin!");
             }
 
             await setStatus("Starting Roblox Studio...");
@@ -196,19 +196,25 @@ namespace RobloxStudioModManager
                     await setStatus("Reading Roblox Studio's Data...");
                     string studio = reader.ReadToEnd();
                     await setStatus("Scanning for strings...");
-                    matches = Regex.Matches(studio, "([A-Z][A-z][A-z0-9]{8,60})+");
+                    matches = Regex.Matches(studio, "([A-Z][A-Za-z][A-Za-z_0-9]{8,60})+[A-Za-z0-9]?");
                 }
 
-                await setStatus("Collecting strings...");
-                stringList = new string[matches.Count];
-                for (int i = 0; i < matches.Count; i++)
-                    stringList[i] = matches[i].Value;
+                await setStatus("Filtering strings...");
+                stringList = matches.Cast<Match>()
+                    .Select(match => match.Value)
+                    .Distinct()
+                    .Where(value => !(
+                        value.All(c => char.IsUpper(c) || char.IsDigit(c) || c == '_') ||
+                        GARBAGE_ANY.Any(s => value.Contains(s)) ||
+                        GARBAGE_BEG.Any(s => value.StartsWith(s)) ||
+                        GARBAGE_END.Any(s => value.EndsWith(s))
+                     ))
+                    .ToArray();
             }
 
             fvars = new List<string>();
             stringListReady = true;
             await setStatus("Waiting for Roblox Studio...");
-            
 
             while (!pingedStudio)
             {
@@ -243,18 +249,18 @@ namespace RobloxStudioModManager
             catch { }
             if (studioProc != null && !studioProc.HasExited)
                 studioProc.Kill();
+
+            finished = true;
         }
 
         private void FVariableScanner_FormClosed(object sender, FormClosedEventArgs e)
         {
             stopScan();
+            
             if (!editor.Enabled)
             {
                 editor.Enabled = true;
                 editor.BringToFront();
-
-                if (!finished)
-                    MessageBox.Show(editor, errorState, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         
