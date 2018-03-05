@@ -30,6 +30,8 @@ do
 	end
 end
 
+wait(1)
+
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 local HttpService = game:GetService("HttpService")
@@ -41,7 +43,13 @@ local function queryModManager(request,query)
 	return HttpService:GetAsync(ModManager,true,header)
 end
 
-local strings = queryModManager("GetStringList")
+local strings do
+	local success = false
+	while not success do
+		success, strings = pcall(queryModManager,"GetStringList")
+	end
+end
+
 local at = 0
 local registeredFvars = {}
 local payload = {}

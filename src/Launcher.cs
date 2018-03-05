@@ -151,32 +151,33 @@ namespace RobloxStudioModManager
             if (args != null)
             {
                 string firstArg = args[0];
-                if (firstArg != null)
+                if (firstArg != null && firstArg.StartsWith("roblox-studio"))
                 {
-                    if (firstArg.StartsWith("roblox-studio"))
+                    foreach (string commandPair in firstArg.Split('+'))
                     {
-                        foreach (string commandPair in firstArg.Split('+'))
+                        if (commandPair.Contains(':'))
                         {
-                            if (commandPair.Contains(':'))
+                            string[] keyVal = commandPair.Split(':');
+                            string key = keyVal[0];
+                            string val = keyVal[1];
+                            if (key == "script")
                             {
-                                string[] keyVal = commandPair.Split(':');
-                                string key = keyVal[0];
-                                string val = keyVal[1];
-                                if (key == "script")
-                                {
-                                   
-                                    Uri scriptQuery = new Uri(WebUtility.UrlDecode(val));
-                                    NameValueCollection query = HttpUtility.ParseQueryString(scriptQuery.Query);
-                                    robloxStudioInfo.Arguments = "-task EditPlace -placeId " + query["placeId"];
-                                    break;
-                                }
+                                Uri scriptQuery = new Uri(WebUtility.UrlDecode(val));
+                                NameValueCollection query = HttpUtility.ParseQueryString(scriptQuery.Query);
+                                robloxStudioInfo.Arguments = "-task EditPlace -placeId " + query["placeId"];
+                                break;
+                            }
+                            else if (key == "pluginid")
+                            {
+                                robloxStudioInfo.Arguments = "-task InstallPlugin -pluginId " + val;
+                                break;
                             }
                         }
                     }
-                    else
-                    {
-                        robloxStudioInfo.Arguments = string.Join(" ", args);
-                    }
+                }
+                else
+                {
+                    robloxStudioInfo.Arguments = string.Join(" ", args);
                 }
             }
 
@@ -201,6 +202,9 @@ namespace RobloxStudioModManager
             {
                 dataBaseSelect.SelectedIndex = 0;
             }
+
+            if (args != null)
+                openStudioDirectory.Enabled = false;
         }
 
         private void onHelpRequested(object sender, HelpEventArgs e)
@@ -229,10 +233,7 @@ namespace RobloxStudioModManager
         public Launcher(params string[] mainArgs)
         {
             if (mainArgs.Length > 0)
-            {
                 args = mainArgs;
-                openStudioDirectory.Visible = false;
-            }
 
             InitializeComponent();
         }

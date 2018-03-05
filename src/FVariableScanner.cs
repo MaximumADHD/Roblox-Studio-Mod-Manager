@@ -31,6 +31,7 @@ namespace RobloxStudioModManager
         private bool finished = false;
 
         private int timeout = 0;
+        private int windowState = 5;
 
         // The goal of these lists is to provide a tighter filter for the strings we use in the FVariable scan.
         private static List<string> GARBAGE_BEG = new List<string>() { "AM_", "CLSID_", "ABV", "ABCDEF", "AU", "MEDIA", "ReachActor", "IID_", "FORMAT_" };    // Skip if found at the beginning
@@ -40,6 +41,9 @@ namespace RobloxStudioModManager
         private void error(string errorMsg)
         {
             MessageBox.Show(editor, errorMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (studioProc != null)
+                studioProc = null;
+
             Close();
         }
 
@@ -66,6 +70,7 @@ namespace RobloxStudioModManager
 
                     HttpListenerResponse response = context.Response;
                     string query = request.Headers.Get("Query");
+                    Console.WriteLine("Received Query {0}",query);
                     if (query != null)
                     {
                         if (query == "GetStringList")
@@ -78,10 +83,11 @@ namespace RobloxStudioModManager
                             Stream outStream = response.OutputStream;
                             byte[] buffer = Encoding.ASCII.GetBytes(file);
                             outStream.Write(buffer, 0, buffer.Length);
-                            response.StatusCode = 200;
+                            windowState = 5;
                         }
                         else if (query == "PingProgress")
                         {
+                            windowState = 0;
                             string s_processed = request.Headers.Get("Count");
                             if (s_processed != null)
                                 int.TryParse(s_processed, out processed);
@@ -119,8 +125,8 @@ namespace RobloxStudioModManager
             {
                 if (studioProc.HasExited)
                     error("Roblox Studio exited prematurely!");
-                else // Hide the window
-                    ShowWindowAsync(studioProc.MainWindowHandle, 0);
+                else
+                    ShowWindowAsync(studioProc.MainWindowHandle, windowState);
             }
         }
 
