@@ -24,7 +24,7 @@
 			<addaction name="fileSaveAsAction" />
 			<addaction name="publishToRobloxAction" />
 			<addaction name="publishToRobloxAsAction" />
-			<addaction fflag="GameExplorerPublishEnabled" name="publishGameAction" />
+			<addaction name="publishGameAction" />
 			<addseparator />
 			<addaction name="publishSelectionToRobloxAction" />
 			<addseparator />
@@ -96,21 +96,21 @@
 					<addaction name="createRopeConstraintAction" style="icononly" iscommonslot="true" text="Rope" tooltip="Create rope constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/rope-32x32.png" width="16" height="16" />
 					<addaction name="createRodConstraintAction" style="icononly" iscommonslot="true" text="Rod" tooltip="Create rod constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/rod-32x32.png" width="16" height="16" />
 					<addaction name="createSpringConstraintAction" style="icononly" iscommonslot="true" text="Spring" tooltip="Create spring constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/spring-32x32.png" width="16" height="16" />
-					<addaction fflag="EnableWeldConstraint2" name="createWeldConstraintAction" style="textundericon" iscommonslot="true" text="Weld" tooltip="Create weld constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/weld-32x32.png" width="32" height="32" />
+					<addaction name="createWeldConstraintAction" style="textundericon" iscommonslot="true" text="Weld" tooltip="Create weld constraint" icon=":/RibbonBar/images/RibbonIcons/Physics/weld-32x32.png" width="32" height="32" />
 					<addseparator visible="true"/>
-					<addaction name="createAlignOrientationAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Align Orientation" tooltip="Create align orientation" icon=":/RibbonBar/images/RibbonIcons/Physics/align-orientation-32x32.png" width="32" height="32" />
-					<addaction name="createAlignPositionAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Align Position" tooltip="Create align position" icon=":/RibbonBar/images/RibbonIcons/Physics/align-position-32x32.png" width="32" height="32" />
-					<addaction name="createVectorForceAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Vector Force" tooltip="Create vector force" icon=":/RibbonBar/images/RibbonIcons/Physics/force-32x32.png" width="32" height="32" />
-					<addaction name="createLineForceAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Line Force" tooltip="Create line force" icon=":/RibbonBar/images/RibbonIcons/Physics/line-force-32x32.png" width="32" height="32" />
-					<addaction name="createTorqueAction" fflag="AttachmentBasedMoversEnabled" style="textundericon" iscommonslot="true" text="Torque" tooltip="Create torque" icon=":/RibbonBar/images/RibbonIcons/Physics/torque-32x32.png" width="32" height="32" />
-					<addseparator visible="true" fflag="AttachmentBasedMoversEnabled" />
+					<addaction name="createAlignOrientationAction" style="textundericon" iscommonslot="true" text="Align Orientation" tooltip="Create align orientation" icon=":/RibbonBar/images/RibbonIcons/Physics/align-orientation-32x32.png" width="32" height="32" />
+					<addaction name="createAlignPositionAction" style="textundericon" iscommonslot="true" text="Align Position" tooltip="Create align position" icon=":/RibbonBar/images/RibbonIcons/Physics/align-position-32x32.png" width="32" height="32" />
+					<addaction name="createVectorForceAction" style="textundericon" iscommonslot="true" text="Vector Force" tooltip="Create vector force" icon=":/RibbonBar/images/RibbonIcons/Physics/force-32x32.png" width="32" height="32" />
+					<addaction name="createLineForceAction" style="textundericon" iscommonslot="true" text="Line Force" tooltip="Create line force" icon=":/RibbonBar/images/RibbonIcons/Physics/line-force-32x32.png" width="32" height="32" />
+					<addaction name="createTorqueAction" style="textundericon" iscommonslot="true" text="Torque" tooltip="Create torque" icon=":/RibbonBar/images/RibbonIcons/Physics/torque-32x32.png" width="32" height="32" />
+					<addseparator visible="true"/>
 					<addaction name="createAttachmentAction" style="icononly" iscommonslot="true" text="Attachment" tooltip="Insert attachment" icon=":/RibbonBar/images/RibbonIcons/Physics/attachment-32x32.png" width="16" height="16" />
 				</MenuPopupButton>
 				<addseparator/>
-				<addseparator visible="false" fflag="StudioCustomDragIncrements" />
 				<addseparator visible="false"/>
-				<addspinbox type="spinbox" fflag="StudioCustomDragIncrements" keyboardTracking="true" tooltip="The grid that rotate tools will snap to" name="setRotateIncrementAction" decimals="3" text="" minimum="0" maximum="180" minumumWidth="100" step="5" suffix=" *" />
-				<addspinbox type="spinbox" fflag="StudioCustomDragIncrements" keyboardTracking="true" tooltip="The grid move and resize tools will snap to" name="setDragGridIncrementAction" decimals="2" text="" minimum="0" maximum="1024" minumumWidth="100" step="0.2" suffix=" studs" />
+				<addseparator visible="false"/>
+				<addspinbox type="spinbox" keyboardTracking="true" tooltip="The grid that rotate tools will snap to" name="setRotateIncrementAction" decimals="3" text="" minimum="0" maximum="180" minumumWidth="100" step="5" suffix=" *" />
+				<addspinbox type="spinbox" keyboardTracking="true" tooltip="The grid move and resize tools will snap to" name="setDragGridIncrementAction" decimals="2" text="" minimum="0" maximum="1024" minumumWidth="100" step="0.2" suffix=" studs" />
 				<addseparator visible="false"/>
 			</Group>
 			<Group name="Edit">
@@ -159,26 +159,16 @@
 					<addaction name="motorRightAction" style="icononly" text="Motor" tooltip="Attach a motor to a part" icon=":/RibbonBar/images/RibbonIcons/Home/Motor.png" width="16" height="16" />
 				</MenuPopupButton>
 			</Group>
-			<Group name="UI" fflag="UserUIEditorEnabled" controlsCentering="true">
+			<Group name="UI" controlsCentering="true">
 				<addaction name="RobloxUIEditor" instancename="UIEditor" style="textundericon" text="UI Editor" tooltip="UI Editor v1.0" type="plugin" icon=":/RibbonBar/images/RibbonIcons/Home/UIEditor.png" width="32" height="32" />
 			</Group>
 			<Group name="Terrain" controlsCentering="true">
-				<addaction name="Generate" instancename="Generate" text="Generate" style="icononly" tooltip="Generate landscapes of terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/generate.png" width="32" height="32" />
-				<addaction name="Add" instancename="Add" text="Add" style="icononly" tooltip="Click and hold to add terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/add.png" width="32" height="32" />
-				<addseparator visible="false" />
-				<addaction name="Subtract" instancename="Subtract" text="Subtract" style="icononly" tooltip="Click and hold to remove terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/subtract.png" width="32" height="32" />
-				<addaction name="Paint" instancename="Paint" text="Paint" style="icononly" tooltip="Paint the material of the terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/paint.png" width="32" height="32" />
-				<addseparator visible="false" />
-				<addaction name="Grow" instancename="Grow" text="Grow" style="icononly" tooltip="Click and hold to grow and expand terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/grow.png" width="32" height="32" />
-				<addaction name="Erode" instancename="Erode" text="Erode" style="icononly" tooltip="Click and hold to erode and remove terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/erode.png" width="32" height="32" />
-				<addseparator visible="false" />
-				<addaction name="Smooth" instancename="Smooth" text="Smooth" style="icononly" tooltip="Brush to smooth out rough or jagged terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/smooth.png" width="32" height="32" />
-				<addaction name="Regions" instancename="Regions" text="Regions" style="icononly" tooltip="Manipulate regions of smooth terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/regions.png" width="32" height="32" />
+				<addaction name="toggleTerrainToolsDockAliasAction" style="icononly" icon=":/images/RibbonIcons/Terrain/icon_terrain_big.png" height="32" width="32"/>
 			</Group>
 			<Group name="Testing" controlsCentering="true">
 				<MenuPopupButton name="playGameActionGroup" style="textundericon" popupStyle="menubutton" text="Play" tooltip="Play the game inside the window" icon=":/RibbonBar/images/RibbonIcons/Test/Run.png" value="simulationPlayAction" width="32" height="32">
 					<addaction text="Play" name="simulationPlayAction" style="icononly" value="simulationPlayAction" icon=":/RibbonBar/images/RibbonIcons/Test/Play-Solo.png" width="32" height="32" />
-					<addaction text="Play Here" fflag="StudioPlaySoloFromCameraEnabled" name="simulationPlayFromCameraAction" style="icononly" value="simulationPlayFromCameraAction" icon=":/RibbonBar/images/RibbonIcons/Test/Play-Solo-Camera.png" width="32" height="32" />
+					<addaction text="Play Here" name="simulationPlayFromCameraAction" style="icononly" value="simulationPlayFromCameraAction" icon=":/RibbonBar/images/RibbonIcons/Test/Play-Solo-Camera.png" width="32" height="32" />
 				</MenuPopupButton>
 				<addseperator visible="false" />
 				<addaction text="Run" style="textbesideicon" name="simulationRunAction" value="simulationRunAction" icon=":/RibbonBar/images/RibbonIcons/Test/Run.png" width="16" height="16" />
@@ -192,7 +182,7 @@
 				<addaction name="startServerAndPlayersAction" text="Start" style="textbesideicon" iscommonslot="true" tooltip="Start server and players" icon=":/RibbonBar/images/RibbonIcons/Test/Start-Server.png" width="16" height="16" />
 				<addaction name="cleanupServersAndPlayersAction" text = "Clear" style="textbesideicon" icon=":/RibbonBar/images/Studio 2.0 icons/32x32/delete_x_32.png" width="16" height="16" />
 				<addseparator visible="false" />
-				<addcombobox fflag="StudioTeamTestEnabled" name="serverMode">
+				<addcombobox name="serverMode">
 					<comboboxitem text="None" value="0" />
 					<comboboxitem text="Local Server" value="1" defaultvalue="true" />
 				</addcombobox>
@@ -210,18 +200,20 @@
 				<addseparator visible="false" />
 			</Group>
 		</TabPage>
-		<TabPage name="Terrain" visible="false">
-			<Group name="Terrain">
-				<addaction name="Generate" instancename="Generate" text="Generate" style="textundericon" tooltip="Generate landscapes of terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/generate.png" width="32" height="32" />
-				<addaction name="Add" instancename="Add" text="Add" style="textundericon" tooltip="Click and hold to add terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/add.png" width="32" height="32" />
-				<addaction name="Subtract" instancename="Subtract" text="Subtract" style="textundericon" tooltip="Click and hold to remove terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/subtract.png" width="32" height="32" />
-				<addaction name="Paint" instancename="Paint" text="Paint" style="textundericon" tooltip="Paint the material of the terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/paint.png" width="32" height="32" />
-				<addaction name="Grow" instancename="Grow" text="Grow" style="textundericon" tooltip="Click and hold to grow and expand terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/grow.png" width="32" height="32" />
-				<addaction name="Erode" instancename="Erode" text="Erode" style="textundericon" tooltip="Click and hold to erode and remove terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/erode.png" width="32" height="32" />
-				<addaction name="Smooth" instancename="Smooth" text="Smooth" style="textundericon" tooltip="Brush to smooth out rough or jagged terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/smooth.png" width="32" height="32" />
-				<addaction name="Regions" instancename="Regions" text="Regions" style="textundericon" tooltip="Manipulate regions of smooth terrain." type="plugin" icon=":/RibbonBar/images/RibbonIcons/Terrain/SmoothTerrain/regions.png" width="32" height="32" />
+		<TabPage name="UI" fflag="StudioUIEditorV2Alpha">
+			<Group name="">
+				<addaction name="createScreenGuiAction" text="ScreenGUI" style="textundericon" iscommonslot="true" tooltip="The core GUI object on which tools are built.  Add Frames/Labels/Buttons to this object to have them rendered as a 2D overlay" type="plugin"  icon=":/RibbonBar/images/RibbonIcons/UI/icon_screenGUI.png" width="32" height="32"/>
 			</Group>
-		</TabPage>
+			<Group name=" ">
+				<addaction name="createFrameAction" text="Frame" style="textundericon" iscommonslot="true" tooltip="A container object used to layout other GUI objects" type="plugin"  icon=":/RibbonBar/images/RibbonIcons/UI/icon_frame.png" width="32" height="32"/>
+				<addaction name="createScrollingFrameAction" text="Scrolling Frame" style="textundericon" iscommonslot="true" tooltip="A container object used to layout other GUI objects, and allows for scrolling" type="plugin"  icon=":/RibbonBar/images/RibbonIcons/UI/icon_scrollingFrame.png" width="32" height="32"/>
+				<addaction name="createTextLabelAction" text="Text Label" style="textundericon" iscommonslot="true" tooltip="A GUI object containing text" type="plugin" icon=":/RibbonBar/images/RibbonIcons/UI/icon_textLabel.png" width="32" height="32"/>
+				<addaction name="createTextButtonAction" text="Text Button" style="textundericon" iscommonslot="true" tooltip="A GUI button containing text" type="plugin" icon=":/RibbonBar/images/RibbonIcons/UI/icon_textButton.png" width="32" height="32"/>
+				<addaction name="createTextBoxAction" text="Text Box" style="textundericon" iscommonslot="true" tooltip="A text entry box" type="plugin" icon=":/RibbonBar/images/RibbonIcons/UI/icon_textBox.png" width="32" height="32"/>
+				<addaction name="createImageButtonAction" text="Image Button" style="textundericon" iscommonslot="true" tooltip="A GUI button containing an Image" type="plugin" icon=":/RibbonBar/images/RibbonIcons/UI/icon_imageButton.png"  width="32" height="32"/>
+				<addaction name="createImageLabelAction" text="Image Label" style="textundericon" iscommonslot="true" tooltip="Specifies the asset id of the texture to display" type="plugin"  icon=":/RibbonBar/images/RibbonIcons/UI/icon_imageLabel.png"  width="32" height="32"/>
+			</Group>
+    </TabPage>
 		<TabPage name="Plugins">
 			<Group name="Tools">
 				<addaction name="managePluginsAction" text="Manage Plugins" style="textundericon" height="32" width="32" tooltip="Manage plugins installed from roblox.com" icon=":/RibbonBar/images/RibbonIcons/AddOns/Manage-Plugins.png" />
@@ -253,13 +245,13 @@
 				<addaction name="simulationStopAction" style="textbesideicon" text="Pause" icon=":/RibbonBar/images/RibbonIcons/Test/Pause.png" width="16" height="16" />
 				<addaction name="simulationResetAction" style="textbesideicon" text="Stop" icon=":/RibbonBar/images/RibbonIcons/Test/Stop.png" width="16" height="16" />
 			</Group>
-			<Group name="Debugger" fflag="LuaDebugger">
+			<Group name="Debugger">
 				<addaction name="stepIntoAction" style="icononly" icon=":/RibbonBar/images/RibbonIcons/Test/Step-In.png" width="16" height="16" />
 				<addaction name="stepOverAction" style="icononly" icon=":/RibbonBar/images/RibbonIcons/Test/Step-Over.png" width="16" height="16" />
 				<addaction name="stepOutAction" style="icononly" icon=":/RibbonBar/images/RibbonIcons/Test/Step-Out.png" width="16" height="16" />
 				<addaction name="addWatchAction" style="icononly" icon=":/RibbonBar/images/RibbonIcons/Test/Add-Watch.png" tooltip="Watch the highlighted variable's value" width="16" height="16" />
 			</Group>
-			<Group fflag="LuaDebuggerBreakOnError" name="Debug Errors">
+			<Group name="Debug Errors">
 				<addaction type="radio" name="neverBreakOnScriptErrorsAction" style="textbesideicon" text="Never" tooltip="Never break errors into debugger" />
 				<addaction type="radio" name="breakOnAllScriptErrorsAction" style="textbesideicon" text="On All Exceptions" tooltip="Break all exceptions into debugger" />
 				<addaction type="radio" name="breakOnUnhandledScriptErrorsAction" style="textbesideicon" text="On Unhandled Exceptions" tooltip="Break unhandled exceptions into debugger" />
