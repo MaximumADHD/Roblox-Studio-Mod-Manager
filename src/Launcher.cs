@@ -27,6 +27,7 @@ namespace RobloxStudioModManager
                     "BuiltInPlugins",
                     "ClientSettings",
                     "content/fonts",
+                    "content/LuaPackages",
                     "content/music",
                     "content/particles",
                     "content/scripts",
