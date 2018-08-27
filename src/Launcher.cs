@@ -63,13 +63,17 @@ namespace RobloxStudioModManager
         private async void launchStudio_Click(object sender = null, EventArgs e = null)
         {
             Hide();
+
             string dataBase = (string)dataBaseSelect.SelectedItem;
             RobloxInstaller installer = new RobloxInstaller();
+
             string studioPath = await installer.RunInstaller(dataBase,forceRebuild.Checked);
             string studioRoot = Directory.GetParent(studioPath).ToString();
             string modPath = getModPath();
+
             string[] studioFiles = Directory.GetFiles(studioRoot);
             string[] modFiles = Directory.GetFiles(modPath,"*.*",SearchOption.AllDirectories);
+
             foreach (string modFile in modFiles)
             {
                 try

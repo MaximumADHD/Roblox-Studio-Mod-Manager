@@ -92,8 +92,7 @@
             "gametest2.robloxlabs",
             "gametest3.robloxlabs",
             "gametest4.robloxlabs",
-            "gametest5.robloxlabs",
-            "future-is-bright"});
+            "gametest5.robloxlabs"});
             this.dataBaseSelect.Location = new System.Drawing.Point(25, 192);
             this.dataBaseSelect.Name = "dataBaseSelect";
             this.dataBaseSelect.Size = new System.Drawing.Size(140, 21);
