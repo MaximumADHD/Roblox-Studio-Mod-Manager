@@ -277,7 +277,8 @@ namespace RobloxStudioModManager
             return filePath;
         }
 
-        private static string unfixFilePath(string pkgName, string filePath)
+        // Reverse of fixFilePath so filePath can be used as a lookup key in the manifest.
+        private static string breakFilePath(string pkgName, string filePath)
         {
             if (pkgName == "Plugins.zip" || pkgName == "Qml.zip")
             {
@@ -413,14 +414,13 @@ namespace RobloxStudioModManager
                     echo("Grabbing file manifest...");
                     RobloxFileManifest fileManifest = await getFileManifest();
 
-                    progressBar.Maximum = 0;
+                    progressBar.Maximum = 1;
                     progressBar.Value = 0;
                     progressBar.Style = ProgressBarStyle.Continuous;
 
                     foreach (RobloxPackageManifest package in pkgManifest)
                     {
                         int size = package.Size;
-                        progressBar.Maximum += size;
 
                         string pkgName = package.Name;
                         string oldSig = pkgRegistry.GetValue(pkgName, "") as string;
@@ -429,9 +429,10 @@ namespace RobloxStudioModManager
                         if (oldSig == newSig && !forceInstall)
                         {
                             echo("Package '" + pkgName + "' hasn't changed between builds, skipping.");
-                            progressBar.Value += size;
                             continue;
                         }
+
+                        progressBar.Maximum += size;
 
                         Task installer = Task.Run( async() =>
                         {
@@ -469,10 +470,9 @@ namespace RobloxStudioModManager
 
                                         if (localRootDir != null)
                                         {
-                                            string filePath = unfixFilePath(pkgName, localRootDir + entry.FullName.Replace('/', '\\'));
+                                            string filePath = breakFilePath(pkgName, localRootDir + entry.FullName.Replace('/', '\\'));
                                             if (fileManifest.FileToSignature.ContainsKey(filePath))
                                                 newFileSig = fileManifest.FileToSignature[filePath];
-
                                         }
 
                                         if (newFileSig == null)
