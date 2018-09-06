@@ -97,7 +97,6 @@
     <Compile Include="FVariableScanner.Designer.cs">
       <DependentUpon>FVariableScanner.cs</DependentUpon>
     </Compile>
-    <Compile Include="GitJson.cs" />
     <Compile Include="FVariableEditor.cs">
       <SubType>Form</SubType>
     </Compile>

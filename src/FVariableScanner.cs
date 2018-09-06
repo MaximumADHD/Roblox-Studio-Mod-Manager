@@ -50,9 +50,15 @@ namespace RobloxStudioModManager
         private void checkTimeout(int threshold)
         {
             if (timeout > threshold)
+            {
                 error("Roblox Studio timed out!");
+                finished = true;
+                pingedStudio = true;
+            }
             else
+            {
                 timeout++;
+            }
         }
 
         private async void runServerSession()
@@ -160,10 +166,8 @@ namespace RobloxStudioModManager
                 string fvarExtractor;
 
                 using (Stream stream = self.GetManifestResourceStream("RobloxStudioModManager.Resources.FVariableExtractor.lua"))
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    fvarExtractor = reader.ReadToEnd();
-                }
+                    using (StreamReader reader = new StreamReader(stream))
+                        fvarExtractor = reader.ReadToEnd();
 
                 string dir = Path.Combine(studioRoot, "BuiltInPlugins");
                 if (!Directory.Exists(dir))
@@ -224,22 +228,28 @@ namespace RobloxStudioModManager
 
             while (!pingedStudio)
             {
+                if (IsDisposed)
+                    break;
+
                 checkStudioState();
                 checkTimeout(300);
                 await Task.Delay(100);
             }
-
-            await setStatus("Collecting FVariables...");
-            progressBar.Style = ProgressBarStyle.Blocks;
-            progressBar.Maximum = stringList.Length;
-            timeout = 0;
-
-            while (!finished)
+            
+            if (!finished)
             {
-                checkStudioState();
-                checkTimeout(600);
-                progressBar.Value = processed;
-                await Task.Delay(100);
+                await setStatus("Collecting FVariables...");
+                progressBar.Style = ProgressBarStyle.Blocks;
+                progressBar.Maximum = stringList.Length;
+                timeout = 0;
+
+                while (!finished)
+                {
+                    checkStudioState();
+                    checkTimeout(600);
+                    progressBar.Value = processed;
+                    await Task.Delay(100);
+                }
             }
 
             Close();

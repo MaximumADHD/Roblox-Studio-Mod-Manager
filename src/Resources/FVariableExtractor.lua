@@ -5,48 +5,38 @@
 -- It will only run while Studio is in a specific uncopylocked place that has the HttpService pre-enabled.
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-local EXTRACTION_PLACE_ID = 1327419651
+local CollectionService = game:GetService("CollectionService")
+local HttpService = game:GetService("HttpService")
 
-do
-	-- To identify for certain that we're actually in this place, wait for Roblox to log that the DataModel is loading this placeId in particular.
-	local LogService = game:GetService("LogService")
-	local inPlace = false
+local BEGIN_EXTRACT_TAG = "FFlagExtract"
 	
-	local function checkLog(message,messageType)
-		if messageType == Enum.MessageType.MessageInfo and message:sub(1,17) == "DataModel Loading" then
-			local placeId = tonumber(message:match("%d+$"))
-			if placeId == EXTRACTION_PLACE_ID then
-				inPlace = true
-			end
-		end
-	end
-	
-	for _,logEntry in pairs(LogService:GetLogHistory()) do
-		checkLog(logEntry.messageType,logEntry.message)
-	end
-	
-	while not inPlace do
-		checkLog(LogService.MessageOut:Wait())
-	end
+local function initialized()
+	return CollectionService:HasTag(HttpService, BEGIN_EXTRACT_TAG)
 end
 
-wait(1)
+if not initialized() then
+	local addedSignal = CollectionService:GetInstanceAddedSignal(BEGIN_EXTRACT_TAG)
+	repeat addedSignal:Wait() until initialized()
+end
+
+-- thx roblox
+HttpService:SetHttpEnabled(true)
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 local HttpService = game:GetService("HttpService")
 local ModManager = "http://localhost:20326/"
 
-local function queryModManager(request,query)
+local function queryModManager(request, query)
 	local header = query or {}
 	header.Query = request
-	return HttpService:GetAsync(ModManager,true,header)
+	return HttpService:GetAsync(ModManager, true, header)
 end
 
 local strings do
 	local success = false
 	while not success do
-		success, strings = pcall(queryModManager,"GetStringList")
+		success, strings = pcall(queryModManager, "GetStringList")
 	end
 end
 
@@ -55,7 +45,7 @@ local registeredFvars = {}
 local payload = {}
 
 local function pushPayload()
-	local chunk = table.concat(payload,";")
+	local chunk = table.concat(payload, ";")
 	payload = {}
 	queryModManager("SendFVariables", {FVariables = chunk})
 end
@@ -70,13 +60,13 @@ for word in strings:gmatch("[^\n]+") do
 	end)
 	if isFVar and not registeredFvars[word] and not word:find("PlaceFilter_") then
 		registeredFvars[word] = true
-		table.insert(payload,word)
+		table.insert(payload, word)
 		if #payload == 100 then
 			pushPayload()
 		end
 	end
 	at = at + 1
-	if at%300 == 0 then
+	if at % 300 == 0 then
 		pingProgress()
 		wait()
 	end
