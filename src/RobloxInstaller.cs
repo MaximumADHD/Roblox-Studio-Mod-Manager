@@ -277,21 +277,6 @@ namespace RobloxStudioModManager
             return filePath;
         }
 
-        // Reverse of fixFilePath so filePath can be used as a lookup key in the manifest.
-        private static string breakFilePath(string pkgName, string filePath)
-        {
-            if (pkgName == "Plugins.zip" || pkgName == "Qml.zip")
-            {
-                string rootPkgDir = pkgName.Replace(".zip", "") + '\\';
-                string rootFileDir = Directory.GetDirectoryRoot(filePath);
-
-                if (filePath.StartsWith(rootPkgDir))
-                    filePath = filePath.Substring(rootPkgDir.Length);
-            }
-
-            return filePath;
-        }
-
         private void writePackageFile(string rootDir, string pkgName, string file, string newFileSig, ZipArchiveEntry entry, bool forceInstall = false)
         {
             string filePath = fixFilePath(pkgName, file);
@@ -470,9 +455,13 @@ namespace RobloxStudioModManager
 
                                         if (localRootDir != null)
                                         {
-                                            string filePath = breakFilePath(pkgName, localRootDir + entry.FullName.Replace('/', '\\'));
+                                            string filePath = entry.FullName.Replace('/', '\\');
+                                            if (!fileManifest.FileToSignature.ContainsKey(filePath))
+                                                filePath = localRootDir + filePath;
+
                                             if (fileManifest.FileToSignature.ContainsKey(filePath))
                                                 newFileSig = fileManifest.FileToSignature[filePath];
+
                                         }
 
                                         if (newFileSig == null)
