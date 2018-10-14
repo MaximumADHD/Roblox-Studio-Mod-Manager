@@ -268,10 +268,10 @@ namespace RobloxStudioModManager
             if (pkgName == "Plugins.zip" || pkgName == "Qml.zip")
             {
                 string rootPkgDir = pkgName.Replace(".zip", "");
-                string rootFileDir = Directory.GetDirectoryRoot(filePath);
 
                 if (!filePath.StartsWith(rootPkgDir))
                     filePath = rootPkgDir + '\\' + filePath;
+
             }
 
             return filePath;
