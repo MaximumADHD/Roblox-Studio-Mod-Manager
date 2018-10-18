@@ -13,13 +13,13 @@ using System.Windows.Forms;
 
 namespace RobloxStudioModManager
 {
-    public partial class FVariableScanner : Form
+    public partial class DEPRECATED_FVariableScanner : Form
     {
         [DllImport("user32.dll")]
         private static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
 
         private HttpListener server;
-        private FVariableEditor editor;
+        private DEPRECATED_FVariableEditor editor;
 
         private Process studioProc;
         private bool pingedStudio = false;
@@ -136,7 +136,7 @@ namespace RobloxStudioModManager
             }
         }
 
-        public FVariableScanner(FVariableEditor _editor)
+        public DEPRECATED_FVariableScanner(DEPRECATED_FVariableEditor _editor)
         {
             Application.ApplicationExit += new EventHandler(FVariableScanner_AppExit);
             editor = _editor;

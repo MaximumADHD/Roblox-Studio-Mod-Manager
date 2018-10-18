@@ -10,7 +10,7 @@ using Microsoft.Win32;
 
 namespace RobloxStudioModManager
 {
-    public partial class FVariableEditor : Form
+    public partial class DEPRECATED_FVariableEditor : Form
     {
         private Launcher launcher;
         private string database;
@@ -22,7 +22,7 @@ namespace RobloxStudioModManager
         private delegate void reassembleListingsDelegate(object sender = null, EventArgs e = null);
         private delegate void voidDelegate();
 
-        public FVariableEditor(Launcher launcher, string database)
+        public DEPRECATED_FVariableEditor(Launcher launcher, string database)
         {
             this.launcher = launcher;
             this.database = database;
@@ -471,7 +471,7 @@ namespace RobloxStudioModManager
             if (result == DialogResult.Yes)
             {
                 Enabled = false;
-                FVariableScanner fetcher = new FVariableScanner(this);
+                DEPRECATED_FVariableScanner fetcher = new DEPRECATED_FVariableScanner(this);
                 fetcher.Show();
                 fetcher.BringToFront();
             }

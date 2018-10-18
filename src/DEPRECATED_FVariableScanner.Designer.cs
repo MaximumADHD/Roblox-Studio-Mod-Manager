@@ -1,6 +1,6 @@
 ﻿namespace RobloxStudioModManager
 {
-    partial class FVariableScanner
+    partial class DEPRECATED_FVariableScanner
     {
         /// <summary>
         /// Required designer variable.

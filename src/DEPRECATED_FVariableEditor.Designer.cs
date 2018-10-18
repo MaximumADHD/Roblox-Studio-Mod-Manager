@@ -1,6 +1,6 @@
 ﻿namespace RobloxStudioModManager
 {
-    partial class FVariableEditor
+    partial class DEPRECATED_FVariableEditor
     {
         /// <summary>
         /// Required designer variable.

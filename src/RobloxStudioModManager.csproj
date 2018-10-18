@@ -91,17 +91,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FVariableScanner.cs">
+    <Compile Include="DEPRECATED_FVariableScanner.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FVariableScanner.Designer.cs">
-      <DependentUpon>FVariableScanner.cs</DependentUpon>
+    <Compile Include="DEPRECATED_FVariableScanner.Designer.cs">
+      <DependentUpon>DEPRECATED_FVariableScanner.cs</DependentUpon>
     </Compile>
-    <Compile Include="FVariableEditor.cs">
+    <Compile Include="DEPRECATED_FVariableEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FVariableEditor.Designer.cs">
-      <DependentUpon>FVariableEditor.cs</DependentUpon>
+    <Compile Include="DEPRECATED_FVariableEditor.Designer.cs">
+      <DependentUpon>DEPRECATED_FVariableEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

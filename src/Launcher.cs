@@ -55,7 +55,7 @@ namespace RobloxStudioModManager
             if (result == DialogResult.Yes)
             {
                 string dataBase = (string)dataBaseSelect.SelectedItem;
-                FVariableEditor editor = new FVariableEditor(this, dataBase);
+                DEPRECATED_FVariableEditor editor = new DEPRECATED_FVariableEditor(this, dataBase);
                 editor.Show();
             }
         }
