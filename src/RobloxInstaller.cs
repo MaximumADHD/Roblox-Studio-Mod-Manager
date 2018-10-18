@@ -538,7 +538,7 @@ namespace RobloxStudioModManager
             string clientAppSettings = Path.Combine(clientSettings, "ClientAppSettings.json");
             applyFVariableConfiguration(fvarRegistry, clientAppSettings);
 
-            await setStatus("Roblox Studio is up to date!");
+            await setStatus("Starting Roblox Studio...");
             return robloxStudioBetaPath;
         }
 
