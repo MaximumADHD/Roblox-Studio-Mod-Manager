@@ -19,27 +19,33 @@ namespace RobloxStudioModManager
         {
             string appData = Environment.GetEnvironmentVariable("AppData");
             string root = Path.Combine(appData, "RbxModManager", "ModFiles");
+
             if (!Directory.Exists(root))
             {
                 // Build a folder structure so the usage of my mod manager is more clear.
+
                 string[] folderPaths = new string[]
                 {
                     "BuiltInPlugins",
                     "ClientSettings",
+
+                    "content/avatar",
                     "content/fonts",
-                    "content/music",
-                    "content/particles",
+                    "content/models",
                     "content/scripts",
                     "content/sky",
                     "content/sounds",
                     "content/textures",
+                    "content/translations"
                 };
+
                 foreach (string f in folderPaths)
                 {
-                    string path = Path.Combine(root,f.Replace("/", "\\"));
+                    string path = Path.Combine(root, f.Replace("/", "\\"));
                     Directory.CreateDirectory(path);
                 }
             }
+
             return root;
         }
 
@@ -51,11 +57,11 @@ namespace RobloxStudioModManager
 
         private void editFVariables_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Editing FVariables can make Roblox Studio unstable, and could potentially corrupt your places and game data.\n\nYou should not edit them unless you're just experimenting locally, and you know what you're doing.\n\nAre you sure you would like to continue?", "WARNING: HERE BE DRAGONS", MessageBoxButtons.YesNo, MessageBoxIcon.Stop);
+            DialogResult result = MessageBox.Show("Editing flags can make Roblox Studio unstable, and could potentially corrupt your places and game data.\n\nYou should not edit them unless you're just experimenting locally, and you know what you're doing.\n\nAre you sure you would like to continue?", "WARNING: HERE BE DRAGONS", MessageBoxButtons.YesNo, MessageBoxIcon.Stop);
             if (result == DialogResult.Yes)
             {
-                string dataBase = (string)dataBaseSelect.SelectedItem;
-                DEPRECATED_FVariableEditor editor = new DEPRECATED_FVariableEditor(this, dataBase);
+                string branch = (string)branchSelect.SelectedItem;
+                FlagEditor editor = new FlagEditor(this, branch);
                 editor.Show();
             }
         }
@@ -64,15 +70,15 @@ namespace RobloxStudioModManager
         {
             Hide();
 
-            string dataBase = (string)dataBaseSelect.SelectedItem;
+            string branch = (string)branchSelect.SelectedItem;
             RobloxInstaller installer = new RobloxInstaller();
 
-            string studioPath = await installer.RunInstaller(dataBase,forceRebuild.Checked);
+            string studioPath = await installer.RunInstaller(branch, forceRebuild.Checked);
             string studioRoot = Directory.GetParent(studioPath).ToString();
             string modPath = getModPath();
 
             string[] studioFiles = Directory.GetFiles(studioRoot);
-            string[] modFiles = Directory.GetFiles(modPath,"*.*",SearchOption.AllDirectories);
+            string[] modFiles = Directory.GetFiles(modPath, "*.*", SearchOption.AllDirectories);
 
             foreach (string modFile in modFiles)
             {
@@ -80,17 +86,21 @@ namespace RobloxStudioModManager
                 {
                     byte[] fileContents = File.ReadAllBytes(modFile);
                     FileInfo modFileControl = new FileInfo(modFile);
+
                     bool allow = true;
+
                     if (modFileControl.Name == "ClientAppSettings.json")
                     {
                         DialogResult result = MessageBox.Show("A custom ClientAppSettings configuration was detected in your mods folder. This will override the configuration provided by the FVariable Editor.\nAre you sure you want to use this one instead?", "Notice", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
                         if (result == DialogResult.No)
                             allow = false;
                     }
+
                     if (allow)
                     {
                         string relativeFile = modFile.Replace(modPath, studioRoot);
                         string relativeDir = Directory.GetParent(relativeFile).ToString();
+
                         if (!Directory.Exists(relativeDir))
                             Directory.CreateDirectory(relativeDir);
 
@@ -125,7 +135,7 @@ namespace RobloxStudioModManager
                 using (StreamReader reader = new StreamReader(stream))
                 {
                     metaScript = reader.ReadToEnd();
-                    metaScript = metaScript.Replace("%MOD_MANAGER_VERSION%", '"' + dataBase + '"'); // TODO: Make this something more generic?
+                    metaScript = metaScript.Replace("%MOD_MANAGER_VERSION%", '"' + branch + '"'); // TODO: Make this something more generic?
                 }
 
                 string dir = Path.Combine(studioRoot, "BuiltInPlugins");
@@ -142,6 +152,7 @@ namespace RobloxStudioModManager
 
             ProcessStartInfo robloxStudioInfo = new ProcessStartInfo();
             robloxStudioInfo.FileName = studioPath;
+
             if (args != null)
             {
                 string firstArg = args[0];
@@ -152,8 +163,10 @@ namespace RobloxStudioModManager
                         if (commandPair.Contains(':'))
                         {
                             string[] keyVal = commandPair.Split(':');
+
                             string key = keyVal[0];
                             string val = keyVal[1];
+
                             if (key == "script")
                             {
                                 Uri scriptQuery = new Uri(WebUtility.UrlDecode(val));
@@ -175,30 +188,37 @@ namespace RobloxStudioModManager
                 }
             }
 
-            Process process;
             if (openStudioDirectory.Checked)
-                process = Process.Start(studioRoot);
+            {
+                Process.Start(studioRoot);
+            }
             else
-                process = Process.Start(robloxStudioInfo);
-
+            {
+                string currentVersion = Program.GetRegistryString(Program.ModManagerRegistry, "BuildVersion");
+                Program.ModManagerRegistry.SetValue("LastExecutedVersion", currentVersion);
+                Process.Start(robloxStudioInfo);
+            }
+            
             Environment.Exit(0);
         }
 
         private void Launcher_Load(object sender, EventArgs e)
         {
-            object registrySave = Program.ModManagerRegistry.GetValue("BuildDatabase");
-            if (registrySave != null)
-            {
-                string build = registrySave as string;
-                dataBaseSelect.SelectedIndex = dataBaseSelect.Items.IndexOf(build);
-            }
-            else
-            {
-                dataBaseSelect.SelectedIndex = 0;
-            }
 
             if (args != null)
                 openStudioDirectory.Enabled = false;
+
+            object registrySave = Program.ModManagerRegistry.GetValue("BuildBranch");
+
+            if (registrySave != null)
+            {
+                string build = registrySave as string;
+                branchSelect.SelectedIndex = branchSelect.Items.IndexOf(build);
+            }
+            else
+            {
+                branchSelect.SelectedIndex = 0;
+            }
         }
 
         private void onHelpRequested(object sender, HelpEventArgs e)
@@ -209,13 +229,13 @@ namespace RobloxStudioModManager
                 msg = "Click to Launch Roblox Studio!";
             else if (sender.Equals(manageMods))
                 msg = "Opens your ModFolder directory, which contains all of the files to be overridden in Roblox Studio's client directory.";
-            else if (sender.Equals(dataBaseSelect))
+            else if (sender.Equals(branchSelect))
                 msg = "Indicates which setup web-domain we should use to download Roblox Studio.\nThe gametest domains are QA testing versions of Roblox Studio that are not available on production yet.";
             else if (sender.Equals(forceRebuild))
-                msg = "Should we forcefully reinstall this version of the client, even if its already installed?\nThis can be used if you are experiencing a problem with launching Roblox Studio.";
+                msg = "Should the mod manager forcefully reinstall this version of the client, even if its already installed?\nThis can be used if you are experiencing a problem with launching Roblox Studio.";
             else if (sender.Equals(openStudioDirectory))
-                msg = "Should we just open the directory of Roblox Studio after installing?\nThis may come in handy for users who want to run .bat on Studio's files.";
-            else if (sender.Equals(editFVariables))
+                msg = "Should the mod manager just open the directory of Roblox Studio after installing?\nThis may come in handy for users who want to run .bat on Studio's files.";
+            else if (sender.Equals(openFlagEditor))
                 msg = "Allows you to enable certain Roblox engine features before they are available.\nThis is for expert users only, and you should avoid using this if you don't know how to.";
 
             if (msg != null)

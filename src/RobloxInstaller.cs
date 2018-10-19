@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -35,7 +33,7 @@ namespace RobloxStudioModManager
 
     public partial class RobloxInstaller : Form
     {
-        public string buildName;
+        public string buildVersion;
         public string setupDir;
         public string robloxStudioBetaPath;
 
@@ -69,10 +67,10 @@ namespace RobloxStudioModManager
             return result;
         }
 
-        private async Task setStatus(string status)
+        private void setStatus(string status)
         {
-            await Task.Delay(500);
             statusLbl.Text = status;
+            statusLbl.Refresh();
         }
 
         private void echo(string text)
@@ -112,7 +110,7 @@ namespace RobloxStudioModManager
 
         private string constructDownloadUrl(string file)
         {
-            return amazonAws + setupDir + buildName + '-' + file;
+            return amazonAws + setupDir + buildVersion + '-' + file;
         }
 
         private async Task<List<RobloxPackageManifest>> getPackageManifest()
@@ -126,7 +124,7 @@ namespace RobloxStudioModManager
             {
                 string version = reader.ReadLine();
                 if (version != "v0")
-                    throw new NotSupportedException("Unexpected package manifest version: " + version + " (expected v0!)");
+                    throw new NotSupportedException("Unexpected package manifest version: " + version + " (expected v0!)\nPlease contact CloneTrooper1019 if you see this error.");
 
                 while (true)
                 {
@@ -198,11 +196,11 @@ namespace RobloxStudioModManager
             return result;
         }
 
-        public RobloxInstaller(bool exitWhenClosed = true)
+        public RobloxInstaller(bool _exitWhenClosed = true)
         {
             InitializeComponent();
             http.Headers.Set(HttpRequestHeader.UserAgent, "Roblox");
-            this.exitWhenClosed = exitWhenClosed;
+            exitWhenClosed = _exitWhenClosed;
         }
 
         private static string getDirectory(params string[] paths)
@@ -247,19 +245,19 @@ namespace RobloxStudioModManager
             }
         }
 
-        private static async Task<string> getCurrentVersion(string database)
+        public static async Task<string> GetCurrentVersion(string branch)
         {
             if (versionCompKey == null)
                 versionCompKey = await http.DownloadStringTaskAsync(gitContentUrl + "VersionCompatibilityApiKey");
 
-            string versionUrl = "https://versioncompatibility.api." + database +
+            string versionUrl = "https://versioncompatibility.api." + branch +
                                 ".com/GetCurrentClientVersionUpload/?apiKey=" + versionCompKey +
                                 "&binaryType=WindowsStudio";
 
-            string buildName = await http.DownloadStringTaskAsync(versionUrl);
-            buildName = buildName.Replace('"', ' ').Trim();
+            string buildVersion = await http.DownloadStringTaskAsync(versionUrl);
+            buildVersion = buildVersion.Replace('"', ' ').Trim();
 
-            return buildName;
+            return buildVersion;
         }
 
         // YOU WERE SO CLOSE ROBLOX, AGHHHH
@@ -316,7 +314,13 @@ namespace RobloxStudioModManager
             incrementProgress(length);
         }
 
-        public async Task<string> RunInstaller(string database, bool forceInstall = false)
+        public static string GetStudioDirectory()
+        {
+            string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
+            return getDirectory(localAppData, "Roblox Studio");
+        }
+
+        public async Task<string> RunInstaller(string branch, bool forceInstall = false)
         {
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             string rootDir = getDirectory(localAppData, "Roblox Studio");
@@ -327,26 +331,26 @@ namespace RobloxStudioModManager
 
             if (!exitWhenClosed)
             {
-                TopMost = true;
                 FormBorderStyle = FormBorderStyle.None;
+                TopMost = true;
             }
 
-            await setStatus("Checking for updates");
+            setStatus("Checking for updates");
 
-            setupDir = "setup." + database + ".com/";
-            buildName = await getCurrentVersion(database);
+            setupDir = "setup." + branch + ".com/";
+            buildVersion = await GetCurrentVersion(branch);
             robloxStudioBetaPath = Path.Combine(rootDir, "RobloxStudioBeta.exe");
 
             echo("Checking build installation...");
 
-            string currentBuildDatabase = Program.ModManagerRegistry.GetValue("BuildDatabase","") as string;
-            string currentBuildVersion = Program.ModManagerRegistry.GetValue("BuildVersion", "") as string;
+            string currentBranch = Program.ModManagerRegistry.GetValue("BuildBranch","") as string;
+            string currentVersion = Program.ModManagerRegistry.GetValue("BuildVersion", "") as string;
 
-            if (currentBuildDatabase != database || currentBuildVersion != buildName || forceInstall)
+            if (currentBranch != branch || currentVersion != buildVersion || forceInstall)
             {
                 echo("This build needs to be installed!");
 
-                await setStatus("Installing the latest '" + (database == "roblox" ? "production" : database) + "' branch of Roblox Studio...");
+                setStatus("Installing the latest '" + (branch == "roblox" ? "production" : branch) + "' branch of Roblox Studio...");
 
                 bool safeToContinue = false;
                 bool cancelled = false;
@@ -421,7 +425,7 @@ namespace RobloxStudioModManager
 
                         Task installer = Task.Run( async() =>
                         {
-                            string zipFileUrl = amazonAws + setupDir + buildName + '-' + package.Name;
+                            string zipFileUrl = constructDownloadUrl(package.Name);
                             string zipExtractPath = Path.Combine(downloads, package.Name);
 
                             echo("Installing package " + zipFileUrl);
@@ -509,20 +513,20 @@ namespace RobloxStudioModManager
 
                     await Task.WhenAll(taskQueue.ToArray());
 
-                    await setStatus("Writing AppSettings.xml");
+                    setStatus("Writing AppSettings.xml");
                     progressBar.Style = ProgressBarStyle.Marquee;
 
-                    Program.ModManagerRegistry.SetValue("BuildDatabase", database);
-                    Program.ModManagerRegistry.SetValue("BuildVersion", buildName);
+                    Program.ModManagerRegistry.SetValue("Buildbranch", branch);
+                    Program.ModManagerRegistry.SetValue("BuildVersion", buildVersion);
 
                     echo("Writing AppSettings.xml...");
 
                     string appSettings = Path.Combine(rootDir, "AppSettings.xml");
-                    File.WriteAllText(appSettings, "<Settings>\r\n\t<ContentFolder>content</ContentFolder>\r\n\t<BaseUrl>http://www.roblox.com</BaseUrl>\r\n</Settings>");
+                    File.WriteAllText(appSettings, "<Settings>\r\n\t<ContentFolder>content</ContentFolder>\r\n\t<BaseUrl>https://www.roblox.com</BaseUrl>\r\n</Settings>");
                 }
                 else
                 {
-                    echo("Update cancelled. Proceeding with launch on current database and version.");
+                    echo("Update cancelled. Launching on current branch and version.");
                 }
             }
             else
@@ -530,15 +534,15 @@ namespace RobloxStudioModManager
                 echo("This version of Roblox Studio has been installed!");
             }
             
-            await setStatus("Configuring Roblox Studio...");
-            Program.UpdateStudioRegistryProtocols(setupDir, buildName, robloxStudioBetaPath);
+            setStatus("Configuring Roblox Studio...");
+            Program.UpdateStudioRegistryProtocols(setupDir, buildVersion, robloxStudioBetaPath);
 
             RegistryKey fvarRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FVariables");
             string clientSettings = getDirectory(rootDir, "ClientSettings");
             string clientAppSettings = Path.Combine(clientSettings, "ClientAppSettings.json");
             applyFVariableConfiguration(fvarRegistry, clientAppSettings);
 
-            await setStatus("Starting Roblox Studio...");
+            setStatus("Starting Roblox Studio...");
             return robloxStudioBetaPath;
         }
 

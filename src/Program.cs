@@ -23,6 +23,11 @@ namespace RobloxStudioModManager
             return key.CreateSubKey(constructedPath, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryOptions.None);
         }
 
+        public static string GetRegistryString(RegistryKey key, string name)
+        {
+            return key.GetValue(name, "") as string;
+        }
+
         // This sets up the following:
         // 1: The File Protocol to open .rbxl/.rbxlx files using my mod manager.
         // 2: The URI Protcol to open places from the website through my mod manager.
@@ -64,6 +69,7 @@ namespace RobloxStudioModManager
                 defaultIcon.SetValue(_, modManagerPath + ",0");
             }
         }
+
         private static bool validateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
         {
             if (errors == SslPolicyErrors.None)
@@ -79,6 +85,7 @@ namespace RobloxStudioModManager
         {
             // Delete deprecated startup protocol if it exists.
             bool registryInit = bool.Parse(ModManagerRegistry.GetValue("Initialized Startup Protocol", "False") as string);
+
             if (registryInit)
             {
                 string myPath = Application.ExecutablePath;
@@ -86,7 +93,7 @@ namespace RobloxStudioModManager
                 startUpBin.DeleteValue("RobloxStudioModManager");
                 ModManagerRegistry.SetValue("Initialized Startup Protocol", false);
             }
-
+            
             // Add Roblox HTTPS validation 
             ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(validateCertificate);
 

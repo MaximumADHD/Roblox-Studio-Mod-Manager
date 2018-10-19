@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.launchStudio = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.programLogo = new System.Windows.Forms.PictureBox();
             this.manageMods = new System.Windows.Forms.Button();
-            this.dataBaseSelect = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.branchSelect = new System.Windows.Forms.ComboBox();
+            this.branchToUse = new System.Windows.Forms.Label();
             this.forceRebuild = new System.Windows.Forms.CheckBox();
             this.openStudioDirectory = new System.Windows.Forms.CheckBox();
-            this.editFVariables = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.openFlagEditor = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.programLogo)).BeginInit();
             this.SuspendLayout();
             // 
             // launchStudio
@@ -53,20 +53,20 @@
             this.launchStudio.Click += new System.EventHandler(this.launchStudio_Click);
             this.launchStudio.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
-            // pictureBox1
+            // programLogo
             // 
-            this.pictureBox1.AccessibleName = "Roblox Studio Logo";
-            this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.Top;
-            this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBox1.Image = global::RobloxStudioModManager.Properties.Resources.Logo;
-            this.pictureBox1.InitialImage = null;
-            this.pictureBox1.Location = new System.Drawing.Point(25, 12);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(140, 101);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 8;
-            this.pictureBox1.TabStop = false;
+            this.programLogo.AccessibleName = "Roblox Studio Logo";
+            this.programLogo.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.programLogo.BackColor = System.Drawing.Color.Transparent;
+            this.programLogo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.programLogo.Image = global::RobloxStudioModManager.Properties.Resources.Logo;
+            this.programLogo.InitialImage = null;
+            this.programLogo.Location = new System.Drawing.Point(25, 12);
+            this.programLogo.Name = "programLogo";
+            this.programLogo.Size = new System.Drawing.Size(140, 101);
+            this.programLogo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.programLogo.TabIndex = 8;
+            this.programLogo.TabStop = false;
             // 
             // manageMods
             // 
@@ -81,36 +81,36 @@
             this.manageMods.Click += new System.EventHandler(this.manageMods_Click);
             this.manageMods.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
-            // dataBaseSelect
+            // branchSelect
             // 
-            this.dataBaseSelect.AccessibleName = "Database Selector";
-            this.dataBaseSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.dataBaseSelect.FormattingEnabled = true;
-            this.dataBaseSelect.Items.AddRange(new object[] {
+            this.branchSelect.AccessibleName = "Branch Selector";
+            this.branchSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.branchSelect.FormattingEnabled = true;
+            this.branchSelect.Items.AddRange(new object[] {
             "roblox",
             "gametest1.robloxlabs",
             "gametest2.robloxlabs",
             "gametest3.robloxlabs",
             "gametest4.robloxlabs",
             "gametest5.robloxlabs"});
-            this.dataBaseSelect.Location = new System.Drawing.Point(25, 192);
-            this.dataBaseSelect.Name = "dataBaseSelect";
-            this.dataBaseSelect.Size = new System.Drawing.Size(140, 21);
-            this.dataBaseSelect.TabIndex = 10;
-            this.dataBaseSelect.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
+            this.branchSelect.Location = new System.Drawing.Point(25, 192);
+            this.branchSelect.Name = "branchSelect";
+            this.branchSelect.Size = new System.Drawing.Size(140, 21);
+            this.branchSelect.TabIndex = 10;
+            this.branchSelect.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
-            // label1
+            // branchToUse
             // 
-            this.label1.AutoSize = true;
-            this.label1.BackColor = System.Drawing.Color.Transparent;
-            this.label1.CausesValidation = false;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.label1.Location = new System.Drawing.Point(22, 174);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(79, 13);
-            this.label1.TabIndex = 11;
-            this.label1.Text = "Branch to use: ";
+            this.branchToUse.AutoSize = true;
+            this.branchToUse.BackColor = System.Drawing.Color.Transparent;
+            this.branchToUse.CausesValidation = false;
+            this.branchToUse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.branchToUse.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.branchToUse.Location = new System.Drawing.Point(22, 174);
+            this.branchToUse.Name = "branchToUse";
+            this.branchToUse.Size = new System.Drawing.Size(79, 13);
+            this.branchToUse.TabIndex = 11;
+            this.branchToUse.Text = "Branch to use: ";
             // 
             // forceRebuild
             // 
@@ -138,17 +138,17 @@
             this.openStudioDirectory.UseVisualStyleBackColor = true;
             this.openStudioDirectory.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
-            // editFVariables
+            // openFlagEditor
             // 
-            this.editFVariables.AccessibleName = "Edit FVariables";
-            this.editFVariables.Location = new System.Drawing.Point(25, 257);
-            this.editFVariables.Name = "editFVariables";
-            this.editFVariables.Size = new System.Drawing.Size(140, 23);
-            this.editFVariables.TabIndex = 15;
-            this.editFVariables.Text = "Edit FVariables";
-            this.editFVariables.UseVisualStyleBackColor = true;
-            this.editFVariables.Click += new System.EventHandler(this.editFVariables_Click);
-            this.editFVariables.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
+            this.openFlagEditor.AccessibleName = "Open Flag Editor";
+            this.openFlagEditor.Location = new System.Drawing.Point(25, 257);
+            this.openFlagEditor.Name = "openFlagEditor";
+            this.openFlagEditor.Size = new System.Drawing.Size(140, 23);
+            this.openFlagEditor.TabIndex = 15;
+            this.openFlagEditor.Text = "Open Flag Editor";
+            this.openFlagEditor.UseVisualStyleBackColor = true;
+            this.openFlagEditor.Click += new System.EventHandler(this.editFVariables_Click);
+            this.openFlagEditor.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
             // Launcher
             // 
@@ -156,13 +156,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(189, 288);
-            this.Controls.Add(this.editFVariables);
+            this.Controls.Add(this.openFlagEditor);
             this.Controls.Add(this.openStudioDirectory);
             this.Controls.Add(this.forceRebuild);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.dataBaseSelect);
+            this.Controls.Add(this.branchToUse);
+            this.Controls.Add(this.branchSelect);
             this.Controls.Add(this.manageMods);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.programLogo);
             this.Controls.Add(this.launchStudio);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.HelpButton = true;
@@ -172,7 +172,7 @@
             this.Name = "Launcher";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Load += new System.EventHandler(this.Launcher_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.programLogo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -181,13 +181,13 @@
         #endregion
 
         private System.Windows.Forms.Button launchStudio;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox programLogo;
         private System.Windows.Forms.Button manageMods;
-        private System.Windows.Forms.ComboBox dataBaseSelect;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox branchSelect;
+        private System.Windows.Forms.Label branchToUse;
         private System.Windows.Forms.CheckBox forceRebuild;
         private System.Windows.Forms.CheckBox openStudioDirectory;
-        private System.Windows.Forms.Button editFVariables;
+        private System.Windows.Forms.Button openFlagEditor;
     }
 }
 
