@@ -34,9 +34,8 @@
             this.searchTitle = new System.Windows.Forms.Label();
             this.flagDataGridView = new System.Windows.Forms.DataGridView();
             this.overridesTab = new System.Windows.Forms.TabPage();
-            this.flagNames = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.flagType = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.flagValue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.overrideSelected = new System.Windows.Forms.Button();
+            this.overrideStatus = new System.Windows.Forms.Label();
             this.tabs.SuspendLayout();
             this.viewFlagsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.flagDataGridView)).BeginInit();
@@ -55,6 +54,8 @@
             // 
             // viewFlagsTab
             // 
+            this.viewFlagsTab.Controls.Add(this.overrideStatus);
+            this.viewFlagsTab.Controls.Add(this.overrideSelected);
             this.viewFlagsTab.Controls.Add(this.flagSearchFilter);
             this.viewFlagsTab.Controls.Add(this.searchTitle);
             this.viewFlagsTab.Controls.Add(this.flagDataGridView);
@@ -68,16 +69,19 @@
             // 
             // flagSearchFilter
             // 
-            this.flagSearchFilter.Location = new System.Drawing.Point(49, 6);
+            this.flagSearchFilter.Location = new System.Drawing.Point(59, 6);
             this.flagSearchFilter.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
             this.flagSearchFilter.Name = "flagSearchFilter";
-            this.flagSearchFilter.Size = new System.Drawing.Size(221, 20);
+            this.flagSearchFilter.Size = new System.Drawing.Size(387, 20);
             this.flagSearchFilter.TabIndex = 2;
+            this.flagSearchFilter.TextChanged += new System.EventHandler(this.flagSearchFilter_TextChanged);
+            this.flagSearchFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.flagSearchFilter_KeyDown);
             // 
             // searchTitle
             // 
             this.searchTitle.AutoSize = true;
-            this.searchTitle.Location = new System.Drawing.Point(3, 9);
+            this.searchTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.searchTitle.Location = new System.Drawing.Point(6, 9);
             this.searchTitle.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
             this.searchTitle.Name = "searchTitle";
             this.searchTitle.Size = new System.Drawing.Size(44, 13);
@@ -93,17 +97,16 @@
             this.flagDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
             this.flagDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.flagDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.flagDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.flagNames,
-            this.flagType,
-            this.flagValue});
             this.flagDataGridView.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flagDataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.flagDataGridView.Location = new System.Drawing.Point(3, 32);
+            this.flagDataGridView.Location = new System.Drawing.Point(3, 58);
+            this.flagDataGridView.MultiSelect = false;
             this.flagDataGridView.Name = "flagDataGridView";
             this.flagDataGridView.RowHeadersVisible = false;
             this.flagDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.flagDataGridView.Size = new System.Drawing.Size(448, 378);
+            this.flagDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.flagDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.flagDataGridView.Size = new System.Drawing.Size(448, 352);
             this.flagDataGridView.TabIndex = 0;
             this.flagDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.flagDataGridView_CellContentClick);
             // 
@@ -112,30 +115,31 @@
             this.overridesTab.Location = new System.Drawing.Point(4, 22);
             this.overridesTab.Name = "overridesTab";
             this.overridesTab.Padding = new System.Windows.Forms.Padding(3);
-            this.overridesTab.Size = new System.Drawing.Size(276, 235);
+            this.overridesTab.Size = new System.Drawing.Size(454, 413);
             this.overridesTab.TabIndex = 1;
             this.overridesTab.Text = "Overrides";
             this.overridesTab.UseVisualStyleBackColor = true;
             // 
-            // flagNames
+            // overrideSelected
             // 
-            this.flagNames.HeaderText = "Name";
-            this.flagNames.Name = "flagNames";
-            this.flagNames.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.flagNames.Width = 250;
+            this.overrideSelected.Location = new System.Drawing.Point(59, 32);
+            this.overrideSelected.Name = "overrideSelected";
+            this.overrideSelected.Size = new System.Drawing.Size(117, 20);
+            this.overrideSelected.TabIndex = 3;
+            this.overrideSelected.Text = "Override Selected";
+            this.overrideSelected.UseVisualStyleBackColor = true;
+            this.overrideSelected.Click += new System.EventHandler(this.overrideSelected_Click);
             // 
-            // flagType
+            // overrideStatus
             // 
-            this.flagType.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.flagType.HeaderText = "Type";
-            this.flagType.Name = "flagType";
-            this.flagType.Width = 56;
-            // 
-            // flagValue
-            // 
-            this.flagValue.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.flagValue.HeaderText = "Value";
-            this.flagValue.Name = "flagValue";
+            this.overrideStatus.AutoSize = true;
+            this.overrideStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.overrideStatus.Location = new System.Drawing.Point(180, 36);
+            this.overrideStatus.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
+            this.overrideStatus.Name = "overrideStatus";
+            this.overrideStatus.Size = new System.Drawing.Size(114, 13);
+            this.overrideStatus.TabIndex = 4;
+            this.overrideStatus.Text = "Initializing Flag Editor...";
             // 
             // FlagEditor
             // 
@@ -167,8 +171,7 @@
         private System.Windows.Forms.DataGridView flagDataGridView;
         private System.Windows.Forms.TextBox flagSearchFilter;
         private System.Windows.Forms.Label searchTitle;
-        private System.Windows.Forms.DataGridViewTextBoxColumn flagNames;
-        private System.Windows.Forms.DataGridViewTextBoxColumn flagType;
-        private System.Windows.Forms.DataGridViewTextBoxColumn flagValue;
+        private System.Windows.Forms.Label overrideStatus;
+        private System.Windows.Forms.Button overrideSelected;
     }
 }

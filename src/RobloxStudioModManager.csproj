@@ -91,18 +91,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DEPRECATED_FVariableScanner.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DEPRECATED_FVariableScanner.Designer.cs">
-      <DependentUpon>DEPRECATED_FVariableScanner.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DEPRECATED_FVariableEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="DEPRECATED_FVariableEditor.Designer.cs">
-      <DependentUpon>DEPRECATED_FVariableEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="FlagEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -130,9 +118,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FlagEditor.resx">
       <DependentUpon>FlagEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Launcher.resx">
-      <DependentUpon>Launcher.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
