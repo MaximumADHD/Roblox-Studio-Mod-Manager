@@ -33,6 +33,8 @@ namespace RobloxStudioModManager
         private Dictionary<string, DataGridViewRow> flagRowLookup = new Dictionary<string, DataGridViewRow>();
         private Dictionary<string, DataRow> overrideRowLookup = new Dictionary<string, DataRow>();
 
+        private string updateFlag = "";
+
         static FlagEditor()
         {
             foreach (string fvarType in fvarTypes)
@@ -80,6 +82,27 @@ namespace RobloxStudioModManager
             string type = cells[1].Value as string;
 
             return type + name;
+        }
+
+        private void refreshViewFlagRow(DataGridViewRow row)
+        {
+            string flagName = getFlagNameByRow(row);
+            string[] flagNames = flagRegistry.GetSubKeyNames();
+
+            if (flagNames.Contains(flagName))
+            {
+                RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
+
+                var valueCell = row.Cells[2];
+                valueCell.Value = flagKey.GetValue("Value");
+
+                applyRowColor(row, Color.Pink);
+            }
+        }
+
+        private void markFlagEditorAsDirty()
+        {
+            updateFlag = DateTime.Now.Ticks.ToString();
         }
 
         private static DataTable initializeDataGridView(DataGridView dgv)
@@ -141,11 +164,8 @@ namespace RobloxStudioModManager
                 
                 if (flagRowLookup.ContainsKey(key))
                 {
-                    DataGridViewRow viewRow = flagRowLookup[key];
-                    applyRowColor(viewRow, Color.Pink);
-
-                    var valueCell = viewRow.Cells[2];
-                    valueCell.Value = flagKey.GetValue("Value");
+                    DataGridViewRow viewFlagRow = flagRowLookup[key];
+                    refreshViewFlagRow(viewFlagRow);
                 }
 
                 DataRow row = overrideTable.Rows.Add(name, type, value);
@@ -323,6 +343,7 @@ namespace RobloxStudioModManager
             {
                 flagTable.DefaultView.RowFilter = string.Format("Name LIKE '%{0}%'", text);
                 flagDataGridView.Sort(flagDataGridView.Columns[0], ListSortDirection.Ascending);
+                markFlagEditorAsDirty();
             }
         }
 
@@ -380,6 +401,7 @@ namespace RobloxStudioModManager
                 selectedRow.Dispose();
 
                 flagRegistry.DeleteSubKey(flagName);
+                markFlagEditorAsDirty();
             }
 
             if (overrideDataGridView.Rows.Count == 0)
@@ -455,6 +477,8 @@ namespace RobloxStudioModManager
                 }
 
                 flagKey.SetValue("Value", value);
+                markFlagEditorAsDirty();
+
                 return;
             }
 
@@ -504,6 +528,16 @@ namespace RobloxStudioModManager
                     row.Cells[2] = newValueCell;
                     newValueCell.ReadOnly = true;
                 }
+            }
+        }
+
+        private void flagDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            var row = flagDataGridView.Rows[e.RowIndex];
+            if (row.Tag == null || row.Tag.ToString() != updateFlag)
+            {
+                row.Tag = updateFlag;
+                refreshViewFlagRow(row);
             }
         }
     }

@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabs = new System.Windows.Forms.TabControl();
             this.viewFlagsTab = new System.Windows.Forms.TabPage();
             this.overrideStatus = new System.Windows.Forms.Label();
@@ -132,6 +132,7 @@
             this.flagDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.flagDataGridView.Size = new System.Drawing.Size(448, 352);
             this.flagDataGridView.TabIndex = 0;
+            this.flagDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.flagDataGridView_CellFormatting);
             // 
             // overridesTab
             // 
@@ -182,8 +183,8 @@
             this.overrideDataGridView.Name = "overrideDataGridView";
             this.overrideDataGridView.RowHeadersVisible = false;
             this.overrideDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Silver;
-            this.overrideDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Silver;
+            this.overrideDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle3;
             this.overrideDataGridView.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.White;
             this.overrideDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.overrideDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
