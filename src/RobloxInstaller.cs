@@ -216,24 +216,25 @@ namespace RobloxStudioModManager
             return basePath;
         }
 
-        public void applyFVariableConfiguration(RegistryKey fvarRegistry, string filePath)
+        public void applyFVariableConfiguration(RegistryKey flagRegistry, string filePath)
         {
-            List<string> prefixes = new List<string>() { "F", "DF", "SF" }; // List of possible prefixes that the fvars will use.
-
             try
             {
                 List<string> configs = new List<string>();
-                foreach (string fvar in fvarRegistry.GetSubKeyNames())
+
+                foreach (string flagName in flagRegistry.GetSubKeyNames())
                 {
-                    RegistryKey fvarEntry = Program.GetSubKey(fvarRegistry, fvar);
+                    RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
 
-                    string type = fvarEntry.GetValue("Type") as string;
-                    string value = fvarEntry.GetValue("Value") as string;
-                    string key = type + fvar;
+                    string name  = flagKey.GetValue("Name")  as string;
+                    string type  = flagKey.GetValue("Type")  as string;
+                    string value = flagKey.GetValue("Value") as string;
 
-                    foreach (string prefix in prefixes)
-                        configs.Add('"' + prefix + key + "\":\"" + value + '"');
+                    string key = type + name;
+                    if (type.EndsWith("String"))
+                        value = '"' + value.Replace("\"", "\\\"").Replace("\\\\","\\") + '"';
 
+                    configs.Add('"' + key + "\": " + value);
                 };
 
                 string json = "{" + string.Join(",", configs.ToArray()) + "}";
@@ -537,12 +538,15 @@ namespace RobloxStudioModManager
             setStatus("Configuring Roblox Studio...");
             Program.UpdateStudioRegistryProtocols(setupDir, buildVersion, robloxStudioBetaPath);
 
-            RegistryKey fvarRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FVariables");
             string clientSettings = getDirectory(rootDir, "ClientSettings");
             string clientAppSettings = Path.Combine(clientSettings, "ClientAppSettings.json");
+
+            RegistryKey fvarRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FlagEditor");
             applyFVariableConfiguration(fvarRegistry, clientAppSettings);
 
             setStatus("Starting Roblox Studio...");
+            await Task.Delay(1000);
+
             return robloxStudioBetaPath;
         }
 
