@@ -28,17 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabs = new System.Windows.Forms.TabControl();
             this.viewFlagsTab = new System.Windows.Forms.TabPage();
+            this.overrideStatus = new System.Windows.Forms.Label();
+            this.overrideSelected = new System.Windows.Forms.Button();
             this.flagSearchFilter = new System.Windows.Forms.TextBox();
             this.searchTitle = new System.Windows.Forms.Label();
             this.flagDataGridView = new System.Windows.Forms.DataGridView();
             this.overridesTab = new System.Windows.Forms.TabPage();
-            this.overrideSelected = new System.Windows.Forms.Button();
-            this.overrideStatus = new System.Windows.Forms.Label();
+            this.removeAll = new System.Windows.Forms.Button();
+            this.removeSelected = new System.Windows.Forms.Button();
+            this.overrideDataGridView = new System.Windows.Forms.DataGridView();
             this.tabs.SuspendLayout();
             this.viewFlagsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.flagDataGridView)).BeginInit();
+            this.overridesTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.overrideDataGridView)).BeginInit();
             this.SuspendLayout();
             // 
             // tabs
@@ -66,6 +72,24 @@
             this.viewFlagsTab.TabIndex = 0;
             this.viewFlagsTab.Text = "View Flags";
             this.viewFlagsTab.UseVisualStyleBackColor = true;
+            // 
+            // overrideStatus
+            // 
+            this.overrideStatus.AutoSize = true;
+            this.overrideStatus.Location = new System.Drawing.Point(182, 36);
+            this.overrideStatus.Name = "overrideStatus";
+            this.overrideStatus.Size = new System.Drawing.Size(0, 13);
+            this.overrideStatus.TabIndex = 4;
+            // 
+            // overrideSelected
+            // 
+            this.overrideSelected.Location = new System.Drawing.Point(59, 32);
+            this.overrideSelected.Name = "overrideSelected";
+            this.overrideSelected.Size = new System.Drawing.Size(117, 20);
+            this.overrideSelected.TabIndex = 3;
+            this.overrideSelected.Text = "Override Selected";
+            this.overrideSelected.UseVisualStyleBackColor = true;
+            this.overrideSelected.Click += new System.EventHandler(this.overrideSelected_Click);
             // 
             // flagSearchFilter
             // 
@@ -108,10 +132,12 @@
             this.flagDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.flagDataGridView.Size = new System.Drawing.Size(448, 352);
             this.flagDataGridView.TabIndex = 0;
-            this.flagDataGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.flagDataGridView_CellContentClick);
             // 
             // overridesTab
             // 
+            this.overridesTab.Controls.Add(this.removeAll);
+            this.overridesTab.Controls.Add(this.removeSelected);
+            this.overridesTab.Controls.Add(this.overrideDataGridView);
             this.overridesTab.Location = new System.Drawing.Point(4, 22);
             this.overridesTab.Name = "overridesTab";
             this.overridesTab.Padding = new System.Windows.Forms.Padding(3);
@@ -120,26 +146,52 @@
             this.overridesTab.Text = "Overrides";
             this.overridesTab.UseVisualStyleBackColor = true;
             // 
-            // overrideSelected
+            // removeAll
             // 
-            this.overrideSelected.Location = new System.Drawing.Point(59, 32);
-            this.overrideSelected.Name = "overrideSelected";
-            this.overrideSelected.Size = new System.Drawing.Size(117, 20);
-            this.overrideSelected.TabIndex = 3;
-            this.overrideSelected.Text = "Override Selected";
-            this.overrideSelected.UseVisualStyleBackColor = true;
-            this.overrideSelected.Click += new System.EventHandler(this.overrideSelected_Click);
+            this.removeAll.Location = new System.Drawing.Point(229, 6);
+            this.removeAll.Name = "removeAll";
+            this.removeAll.Size = new System.Drawing.Size(217, 23);
+            this.removeAll.TabIndex = 3;
+            this.removeAll.Text = "Remove All";
+            this.removeAll.UseVisualStyleBackColor = true;
+            this.removeAll.Click += new System.EventHandler(this.removeAll_Click);
             // 
-            // overrideStatus
+            // removeSelected
             // 
-            this.overrideStatus.AutoSize = true;
-            this.overrideStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.overrideStatus.Location = new System.Drawing.Point(180, 36);
-            this.overrideStatus.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
-            this.overrideStatus.Name = "overrideStatus";
-            this.overrideStatus.Size = new System.Drawing.Size(114, 13);
-            this.overrideStatus.TabIndex = 4;
-            this.overrideStatus.Text = "Initializing Flag Editor...";
+            this.removeSelected.Location = new System.Drawing.Point(6, 6);
+            this.removeSelected.Name = "removeSelected";
+            this.removeSelected.Size = new System.Drawing.Size(217, 23);
+            this.removeSelected.TabIndex = 2;
+            this.removeSelected.Text = "Remove Selected";
+            this.removeSelected.UseVisualStyleBackColor = true;
+            this.removeSelected.Click += new System.EventHandler(this.removeSelected_Click);
+            // 
+            // overrideDataGridView
+            // 
+            this.overrideDataGridView.AllowUserToAddRows = false;
+            this.overrideDataGridView.AllowUserToDeleteRows = false;
+            this.overrideDataGridView.AllowUserToResizeColumns = false;
+            this.overrideDataGridView.AllowUserToResizeRows = false;
+            this.overrideDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
+            this.overrideDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.overrideDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.overrideDataGridView.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.overrideDataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.overrideDataGridView.Location = new System.Drawing.Point(3, 35);
+            this.overrideDataGridView.MultiSelect = false;
+            this.overrideDataGridView.Name = "overrideDataGridView";
+            this.overrideDataGridView.RowHeadersVisible = false;
+            this.overrideDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Silver;
+            this.overrideDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            this.overrideDataGridView.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.White;
+            this.overrideDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.overrideDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.overrideDataGridView.Size = new System.Drawing.Size(448, 375);
+            this.overrideDataGridView.TabIndex = 1;
+            this.overrideDataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.overrideDataGridView_CellEndEdit);
+            this.overrideDataGridView.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.overrideDataGridView_CellMouseEnter);
+            this.overrideDataGridView.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.overrideDataGridView_CellMouseLeave);
             // 
             // FlagEditor
             // 
@@ -159,6 +211,8 @@
             this.viewFlagsTab.ResumeLayout(false);
             this.viewFlagsTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.flagDataGridView)).EndInit();
+            this.overridesTab.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.overrideDataGridView)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -171,7 +225,10 @@
         private System.Windows.Forms.DataGridView flagDataGridView;
         private System.Windows.Forms.TextBox flagSearchFilter;
         private System.Windows.Forms.Label searchTitle;
-        private System.Windows.Forms.Label overrideStatus;
         private System.Windows.Forms.Button overrideSelected;
+        private System.Windows.Forms.DataGridView overrideDataGridView;
+        private System.Windows.Forms.Label overrideStatus;
+        private System.Windows.Forms.Button removeAll;
+        private System.Windows.Forms.Button removeSelected;
     }
 }
