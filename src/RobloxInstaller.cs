@@ -523,7 +523,7 @@ namespace RobloxStudioModManager
                     echo("Writing AppSettings.xml...");
 
                     string appSettings = Path.Combine(rootDir, "AppSettings.xml");
-                    File.WriteAllText(appSettings, "<Settings>\r\n\t<ContentFolder>content</ContentFolder>\r\n\t<BaseUrl>https://www.roblox.com</BaseUrl>\r\n</Settings>");
+                    File.WriteAllText(appSettings, "<Settings>\r\n\t<ContentFolder>content</ContentFolder>\r\n\t<BaseUrl>http://www.roblox.com</BaseUrl>\r\n</Settings>");
                 }
                 else
                 {
