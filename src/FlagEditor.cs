@@ -20,18 +20,19 @@ namespace RobloxStudioModManager
         private static string[] fvarGroups = new string[3] { "F", "DF", "SF" };
         private static string[] fvarTypes = new string[4] { "Flag", "String", "Int", "Log" };
 
+        private static List<string> fvarPrefixes = new List<string>();
+
         private DataTable flagTable;
         private DataTable overrideTable;
 
         private Launcher launcher;
         private string branch;
         
-        private const string OVERRIDE_STATUS_OFF = "No local overrides were found on load.";
-        private const string OVERRIDE_STATUS_ON = "Values highlighted in red were overridden locally.";
-
-        private static List<string> fvarPrefixes = new List<string>();
         private Dictionary<string, DataGridViewRow> flagRowLookup = new Dictionary<string, DataGridViewRow>();
         private Dictionary<string, DataRow> overrideRowLookup = new Dictionary<string, DataRow>();
+
+        private const string OVERRIDE_STATUS_OFF = "No local overrides were found on load.";
+        private const string OVERRIDE_STATUS_ON = "Values highlighted in red were overridden locally.";
 
         private string updateFlag = "";
 
@@ -451,7 +452,7 @@ namespace RobloxStudioModManager
             var cells = row.Cells;
             var flagType = cells[1].Value as string;
 
-            // Check if this should be cancelled.
+            // Check if this input should be cancelled.
             bool badInput = false;
 
             if (flagType.EndsWith("Flag"))
@@ -482,6 +483,7 @@ namespace RobloxStudioModManager
                 return;
             }
 
+            // If we have bad input, reset the value to the original value.
             cell.Value = flagKey.GetValue("Reset");
         }
 
@@ -498,6 +500,8 @@ namespace RobloxStudioModManager
                 string flagType = cells[1].Value as string;
                 if (flagType.EndsWith("Flag") && cellType != typeof(DataGridViewComboBoxCell))
                 {
+                    // Switch the cell to a combo box.
+                    // The user needs to select either true or false.
                     var newValueCell = new DataGridViewComboBoxCell();
                     newValueCell.Items.Add("true");
                     newValueCell.Items.Add("false");
@@ -531,6 +535,8 @@ namespace RobloxStudioModManager
             }
         }
 
+        // Whenever the updateFlag string is explicitly updated by the program, this will force
+        // each cell to be redrawn. This will prevent any red-highlighted cells from being reset.
         private void flagDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             var row = flagDataGridView.Rows[e.RowIndex];

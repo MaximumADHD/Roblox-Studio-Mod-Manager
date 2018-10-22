@@ -216,7 +216,7 @@ namespace RobloxStudioModManager
             return basePath;
         }
 
-        public void applyFVariableConfiguration(RegistryKey flagRegistry, string filePath)
+        public void applyFlagEditorConfiguration(RegistryKey flagRegistry, string filePath)
         {
             try
             {
@@ -234,10 +234,10 @@ namespace RobloxStudioModManager
                     if (type.EndsWith("String"))
                         value = '"' + value.Replace("\"", "\\\"").Replace("\\\\","\\") + '"';
 
-                    configs.Add('"' + key + "\": " + value);
+                    configs.Add("\t\"" + key + "\": " + value);
                 };
 
-                string json = "{" + string.Join(",", configs.ToArray()) + "}";
+                string json = "{\r\n" + string.Join(",\r\n", configs.ToArray()) + "\r\n}";
                 File.WriteAllText(filePath, json);
             }
             catch
@@ -541,8 +541,8 @@ namespace RobloxStudioModManager
             string clientSettings = getDirectory(rootDir, "ClientSettings");
             string clientAppSettings = Path.Combine(clientSettings, "ClientAppSettings.json");
 
-            RegistryKey fvarRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FlagEditor");
-            applyFVariableConfiguration(fvarRegistry, clientAppSettings);
+            RegistryKey flagRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FlagEditor");
+            applyFlagEditorConfiguration(flagRegistry, clientAppSettings);
 
             setStatus("Starting Roblox Studio...");
             await Task.Delay(1000);

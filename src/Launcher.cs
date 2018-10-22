@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
@@ -156,35 +157,40 @@ namespace RobloxStudioModManager
             if (args != null)
             {
                 string firstArg = args[0];
+                var argMap = new Dictionary<string, string>();
+
                 if (firstArg != null && firstArg.StartsWith("roblox-studio"))
                 {
                     foreach (string commandPair in firstArg.Split('+'))
                     {
                         if (commandPair.Contains(':'))
                         {
-                            string[] keyVal = commandPair.Split(':');
+                            string[] kvPair = commandPair.Split(':');
 
-                            string key = keyVal[0];
-                            string val = keyVal[1];
+                            string key = kvPair[0];
+                            string val = kvPair[1];
 
-                            if (key == "script")
-                            {
-                                Uri scriptQuery = new Uri(WebUtility.UrlDecode(val));
-                                NameValueCollection query = HttpUtility.ParseQueryString(scriptQuery.Query);
-                                robloxStudioInfo.Arguments = "-task EditPlace -placeId " + query["placeId"];
-                                break;
-                            }
-                            else if (key == "pluginid")
-                            {
-                                robloxStudioInfo.Arguments = "-task InstallPlugin -pluginId " + val;
-                                break;
-                            }
+                            argMap.Add(key, val);
+                            robloxStudioInfo.Arguments += " -" + key + ' ' + val;
                         }
+                    }
+
+                    if (argMap.ContainsKey("launchmode") && !argMap.ContainsKey("task"))
+                    {
+                        robloxStudioInfo.Arguments += "-task ";
+
+                        string launchMode = argMap["launchmode"];
+                        if (launchMode == "plugin")
+                            robloxStudioInfo.Arguments += "InstallPlugin";
+                        else if (launchMode == "edit")
+                            robloxStudioInfo.Arguments += "EditPlace";
+
                     }
                 }
                 else
                 {
-                    robloxStudioInfo.Arguments = string.Join(" ", args);
+                    string fullArg = string.Join(" ", args);
+                    robloxStudioInfo.Arguments += fullArg;
                 }
             }
 
