@@ -144,7 +144,16 @@ namespace RobloxStudioModManager
                     Directory.CreateDirectory(dir);
 
                 string metaScriptFile = Path.Combine(dir, "__rbxModManagerMetadata.lua");
+                FileInfo info = new FileInfo(metaScriptFile);
+                if (info.Exists)
+                    info.Attributes = FileAttributes.Normal;
+
                 File.WriteAllText(metaScriptFile, metaScript);
+               
+                // Make the file as readonly so that it (hopefully) won't be messed with.
+                // I can't hide the file because Roblox Studio will ignore it.
+                // If someone has the file open with write permissions, it will fail to write.
+                info.Attributes = FileAttributes.ReadOnly;
             }
             catch
             {
