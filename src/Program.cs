@@ -12,11 +12,12 @@ namespace RobloxStudioModManager
     static class Program
     {
         public static RegistryKey ModManagerRegistry = GetSubKey(Registry.CurrentUser, "SOFTWARE", "Roblox Studio Mod Manager");
-        private static string _ = ""; // Default key/value used for stuff in UpdateStudioRegistryProtocols.
+        private const string _ = ""; // Default key/value used for stuff in UpdateStudioRegistryProtocols.
 
         public static RegistryKey GetSubKey(RegistryKey key, params string[] path)
         {
             string constructedPath = "";
+
             foreach (string p in path)
                 constructedPath = Path.Combine(constructedPath, p);
 
@@ -84,14 +85,23 @@ namespace RobloxStudioModManager
         static void Main(string[] args)
         {
             // Delete deprecated startup protocol if it exists.
-            bool registryInit = bool.Parse(ModManagerRegistry.GetValue("Initialized Startup Protocol", "False") as string);
-
-            if (registryInit)
+            try
             {
-                string myPath = Application.ExecutablePath;
-                RegistryKey startUpBin = GetSubKey(Registry.CurrentUser, "SOFTWARE", "Microsoft", "Windows", "CurrentVersion", "Run");
-                startUpBin.DeleteValue("RobloxStudioModManager");
-                ModManagerRegistry.SetValue("Initialized Startup Protocol", false);
+                bool registryInit = bool.Parse(ModManagerRegistry.GetValue("Initialized Startup Protocol", "False") as string);
+
+                if (registryInit)
+                {
+                    string myPath = Application.ExecutablePath;
+
+                    RegistryKey startUpBin = GetSubKey(Registry.CurrentUser, "SOFTWARE", "Microsoft", "Windows", "CurrentVersion", "Run");
+                    startUpBin.DeleteValue("RobloxStudioModManager");
+
+                    ModManagerRegistry.SetValue("Initialized Startup Protocol", false);
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Ran into problem while removing deprecated startup protocol. Ignoring for now?");
             }
             
             // Add Roblox HTTPS validation 

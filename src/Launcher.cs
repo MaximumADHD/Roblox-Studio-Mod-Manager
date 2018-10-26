@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Web;
 using System.Windows.Forms;
 
 namespace RobloxStudioModManager
@@ -219,18 +217,16 @@ namespace RobloxStudioModManager
 
         private void Launcher_Load(object sender, EventArgs e)
         {
-
             if (args != null)
                 openStudioDirectory.Enabled = false;
-
-            object registrySave = Program.ModManagerRegistry.GetValue("BuildBranch");
-
-            if (registrySave != null)
+            
+            try
             {
-                string build = registrySave as string;
-                branchSelect.SelectedIndex = branchSelect.Items.IndexOf(build);
+                string build = Program.ModManagerRegistry.GetValue("BuildBranch") as string;
+                int index = branchSelect.Items.IndexOf(build);
+                branchSelect.SelectedIndex = Math.Max(index, 0);
             }
-            else
+            catch
             {
                 branchSelect.SelectedIndex = 0;
             }

@@ -517,7 +517,7 @@ namespace RobloxStudioModManager
                     setStatus("Writing AppSettings.xml");
                     progressBar.Style = ProgressBarStyle.Marquee;
 
-                    Program.ModManagerRegistry.SetValue("Buildbranch", branch);
+                    Program.ModManagerRegistry.SetValue("BuildBranch", branch);
                     Program.ModManagerRegistry.SetValue("BuildVersion", buildVersion);
 
                     echo("Writing AppSettings.xml...");
