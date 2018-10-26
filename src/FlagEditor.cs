@@ -203,6 +203,8 @@ namespace RobloxStudioModManager
                 if (doInstall)
                 {
                     RobloxInstaller installer = new RobloxInstaller(false);
+                    installer.ShowDialog();
+
                     studioPath = await installer.RunInstaller(branch);
                     installer.Dispose();
 

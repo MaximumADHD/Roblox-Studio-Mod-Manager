@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Media;
 using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
@@ -54,14 +56,118 @@ namespace RobloxStudioModManager
             Process.Start(modPath);
         }
 
+        private static Form createFlagWarningPrompt()
+        {
+            Form warningForm = new Form()
+            {
+                Text = "WARNING: HERE BE DRAGONS",
+                
+                Width = 425, Height = 250,
+                MaximizeBox = false, MinimizeBox = false,
+
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                StartPosition = FormStartPosition.CenterScreen,
+
+                ShowInTaskbar = false
+            };
+
+            PictureBox errorIcon = new PictureBox()
+            {
+                Image = SystemIcons.Error.ToBitmap(),
+                Location = new Point(12, 12),
+                Size = new Size(32, 32),
+            };
+
+            CheckBox dontShowAgain = new CheckBox()
+            {
+                AutoSize = true,
+                Text = "Do not show this warning again.",
+                Location = new Point(54, 145),
+                Font = new Font("Microsoft Sans Serif", 9.75f),
+            };
+
+            FlowLayoutPanel buttonPanel = new FlowLayoutPanel()
+            {
+                FlowDirection = FlowDirection.RightToLeft,
+                BackColor = SystemColors.ControlLight,
+                Padding = new Padding(4),
+                Dock = DockStyle.Bottom,
+                Size = new Size(0, 40)
+            };
+
+            Label infoLabel = new Label()
+            {
+                AutoSize = true,
+
+                Font = new Font("Microsoft Sans Serif", 9.75f),
+                Text = "Editing flags can make Roblox Studio unstable, and could potentially corrupt your places and game data.\n\nYou should not edit them unless you are just experimenting with new features locally, and you know what you're doing.\n\nAre you sure you would like to continue?",
+
+                Location = new Point(50, 14),
+                MaximumSize = new Size(350, 0),
+            };
+
+            Button yes = new Button()
+            {
+                Size = new Size(100, 23),
+                Text = "Yes",
+            };
+
+            Button no = new Button()
+            {
+                Size = new Size(100, 23),
+                Text = "No",
+            };
+
+            yes.Click += (sender, e) =>
+            {
+                warningForm.DialogResult = DialogResult.Yes;
+                warningForm.Enabled = dontShowAgain.Checked;
+                warningForm.Close();
+            };
+
+            no.Click += (sender, e) =>
+            {
+                warningForm.DialogResult = DialogResult.No;
+                warningForm.Enabled = dontShowAgain.Checked;
+                warningForm.Close();
+            };
+
+            buttonPanel.Controls.Add(no);
+            buttonPanel.Controls.Add(yes);
+            warningForm.Controls.Add(errorIcon);
+            warningForm.Controls.Add(infoLabel);
+            warningForm.Controls.Add(buttonPanel);
+            warningForm.Controls.Add(dontShowAgain);
+
+            return warningForm;
+        }
+
         private void editFVariables_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Editing flags can make Roblox Studio unstable, and could potentially corrupt your places and game data.\n\nYou should not edit them unless you're just experimenting locally, and you know what you're doing.\n\nAre you sure you would like to continue?", "WARNING: HERE BE DRAGONS", MessageBoxButtons.YesNo, MessageBoxIcon.Stop);
-            if (result == DialogResult.Yes)
+            bool allow = true;
+
+            // Create a warning prompt if the user hasn't disabled this warning.
+            if (Program.GetRegistryString(Program.ModManagerRegistry, "Disable Flag Warning") != "True")
+            {
+                SystemSounds.Hand.Play();
+                allow = false;
+
+                Form warningPrompt = createFlagWarningPrompt();
+                warningPrompt.ShowDialog();
+
+                DialogResult result = warningPrompt.DialogResult;
+                if (result == DialogResult.Yes)
+                {
+                    Program.ModManagerRegistry.SetValue("Disable Flag Warning", warningPrompt.Enabled);
+                    allow = true;
+                }
+            }
+
+            if (allow)
             {
                 string branch = (string)branchSelect.SelectedItem;
                 FlagEditor editor = new FlagEditor(this, branch);
-                editor.Show();
+                editor.ShowDialog();
             }
         }
 
