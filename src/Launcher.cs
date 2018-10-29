@@ -270,10 +270,12 @@ namespace RobloxStudioModManager
             if (args != null)
             {
                 string firstArg = args[0];
-                var argMap = new Dictionary<string, string>();
 
                 if (firstArg != null && firstArg.StartsWith("roblox-studio"))
                 {
+                    // Arguments were passed by URI.
+                    var argMap = new Dictionary<string, string>();
+
                     foreach (string commandPair in firstArg.Split('+'))
                     {
                         if (commandPair.Contains(':'))
@@ -283,8 +285,16 @@ namespace RobloxStudioModManager
                             string key = kvPair[0];
                             string val = kvPair[1];
 
-                            argMap.Add(key, val);
-                            robloxStudioInfo.Arguments += " -" + key + ' ' + val;
+                            if (key == "gameinfo")
+                            {
+                                // The user is authenticating. This argument is a special case.
+                                robloxStudioInfo.Arguments += " -url https://www.roblox.com/Login/Negotiate.ashx -ticket " + val;
+                            }
+                            else
+                            {
+                                argMap.Add(key, val);
+                                robloxStudioInfo.Arguments += " -" + key + ' ' + val;
+                            }
                         }
                     }
 
@@ -297,11 +307,11 @@ namespace RobloxStudioModManager
                             robloxStudioInfo.Arguments += "InstallPlugin";
                         else if (launchMode == "edit")
                             robloxStudioInfo.Arguments += "EditPlace";
-
                     }
                 }
                 else
                 {
+                    // Arguments were passed directly.
                     string fullArg = string.Join(" ", args);
                     robloxStudioInfo.Arguments += fullArg;
                 }
