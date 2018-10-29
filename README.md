@@ -16,7 +16,7 @@ The _Roblox Studio Mod Manager_ is an unofficial custom launcher for Roblox Stud
 * File overrides are sustained between updates.
 * Updates are applied incrementally to a single directory.
 * Provides a flexible FVariable editor, allowing you to toggle engine features.
-* Smooth transitions between test builds of Roblox Studio (gametest1-gametest5),<br/>as well as Roblox's ***future-is-bright*** lighting prototype.
+* Smooth transitions between test builds of Roblox Studio (gametest1-gametest5).
 * Support for launching from the website, and from saved _RBXL_ files.
 
 # Downloads
