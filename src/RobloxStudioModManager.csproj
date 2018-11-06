@@ -145,7 +145,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\FVariableExtractor.lua" />
     <None Include="Resources\Logo.png" />
   </ItemGroup>
   <ItemGroup>
