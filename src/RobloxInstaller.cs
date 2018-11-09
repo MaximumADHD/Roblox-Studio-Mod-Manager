@@ -91,7 +91,9 @@ namespace RobloxStudioModManager
         private void incrementProgressBarMax(int count)
         {
             if (progressBar.InvokeRequired)
+            {
                 progressBar.Invoke(new IncrementDelegator(incrementProgressBarMax), count);
+            }
             else
             {
                 actualProgressBarSum += count;
@@ -194,6 +196,33 @@ namespace RobloxStudioModManager
             }
 
             return result;
+        }
+
+        public static async Task BringUpToDate(string branch, string expectedVersion, string updateReason)
+        {
+            string currentVersion = Program.GetRegistryString(Program.ModManagerRegistry, "BuildVersion");
+
+            if (currentVersion != expectedVersion)
+            {
+                DialogResult check = MessageBox.Show
+                (
+                    "Roblox Studio is out of date!\n" 
+                    + updateReason + 
+                    "\nWould you like to update now?",
+                    
+                    "Out of date!",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                );
+
+                if (check == DialogResult.Yes)
+                {
+                    RobloxInstaller installer = new RobloxInstaller(false);
+
+                    await installer.RunInstaller(branch);
+                    installer.Dispose();
+                }
+            }
         }
 
         public RobloxInstaller(bool _exitWhenClosed = true)

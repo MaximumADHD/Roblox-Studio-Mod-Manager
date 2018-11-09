@@ -378,5 +378,13 @@ namespace RobloxStudioModManager
 
             InitializeComponent();
         }
+
+        private void editExplorerIcons_Click(object sender, EventArgs e)
+        {
+            string branch = (string)branchSelect.SelectedItem;
+
+            ExplorerIconEditor editor = new ExplorerIconEditor(branch);
+            editor.ShowDialog();
+        }
     }
 }

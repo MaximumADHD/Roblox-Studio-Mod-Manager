@@ -193,24 +193,12 @@ namespace RobloxStudioModManager
             UseWaitCursor = true;
 
             string studioPath = Path.Combine(RobloxInstaller.GetStudioDirectory(), "RobloxStudioBeta.exe");
-
-            string currentVersion = Program.GetRegistryString(Program.ModManagerRegistry, "BuildVersion");
             string liveVersion = await RobloxInstaller.GetCurrentVersion(branch);
 
-            if (currentVersion != liveVersion)
-            {
-                bool doInstall = confirm("Out of date!", "Roblox Studio is out of date!\nThe listed flags may not be accurate.\nWould you like to update now?");
-                if (doInstall)
-                {
-                    RobloxInstaller installer = new RobloxInstaller(false);
+            await RobloxInstaller.BringUpToDate(branch, liveVersion, "The listed flags might be out of date!");
 
-                    studioPath = await installer.RunInstaller(branch);
-                    installer.Dispose();
-
-                    TopMost = true;
-                    BringToFront();
-                }
-            }
+            TopMost = true;
+            BringToFront();
 
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             string settingsPath = Path.Combine(localAppData, "Roblox", "ClientSettings", "StudioAppSettings.json");

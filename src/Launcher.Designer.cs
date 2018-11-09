@@ -36,6 +36,7 @@
             this.forceRebuild = new System.Windows.Forms.CheckBox();
             this.openStudioDirectory = new System.Windows.Forms.CheckBox();
             this.openFlagEditor = new System.Windows.Forms.Button();
+            this.editExplorerIcons = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.programLogo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -150,12 +151,24 @@
             this.openFlagEditor.Click += new System.EventHandler(this.editFVariables_Click);
             this.openFlagEditor.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
+            // editExplorerIcons
+            // 
+            this.editExplorerIcons.AccessibleName = "Open Flag Editor";
+            this.editExplorerIcons.Location = new System.Drawing.Point(25, 286);
+            this.editExplorerIcons.Name = "editExplorerIcons";
+            this.editExplorerIcons.Size = new System.Drawing.Size(140, 23);
+            this.editExplorerIcons.TabIndex = 16;
+            this.editExplorerIcons.Text = "Edit Explorer Icons";
+            this.editExplorerIcons.UseVisualStyleBackColor = true;
+            this.editExplorerIcons.Click += new System.EventHandler(this.editExplorerIcons_Click);
+            // 
             // Launcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(189, 288);
+            this.ClientSize = new System.Drawing.Size(189, 318);
+            this.Controls.Add(this.editExplorerIcons);
             this.Controls.Add(this.openFlagEditor);
             this.Controls.Add(this.openStudioDirectory);
             this.Controls.Add(this.forceRebuild);
@@ -188,6 +201,7 @@
         private System.Windows.Forms.CheckBox forceRebuild;
         private System.Windows.Forms.CheckBox openStudioDirectory;
         private System.Windows.Forms.Button openFlagEditor;
+        private System.Windows.Forms.Button editExplorerIcons;
     }
 }
 

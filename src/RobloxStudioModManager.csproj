@@ -91,6 +91,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExplorerIconEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExplorerIconEditor.Designer.cs">
+      <DependentUpon>ExplorerIconEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="FlagEditor.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,6 +122,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ExplorerIconEditor.resx">
+      <DependentUpon>ExplorerIconEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Launcher.resx">
+      <DependentUpon>Launcher.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
