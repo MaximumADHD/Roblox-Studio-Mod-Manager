@@ -30,8 +30,10 @@
         {
             this.iconContainer = new System.Windows.Forms.FlowLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.selectedIcon = new System.Windows.Forms.PictureBox();
+            this.enableIconOverride = new System.Windows.Forms.CheckBox();
+            this.editIcon = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)(this.selectedIcon)).BeginInit();
             this.SuspendLayout();
             // 
             // iconContainer
@@ -42,7 +44,7 @@
             this.iconContainer.MaximumSize = new System.Drawing.Size(272, 9999);
             this.iconContainer.Name = "iconContainer";
             this.iconContainer.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
-            this.iconContainer.Size = new System.Drawing.Size(272, 124);
+            this.iconContainer.Size = new System.Drawing.Size(259, 170);
             this.iconContainer.TabIndex = 0;
             // 
             // label1
@@ -55,22 +57,46 @@
             this.label1.TabIndex = 2;
             this.label1.Text = "Select Icon";
             // 
-            // pictureBox1
+            // selectedIcon
             // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.Window;
-            this.pictureBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox1.Location = new System.Drawing.Point(12, 158);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(64, 64);
-            this.pictureBox1.TabIndex = 4;
-            this.pictureBox1.TabStop = false;
+            this.selectedIcon.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.selectedIcon.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.selectedIcon.Location = new System.Drawing.Point(12, 204);
+            this.selectedIcon.Name = "selectedIcon";
+            this.selectedIcon.Size = new System.Drawing.Size(48, 48);
+            this.selectedIcon.TabIndex = 3;
+            this.selectedIcon.TabStop = false;
+            // 
+            // enableIconOverride
+            // 
+            this.enableIconOverride.AutoSize = true;
+            this.enableIconOverride.Location = new System.Drawing.Point(66, 206);
+            this.enableIconOverride.Name = "enableIconOverride";
+            this.enableIconOverride.Size = new System.Drawing.Size(126, 17);
+            this.enableIconOverride.TabIndex = 4;
+            this.enableIconOverride.Text = "Enable Icon Override";
+            this.enableIconOverride.UseVisualStyleBackColor = true;
+            this.enableIconOverride.CheckedChanged += new System.EventHandler(this.enableIconOverride_CheckedChanged);
+            // 
+            // editIcon
+            // 
+            this.editIcon.Enabled = false;
+            this.editIcon.Location = new System.Drawing.Point(66, 229);
+            this.editIcon.Name = "editIcon";
+            this.editIcon.Size = new System.Drawing.Size(126, 23);
+            this.editIcon.TabIndex = 5;
+            this.editIcon.Text = "Edit Icon";
+            this.editIcon.UseVisualStyleBackColor = true;
+            this.editIcon.Click += new System.EventHandler(this.editIcon_Click);
             // 
             // ExplorerIconEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(296, 238);
-            this.Controls.Add(this.pictureBox1);
+            this.ClientSize = new System.Drawing.Size(284, 264);
+            this.Controls.Add(this.editIcon);
+            this.Controls.Add(this.enableIconOverride);
+            this.Controls.Add(this.selectedIcon);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.iconContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -82,7 +108,7 @@
             this.Text = "Explorer Icon Editor";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.ExplorerIconEditor_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.selectedIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -92,6 +118,8 @@
 
         private System.Windows.Forms.FlowLayoutPanel iconContainer;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox selectedIcon;
+        private System.Windows.Forms.CheckBox enableIconOverride;
+        private System.Windows.Forms.Button editIcon;
     }
 }

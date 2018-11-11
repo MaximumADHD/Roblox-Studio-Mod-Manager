@@ -1,26 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using Microsoft.Win32;
 
 namespace RobloxStudioModManager
 {
     public partial class ExplorerIconEditor : Form
     {
-        private string branch;
-        private static Rectangle iconRect = new Rectangle(0, 0, 16, 16);
+        private static RegistryKey expRegistry = Program.GetSubKey(Program.ModManagerRegistry, "ExplorerIcons");
 
-        private struct ExplorerIconInfo
+        private static int iconSize = 16;
+        private static Rectangle iconRect = new Rectangle(0, 0, iconSize, iconSize);
+
+        private string branch;
+        private int selectedIndex;
+
+        private List<Image> iconLookup = new List<Image>();
+        private Dictionary<Button, int> iconBtnIndex = new Dictionary<Button, int>();
+        
+        public struct ExplorerIconInfo
         {
-            public Image SpriteSheet;
+            public string Source;
             public int MemoryOffset;
+            public Image SpriteSheet;
         }
 
         public ExplorerIconEditor(string _branch)
@@ -29,7 +36,18 @@ namespace RobloxStudioModManager
             branch = _branch;
         }
 
-        private static ExplorerIconInfo GetExplorerIcons(string studioPath)
+        private string getExplorerIconPath()
+        {
+            string studioBin = RobloxInstaller.GetStudioDirectory();
+            string explorerBin = Path.Combine(studioBin, "ExplorerIcons");
+
+            if (!Directory.Exists(explorerBin))
+                Directory.CreateDirectory(explorerBin);
+
+            return Path.Combine(explorerBin, "explorer-icon-" + selectedIndex + ".png");
+        }
+
+        public static ExplorerIconInfo GetExplorerIcons(string studioPath)
         {
             string studioBin = File.ReadAllText(studioPath, Encoding.Default);
             int pos = studioBin.Length / 2;
@@ -55,7 +73,7 @@ namespace RobloxStudioModManager
                             using (MemoryStream stream = new MemoryStream(pngBuffer))
                                 image = Image.FromStream(stream);
 
-                            if (image.Height == 16 || image.Width % 16 != 0)
+                            if (image.Height == iconSize || image.Width % iconSize != 0)
                             {
                                 if (icons == null || image.Width > icons.Width)
                                 {
@@ -82,10 +100,36 @@ namespace RobloxStudioModManager
             }
 
             ExplorerIconInfo info = new ExplorerIconInfo();
+            info.Source = studioPath;
             info.SpriteSheet = icons;
             info.MemoryOffset = memoryOffset;
 
             return info;
+        }
+
+        private static bool PatchStudioIcons(string versionGuid)
+        {
+            // todo
+            return false;
+        }
+
+        private void setSelectedIndex(int index)
+        {
+            Image icon = iconLookup[index];
+            selectedIcon.BackgroundImage = icon;
+            selectedIndex = index;
+
+            bool enabled = (Program.GetRegistryString(expRegistry, "explorer-icon-" + selectedIndex) == "True");
+            enableIconOverride.Checked = enabled;
+            editIcon.Enabled = enabled;
+        }
+
+        private void onIconBtnClicked(object sender, EventArgs e)
+        {
+            Button button = sender as Button;
+
+            int index = iconBtnIndex[button];
+            setSelectedIndex(index);
         }
 
         private async void ExplorerIconEditor_Load(object sender, EventArgs e)
@@ -102,13 +146,15 @@ namespace RobloxStudioModManager
             ExplorerIconInfo explorerInfo = GetExplorerIcons(studioPath);
             Image explorerIcons = explorerInfo.SpriteSheet;
 
-            int numIcons = explorerIcons.Width / 16;
+            EventHandler iconBtnClicked = new EventHandler(onIconBtnClicked);
+
+            int numIcons = explorerIcons.Width / iconSize;
             SuspendLayout();
 
             for (int i = 0; i < numIcons; i++)
             {
-                Bitmap icon = new Bitmap(16, 16);
-                Rectangle srcRect = new Rectangle(i * 16, 0, 16, 16);
+                Bitmap icon = new Bitmap(iconSize, iconSize);
+                Rectangle srcRect = new Rectangle(i * iconSize, 0, iconSize, iconSize);
 
                 using (Graphics graphics = Graphics.FromImage(icon))
                     graphics.DrawImage(explorerIcons, iconRect, srcRect, GraphicsUnit.Pixel);
@@ -116,14 +162,44 @@ namespace RobloxStudioModManager
                 Button iconBtn = new Button();
                 iconBtn.BackgroundImage = icon;
                 iconBtn.BackgroundImageLayout = ImageLayout.Zoom;
-                iconBtn.Size = new Size(24, 24);
+                iconBtn.Size = new Size(32, 32);
+                iconBtn.Click += iconBtnClicked;
+
+                iconLookup.Add(icon);
+                iconBtnIndex.Add(iconBtn, i);
 
                 iconContainer.Controls.Add(iconBtn);
             }
 
+            setSelectedIndex(0);
             ResumeLayout();
+
             Enabled = true;
             UseWaitCursor = false;
+        }
+
+        private void enableIconOverride_CheckedChanged(object sender, EventArgs e)
+        {
+            string explorerIconPath = getExplorerIconPath();
+            bool isChecked = enableIconOverride.Checked;
+
+            if (isChecked && !File.Exists(explorerIconPath))
+            {
+                Image icon = iconLookup[selectedIndex];
+                icon.Save(explorerIconPath);
+            }
+
+            editIcon.Enabled = isChecked;
+            expRegistry.SetValue("explorer-icon-" + selectedIndex, isChecked);
+        }
+
+        private void editIcon_Click(object sender, EventArgs e)
+        {
+            string explorerIconPath = getExplorerIconPath();
+            if (File.Exists(explorerIconPath))
+            {
+                Process.Start(explorerIconPath);
+            }
         }
     }
 }

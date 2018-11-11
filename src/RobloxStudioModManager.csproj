@@ -125,9 +125,6 @@
     <EmbeddedResource Include="ExplorerIconEditor.resx">
       <DependentUpon>ExplorerIconEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Launcher.resx">
-      <DependentUpon>Launcher.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
