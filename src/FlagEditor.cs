@@ -202,7 +202,7 @@ namespace RobloxStudioModManager
 
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             string settingsPath = Path.Combine(localAppData, "Roblox", "ClientSettings", "StudioAppSettings.json");
-            string lastExecVersion = Program.GetRegistryString(Program.ModManagerRegistry, "LastExecutedVersion");
+            string lastExecVersion = Program.GetRegistryString("LastExecutedVersion");
 
             if (lastExecVersion != liveVersion || settingsPath == "")
             {

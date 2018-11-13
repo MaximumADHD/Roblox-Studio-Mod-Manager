@@ -200,7 +200,7 @@ namespace RobloxStudioModManager
 
         public static async Task BringUpToDate(string branch, string expectedVersion, string updateReason)
         {
-            string currentVersion = Program.GetRegistryString(Program.ModManagerRegistry, "BuildVersion");
+            string currentVersion = Program.GetRegistryString("BuildVersion");
 
             if (currentVersion != expectedVersion)
             {
@@ -234,10 +234,7 @@ namespace RobloxStudioModManager
 
         private static string getDirectory(params string[] paths)
         {
-            string basePath = "";
-
-            foreach (string path in paths)
-                basePath = Path.Combine(basePath, path);
+            string basePath = Path.Combine(paths);
 
             if (!Directory.Exists(basePath))
                 Directory.CreateDirectory(basePath);
