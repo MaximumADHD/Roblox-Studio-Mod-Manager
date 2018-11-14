@@ -23,6 +23,8 @@ namespace RobloxStudioModManager
         private static Rectangle iconRect = new Rectangle(0, 0, iconSize, iconSize);
         private static Color darkColor = Color.FromArgb(44, 44, 44);
 
+        private delegate void StatusDelegator(Label label, string newText, Color newColor);
+
         private string branch;
         private bool darkTheme = false;
         private int selectedIndex = 0;
@@ -115,31 +117,37 @@ namespace RobloxStudioModManager
             if (fileInfo.Exists)
                 fileInfo.Attributes = FileAttributes.Normal;
 
-            // Write the updated icons file.
-            icons.Save(classImages);
-            icons.Dispose();
+            try
+            {
+                // Write the updated icons file.
+                icons.Save(classImages);
+                icons.Dispose();
 
-            // Lock the file so it isn't tampered with. This file is used as a
-            // reference for the original icons in the sprite sheet.
-            fileInfo.Attributes = FileAttributes.Hidden | FileAttributes.ReadOnly;
+                // Lock the file so it isn't tampered with. This file is used as a
+                // reference for the original icons in the sprite sheet.
+                fileInfo.Attributes = FileAttributes.Hidden | FileAttributes.ReadOnly;
 
-            // Update the registry with some information about the sprite sheet.
-            infoRegistry.SetValue("SourceLocation", classImages);
-            infoRegistry.SetValue("MemoryOffset", memoryOffset);
-            infoRegistry.SetValue("MemorySize", memorySize);
+                // Update the registry with some information about the sprite sheet.
+                infoRegistry.SetValue("SourceLocation", classImages);
+                infoRegistry.SetValue("MemoryOffset", memoryOffset);
+                infoRegistry.SetValue("MemorySize", memorySize);
+            }
+            catch
+            {
+                Console.WriteLine(":eyes:");
+            }
         }
 
         private static Image getExplorerIcons()
         {
             string currentVersion = Program.GetRegistryString("BuildVersion");
             string patchVersion = Program.GetRegistryString(explRegistry, "LastPatchVersion");
-
-            string studioDir = RobloxInstaller.GetStudioDirectory();
-            string studioPath = Path.Combine(studioDir, "RobloxStudioBeta.exe");
-
+        
             if (currentVersion != patchVersion)
             {
+                string studioPath = RobloxInstaller.GetStudioPath();
                 updateExplorerIcons(studioPath);
+
                 explRegistry.SetValue("LastPatchVersion", currentVersion);
             }
 
@@ -147,11 +155,8 @@ namespace RobloxStudioModManager
             return Image.FromFile(imagePath);
         }
 
-        private Image getPatchedExplorerIcons()
+        private static Image getPatchedExplorerIcons()
         {
-            string studioBin = RobloxInstaller.GetStudioDirectory();
-            string studioPath = Path.Combine(studioBin, "RobloxStudioBeta.exe");
-
             Image explorerIcons = getExplorerIcons();
             Image newExplorerIcons = new Bitmap(explorerIcons.Width, explorerIcons.Height);
 
@@ -165,7 +170,7 @@ namespace RobloxStudioModManager
 
             for (int i = 0; i < numIcons; i++)
             {
-                if (getIconOverridden(i))
+                if (hasIconOverride(i))
                 {
                     string filePath = getExplorerIconPath(i);
                     if (File.Exists(filePath))
@@ -205,54 +210,79 @@ namespace RobloxStudioModManager
 
         private static bool isRobloxStudioRunning()
         {
-            var studioProcs = Process.GetProcessesByName("RobloxStudioBeta.exe");
+            var studioProcs = Process.GetProcessesByName("RobloxStudioBeta");
             return studioProcs.Length > 0;
+        }
+
+        private void modifyStatusLabel(Label label, string newText, Color newColor)
+        {
+            if (label.InvokeRequired)
+            {
+                StatusDelegator update = new StatusDelegator(modifyStatusLabel);
+                label.Invoke(update, label, newText, newColor);
+            }
+            else
+            {
+                label.Text = newText;
+                label.ForeColor = newColor;
+                label.Refresh();
+            }
         }
 
         private void updateStatus()
         {
+            // Update the memory status
             Image mainIcons = getExplorerIcons();
             Image patchIcons = getPatchedExplorerIcons();
 
+            string explorerPath = getExplorerIconDir();
+
             long mainLen = measureImageSize(mainIcons);
             long patchLen = measureImageSize(patchIcons);
-            
-            memoryStatus.Text = "Memory Budget: " + patchLen + '/' + mainLen + " bytes used, " + Math.Max(0, mainLen - patchLen) + " free.";
-            memoryStatus.ForeColor = (patchLen > mainLen ? Color.Red : Color.Green);
 
+            string available = (patchLen > mainLen ? "over!!" : "free.");
 
+            modifyStatusLabel
+            (
+                memoryStatus,
+                "Memory Budget: " + patchLen + '/' + mainLen + " bytes used, " + Math.Abs(mainLen - patchLen) + " bytes " + available,
+                patchLen > mainLen ? Color.Red : Color.Green
+            );
+
+            // Update the studio status
             bool runningStudio = isRobloxStudioRunning();
-            studioStatus.Text = "Studio Status: " + (runningStudio ? "" : "Not") + " running";
-            studioStatus.ForeColor = (runningStudio ? Color.Red : Color.Green);
+            modifyStatusLabel
+            (
+                studioStatus,
+                "Studio Status: " + (runningStudio ? "" : "Not") + " Running.",
+                runningStudio ? Color.Red : Color.Green
+            );
+
+            // Update the error details.
+            Color detailColor = Color.Red;
+            string detailMsg = "";
 
             if (patchLen > mainLen)
             {
-                errors.Text = "The size of the new explorer icon spritesheet exceeds\n"
-                            + " the original file's size. Try to optimize some icons!";
-
-                errors.ForeColor = Color.Red;
+                detailMsg = "The size of the new explorer icon spritesheet exceeds\n"
+                          + " the original file's size. Try to optimize some icons!";
             }
             else if (runningStudio)
             {
-                errors.Text = "The explorer icon spritesheet cannot be updated\n"
-                            + "while Roblox Studio is running!";
-
-                errors.ForeColor = Color.Red;
+                detailMsg = "The explorer icon spritesheet cannot be updated\n"
+                          + "while Roblox Studio is running!";
             }
             else
             {
-                errors.Text = "All good to go! Your icons will be patched in once\n"
-                            + "you launch Roblox Studio from the mod manager!";
-
-                errors.ForeColor = Color.Green;
+                detailColor = Color.Green;
+                detailMsg = "All set! Your icons will be patched in once you\n"
+                          + "launch Roblox Studio from the Mod Manager!";
             }
 
-
-            mainIcons.Dispose();
-            patchIcons.Dispose();
+            modifyStatusLabel(errors, detailMsg, detailColor);
         }
 
-        private static bool getIconOverridden(int index)
+        private static bool hasIconOverride(int index)
         {
             string key = iconPrefix + index;
             string value = Program.GetRegistryString(iconRegistry, key);
@@ -281,19 +311,26 @@ namespace RobloxStudioModManager
 
         private Image getIconForIndex(int index)
         {
-            if (getIconOverridden(index))
+            if (hasIconOverride(index))
             {
-                string iconPath = getExplorerIconPath(index);
+                Image result;
 
-                // Copy the file to a memory stream so the image doesn't
-                // hold a write lock on the icon file.
-                MemoryStream stream = new MemoryStream();
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    try
+                    {
+                        string iconPath = getExplorerIconPath(index);
 
-                using (FileStream file = File.OpenRead(iconPath))
-                    file.CopyTo(stream);
+                        using (FileStream file = File.OpenRead(iconPath))
+                            file.CopyTo(stream);
 
-                Image result = Image.FromStream(stream);
-                stream.Dispose();
+                        result = Image.FromStream(stream);
+                    }
+                    catch
+                    {
+                        result = iconLookup[index];
+                    }
+                }
 
                 return result;
             }
@@ -309,7 +346,7 @@ namespace RobloxStudioModManager
             selectedIcon.BackgroundImage = getIconForIndex(index);
             selectedIndex = index;
 
-            bool enabled = getIconOverridden(selectedIndex);
+            bool enabled = hasIconOverride(selectedIndex);
             enableIconOverride.Checked = enabled;
             restoreOriginal.Enabled = enabled;
             editIcon.Enabled = enabled;
@@ -327,12 +364,19 @@ namespace RobloxStudioModManager
             updateStatus();
         }
 
-
         private void onIconBtnClicked(object sender, EventArgs e)
         {
             Button button = sender as Button;
             int index = iconBtnIndex[button];
             setSelectedIndex(index);
+        }
+
+        private void onFileSystemUpdate(object sender, FileSystemEventArgs e)
+        {
+            if (hasIconOverride(selectedIndex))
+                selectedIcon.BackgroundImage = getIconForIndex(selectedIndex);
+
+            updateStatus();
         }
 
         private async void ExplorerIconEditor_Load(object sender, EventArgs e)
@@ -341,9 +385,7 @@ namespace RobloxStudioModManager
             UseWaitCursor = true;
 
             EventHandler iconBtnClicked = new EventHandler(onIconBtnClicked);
-
-            string studioBin = RobloxInstaller.GetStudioDirectory();
-            string studioPath = Path.Combine(studioBin, "RobloxStudioBeta.exe");
+            string studioPath = RobloxInstaller.GetStudioPath();
 
             string liveVersion = await RobloxInstaller.GetCurrentVersion(branch);
             await RobloxInstaller.BringUpToDate(branch, liveVersion, "The explorer icons may have been changed!");
@@ -380,13 +422,51 @@ namespace RobloxStudioModManager
 
             string explorerIconDir = getExplorerIconDir();
             watcher = new FileSystemWatcher(explorerIconDir);
-            watcher.NotifyFilter = NotifyFilters.LastWrite;
             watcher.Filter = "*.png";
+            watcher.EnableRaisingEvents = true;
+            watcher.NotifyFilter = NotifyFilters.LastWrite;
+            watcher.Changed += new FileSystemEventHandler(onFileSystemUpdate);
+            
+            updateStatus();
 
             Enabled = true;
             UseWaitCursor = false;
+        }
 
-            updateStatus();
+        public static bool PatchExplorerIcons()
+        {
+            Image original = getExplorerIcons();
+            Image patched = getPatchedExplorerIcons();
+
+            long oldSize = measureImageSize(original);
+            long newSize = measureImageSize(patched);
+
+            if (newSize <= oldSize && !isRobloxStudioRunning())
+            {
+                string studioPath = RobloxInstaller.GetStudioPath();
+                int memoryOffset = (int)infoRegistry.GetValue("MemoryOffset");
+
+                try
+                {
+                    using (FileStream studio = File.OpenWrite(studioPath))
+                    {
+                        studio.Position = memoryOffset;
+                        patched.Save(studio, ImageFormat.Png);
+                    }
+
+                    return true;
+                }
+                catch
+                {
+                    Console.WriteLine("PATCH FAILED!");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Conditions to patch were not met.");
+            }
+
+            return false;
         }
 
         private void editIcon_Click(object sender, EventArgs e)
@@ -438,8 +518,6 @@ namespace RobloxStudioModManager
                     {
                         File.Delete(explorerIconPath);
                         setIconOverridden(selectedIndex, true);
-                        selectedIcon.BackgroundImage = getIconForIndex(selectedIndex);
-                        updateStatus();
                     }
                     catch
                     {
