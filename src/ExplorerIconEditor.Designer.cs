@@ -29,13 +29,15 @@
         private void InitializeComponent()
         {
             this.iconContainer = new System.Windows.Forms.FlowLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
+            this.selectIcon = new System.Windows.Forms.Label();
             this.enableIconOverride = new System.Windows.Forms.CheckBox();
             this.editIcon = new System.Windows.Forms.Button();
             this.selectedIcon = new System.Windows.Forms.PictureBox();
             this.restoreOriginal = new System.Windows.Forms.Button();
             this.themeSwitcher = new System.Windows.Forms.Button();
             this.memoryStatus = new System.Windows.Forms.Label();
+            this.studioStatus = new System.Windows.Forms.Label();
+            this.errors = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.selectedIcon)).BeginInit();
             this.SuspendLayout();
             // 
@@ -50,15 +52,15 @@
             this.iconContainer.Size = new System.Drawing.Size(259, 170);
             this.iconContainer.TabIndex = 0;
             // 
-            // label1
+            // selectIcon
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(9, 9);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(72, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Select Icon";
+            this.selectIcon.AutoSize = true;
+            this.selectIcon.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.selectIcon.Location = new System.Drawing.Point(9, 9);
+            this.selectIcon.Name = "selectIcon";
+            this.selectIcon.Size = new System.Drawing.Size(72, 13);
+            this.selectIcon.TabIndex = 2;
+            this.selectIcon.Text = "Select Icon";
             // 
             // enableIconOverride
             // 
@@ -121,22 +123,42 @@
             this.memoryStatus.AutoSize = true;
             this.memoryStatus.Location = new System.Drawing.Point(9, 259);
             this.memoryStatus.Name = "memoryStatus";
-            this.memoryStatus.Size = new System.Drawing.Size(121, 13);
+            this.memoryStatus.Size = new System.Drawing.Size(134, 13);
             this.memoryStatus.TabIndex = 8;
-            this.memoryStatus.Text = "Current Memory Budget:";
+            this.memoryStatus.Text = "Memory Budget: Loading...";
+            // 
+            // studioStatus
+            // 
+            this.studioStatus.AutoSize = true;
+            this.studioStatus.Location = new System.Drawing.Point(9, 272);
+            this.studioStatus.Name = "studioStatus";
+            this.studioStatus.Size = new System.Drawing.Size(123, 13);
+            this.studioStatus.TabIndex = 9;
+            this.studioStatus.Text = "Studio Status: Loading...";
+            // 
+            // errors
+            // 
+            this.errors.AutoSize = true;
+            this.errors.ForeColor = System.Drawing.Color.Red;
+            this.errors.Location = new System.Drawing.Point(9, 290);
+            this.errors.Name = "errors";
+            this.errors.Size = new System.Drawing.Size(0, 13);
+            this.errors.TabIndex = 10;
             // 
             // ExplorerIconEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 281);
+            this.ClientSize = new System.Drawing.Size(284, 328);
+            this.Controls.Add(this.errors);
+            this.Controls.Add(this.studioStatus);
             this.Controls.Add(this.memoryStatus);
             this.Controls.Add(this.themeSwitcher);
             this.Controls.Add(this.restoreOriginal);
             this.Controls.Add(this.editIcon);
             this.Controls.Add(this.enableIconOverride);
             this.Controls.Add(this.selectedIcon);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.selectIcon);
             this.Controls.Add(this.iconContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = global::RobloxStudioModManager.Properties.Resources.Icon;
@@ -156,12 +178,14 @@
         #endregion
 
         private System.Windows.Forms.FlowLayoutPanel iconContainer;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label selectIcon;
         private System.Windows.Forms.CheckBox enableIconOverride;
         private System.Windows.Forms.Button editIcon;
         private System.Windows.Forms.PictureBox selectedIcon;
         private System.Windows.Forms.Button restoreOriginal;
         private System.Windows.Forms.Button themeSwitcher;
         private System.Windows.Forms.Label memoryStatus;
+        private System.Windows.Forms.Label studioStatus;
+        private System.Windows.Forms.Label errors;
     }
 }
