@@ -16,6 +16,7 @@ The _Roblox Studio Mod Manager_ is an unofficial custom launcher for Roblox Stud
 * File overrides are sustained between updates.
 * Updates are applied incrementally to a single directory.
 * Provides a flexible flag editor, allowing you to toggle engine features.
+* Provides a tool for patching custom class icons into Roblox Studio's explorer.
 * Smooth transitions between test builds of Roblox Studio (gametest1-gametest5).
 * Support for launching from the website, and from saved _RBXL_ files.
 * File updates from Roblox's deployment servers are only applied where needed.
