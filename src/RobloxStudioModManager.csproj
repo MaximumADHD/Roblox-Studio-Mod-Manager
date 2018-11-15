@@ -91,6 +91,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExplorerIconEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExplorerIconEditor.Designer.cs">
+      <DependentUpon>ExplorerIconEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="FlagEditor.cs">
       <SubType>Form</SubType>
     </Compile>

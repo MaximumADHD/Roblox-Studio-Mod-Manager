@@ -147,7 +147,7 @@ namespace RobloxStudioModManager
             bool allow = true;
 
             // Create a warning prompt if the user hasn't disabled this warning.
-            if (Program.GetRegistryString(Program.ModManagerRegistry, "Disable Flag Warning") != "True")
+            if (Program.GetRegistryString("Disable Flag Warning") != "True")
             {
                 SystemSounds.Hand.Play();
                 allow = false;
@@ -323,7 +323,7 @@ namespace RobloxStudioModManager
             }
             else
             {
-                string currentVersion = Program.GetRegistryString(Program.ModManagerRegistry, "BuildVersion");
+                string currentVersion = Program.GetRegistryString("BuildVersion");
                 Program.ModManagerRegistry.SetValue("LastExecutedVersion", currentVersion);
                 Process.Start(robloxStudioInfo);
             }
@@ -377,6 +377,16 @@ namespace RobloxStudioModManager
                 args = mainArgs;
 
             InitializeComponent();
+        }
+
+        private void editExplorerIcons_Click(object sender, EventArgs e)
+        {
+            string branch = (string)branchSelect.SelectedItem;
+            ExplorerIconEditor editor = new ExplorerIconEditor(branch);
+
+            Hide();
+            editor.ShowDialog();
+            Show();
         }
     }
 }

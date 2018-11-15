@@ -24,9 +24,19 @@ namespace RobloxStudioModManager
             return key.CreateSubKey(constructedPath, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryOptions.None);
         }
 
+        public static RegistryKey GetSubKey(params string[] path)
+        {
+            return GetSubKey(ModManagerRegistry, path);
+        }
+
         public static string GetRegistryString(RegistryKey key, string name)
         {
             return key.GetValue(name, "") as string;
+        }
+
+        public static string GetRegistryString(string name)
+        {
+            return GetRegistryString(ModManagerRegistry, name);
         }
 
         // This sets up the following:

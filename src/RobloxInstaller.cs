@@ -91,7 +91,9 @@ namespace RobloxStudioModManager
         private void incrementProgressBarMax(int count)
         {
             if (progressBar.InvokeRequired)
+            {
                 progressBar.Invoke(new IncrementDelegator(incrementProgressBarMax), count);
+            }
             else
             {
                 actualProgressBarSum += count;
@@ -196,6 +198,33 @@ namespace RobloxStudioModManager
             return result;
         }
 
+        public static async Task BringUpToDate(string branch, string expectedVersion, string updateReason)
+        {
+            string currentVersion = Program.GetRegistryString("BuildVersion");
+
+            if (currentVersion != expectedVersion)
+            {
+                DialogResult check = MessageBox.Show
+                (
+                    "Roblox Studio is out of date!\n" 
+                    + updateReason + 
+                    "\nWould you like to update now?",
+                    
+                    "Out of date!",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Warning
+                );
+
+                if (check == DialogResult.Yes)
+                {
+                    RobloxInstaller installer = new RobloxInstaller(false);
+
+                    await installer.RunInstaller(branch);
+                    installer.Dispose();
+                }
+            }
+        }
+
         public RobloxInstaller(bool _exitWhenClosed = true)
         {
             InitializeComponent();
@@ -205,10 +234,7 @@ namespace RobloxStudioModManager
 
         private static string getDirectory(params string[] paths)
         {
-            string basePath = "";
-
-            foreach (string path in paths)
-                basePath = Path.Combine(basePath, path);
+            string basePath = Path.Combine(paths);
 
             if (!Directory.Exists(basePath))
                 Directory.CreateDirectory(basePath);
@@ -319,6 +345,12 @@ namespace RobloxStudioModManager
         {
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             return getDirectory(localAppData, "Roblox Studio");
+        }
+
+        public static string GetStudioPath()
+        {
+            string studioDir = GetStudioDirectory();
+            return Path.Combine(studioDir, "RobloxStudioBeta.exe");
         }
 
         public async Task<string> RunInstaller(string branch, bool forceInstall = false)
@@ -536,14 +568,26 @@ namespace RobloxStudioModManager
             }
             
             setStatus("Configuring Roblox Studio...");
+
+            echo("Updating registry protocols...");
             Program.UpdateStudioRegistryProtocols(setupDir, buildVersion, robloxStudioBetaPath);
 
-            string clientSettings = getDirectory(rootDir, "ClientSettings");
-            string clientAppSettings = Path.Combine(clientSettings, "ClientAppSettings.json");
+            if (exitWhenClosed)
+            {
+                echo("Applying flag configuration...");
 
-            RegistryKey flagRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FlagEditor");
-            applyFlagEditorConfiguration(flagRegistry, clientAppSettings);
+                string clientSettings = getDirectory(rootDir, "ClientSettings");
+                string clientAppSettings = Path.Combine(clientSettings, "ClientAppSettings.json");
 
+                RegistryKey flagRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FlagEditor");
+                applyFlagEditorConfiguration(flagRegistry, clientAppSettings);
+
+                echo("Patching explorer icons...");
+
+                bool success = ExplorerIconEditor.PatchExplorerIcons();
+                echo(success ? "Patch was successful!" : "PATCH FAILED!");
+            }
+            
             setStatus("Starting Roblox Studio...");
             await Task.Delay(1000);
 
@@ -553,7 +597,9 @@ namespace RobloxStudioModManager
         private void RobloxInstaller_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (exitWhenClosed)
+            {
                 Application.Exit();
+            }
         }
     }
 }
