@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -32,17 +33,19 @@ namespace RobloxStudioModManager
         public Dictionary<string, string> FileToSignature;
     }
 
-    public class RobloxInfoCache
+    public struct RobloxInfoCache
     {
-        public DateTime LastFetch = DateTime.MinValue;
+        public DateTime LastFetch;
         public string LastResult;
     }
 
     public partial class RobloxInstaller : Form
     {
         [DllImport("user32.dll")]
-        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-        private const int SW_RESTORE = 9;
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        static extern bool FlashWindow(IntPtr hWnd, bool bInvert);
 
         public string setupDir;
         public string buildVersion;
@@ -68,6 +71,7 @@ namespace RobloxStudioModManager
 
         private static RegistryKey pkgRegistry = Program.GetSubKey("PackageManifest");
         private static RegistryKey fileRegistry = Program.GetSubKey("FileManifest");
+        private static RegistryKey fixedRegistry = Program.GetSubKey(fileRegistry, "Fixed");
 
         private static Dictionary<string, RobloxInfoCache> infoCache = new Dictionary<string, RobloxInfoCache>();
 
@@ -285,10 +289,19 @@ namespace RobloxStudioModManager
                                 ".com/Get" + endpoint + "/?apiKey=" + versionCompKey +
                                 "&binaryType=" + binaryType;
 
-            if (!infoCache.ContainsKey(versionUrl))
-                infoCache.Add(versionUrl, new RobloxInfoCache());
+            RobloxInfoCache cache;
 
-            RobloxInfoCache cache = infoCache[versionUrl];
+            if (infoCache.ContainsKey(versionUrl))
+            {
+                cache = infoCache[versionUrl];
+            }
+            else
+            {
+                cache = new RobloxInfoCache();
+                cache.LastFetch = DateTime.MinValue;
+                infoCache.Add(versionUrl, cache);
+            }
+
             TimeSpan updateCheck = DateTime.Now - cache.LastFetch;
 
             if (updateCheck.TotalSeconds >= 300)
@@ -396,9 +409,6 @@ namespace RobloxStudioModManager
             BringToFront();
             TopMost = true;
 
-            if (!exitWhenClosed)
-                FormBorderStyle = FormBorderStyle.None;
-
             setStatus("Checking for updates");
 
             setupDir = "setup." + branch + ".com/";
@@ -415,7 +425,6 @@ namespace RobloxStudioModManager
                 echo("This build needs to be installed!");
 
                 string versionId = await GetVersionInfo(branch, "CurrentClientVersion", "WindowsStudio");
-                setStatus("Installing Version " + versionId + " of Roblox Studio...");
 
                 bool safeToContinue = false;
                 bool cancelled = false;
@@ -426,22 +435,52 @@ namespace RobloxStudioModManager
 
                     if (running.Count > 0)
                     {
+                        setStatus("Shutting down Roblox Studio...");
+
+                        TopMost = false;
+                        Hide();
+
                         foreach (Process p in running)
                         {
-                            ShowWindow(p.MainWindowHandle, SW_RESTORE);
-                            p.CloseMainWindow();
+                            SetForegroundWindow(p.MainWindowHandle);
+                            FlashWindow(p.MainWindowHandle, true);
 
+                            p.CloseMainWindow();
                             await Task.Delay(50);
                         }
 
-                        await Task.Delay(1000);
-
-                        List<Process> runningNow = GetRunningStudioProcesses();
+                        Show();
                         BringToFront();
+                        
+                        List<Process> runningNow = null;
+                        const int retries = 10;
 
-                        if (runningNow.Count > 0)
+                        progressBar.Value = 0;
+                        progressBar.Maximum = retries * 300;
+
+                        progressBar.Style = ProgressBarStyle.Continuous;
+                        progressBar.Refresh();
+
+                        for (int i = 0; i < retries; i++)
                         {
-                            echo("Running apps detected, action on the user's part is needed.");
+                            runningNow = GetRunningStudioProcesses();
+
+                            if (runningNow.Count == 0)
+                            {
+                                safeToContinue = true;
+                                break;
+                            }
+                            else
+                            {
+                                progressBar.Increment(300);
+                                await Task.Delay(1000);
+                            }
+                        }
+
+                        if (runningNow.Count > 0 && !safeToContinue)
+                        {
+                            TopMost = true;
+                            BringToFront();
 
                             DialogResult result = MessageBox.Show
                             (
@@ -469,6 +508,7 @@ namespace RobloxStudioModManager
 
                 if (!cancelled)
                 {
+                    setStatus("Installing Version " + versionId + " of Roblox Studio...");
                     List<Task> taskQueue = new List<Task>();
 
                     echo("Grabbing package manifest...");
@@ -533,6 +573,10 @@ namespace RobloxStudioModManager
 
                             ZipArchive archive = ZipFile.OpenRead(zipExtractPath);
                             string localRootDir = null;
+
+                            // Files that we ran into that aren't in the manifest, which we couldn't extract
+                            // immediately because the root directory had not been determined.
+                            var postProcess = new Dictionary<ZipArchiveEntry, string>();
 
                             foreach (ZipArchiveEntry entry in archive.Entries)
                             {
@@ -633,9 +677,34 @@ namespace RobloxStudioModManager
                                     else
                                     {
                                         string file = entry.FullName;
-                                        writePackageFile(rootDir, pkgName, file, newFileSig, entry, forceInstall);
+
+                                        if (localRootDir == null)
+                                        {
+                                            // Check back on this file after we extract the regular files,
+                                            // so we can make sure this is extracted to the correct directory.
+                                            postProcess.Add(entry, newFileSig);
+                                        }
+                                        else
+                                        {
+                                            // Append the local root directory.
+                                            file = localRootDir + file;
+                                            writePackageFile(rootDir, pkgName, file, newFileSig, entry, forceInstall);
+                                        }
                                     }
                                 }
+                            }
+
+                            // Process any files that we deferred from writing immediately.
+                            // See the comment above the postProcess definition.
+                            foreach (ZipArchiveEntry entry in postProcess.Keys)
+                            {
+                                string file = entry.FullName;
+                                string newFileSig = postProcess[entry];
+
+                                if (localRootDir != null)
+                                    file = localRootDir + file;
+
+                                writePackageFile(rootDir, pkgName, file, newFileSig, entry, forceInstall);
                             }
 
                             // Update the signature in the package registry so we can check if this zip file
@@ -649,37 +718,46 @@ namespace RobloxStudioModManager
 
                     await Task.WhenAll(taskQueue.ToArray());
 
-                    setStatus("Writing AppSettings.xml");
-
-                    progressBar.Style = ProgressBarStyle.Marquee;
-                    progressBar.Refresh();
-
-                    Program.ModManagerRegistry.SetValue("BuildBranch", branch);
-                    Program.ModManagerRegistry.SetValue("BuildVersion", buildVersion);
-
                     echo("Writing AppSettings.xml...");
 
                     string appSettings = Path.Combine(rootDir, "AppSettings.xml");
                     File.WriteAllText(appSettings, appSettingsXml);
 
                     setStatus("Deleting unused files...");
+                    taskQueue.Clear();
 
-                    await Task.Run( () =>
+                    foreach (string rawFileName in fileRegistry.GetValueNames())
                     {
-                        foreach (string fileName in fileRegistry.GetValueNames())
+                        // Temporary variable so we can change what file we are testing,
+                        // without breaking the foreach loop.
+                        string fileName = rawFileName;
+
+                        // A few hacky exemptions to the rules, but necessary because older versions of the
+                        // mod manager do not record which files are outside of the manifest, but valid otherwise.
+                        // TODO: Need a more proper way of handling this
+
+                        if (fileName.Contains("/") || fileName.EndsWith(".dll") && !fileName.Contains("\\"))
+                            continue;
+
+                        string filePath = Path.Combine(rootDir, fileName);
+
+                        if (!File.Exists(filePath))
                         {
-                            // A few hacky exemptions to the rules, but necessary because older versions of the
-                            // mod manager do not record which files are outside of the manifest, but valid otherwise.
-                            // TODO: Need a more proper way of handling this
-
-                            if (fileName.Contains("/") || fileName == ".luacheckrc" ||
-                                fileName.EndsWith(".dll") && !fileName.Contains("\\"))
-                                continue;
-
-                            if (!fileManifest.FileToSignature.ContainsKey(fileName))
+                            // Check if we recorded this file as an error in the manifest.
+                            string fixedFile = Program.GetRegistryString(fixedRegistry, fileName);
+                            if (fixedFile.Length > 0)
                             {
-                                string filePath = Path.Combine(rootDir, fileName);
-                                if (File.Exists(filePath))
+                                // Use this path instead.
+                                filePath = Path.Combine(rootDir, fixedFile);
+                                fileName = fixedFile;
+                            }
+                        }
+
+                        if (!fileManifest.FileToSignature.ContainsKey(fileName))
+                        {
+                            if (File.Exists(filePath))
+                            {
+                                Task verify = Task.Run(() =>
                                 {
                                     try
                                     {
@@ -693,19 +771,46 @@ namespace RobloxStudioModManager
                                         {
                                             echo("Deleting unused file " + fileName);
                                             File.Delete(filePath);
+                                            fileRegistry.DeleteValue(fileName);
+                                        }
+                                        else if (!fileName.StartsWith("content"))
+                                        {
+                                            // The path may have been labeled incorrectly in the manifest.
+                                            // Record it for future reference so we don't have to waste time
+                                            // computing the signature.
+
+                                            string fixedName = fileManifest.SignatureToFiles[signature].First();
+                                            fixedRegistry.SetValue(fileName, fixedName);
                                         }
                                     }
                                     catch
                                     {
                                         Console.WriteLine("FAILED TO VERIFY OR DELETE " + fileName);
                                     }
-                                }
+                                });
+
+                                taskQueue.Add(verify);
+                            }
+                            else
+                            {
+                                fileRegistry.DeleteValue(fileName);
                             }
                         }
-                    });
+                    }
+
+                    await Task.WhenAll(taskQueue.ToArray());
+
+                    progressBar.Style = ProgressBarStyle.Marquee;
+                    progressBar.Refresh();
+
+                    Program.ModManagerRegistry.SetValue("BuildBranch", branch);
+                    Program.ModManagerRegistry.SetValue("BuildVersion", buildVersion);
                 }
                 else
                 {
+                    progressBar.Style = ProgressBarStyle.Marquee;
+                    progressBar.Refresh();
+
                     echo("Update cancelled. Launching on current branch and version.");
                 }
             }

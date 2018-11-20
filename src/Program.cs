@@ -84,11 +84,18 @@ namespace RobloxStudioModManager
         private static bool validateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
         {
             if (errors == SslPolicyErrors.None)
+            {
                 return true;
+            }
             else if (errors == SslPolicyErrors.RemoteCertificateNameMismatch)
+            {
+                // TODO: This is handled poorly.
                 return certificate.Subject.Contains("Amazon.com Inc.");
-            else 
+            }
+            else
+            {
                 return false;
+            }
         }
 
         [STAThread]
