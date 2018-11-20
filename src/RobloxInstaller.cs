@@ -407,8 +407,8 @@ namespace RobloxStudioModManager
 
             echo("Checking build installation...");
 
-            string currentBranch = Program.ModManagerRegistry.GetValue("BuildBranch","") as string;
-            string currentVersion = Program.ModManagerRegistry.GetValue("BuildVersion", "") as string;
+            string currentBranch = Program.GetRegistryString("BuildBranch");
+            string currentVersion = Program.GetRegistryString("BuildVersion");
 
             if (currentBranch != branch || currentVersion != buildVersion || forceInstall)
             {
@@ -482,9 +482,7 @@ namespace RobloxStudioModManager
 
                     progressBar.Style = ProgressBarStyle.Continuous;
                     progressBar.Refresh();
-
-                    List<string> filesInUse = new List<string>();
-
+                    
                     foreach (RobloxPackageManifest package in pkgManifest)
                     {
                         int size = package.Size;
