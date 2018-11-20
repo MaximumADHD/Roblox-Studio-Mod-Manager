@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -598,37 +598,36 @@ namespace RobloxStudioModManager
                                                     // files in this package!                                            
                                                     localRootDir = filePath.Replace(entryPath, "");
 
-                                                    /*
-                                                        *  ===== HOW THIS INFERENCE WORKS =====
-                                                        *  
-                                                        *  Lets say I am extracting the file: "textures\studs.dds"
-                                                        *  From the zip file package:         "content-textures3.zip"
-                                                        *  
-                                                        *  We have the hash signature for each file and where it should be extracted to,
-                                                        *  but do we need to compute and match the hashes for every single file? Is there
-                                                        *  a way we could do it faster?
-                                                        *  
-                                                        *  Well, if we compute the hash for the "studs.dds" file, we might get something like:
-                                                        *  77e6efcbc2129448a094dd7afa36e484
-                                                        *  
-                                                        *  We can then check this hash against the SignatureToFiles 
-                                                        *  lookup table, which is derived from rbxManifest.txt:
-                                                        *  
-                                                        *  +----------------------------------+---------------------------------------+
-                                                        *  |          File Signature          |               File Path               |
-                                                        *  +----------------------------------+---------------------------------------+
-                                                        *  | 77e6efcbc2129448a094dd7afa36e484 | PlatformContent\pc\textures\studs.dds |
-                                                        *  +----------------------------------+---------------------------------------+
-                                                        *  
-                                                        *  By comparing the file path in the lookup table with our local path:
-                                                        *  
-                                                        *      PlatformContent\pc\textures\studs.dds
-                                                        *                         textures\studs.dds
-                                                        *                         
-                                                        *  We can now infer that "PlatformContent\pc\" is the local root directory that 
-                                                        *  all files in "content-textures3.zip" will be extracted into, without needing
-                                                        *  to compute the hash for any other files!
-                                                        */
+                                                    /*  ===== MORE DETAILS ON THIS INFERENCE =====
+                                                     *  
+                                                     *  Lets say I am extracting the file: "textures\studs.dds"
+                                                     *  From the zip file package:         "content-textures3.zip"
+                                                     *  
+                                                     *  We have the hash signature for each file and where it should be extracted to,
+                                                     *  but do we need to compute and match the hashes for every single file? Is there
+                                                     *  a way we could do it faster?
+                                                     *  
+                                                     *  Well, if we compute the hash for the "studs.dds" file, we might get something like:
+                                                     *  77e6efcbc2129448a094dd7afa36e484
+                                                     *  
+                                                     *  We can then check this hash against the SignatureToFiles 
+                                                     *  lookup table, which is derived from rbxManifest.txt:
+                                                     *  
+                                                     *  +----------------------------------+---------------------------------------+
+                                                     *  |          File Signature          |               File Path               |
+                                                     *  +----------------------------------+---------------------------------------+
+                                                     *  | 77e6efcbc2129448a094dd7afa36e484 | PlatformContent\pc\textures\studs.dds |
+                                                     *  +----------------------------------+---------------------------------------+
+                                                     *  
+                                                     *  By comparing the file path in the lookup table with our local path:
+                                                     *  
+                                                     *      PlatformContent\pc\textures\studs.dds
+                                                     *                         textures\studs.dds
+                                                     *                         
+                                                     *  We can now infer that "PlatformContent\pc" is the local root directory that 
+                                                     *  all files in "content-textures3.zip" will be extracted into, without needing
+                                                     *  to compute the hash for any other files in the zip file package!
+                                                     */
                                                 }
                                             }
                                         }
