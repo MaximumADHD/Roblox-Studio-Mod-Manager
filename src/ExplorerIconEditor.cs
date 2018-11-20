@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
@@ -16,7 +17,7 @@ namespace RobloxStudioModManager
         private const int iconSize = 16;
         private const string iconPrefix = "explorer-icon-";
 
-        private static RegistryKey explRegistry = Program.GetSubKey(Program.ModManagerRegistry, "ExplorerIcons");
+        private static RegistryKey explRegistry = Program.GetSubKey("ExplorerIcons");
         private static RegistryKey iconRegistry = Program.GetSubKey(explRegistry, "EnabledIcons");
         private static RegistryKey infoRegistry = Program.GetSubKey(explRegistry, "ClassImagesInfo");
 
@@ -82,7 +83,7 @@ namespace RobloxStudioModManager
                             using (MemoryStream stream = new MemoryStream(pngBuffer))
                                 image = Image.FromStream(stream);
 
-                            if (image.Height == iconSize || image.Width % iconSize != 0)
+                            if (image.Height == iconSize && image.Width % iconSize == 0)
                             {
                                 if (icons == null || image.Width > icons.Width)
                                 {
@@ -210,8 +211,8 @@ namespace RobloxStudioModManager
 
         private static bool isRobloxStudioRunning()
         {
-            var studioProcs = Process.GetProcessesByName("RobloxStudioBeta");
-            return studioProcs.Length > 0;
+            var studioProcs = RobloxInstaller.GetRunningStudioProcesses();
+            return studioProcs.Count > 0;
         }
 
         private void modifyStatusLabel(Label label, string newText, Color newColor)
@@ -433,9 +434,11 @@ namespace RobloxStudioModManager
             UseWaitCursor = false;
         }
 
-        public static bool PatchExplorerIcons()
+        public static async Task<bool> PatchExplorerIcons()
         {
-            Image original = getExplorerIcons();
+            // The procedure for grabbing the explorer icons *can* be expensive,
+            // so run it in a task.
+            Image original = await Task.Factory.StartNew(getExplorerIcons);
             Image patched = getPatchedExplorerIcons();
 
             long oldSize = measureImageSize(original);
@@ -472,6 +475,7 @@ namespace RobloxStudioModManager
         private void editIcon_Click(object sender, EventArgs e)
         {
             string explorerIconPath = getExplorerIconPath(selectedIndex);
+
             if (File.Exists(explorerIconPath))
             {
                 Process.Start(explorerIconPath);

@@ -535,5 +535,46 @@ namespace RobloxStudioModManager
                 refreshViewFlagRow(row);
             }
         }
+
+        public static bool ApplyFlags()
+        {
+            try
+            {
+                List<string> configs = new List<string>();
+
+                foreach (string flagName in flagRegistry.GetSubKeyNames())
+                {
+                    RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
+
+                    string name  = flagKey.GetValue("Name")  as string;
+                    string type  = flagKey.GetValue("Type")  as string;
+                    string value = flagKey.GetValue("Value") as string;
+
+                    string key = type + name;
+                    if (type.EndsWith("String"))
+                        value = '"' + value.Replace("\"", "\\\"").Replace("\\\\", "\\") + '"';
+
+                    configs.Add("\t\"" + key + "\": " + value);
+                };
+
+                string json = "{\r\n" + string.Join(",\r\n", configs.ToArray()) + "\r\n}";
+
+                string studioDir = RobloxInstaller.GetStudioDirectory();
+                string clientSettings = Path.Combine(studioDir, "ClientSettings");
+
+                if (!Directory.Exists(clientSettings))
+                    Directory.CreateDirectory(clientSettings);
+
+                string filePath = Path.Combine(clientSettings, "ClientAppSettings.json");
+                File.WriteAllText(filePath, json);
+
+                return true;
+            }
+            catch
+            {
+                Console.WriteLine("Failed to apply flag editor configuration!");
+                return false;
+            }
+        }
     }
 }

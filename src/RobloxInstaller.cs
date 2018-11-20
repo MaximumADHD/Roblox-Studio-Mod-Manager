@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -21,7 +22,7 @@ namespace RobloxStudioModManager
 
         public override string ToString()
         {
-            return Name + " = " + Signature + " [Packed-Size: " + PackedSize + "][Size: " + Size + ']';
+            return Name + " = " + Signature + " [Packed-Size: " + PackedSize + "] [Size: " + Size + ']';
         }
     }
 
@@ -31,10 +32,20 @@ namespace RobloxStudioModManager
         public Dictionary<string, string> FileToSignature;
     }
 
+    public class RobloxInfoCache
+    {
+        public DateTime LastFetch = DateTime.MinValue;
+        public string LastResult;
+    }
+
     public partial class RobloxInstaller : Form
     {
-        public string buildVersion;
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        private const int SW_RESTORE = 9;
+
         public string setupDir;
+        public string buildVersion;
         public string robloxStudioBetaPath;
 
         public delegate void EchoDelegator(string text);
@@ -43,14 +54,22 @@ namespace RobloxStudioModManager
         private int actualProgressBarSum = 0;
         private bool exitWhenClosed = true;
 
-        private static string gitContentUrl = "https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/master/";
-        private static string amazonAws = "https://s3.amazonaws.com/";
+        private const string gitContentUrl = "https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/master/";
+        private const string amazonAws = "https://s3.amazonaws.com/";
+
+        private const string appSettingsXml =
+            "<Settings>\n" +
+            "   <ContentFolder>content</ContentFolder>\n" +
+            "   <BaseUrl>http://www.roblox.com</BaseUrl>\n" +
+            "</Settings>";
 
         private static WebClient http = new WebClient();
         private static string versionCompKey;
 
-        private static RegistryKey pkgRegistry = Program.GetSubKey(Program.ModManagerRegistry, "PackageManifest");
-        private static RegistryKey fileRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FileManifest");
+        private static RegistryKey pkgRegistry = Program.GetSubKey("PackageManifest");
+        private static RegistryKey fileRegistry = Program.GetSubKey("FileManifest");
+
+        private static Dictionary<string, RobloxInfoCache> infoCache = new Dictionary<string, RobloxInfoCache>();
 
         private static string computeSignature(Stream source)
         {
@@ -67,6 +86,14 @@ namespace RobloxStudioModManager
             return result;
         }
 
+        private static string computeSignature(ZipArchiveEntry entry)
+        {
+            using (Stream stream = entry.Open())
+            {
+                return computeSignature(stream);
+            }
+        }
+
         private void setStatus(string status)
         {
             statusLbl.Text = status;
@@ -75,9 +102,10 @@ namespace RobloxStudioModManager
 
         private void echo(string text)
         {
-            if (InvokeRequired)
+            if (log.InvokeRequired)
             {
-                Invoke(new EchoDelegator(echo), text);
+                EchoDelegator echoer = new EchoDelegator(echo);
+                log.Invoke(echoer, text);
             }
             else
             {
@@ -92,22 +120,27 @@ namespace RobloxStudioModManager
         {
             if (progressBar.InvokeRequired)
             {
-                progressBar.Invoke(new IncrementDelegator(incrementProgressBarMax), count);
+                IncrementDelegator increment = new IncrementDelegator(incrementProgressBarMax);
+                progressBar.Invoke(increment, count);
             }
             else
             {
                 actualProgressBarSum += count;
-                if (actualProgressBarSum > progressBar.Maximum)
-                    progressBar.Maximum = actualProgressBarSum;
+                progressBar.Maximum = Math.Max(progressBar.Maximum, actualProgressBarSum);
             }
         }
 
         private void incrementProgress(int count = 1)
         {
             if (progressBar.InvokeRequired)
-                progressBar.Invoke(new IncrementDelegator(progressBar.Increment), count);
+            {
+                IncrementDelegator increment = new IncrementDelegator(progressBar.Increment);
+                progressBar.Invoke(increment, count);
+            }
             else
+            {
                 progressBar.Increment(count);
+            }
         }
 
         private string constructDownloadUrl(string file)
@@ -134,6 +167,7 @@ namespace RobloxStudioModManager
                     {
                         string fileName = reader.ReadLine();
                         string signature = reader.ReadLine();
+
                         int packedSize = int.Parse(reader.ReadLine());
                         int size = int.Parse(reader.ReadLine());
 
@@ -242,62 +276,43 @@ namespace RobloxStudioModManager
             return basePath;
         }
 
-        public void applyFlagEditorConfiguration(RegistryKey flagRegistry, string filePath)
-        {
-            try
-            {
-                List<string> configs = new List<string>();
-
-                foreach (string flagName in flagRegistry.GetSubKeyNames())
-                {
-                    RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
-
-                    string name  = flagKey.GetValue("Name")  as string;
-                    string type  = flagKey.GetValue("Type")  as string;
-                    string value = flagKey.GetValue("Value") as string;
-
-                    string key = type + name;
-                    if (type.EndsWith("String"))
-                        value = '"' + value.Replace("\"", "\\\"").Replace("\\\\","\\") + '"';
-
-                    configs.Add("\t\"" + key + "\": " + value);
-                };
-
-                string json = "{\r\n" + string.Join(",\r\n", configs.ToArray()) + "\r\n}";
-                File.WriteAllText(filePath, json);
-            }
-            catch
-            {
-                echo("Failed to apply FVariable configuration!");
-            }
-        }
-
-        public static async Task<string> GetCurrentVersion(string branch)
+        public static async Task<string> GetVersionInfo(string branch, string endpoint, string binaryType)
         {
             if (versionCompKey == null)
                 versionCompKey = await http.DownloadStringTaskAsync(gitContentUrl + "VersionCompatibilityApiKey");
 
             string versionUrl = "https://versioncompatibility.api." + branch +
-                                ".com/GetCurrentClientVersionUpload/?apiKey=" + versionCompKey +
-                                "&binaryType=WindowsStudio";
+                                ".com/Get" + endpoint + "/?apiKey=" + versionCompKey +
+                                "&binaryType=" + binaryType;
 
-            string buildVersion = await http.DownloadStringTaskAsync(versionUrl);
-            buildVersion = buildVersion.Replace('"', ' ').Trim();
+            if (!infoCache.ContainsKey(versionUrl))
+                infoCache.Add(versionUrl, new RobloxInfoCache());
 
-            return buildVersion;
+            RobloxInfoCache cache = infoCache[versionUrl];
+            TimeSpan updateCheck = DateTime.Now - cache.LastFetch;
+
+            if (updateCheck.TotalSeconds >= 300)
+            {
+                string newFetch = await http.DownloadStringTaskAsync(versionUrl);
+                cache.LastResult = newFetch.Replace('"', ' ').Trim();
+                cache.LastFetch = DateTime.Now;
+            }
+
+            return cache.LastResult;
+        }
+
+        public static async Task<string> GetCurrentVersion(string branch)
+        {
+            return await GetVersionInfo(branch, "CurrentClientVersionUpload", "WindowsStudio");
         }
 
         // YOU WERE SO CLOSE ROBLOX, AGHHHH
         private static string fixFilePath(string pkgName, string filePath)
         {
-            if (pkgName == "Plugins.zip" || pkgName == "Qml.zip")
-            {
-                string rootPkgDir = pkgName.Replace(".zip", "");
+            string pkgDir = pkgName.Replace(".zip", "");
 
-                if (!filePath.StartsWith(rootPkgDir))
-                    filePath = rootPkgDir + '\\' + filePath;
-
-            }
+            if ((pkgDir == "Plugins" || pkgDir == "Qml") && !filePath.StartsWith(pkgDir))
+                filePath = pkgDir + '\\' + filePath;
 
             return filePath;
         }
@@ -353,26 +368,42 @@ namespace RobloxStudioModManager
             return Path.Combine(studioDir, "RobloxStudioBeta.exe");
         }
 
+        public static List<Process> GetRunningStudioProcesses()
+        {
+            List<Process> studioProcs = new List<Process>();
+            
+            foreach (Process process in Process.GetProcessesByName("RobloxStudioBeta"))
+            {
+                if (process.MainWindowHandle != IntPtr.Zero)
+                {
+                    studioProcs.Add(process);
+                }
+                else
+                {
+                    process.Kill();
+                }
+            }
+
+            return studioProcs;
+        }
+
         public async Task<string> RunInstaller(string branch, bool forceInstall = false)
         {
-            string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
-            string rootDir = getDirectory(localAppData, "Roblox Studio");
+            string rootDir = GetStudioDirectory();
             string downloads = getDirectory(rootDir, "downloads");
 
             Show();
             BringToFront();
+            TopMost = true;
 
             if (!exitWhenClosed)
-            {
                 FormBorderStyle = FormBorderStyle.None;
-                TopMost = true;
-            }
 
             setStatus("Checking for updates");
 
             setupDir = "setup." + branch + ".com/";
             buildVersion = await GetCurrentVersion(branch);
-            robloxStudioBetaPath = Path.Combine(rootDir, "RobloxStudioBeta.exe");
+            robloxStudioBetaPath = GetStudioPath();
 
             echo("Checking build installation...");
 
@@ -383,35 +414,45 @@ namespace RobloxStudioModManager
             {
                 echo("This build needs to be installed!");
 
-                setStatus("Installing the latest '" + (branch == "roblox" ? "production" : branch) + "' branch of Roblox Studio...");
+                string versionId = await GetVersionInfo(branch, "CurrentClientVersion", "WindowsStudio");
+                setStatus("Installing Version " + versionId + " of Roblox Studio...");
 
                 bool safeToContinue = false;
                 bool cancelled = false;
 
                 while (!safeToContinue)
                 {
-                    Process[] running = Process.GetProcessesByName("RobloxStudioBeta");
+                    List<Process> running = GetRunningStudioProcesses();
 
-                    if (running.Length > 0)
+                    if (running.Count > 0)
                     {
                         foreach (Process p in running)
                         {
+                            ShowWindow(p.MainWindowHandle, SW_RESTORE);
                             p.CloseMainWindow();
+
                             await Task.Delay(50);
                         }
 
                         await Task.Delay(1000);
 
-                        Process[] runningNow = Process.GetProcessesByName("RobloxStudioBeta");
+                        List<Process> runningNow = GetRunningStudioProcesses();
                         BringToFront();
 
-                        if (runningNow.Length > 0)
+                        if (runningNow.Count > 0)
                         {
                             echo("Running apps detected, action on the user's part is needed.");
-                            Hide();
 
-                            DialogResult result = MessageBox.Show("All Roblox Studio instances needs to be closed in order to install the new version.\nPress Ok once you've saved your work and the windows are closed, or\nPress Cancel to skip the update for this launch.", "Notice", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
-                            Show();
+                            DialogResult result = MessageBox.Show
+                            (
+                                "All Roblox Studio processes need to be closed in order to update Roblox Studio!\n" +
+                                "Press Ok once you've saved your work, or\n" +
+                                "Press Cancel to skip this update temporarily.",
+                                
+                                "Notice",
+                                MessageBoxButtons.OKCancel, 
+                                MessageBoxIcon.Warning
+                            );
 
                             if (result == DialogResult.Cancel)
                             {
@@ -438,7 +479,11 @@ namespace RobloxStudioModManager
 
                     progressBar.Maximum = 1;
                     progressBar.Value = 0;
+
                     progressBar.Style = ProgressBarStyle.Continuous;
+                    progressBar.Refresh();
+
+                    List<string> filesInUse = new List<string>();
 
                     foreach (RobloxPackageManifest package in pkgManifest)
                     {
@@ -463,82 +508,143 @@ namespace RobloxStudioModManager
 
                             echo("Installing package " + zipFileUrl);
 
-                            try
+                            WebClient localHttp = new WebClient();
+                            localHttp.Headers.Set("UserAgent", "Roblox");
+
+                            // Download the zip file package.
+                            byte[] fileContents = await localHttp.DownloadDataTaskAsync(zipFileUrl);
+
+                            // If the size of the file we downloaded does not match the packed size specified
+                            // in the manifest, then this file has been tampered with.
+
+                            if (fileContents.Length != package.PackedSize)
+                                throw new InvalidDataException(package.Name + " expected packed size: " + package.PackedSize + " but got: " + fileContents.Length);
+
+                            using (MemoryStream fileBuffer = new MemoryStream(fileContents))
                             {
-                                WebClient localHttp = new WebClient();
-                                localHttp.Headers.Set("UserAgent", "Roblox");
+                                // Compute the MD5 signature of this zip file, and make sure it matches with the
+                                // signature specified in the package manifest.
 
-                                byte[] fileContents = await localHttp.DownloadDataTaskAsync(zipFileUrl);
-                                if (fileContents.Length != package.PackedSize)
-                                    throw new InvalidDataException(package.Name + " expected packed size: " + package.PackedSize + " but got: " + fileContents.Length);
+                                string checkSig = computeSignature(fileBuffer);
+                                if (checkSig != newSig)
+                                    throw new InvalidDataException(package.Name + " expected signature: " + newSig + " but got: " + checkSig);
 
-                                using (MemoryStream fileBuffer = new MemoryStream(fileContents))
-                                {
-                                    string checkSig = computeSignature(fileBuffer);
-                                    if (checkSig != newSig)
-                                        throw new InvalidDataException(package.Name + " expected signature: " + newSig + " but got: " + checkSig);
-                                }
-
+                                // Write the zip file.
                                 File.WriteAllBytes(zipExtractPath, fileContents);
-                                ZipArchive archive = ZipFile.OpenRead(zipExtractPath);
+                            }
 
-                                string localRootDir = null;
+                            ZipArchive archive = ZipFile.OpenRead(zipExtractPath);
+                            string localRootDir = null;
 
-                                foreach (ZipArchiveEntry entry in archive.Entries)
+                            foreach (ZipArchiveEntry entry in archive.Entries)
+                            {
+                                if (entry.Length > 0)
                                 {
-                                    if (entry.Length > 0)
+                                    string newFileSig = null;
+
+                                    // If we have figured out what our root directory is, try to resolve
+                                    // what the signature of this file is.
+
+                                    if (localRootDir != null)
                                     {
-                                        string newFileSig = null;
+                                        string filePath = entry.FullName.Replace('/', '\\');
 
-                                        if (localRootDir != null)
+                                        // If we can't find this file in the signature lookup table,
+                                        // try appending the local directory to it. This resolves some
+                                        // edge cases relating to the fixFilePath function above.
+
+                                        if (!fileManifest.FileToSignature.ContainsKey(filePath))
+                                            filePath = localRootDir + filePath;
+
+                                        // If we can find this file path in the file manifest, then we will
+                                        // use its pre-computed signature to check if the file has changed.
+
+                                        if (fileManifest.FileToSignature.ContainsKey(filePath))
                                         {
-                                            string filePath = entry.FullName.Replace('/', '\\');
-                                            if (!fileManifest.FileToSignature.ContainsKey(filePath))
-                                                filePath = localRootDir + filePath;
-
-                                            if (fileManifest.FileToSignature.ContainsKey(filePath))
-                                                newFileSig = fileManifest.FileToSignature[filePath];
-
+                                            newFileSig = fileManifest.FileToSignature[filePath];
                                         }
+                                    }
 
-                                        if (newFileSig == null)
-                                        {
-                                            using (Stream data = entry.Open())
-                                                newFileSig = computeSignature(data);
-                                        }
+                                    // If we couldn't pre-determine the file signature from the manifest,
+                                    // then we have to compute it manually. This is slower.
 
-                                        if (fileManifest.SignatureToFiles.ContainsKey(newFileSig))
+                                    if (newFileSig == null)
+                                        newFileSig = computeSignature(entry);
+                                        
+                                    // Now check what files this signature corresponds with.
+                                    if (fileManifest.SignatureToFiles.ContainsKey(newFileSig))
+                                    {
+                                        // Write this package to each of the files specified.
+                                        List<string> files = fileManifest.SignatureToFiles[newFileSig];
+
+                                        foreach (string file in files)
                                         {
-                                            List<string> files = fileManifest.SignatureToFiles[newFileSig];
-                                            foreach (string file in files)
+                                            // Write the file from this signature.
+                                            writePackageFile(rootDir, pkgName, file, newFileSig, entry, forceInstall);
+
+                                            // If we haven't resolved the directory being used by this package, it is
+                                            // possible to infer what it is by comparing the local path in the zip file
+                                            // to the path corresponding with this file signature.
+
+                                            if (localRootDir == null)
                                             {
-                                                writePackageFile(rootDir, pkgName, file, newFileSig, entry, forceInstall);
+                                                string filePath = fixFilePath(pkgName, file);
+                                                string entryPath = entry.FullName.Replace('/', '\\');
 
-                                                if (localRootDir == null)
+                                                // If our local path is the end of the file path in the package signature...
+                                                if (filePath.EndsWith(entryPath))
                                                 {
-                                                    string filePath = fixFilePath(pkgName, file);
-                                                    string entryPath = entry.FullName.Replace('/', '\\');
+                                                    // We can infer what the root extraction directory is for the
+                                                    // files in this package!                                            
+                                                    localRootDir = filePath.Replace(entryPath, "");
 
-                                                    if (filePath.EndsWith(entryPath))
-                                                        localRootDir = filePath.Replace(entryPath, "");
-
+                                                    /*
+                                                        *  ===== HOW THIS INFERENCE WORKS =====
+                                                        *  
+                                                        *  Lets say I am extracting the file: "textures\studs.dds"
+                                                        *  From the zip file package:         "content-textures3.zip"
+                                                        *  
+                                                        *  We have the hash signature for each file and where it should be extracted to,
+                                                        *  but do we need to compute and match the hashes for every single file? Is there
+                                                        *  a way we could do it faster?
+                                                        *  
+                                                        *  Well, if we compute the hash for the "studs.dds" file, we might get something like:
+                                                        *  77e6efcbc2129448a094dd7afa36e484
+                                                        *  
+                                                        *  We can then check this hash against the SignatureToFiles 
+                                                        *  lookup table, which is derived from rbxManifest.txt:
+                                                        *  
+                                                        *  +----------------------------------+---------------------------------------+
+                                                        *  |          File Signature          |               File Path               |
+                                                        *  +----------------------------------+---------------------------------------+
+                                                        *  | 77e6efcbc2129448a094dd7afa36e484 | PlatformContent\pc\textures\studs.dds |
+                                                        *  +----------------------------------+---------------------------------------+
+                                                        *  
+                                                        *  By comparing the file path in the lookup table with our local path:
+                                                        *  
+                                                        *      PlatformContent\pc\textures\studs.dds
+                                                        *                         textures\studs.dds
+                                                        *                         
+                                                        *  We can now infer that "PlatformContent\pc\" is the local root directory that 
+                                                        *  all files in "content-textures3.zip" will be extracted into, without needing
+                                                        *  to compute the hash for any other files!
+                                                        */
                                                 }
                                             }
                                         }
-                                        else
-                                        {
-                                            string file = entry.FullName;
-                                            writePackageFile(rootDir, pkgName, file, newFileSig, entry, forceInstall);
-                                        }
+                                    }
+                                    else
+                                    {
+                                        string file = entry.FullName;
+                                        writePackageFile(rootDir, pkgName, file, newFileSig, entry, forceInstall);
                                     }
                                 }
+                            }
 
-                                pkgRegistry.SetValue(pkgName, package.Signature);
-                            }
-                            catch (Exception e)
-                            {
-                                throw e;
-                            }
+                            // Update the signature in the package registry so we can check if this zip file
+                            // needs to be updated in future versions.
+
+                            pkgRegistry.SetValue(pkgName, package.Signature);
                         });
 
                         taskQueue.Add(installer);
@@ -547,7 +653,9 @@ namespace RobloxStudioModManager
                     await Task.WhenAll(taskQueue.ToArray());
 
                     setStatus("Writing AppSettings.xml");
+
                     progressBar.Style = ProgressBarStyle.Marquee;
+                    progressBar.Refresh();
 
                     Program.ModManagerRegistry.SetValue("BuildBranch", branch);
                     Program.ModManagerRegistry.SetValue("BuildVersion", buildVersion);
@@ -555,7 +663,49 @@ namespace RobloxStudioModManager
                     echo("Writing AppSettings.xml...");
 
                     string appSettings = Path.Combine(rootDir, "AppSettings.xml");
-                    File.WriteAllText(appSettings, "<Settings>\r\n\t<ContentFolder>content</ContentFolder>\r\n\t<BaseUrl>http://www.roblox.com</BaseUrl>\r\n</Settings>");
+                    File.WriteAllText(appSettings, appSettingsXml);
+
+                    setStatus("Deleting unused files...");
+
+                    await Task.Run( () =>
+                    {
+                        foreach (string fileName in fileRegistry.GetValueNames())
+                        {
+                            // A few hacky exemptions to the rules, but necessary because older versions of the
+                            // mod manager do not record which files are outside of the manifest, but valid otherwise.
+                            // TODO: Need a more proper way of handling this
+
+                            if (fileName.Contains("/") || fileName == ".luacheckrc" ||
+                                fileName.EndsWith(".dll") && !fileName.Contains("\\"))
+                                continue;
+
+                            if (!fileManifest.FileToSignature.ContainsKey(fileName))
+                            {
+                                string filePath = Path.Combine(rootDir, fileName);
+                                if (File.Exists(filePath))
+                                {
+                                    try
+                                    {
+                                        // Confirm that this file no longer exists in the manifest.
+                                        string signature;
+
+                                        using (FileStream file = File.OpenRead(filePath))
+                                            signature = computeSignature(file);
+
+                                        if (!fileManifest.SignatureToFiles.ContainsKey(signature))
+                                        {
+                                            echo("Deleting unused file " + fileName);
+                                            File.Delete(filePath);
+                                        }
+                                    }
+                                    catch
+                                    {
+                                        Console.WriteLine("FAILED TO VERIFY OR DELETE " + fileName);
+                                    }
+                                }
+                            }
+                        }
+                    });
                 }
                 else
                 {
@@ -575,22 +725,16 @@ namespace RobloxStudioModManager
             if (exitWhenClosed)
             {
                 echo("Applying flag configuration...");
-
-                string clientSettings = getDirectory(rootDir, "ClientSettings");
-                string clientAppSettings = Path.Combine(clientSettings, "ClientAppSettings.json");
-
-                RegistryKey flagRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FlagEditor");
-                applyFlagEditorConfiguration(flagRegistry, clientAppSettings);
+                FlagEditor.ApplyFlags();
 
                 echo("Patching explorer icons...");
-
-                bool success = ExplorerIconEditor.PatchExplorerIcons();
-                echo(success ? "Patch was successful!" : "PATCH FAILED!");
+                await ExplorerIconEditor.PatchExplorerIcons();
             }
             
             setStatus("Starting Roblox Studio...");
-            await Task.Delay(1000);
+            echo("Roblox Studio is up to date!");
 
+            await Task.Delay(1000);
             return robloxStudioBetaPath;
         }
 
