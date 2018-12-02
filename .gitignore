@@ -1,6 +1,5 @@
 */bin/*
 */obj/*
+*/.vs/*
 *.suo
 *.ide
-*.resx
-src/.vs/*
