@@ -142,7 +142,7 @@ namespace RobloxStudioModManager
             return warningForm;
         }
 
-        private void editFVariables_Click(object sender, EventArgs e)
+        private async void editFVariables_Click(object sender, EventArgs e)
         {
             bool allow = true;
 
@@ -156,6 +156,7 @@ namespace RobloxStudioModManager
                 warningPrompt.ShowDialog();
 
                 DialogResult result = warningPrompt.DialogResult;
+
                 if (result == DialogResult.Yes)
                 {
                     Program.ModManagerRegistry.SetValue("Disable Flag Warning", warningPrompt.Enabled);
@@ -166,8 +167,16 @@ namespace RobloxStudioModManager
             if (allow)
             {
                 string branch = (string)branchSelect.SelectedItem;
-                FlagEditor editor = new FlagEditor(this, branch);
+                Hide();
+
+                string liveVersion = await RobloxInstaller.GetCurrentVersion(branch);
+                await RobloxInstaller.BringUpToDate(branch, liveVersion, "The listed flags might be out of date!");
+
+                FlagEditor editor = new FlagEditor(branch);
                 editor.ShowDialog();
+
+                Show();
+                BringToFront();
             }
         }
 
@@ -191,34 +200,24 @@ namespace RobloxStudioModManager
                 {
                     byte[] fileContents = File.ReadAllBytes(modFile);
                     FileInfo modFileControl = new FileInfo(modFile);
+                    
+                    string relativeFile = modFile.Replace(modPath, studioRoot);
+                    string relativeDir = Directory.GetParent(relativeFile).ToString();
 
-                    bool allow = true;
+                    if (!Directory.Exists(relativeDir))
+                        Directory.CreateDirectory(relativeDir);
 
-                    if (modFileControl.Name == "ClientAppSettings.json")
+                    if (File.Exists(relativeFile))
                     {
-                        DialogResult result = MessageBox.Show("A custom ClientAppSettings configuration was detected in your mods folder. This will override the configuration provided by the FVariable Editor.\nAre you sure you want to use this one instead?", "Notice", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-                        if (result == DialogResult.No)
-                            allow = false;
+                        byte[] relativeContents = File.ReadAllBytes(relativeFile);
+                        if (!fileContents.SequenceEqual(relativeContents))
+                        {
+                            modFileControl.CopyTo(relativeFile, true);
+                        }
                     }
-
-                    if (allow)
+                    else
                     {
-                        string relativeFile = modFile.Replace(modPath, studioRoot);
-                        string relativeDir = Directory.GetParent(relativeFile).ToString();
-
-                        if (!Directory.Exists(relativeDir))
-                            Directory.CreateDirectory(relativeDir);
-
-                        if (File.Exists(relativeFile))
-                        {
-                            byte[] relativeContents = File.ReadAllBytes(relativeFile);
-                            if (!fileContents.SequenceEqual(relativeContents))
-                                modFileControl.CopyTo(relativeFile, true);
-                        }
-                        else
-                        {
-                            File.WriteAllBytes(relativeFile, fileContents);
-                        }
+                        File.WriteAllBytes(relativeFile, fileContents);
                     }
                 }
                 catch
@@ -303,10 +302,14 @@ namespace RobloxStudioModManager
                         robloxStudioInfo.Arguments += "-task ";
 
                         string launchMode = argMap["launchmode"];
+                        string addToArgs = "";
+
                         if (launchMode == "plugin")
-                            robloxStudioInfo.Arguments += "InstallPlugin";
+                            addToArgs = "InstallPlugin";
                         else if (launchMode == "edit")
-                            robloxStudioInfo.Arguments += "EditPlace";
+                            addToArgs += "EditPlace";
+
+                        robloxStudioInfo.Arguments += addToArgs;
                     }
                 }
                 else
@@ -379,14 +382,20 @@ namespace RobloxStudioModManager
             InitializeComponent();
         }
 
-        private void editExplorerIcons_Click(object sender, EventArgs e)
+        private async void editExplorerIcons_Click(object sender, EventArgs e)
         {
-            string branch = (string)branchSelect.SelectedItem;
-            ExplorerIconEditor editor = new ExplorerIconEditor(branch);
-
             Hide();
+
+            string branch = (string)branchSelect.SelectedItem;
+
+            string liveVersion = await RobloxInstaller.GetCurrentVersion(branch);
+            await RobloxInstaller.BringUpToDate(branch, liveVersion, "The explorer icons may have been changed!");
+
+            ExplorerIconEditor editor = new ExplorerIconEditor(branch);
             editor.ShowDialog();
+
             Show();
+            BringToFront();
         }
     }
 }

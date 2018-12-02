@@ -15,7 +15,7 @@ namespace RobloxStudioModManager
 {
     public partial class FlagEditor : Form
     {
-        private static RegistryKey flagRegistry = Program.GetSubKey(Program.ModManagerRegistry, "FlagEditor");
+        private static RegistryKey flagRegistry = Program.GetSubKey("FlagEditor");
 
         private static string[] fvarGroups = new string[3] { "F", "DF", "SF" };
         private static string[] fvarTypes = new string[4] { "Flag", "String", "Int", "Log" };
@@ -25,7 +25,6 @@ namespace RobloxStudioModManager
         private DataTable flagTable;
         private DataTable overrideTable;
 
-        private Launcher launcher;
         private string branch;
         
         private Dictionary<string, DataGridViewRow> flagRowLookup = new Dictionary<string, DataGridViewRow>();
@@ -47,12 +46,9 @@ namespace RobloxStudioModManager
             }
         }
 
-        public FlagEditor(Launcher _launcher, string _branch)
+        public FlagEditor(string _branch)
         {
             InitializeComponent();
-            
-            launcher = _launcher;
-            launcher.Enabled = false;
             
             branch = _branch;
 
@@ -70,9 +66,10 @@ namespace RobloxStudioModManager
 
         private static void applyRowColor(DataGridViewRow row, Color color)
         {
-            var cells = row.Cells;
-            for (int i = 0; i < cells.Count; i++)
-                cells[i].Style.BackColor = color;
+            foreach (DataGridViewCell cell in row.Cells)
+            {
+                cell.Style.BackColor = color;
+            }
         }
         
         private static string getFlagNameByRow(DataGridViewRow row)
@@ -83,6 +80,17 @@ namespace RobloxStudioModManager
             string type = cells[1].Value as string;
 
             return type + name;
+        }
+
+        private bool rowMatchesSelectedRow(DataGridViewRow row)
+        {
+            if (flagDataGridView.SelectedRows.Count == 1)
+            {
+                DataGridViewRow selectedRow = flagDataGridView.SelectedRows[0];
+                return getFlagNameByRow(selectedRow) == getFlagNameByRow(row);
+            }
+
+            return false;
         }
 
         private void refreshViewFlagRow(DataGridViewRow row)
@@ -178,11 +186,16 @@ namespace RobloxStudioModManager
 
             if (!initializing)
             {
-                DataRow dataRow = overrideRowLookup[key];
-                int index = overrideTable.Rows.IndexOf(dataRow);
+                // Find the row that corresponds to the flag we added.
+                DataGridViewRow overrideRow = overrideDataGridView.Rows
+                    .Cast<DataGridViewRow>()
+                    .Where(rowMatchesSelectedRow)
+                    .First();
 
-                DataGridViewRow overrideRow = overrideDataGridView.Rows[index];
+                // Select it.
                 overrideDataGridView.CurrentCell = overrideRow.Cells[0];
+
+                // Switch to the overrides tab.
                 tabs.SelectedTab = overridesTab;
             }
         }
@@ -192,30 +205,28 @@ namespace RobloxStudioModManager
             Enabled = false;
             UseWaitCursor = true;
 
-            string studioPath = Path.Combine(RobloxInstaller.GetStudioDirectory(), "RobloxStudioBeta.exe");
-            string liveVersion = await RobloxInstaller.GetCurrentVersion(branch);
-
-            await RobloxInstaller.BringUpToDate(branch, liveVersion, "The listed flags might be out of date!");
-
             TopMost = true;
             BringToFront();
 
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             string settingsPath = Path.Combine(localAppData, "Roblox", "ClientSettings", "StudioAppSettings.json");
-            string lastExecVersion = Program.GetRegistryString("LastExecutedVersion");
 
-            if (lastExecVersion != liveVersion || settingsPath == "")
+            string lastExecVersion = Program.GetRegistryString("LastExecutedVersion");
+            string installedVersion = Program.GetRegistryString("BuildVersion");
+
+            if (lastExecVersion != installedVersion || settingsPath == "")
             {
                 // Run Roblox Studio briefly so we can update the settings file.
                 ProcessStartInfo studioStartInfo = new ProcessStartInfo()
                 {
                     CreateNoWindow = true,
-                    FileName = studioPath,
                     UseShellExecute = false,
-                    WindowStyle = ProcessWindowStyle.Hidden
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    FileName = RobloxInstaller.GetStudioPath()
                 };
 
-                Process  studio = Process.Start(studioStartInfo);
+                Process studio = Process.Start(studioStartInfo);
+
                 DateTime startTime = DateTime.Now;
                 FileInfo info = new FileInfo(settingsPath);
 
@@ -230,7 +241,7 @@ namespace RobloxStudioModManager
                 await Task.Delay(500);
 
                 // Should be good now. Nuke studio and flag the version we updated with.
-                Program.ModManagerRegistry.SetValue("LastExecutedVersion", liveVersion);
+                Program.ModManagerRegistry.SetValue("LastExecutedVersion", installedVersion);
                 studio.Kill();
             }
 
@@ -311,13 +322,6 @@ namespace RobloxStudioModManager
             UseWaitCursor = false;
         }
 
-        private void FlagEditor_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            launcher.Enabled = true;
-            launcher.BringToFront();
-            launcher = null;
-        }
-
         private void flagSearchFilter_TextChanged(object sender, EventArgs e)
         {
             string text = flagSearchFilter.Text;
@@ -339,7 +343,20 @@ namespace RobloxStudioModManager
 
         private void flagSearchFilter_KeyDown(object sender, KeyEventArgs e)
         {
-            if ((e.KeyCode < Keys.A || e.KeyCode > Keys.Z) && e.KeyCode != Keys.Back)
+            KeysConverter converter = new KeysConverter();
+            string keyName = converter.ConvertToString(e.KeyCode);
+
+            if (keyName.Length == 1)
+            {
+                char key = keyName[0];
+
+                if (!char.IsLetterOrDigit(key))
+                {
+                    e.SuppressKeyPress = true;
+                    e.Handled = true;
+                }
+            }
+            else if (e.KeyCode != Keys.Back)
             {
                 e.SuppressKeyPress = true;
                 e.Handled = true;

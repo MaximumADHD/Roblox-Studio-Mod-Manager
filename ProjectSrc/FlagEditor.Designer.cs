@@ -206,7 +206,6 @@
             this.Name = "FlagEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Flag Editor";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.FlagEditor_FormClosed);
             this.Load += new System.EventHandler(this.FlagEditor_Load);
             this.tabs.ResumeLayout(false);
             this.viewFlagsTab.ResumeLayout(false);

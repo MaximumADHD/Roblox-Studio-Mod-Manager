@@ -38,6 +38,7 @@
             this.memoryStatus = new System.Windows.Forms.Label();
             this.studioStatus = new System.Windows.Forms.Label();
             this.errors = new System.Windows.Forms.Label();
+            this.showModified = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.selectedIcon)).BeginInit();
             this.SuspendLayout();
             // 
@@ -55,10 +56,10 @@
             // selectIcon
             // 
             this.selectIcon.AutoSize = true;
-            this.selectIcon.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.selectIcon.Location = new System.Drawing.Point(9, 9);
+            this.selectIcon.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.selectIcon.Location = new System.Drawing.Point(8, 4);
             this.selectIcon.Name = "selectIcon";
-            this.selectIcon.Size = new System.Drawing.Size(72, 13);
+            this.selectIcon.Size = new System.Drawing.Size(100, 20);
             this.selectIcon.TabIndex = 2;
             this.selectIcon.Text = "Select Icon";
             // 
@@ -75,12 +76,11 @@
             // 
             // editIcon
             // 
-            this.editIcon.Enabled = false;
             this.editIcon.Location = new System.Drawing.Point(63, 229);
             this.editIcon.Name = "editIcon";
             this.editIcon.Size = new System.Drawing.Size(90, 23);
             this.editIcon.TabIndex = 5;
-            this.editIcon.Text = "Edit Icon";
+            this.editIcon.Text = "Edit Icon 0";
             this.editIcon.UseVisualStyleBackColor = true;
             this.editIcon.Click += new System.EventHandler(this.editIcon_Click);
             // 
@@ -145,11 +145,23 @@
             this.errors.Size = new System.Drawing.Size(0, 13);
             this.errors.TabIndex = 10;
             // 
+            // showModified
+            // 
+            this.showModified.AutoSize = true;
+            this.showModified.Location = new System.Drawing.Point(146, 7);
+            this.showModified.Name = "showModified";
+            this.showModified.Size = new System.Drawing.Size(125, 17);
+            this.showModified.TabIndex = 11;
+            this.showModified.Text = "Show Modified Icons";
+            this.showModified.UseVisualStyleBackColor = true;
+            this.showModified.CheckedChanged += new System.EventHandler(this.showModified_CheckedChanged);
+            // 
             // ExplorerIconEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 328);
+            this.Controls.Add(this.showModified);
             this.Controls.Add(this.errors);
             this.Controls.Add(this.studioStatus);
             this.Controls.Add(this.memoryStatus);
@@ -187,5 +199,6 @@
         private System.Windows.Forms.Label memoryStatus;
         private System.Windows.Forms.Label studioStatus;
         private System.Windows.Forms.Label errors;
+        private System.Windows.Forms.CheckBox showModified;
     }
 }
