@@ -104,6 +104,19 @@ namespace RobloxStudioModManager
             statusLbl.Refresh();
         }
 
+        private static bool tryToKillProcess(Process process)
+        {
+            try
+            {
+                process.Kill();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private void echo(string text)
         {
             if (log.InvokeRequired)
@@ -393,7 +406,7 @@ namespace RobloxStudioModManager
                 }
                 else
                 {
-                    process.Kill();
+                    tryToKillProcess(process);
                 }
             }
 
