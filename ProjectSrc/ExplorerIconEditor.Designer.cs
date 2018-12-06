@@ -173,9 +173,8 @@
             this.Controls.Add(this.selectIcon);
             this.Controls.Add(this.iconContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            this.Icon = Properties.Resources.Icon;
+            this.Icon = global::RobloxStudioModManager.Properties.Resources.Icon;
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "ExplorerIconEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Explorer Icon Editor";

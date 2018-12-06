@@ -24,6 +24,7 @@ namespace RobloxStudioModManager
         private static Rectangle iconRect = new Rectangle(0, 0, iconSize, iconSize);
         private static Color darkColor = Color.FromArgb(44, 44, 44);
 
+        private delegate void StateDelegate(FormWindowState windowState);
         private delegate void StatusDelegator(Label label, string newText, Color newColor);
         private delegate void ButtonColorDelegator(Button button, Color newColor);
 
@@ -227,6 +228,19 @@ namespace RobloxStudioModManager
             }
         }
 
+        private void setFormState(FormWindowState state)
+        {
+            if (InvokeRequired)
+            {
+                StateDelegate stateDelegate = new StateDelegate(setFormState);
+                Invoke(stateDelegate, state);
+            }
+            else
+            {
+                WindowState = state;
+            }
+        }
+
         private void setButtonColor(Button button, Color color)
         {
             if (button.InvokeRequired)
@@ -423,6 +437,7 @@ namespace RobloxStudioModManager
             }
 
             updateStatus();
+            setFormState(FormWindowState.Normal);
         }
         
         private void ExplorerIconEditor_Load(object sender, EventArgs e)
