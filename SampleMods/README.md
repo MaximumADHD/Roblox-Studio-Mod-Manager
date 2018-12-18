@@ -1,1 +1,2 @@
-Here are a few sample mod files I created. Just copy them into your ModFolder (accessed by clicking the "Manage Mods" button in my program)
+Here are a few sample mod packs that I have created.
+Instructions for loading them into your environment may vary depending for each pack.
