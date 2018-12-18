@@ -39,6 +39,7 @@
             this.studioStatus = new System.Windows.Forms.Label();
             this.errors = new System.Windows.Forms.Label();
             this.showModified = new System.Windows.Forms.CheckBox();
+            this.openIconFolder = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.selectedIcon)).BeginInit();
             this.SuspendLayout();
             // 
@@ -156,11 +157,22 @@
             this.showModified.UseVisualStyleBackColor = true;
             this.showModified.CheckedChanged += new System.EventHandler(this.showModified_CheckedChanged);
             // 
+            // openIconFolder
+            // 
+            this.openIconFolder.Location = new System.Drawing.Point(12, 326);
+            this.openIconFolder.Name = "openIconFolder";
+            this.openIconFolder.Size = new System.Drawing.Size(259, 23);
+            this.openIconFolder.TabIndex = 12;
+            this.openIconFolder.Text = "Open Explorer Icon Folder";
+            this.openIconFolder.UseVisualStyleBackColor = true;
+            this.openIconFolder.Click += new System.EventHandler(this.openIconFolder_Click);
+            // 
             // ExplorerIconEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 328);
+            this.ClientSize = new System.Drawing.Size(284, 361);
+            this.Controls.Add(this.openIconFolder);
             this.Controls.Add(this.showModified);
             this.Controls.Add(this.errors);
             this.Controls.Add(this.studioStatus);
@@ -199,5 +211,6 @@
         private System.Windows.Forms.Label studioStatus;
         private System.Windows.Forms.Label errors;
         private System.Windows.Forms.CheckBox showModified;
+        private System.Windows.Forms.Button openIconFolder;
     }
 }

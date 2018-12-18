@@ -24,9 +24,10 @@ namespace RobloxStudioModManager
         private static Rectangle iconRect = new Rectangle(0, 0, iconSize, iconSize);
         private static Color darkColor = Color.FromArgb(44, 44, 44);
 
-        private delegate void StateDelegate(FormWindowState windowState);
-        private delegate void StatusDelegator(Label label, string newText, Color newColor);
+        private delegate void WindowStateDelegator(FormWindowState windowState);
         private delegate void ButtonColorDelegator(Button button, Color newColor);
+        private delegate void CheckBoxDelegator(CheckBox checkBox, bool setChecked);
+        private delegate void StatusDelegator(Label label, string newText, Color newColor);
 
         private Dictionary<Button, int> iconBtnIndex = new Dictionary<Button, int>();
 
@@ -37,7 +38,10 @@ namespace RobloxStudioModManager
         private int selectedIndex = 0;
         private bool darkTheme = false;
         private bool showModifiedIcons = false;
+
         private FileSystemWatcher iconWatcher;
+        private Timer statusUpdateTimer;
+        private int lastStatusUpdate = -1;
         
         public ExplorerIconEditor(string _branch)
         {
@@ -174,12 +178,19 @@ namespace RobloxStudioModManager
                     string filePath = getExplorerIconPath(i);
                     if (File.Exists(filePath))
                     {
-                        using (Image icon = Image.FromFile(filePath))
+                        try
                         {
-                            Rectangle srcRect = new Rectangle(0, 0, icon.Width, icon.Height);
-                            Rectangle destRect = new Rectangle(i * iconSize, 0, iconSize, iconSize);
-                            explorerGraphics.DrawImage(icon, destRect, srcRect, GraphicsUnit.Pixel);
-                            patchedAny = true;
+                            using (Image icon = Image.FromFile(filePath))
+                            {
+                                Rectangle srcRect = new Rectangle(0, 0, icon.Width, icon.Height);
+                                Rectangle destRect = new Rectangle(i * iconSize, 0, iconSize, iconSize);
+                                explorerGraphics.DrawImage(icon, destRect, srcRect, GraphicsUnit.Pixel);
+                                patchedAny = true;
+                            }
+                        }
+                        catch
+                        {
+                            Console.WriteLine("Error while trying to load {0}", filePath);
                         }
                     }
                 }
@@ -207,13 +218,38 @@ namespace RobloxStudioModManager
             }
         }
 
+        private static bool iconsAreEqual(Image a, Image b)
+        {
+            // Compare by literal object
+            if (a == b)
+                return true;
+
+            // Compare by size
+            if (a.Size != b.Size)
+                return false;
+
+            // Compare pixels
+            Bitmap compA = new Bitmap(a);
+            Bitmap compB = new Bitmap(b);
+
+            for (int x = 0; x < a.Width; x++)
+                for (int y = 0; y < a.Height; y++)
+                    if (compA.GetPixel(x, y) != compB.GetPixel(x, y))
+                        return false;
+
+            compA.Dispose();
+            compB.Dispose();
+
+            return true;
+        }
+
         private static bool isRobloxStudioRunning()
         {
             var studioProcs = RobloxInstaller.GetRunningStudioProcesses();
             return studioProcs.Count > 0;
         }
-
-        private void modifyStatusLabel(Label label, string newText, Color newColor)
+        
+        private static void modifyStatusLabel(Label label, string newText, Color newColor)
         {
             if (label.InvokeRequired)
             {
@@ -228,16 +264,48 @@ namespace RobloxStudioModManager
             }
         }
 
+        private int resolveIndexForFile(string fileName)
+        {
+            int result = -1;
+
+            if (fileName != iconPrefix + ".png" && fileName.StartsWith(iconPrefix) && fileName.EndsWith(".png"))
+            {
+                string value = fileName.Substring(iconPrefix.Length, fileName.Length - iconPrefix.Length - 4);
+                int.TryParse(value, out result);
+            }
+            
+            if (result > iconLookup.Count)
+                result = -1; // out of range
+
+            return result;
+        }
+
         private void setFormState(FormWindowState state)
         {
             if (InvokeRequired)
             {
-                StateDelegate stateDelegate = new StateDelegate(setFormState);
-                Invoke(stateDelegate, state);
+                WindowStateDelegator delegator = new WindowStateDelegator(setFormState);
+                Invoke(delegator, state);
             }
             else
             {
                 WindowState = state;
+            }
+        }
+
+        private void setCheckBoxCheck(CheckBox checkBox, bool check)
+        {
+            if (checkBox.InvokeRequired)
+            {
+                CheckBoxDelegator checkDelegator = new CheckBoxDelegator(setCheckBoxCheck);
+                checkBox.Invoke(checkDelegator, checkBox, check);
+            }
+            else
+            {
+                if (checkBox.Checked != check)
+                {
+                    checkBox.Checked = check;
+                }
             }
         }
 
@@ -267,8 +335,15 @@ namespace RobloxStudioModManager
             });
         }
 
-        private void updateStatus()
+        private void updateStatus(object sender = null, EventArgs e = null)
         {
+            int now = DateTime.Now.Second;
+
+            if (now == lastStatusUpdate)
+                return;
+
+            lastStatusUpdate = now;
+
             // Update the memory status
             Image mainIcons = getExplorerIcons();
             Image patchIcons = getPatchedExplorerIcons();
@@ -319,6 +394,12 @@ namespace RobloxStudioModManager
             modifyStatusLabel(errors, detailMsg, detailColor);
         }
 
+        private void updateStatusNow()
+        {
+            lastStatusUpdate = -1;
+            updateStatus();
+        }
+
         private static bool hasIconOverride(int index)
         {
             string key = iconPrefix + index;
@@ -327,23 +408,92 @@ namespace RobloxStudioModManager
             bool result = false;
             bool.TryParse(value, out result);
 
+            if (result)
+            {
+                // Double check that the file still exists.
+                string fileName = getExplorerIconPath(index);
+
+                if (!File.Exists(fileName))
+                {
+                    result = false;
+                    iconRegistry.DeleteValue(key, false);
+                }
+            }
+
             return result;
+        }
+
+        private static void hideIconFile(int index)
+        {
+            try
+            {
+                string iconPath = getExplorerIconPath(index);
+                if (File.Exists(iconPath))
+                {
+                    File.SetAttributes(iconPath, File.GetAttributes(iconPath) | FileAttributes.Hidden);
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Could not hide icon {0} at this time.", index);
+            }
+        }
+
+        private static void showIconFile(int index)
+        {
+            try
+            {
+                string iconPath = getExplorerIconPath(index);
+                if (File.Exists(iconPath))
+                {
+                    File.SetAttributes(iconPath, File.GetAttributes(iconPath) & ~FileAttributes.Hidden);
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Could not unhide icon {0} at this time.", index);
+            }
         }
 
         private void setIconOverridden(int index, bool enabled)
         {
+            if (index < 0)
+                return;
+
+            bool iconChanged = true;
+
+            if (enabled)
+            {
+                showIconFile(index);
+            }
+            else
+            {
+                Image current = getIconForIndex(index);
+                Image original = iconLookup[index];
+
+                if (iconsAreEqual(original, current))
+                {
+                    iconChanged = false;
+                    hideIconFile(index);
+                }
+            }
+
             string key = iconPrefix + index;
             iconRegistry.SetValue(key, enabled);
 
             if (enabled)
             {
                 string explorerIconPath = getExplorerIconPath(index);
+
                 if (!File.Exists(explorerIconPath))
                 {
                     Image icon = iconLookup[index];
                     icon.Save(explorerIconPath);
                 }
             }
+
+            if (iconChanged && index == selectedIndex)
+                selectedIcon.BackgroundImage = getIconForIndex(index);
 
             if (showModifiedIcons)
             {
@@ -411,7 +561,7 @@ namespace RobloxStudioModManager
             setIconOverridden(selectedIndex, isChecked);
             selectedIcon.BackgroundImage = getIconForIndex(selectedIndex);
 
-            updateStatus();
+            updateStatusNow();
         }
 
         private void onIconBtnClicked(object sender, EventArgs e)
@@ -420,10 +570,24 @@ namespace RobloxStudioModManager
             int index = iconBtnIndex[button];
             setSelectedIndex(index);
         }
-
-        private void onFileSystemUpdate(object sender, FileSystemEventArgs e)
+        
+        private void onFileCreated(object sender, FileSystemEventArgs e)
         {
-            if (hasIconOverride(selectedIndex))
+            int index = resolveIndexForFile(e.Name);
+            setIconOverridden(index, true);
+        }
+
+        private void onFileDeleted(object sender, FileSystemEventArgs e)
+        {
+            int index = resolveIndexForFile(e.Name);
+            setIconOverridden(index, false);
+        }
+
+        private void onFileChanged(object sender, FileSystemEventArgs e)
+        {
+            string selectedPath = getExplorerIconPath(selectedIndex);
+
+            if (e.FullPath == selectedPath && hasIconOverride(selectedIndex))
             {
                 Image icon = getIconForIndex(selectedIndex);
 
@@ -434,12 +598,18 @@ namespace RobloxStudioModManager
                 }
 
                 selectedIcon.BackgroundImage = icon;
-            }
+                setFormState(FormWindowState.Normal);
 
-            updateStatus();
-            setFormState(FormWindowState.Normal);
+                updateStatusNow();
+            }
+            else
+            {
+                int index = resolveIndexForFile(e.Name);
+                setIconOverridden(index, true);
+                updateStatus();
+            }
         }
-        
+
         private void ExplorerIconEditor_Load(object sender, EventArgs e)
         {
             Enabled = false;
@@ -493,8 +663,15 @@ namespace RobloxStudioModManager
             iconWatcher = new FileSystemWatcher(getExplorerIconDir());
             iconWatcher.Filter = "*.png";
             iconWatcher.EnableRaisingEvents = true;
-            iconWatcher.NotifyFilter = NotifyFilters.LastWrite;
-            iconWatcher.Changed += new FileSystemEventHandler(onFileSystemUpdate);
+
+            iconWatcher.Created += new FileSystemEventHandler(onFileCreated);
+            iconWatcher.Changed += new FileSystemEventHandler(onFileChanged);
+            iconWatcher.Deleted += new FileSystemEventHandler(onFileDeleted);
+
+            statusUpdateTimer = new Timer();
+            statusUpdateTimer.Tick += new EventHandler(updateStatus);
+            statusUpdateTimer.Interval = 1000;
+            statusUpdateTimer.Start();
 
             updateStatus();
 
@@ -635,6 +812,12 @@ namespace RobloxStudioModManager
                     }
                 }
             }
+        }
+
+        private void openIconFolder_Click(object sender, EventArgs e)
+        {
+            string explorerIconDir = getExplorerIconDir();
+            Process.Start(explorerIconDir);
         }
     }
 }
