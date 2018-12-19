@@ -67,7 +67,10 @@ namespace RobloxStudioModManager
 
         private static void updateExplorerIcons(string studioPath)
         {
-            string studioBin = File.ReadAllText(studioPath, Encoding.Default);
+            // Windows-1252 encoding is required to correctly read the exe.
+            Encoding WINDOWS_1252 = Encoding.GetEncoding(1252);
+
+            string studioBin = File.ReadAllText(studioPath, WINDOWS_1252);
             int pos = studioBin.Length / 2;
 
             Image icons = null;
@@ -88,7 +91,7 @@ namespace RobloxStudioModManager
                         if (iend >= 0)
                         {
                             string pngFile = studioBin.Substring(begin - 1, (iend + 10) - begin);
-                            byte[] pngBuffer = Encoding.Default.GetBytes(pngFile);
+                            byte[] pngBuffer = WINDOWS_1252.GetBytes(pngFile);
 
                             try
                             {
