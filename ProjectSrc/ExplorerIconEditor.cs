@@ -77,9 +77,11 @@ namespace RobloxStudioModManager
             while (true)
             {
                 int begin = studioBin.IndexOf("PNG\r\n\x1a\n", pos);
+
                 if (begin >= 0)
                 {
                     int ihdr = studioBin.IndexOf("IHDR", begin);
+
                     if ((ihdr - begin) <= 16)
                     {
                         int iend = studioBin.IndexOf("IEND", ihdr);
@@ -88,18 +90,25 @@ namespace RobloxStudioModManager
                             string pngFile = studioBin.Substring(begin - 1, (iend + 10) - begin);
                             byte[] pngBuffer = Encoding.Default.GetBytes(pngFile);
 
-                            Image image;
-                            using (MemoryStream stream = new MemoryStream(pngBuffer))
-                                image = Image.FromStream(stream);
-
-                            if (image.Height == iconSize && image.Width % iconSize == 0)
+                            try
                             {
-                                if (icons == null || image.Width > icons.Width)
+                                Image image;
+                                using (MemoryStream stream = new MemoryStream(pngBuffer))
+                                    image = Image.FromStream(stream);
+
+                                if (image.Height == iconSize && image.Width % iconSize == 0)
                                 {
-                                    icons = image;
-                                    memoryOffset = begin - 1;
-                                    memorySize = pngFile.Length;
+                                    if (icons == null || image.Width > icons.Width)
+                                    {
+                                        icons = image;
+                                        memoryOffset = begin - 1;
+                                        memorySize = pngFile.Length;
+                                    }
                                 }
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine("Error while processing image: " + e.Message);
                             }
 
                             pos = iend + 10;
@@ -117,6 +126,9 @@ namespace RobloxStudioModManager
                     break;
                 }
             }
+
+            if (icons == null)
+                throw new InvalidDataException("Failed to locate the explorer icon spritesheet in RobloxStudioBeta.exe!");
 
             string explorerDir = getExplorerIconDir();
             string classImages = Path.Combine(explorerDir, "__classImageRef.png");
@@ -232,15 +244,24 @@ namespace RobloxStudioModManager
             Bitmap compA = new Bitmap(a);
             Bitmap compB = new Bitmap(b);
 
+            bool result = true;
+
             for (int x = 0; x < a.Width; x++)
+            {
                 for (int y = 0; y < a.Height; y++)
+                {
                     if (compA.GetPixel(x, y) != compB.GetPixel(x, y))
-                        return false;
+                    {
+                        result = false;
+                        break;
+                    }
+                }
+            }
 
             compA.Dispose();
             compB.Dispose();
 
-            return true;
+            return result;
         }
 
         private static bool isRobloxStudioRunning()
@@ -681,18 +702,20 @@ namespace RobloxStudioModManager
 
         public static async Task<bool> PatchExplorerIcons()
         {
-            // The procedure for grabbing the explorer icons
-            // *can* be expensive, so run it in a task.
+            bool success = false;
 
-            Image original = await Task.Factory.StartNew(getExplorerIcons);
-            Image patched = getPatchedExplorerIcons();
-
-            long oldSize = measureImageSize(original);
-            long newSize = measureImageSize(patched);
-
-            if (newSize <= oldSize && !isRobloxStudioRunning())
+            try
             {
-                try
+                // The procedure for grabbing the explorer icons
+                // *can* be expensive, so run it in a task.
+
+                Image original = await Task.Factory.StartNew(getExplorerIcons);
+                Image patched = getPatchedExplorerIcons();
+
+                long oldSize = measureImageSize(original);
+                long newSize = measureImageSize(patched);
+
+                if (newSize <= oldSize && !isRobloxStudioRunning())
                 {
                     string studioPath = RobloxInstaller.GetStudioPath();
                     int memoryOffset = (int)infoRegistry.GetValue("MemoryOffset");
@@ -703,19 +726,15 @@ namespace RobloxStudioModManager
                         patched.Save(studio, ImageFormat.Png);
                     }
 
-                    return true;
-                }
-                catch
-                {
-                    Console.WriteLine("PATCH FAILED!");
+                    success = true;
                 }
             }
-            else
+            catch (Exception e)
             {
-                Console.WriteLine("Conditions to patch were not met.");
+                Console.WriteLine("An error occurred while trying to patch the explorer icons: {0}", e.Message);
             }
 
-            return false;
+            return success;
         }
 
         private void showModified_CheckedChanged(object sender, EventArgs e)
