@@ -26,7 +26,6 @@ namespace RobloxStudioModManager
 
         private delegate void WindowStateDelegator(FormWindowState windowState);
         private delegate void ButtonColorDelegator(Button button, Color newColor);
-        private delegate void CheckBoxDelegator(CheckBox checkBox, bool setChecked);
         private delegate void StatusDelegator(Label label, string newText, Color newColor);
 
         private Dictionary<Button, int> iconBtnIndex = new Dictionary<Button, int>();
@@ -314,22 +313,6 @@ namespace RobloxStudioModManager
             else
             {
                 WindowState = state;
-            }
-        }
-
-        private void setCheckBoxCheck(CheckBox checkBox, bool check)
-        {
-            if (checkBox.InvokeRequired)
-            {
-                CheckBoxDelegator checkDelegator = new CheckBoxDelegator(setCheckBoxCheck);
-                checkBox.Invoke(checkDelegator, checkBox, check);
-            }
-            else
-            {
-                if (checkBox.Checked != check)
-                {
-                    checkBox.Checked = check;
-                }
             }
         }
 
