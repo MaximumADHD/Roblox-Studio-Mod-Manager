@@ -194,7 +194,7 @@ namespace RobloxStudioModManager
             string[] studioFiles = Directory.GetFiles(studioRoot);
             string[] modFiles = Directory.GetFiles(modPath, "*.*", SearchOption.AllDirectories);
 
-            // Moved mod file copying to RobloxLauncher.cs - Hexcede
+            // Moved mod file copying to RobloxInstaller.cs - Hexcede
 
             // Hack in the metadata plugin.
             // This is used to provide an end-point to custom StarterScripts that are trying to fork what branch they are on.
