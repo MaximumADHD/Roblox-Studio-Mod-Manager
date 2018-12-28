@@ -16,7 +16,7 @@ namespace RobloxStudioModManager
         private WebClient http = new WebClient();
         private string[] args = null;
 
-        public string getModPath()
+        public static string getModPath()
         {
             string appData = Environment.GetEnvironmentVariable("AppData");
             string root = Path.Combine(appData, "RbxModManager", "ModFiles");
@@ -194,37 +194,7 @@ namespace RobloxStudioModManager
             string[] studioFiles = Directory.GetFiles(studioRoot);
             string[] modFiles = Directory.GetFiles(modPath, "*.*", SearchOption.AllDirectories);
 
-            foreach (string modFile in modFiles)
-            {
-                try
-                {
-                    byte[] fileContents = File.ReadAllBytes(modFile);
-                    FileInfo modFileControl = new FileInfo(modFile);
-                    
-                    string relativeFile = modFile.Replace(modPath, studioRoot);
-                    string relativeDir = Directory.GetParent(relativeFile).ToString();
-
-                    if (!Directory.Exists(relativeDir))
-                        Directory.CreateDirectory(relativeDir);
-
-                    if (File.Exists(relativeFile))
-                    {
-                        byte[] relativeContents = File.ReadAllBytes(relativeFile);
-                        if (!fileContents.SequenceEqual(relativeContents))
-                        {
-                            modFileControl.CopyTo(relativeFile, true);
-                        }
-                    }
-                    else
-                    {
-                        File.WriteAllBytes(relativeFile, fileContents);
-                    }
-                }
-                catch
-                {
-                    Console.WriteLine("Failed to overwrite " + modFile + "\nMight be open in another program\nThats their problem, not mine <3");
-                }
-            }
+            // Moved mod file copying to RobloxLauncher.cs - Hexcede
 
             // Hack in the metadata plugin.
             // This is used to provide an end-point to custom StarterScripts that are trying to fork what branch they are on.

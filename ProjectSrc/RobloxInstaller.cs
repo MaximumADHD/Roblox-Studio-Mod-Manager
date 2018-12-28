@@ -831,7 +831,63 @@ namespace RobloxStudioModManager
             {
                 echo("This version of Roblox Studio has been installed!");
             }
-            
+
+            // Moved from Launcher.cs to here for user feedback, debugging and reliability - Hexcede
+            setStatus("Updating mod files...");
+
+            string studioPath = robloxStudioBetaPath;
+            string studioRoot = Directory.GetParent(studioPath).ToString();
+            string modPath = Launcher.getModPath();
+
+            string[] studioFiles = Directory.GetFiles(studioRoot);
+            string[] modFiles = Directory.GetFiles(modPath, "*.*", SearchOption.AllDirectories);
+            progressBar.Maximum = modFiles.Length;
+            progressBar.Value = 0;
+            progressBar.Style = ProgressBarStyle.Continuous;
+            foreach (string modFile in modFiles)
+            {
+                try
+                {
+                    byte[] fileContents = File.ReadAllBytes(modFile);
+                    FileInfo modFileControl = new FileInfo(modFile);
+
+                    string relativeFile = modFile.Replace(modPath, studioRoot);
+                    string relativeDir = Directory.GetParent(relativeFile).ToString();
+
+                    if (!Directory.Exists(relativeDir))
+                        Directory.CreateDirectory(relativeDir);
+                    
+                    if (File.Exists(relativeFile))
+                    {
+                        byte[] relativeContents = File.ReadAllBytes(relativeFile);
+                        if (!fileContents.SequenceEqual(relativeContents))
+                        {
+                            echo(String.Format("Updating {0} -> {1}", modFile, relativeFile));
+                            modFileControl.CopyTo(relativeFile, true);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Up to date {1}", modFile, relativeFile);
+                        }
+                    }
+                    else
+                    {
+                        echo(String.Format("Creating {0} -> {1}", modFile, relativeFile));
+                        File.WriteAllBytes(relativeFile, fileContents);
+                    }
+                }
+                catch
+                {
+                    // Use echo for user feedback
+                    echo("Failed to overwrite " + modFile + "... It's probably being used by Roblox studio or a text editor (This is not RobloxStudioModManager's fault!)");
+                    Console.WriteLine("Failed to overwrite " + modFile + "\nMight be open in another program\nThats their problem, not mine <3");
+                }
+                progressBar.Value += 1;
+                progressBar.Refresh();
+            }
+            progressBar.Style = ProgressBarStyle.Marquee;
+            progressBar.Refresh();
+
             setStatus("Configuring Roblox Studio...");
 
             echo("Updating registry protocols...");
