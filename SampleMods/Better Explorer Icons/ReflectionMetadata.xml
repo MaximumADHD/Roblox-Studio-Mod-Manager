@@ -104,6 +104,7 @@
 				<string name="Name">Glue</string>
 				<string name="PreferredParent">BasePart</string>
 				<string name="PreferredParents">BasePart</string>
+				<string name="Deprecated">true</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -664,6 +665,14 @@
 				<string name="ExplorerImageIndex">34</string>
 				<string name="PreferredParent">PVInstance</string>
 				<string name="PreferredParents">PVInstance</string>
+				<Item class="ReflectionMetadataProperties">
+					<Item class="ReflectionMetadataMember">
+						<Properties>
+							<string name="Name">Active</string>
+							<string name="summary">Read-only boolean, true if the joint is active in world. Rigid joints may be inactive if they are redundant or form cycles.</string>
+						</Properties>
+					</Item>
+				</Item>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1165,6 +1174,7 @@
 				<string name="Name">RotateP</string>
 				<string name="PreferredParent">BasePart</string>
 				<string name="PreferredParents">BasePart</string>
+				<string name="Deprecated">true</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1172,6 +1182,7 @@
 				<string name="Name">RotateV</string>
 				<string name="PreferredParent">BasePart</string>
 				<string name="PreferredParents">BasePart</string>
+				<string name="Deprecated">true</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1191,6 +1202,7 @@
 				<string name="Name">VelocityMotor</string>
 				<string name="PreferredParent">BasePart</string>
 				<string name="PreferredParents">BasePart</string>
+				<string name="Deprecated">true</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1198,6 +1210,15 @@
 				<string name="Name">Weld</string>
 				<string name="ExplorerOrder">20</string>
 				<string name="ExplorerImageIndex">34</string>
+				<string name="PreferredParent">BasePart</string>
+				<string name="PreferredParents">BasePart</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Motor6D</string>
+				<string name="ExplorerOrder">20</string>
+				<string name="ExplorerImageIndex">86</string>
 				<string name="PreferredParent">BasePart</string>
 				<string name="PreferredParents">BasePart</string>
 			</Properties>
@@ -1252,6 +1273,7 @@
 				<string name="Name">FileMesh</string>
 				<string name="PreferredParent">BasePart</string>
 				<string name="PreferredParents">BasePart</string>
+				<string name="Browsable">false</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1721,13 +1743,20 @@
 				<string name="ExplorerOrder">20</string>
 				<string name="ExplorerImageIndex">34</string>
 			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Active</string>
+						<string name="summary">Read-only boolean, true if the joint is active in world. Rigid joints may be inactive if they are redundant or form cycles.</string>
+					</Properties>
+				</Item>
+			</Item>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Message</string>
 				<string name="ExplorerOrder">11</string>
 				<string name="ExplorerImageIndex">33</string>
-				<bool name="Deprecated">true</bool>
 				<string name="PreferredParent">StarterGui</string>
 				<string name="PreferredParents">StarterGui</string>
 			</Properties>
@@ -1735,7 +1764,6 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Hint</string>
-				<bool name="Deprecated">true</bool>
 				<string name="ExplorerOrder">11</string>
 				<string name="ExplorerImageIndex">33</string>
 			</Properties>
@@ -1974,6 +2002,7 @@
 				<string name="ExplorerImageIndex">8</string>
 				<string name="PreferredParent">BasePart</string>
 				<string name="PreferredParents">BasePart</string>
+				<bool name="Deprecated">true</bool>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -2388,13 +2417,6 @@
 				<string name="PreferredParents">SoundService</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties"></Item>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">StockSound</string>
-				<string name="Browsable">false</string>
-				<string name="ExplorerOrder">-1</string>
-			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
@@ -2918,6 +2940,7 @@
 			<Properties>
 				<string name="Name">Tween</string>
 				<string name="summary">An object linked to an instance that animates properties on the instance over a specified period of time. Useful for easily moving UI objects around, rotating objects, etc. without having to write a lot of code. To create a new tween, please use TweenService:Create.</string>
+				<string name="Insertable">false</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -3478,6 +3501,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 						<string name="Name">Intensity</string>
 						<double name="UIMinimum">0</double>
 						<double name="UIMaximum">1</double>
+						<double name="UINumTicks">1000</double>
 					</Properties>
 				</Item>
 				<Item class="ReflectionMetadataMember">
@@ -3485,6 +3509,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 						<string name="Name">Spread</string>
 						<double name="UIMinimum">0</double>
 						<double name="UIMaximum">1</double>
+						<double name="UINumTicks">1000</double>
 					</Properties>
 				</Item>
 			</Item>
@@ -3705,6 +3730,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">PackageLink</string>
 				<string name="ExplorerOrder">1</string>
 				<string name="ExplorerImageIndex">34</string>
+				<string name="Insertable">false</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -3712,12 +3738,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">RenderSettings</string>
 				<bool name="Browsable">false</bool>
 				<string name="ExplorerOrder">2</string>
-			</Properties>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">RootInstance</string>
-				<bool name="Browsable">false</bool>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -4455,7 +4475,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">DataModel</string>
-				<string name="summary">The root of ROBLOX's parent-child hierarchy (commonly known as game after the global variable used to access it)</string>
+				<string name="summary">The root of Roblox's parent-child hierarchy (commonly known as game after the global variable used to access it)</string>
 			</Properties>
 			<Item class="ReflectionMetadataCallbacks">
 				<Item class="ReflectionMetadataMember">
@@ -4470,6 +4490,30 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<Properties></Properties>
 				<Item class="ReflectionMetadataMember">
 					<Properties>
+						<string name="Name">PrivateServerId</string>
+						<bool name="ServerOnly">true</bool>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">PrivateServerOwnerId</string>
+						<bool name="ServerOnly">true</bool>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">VIPServerId</string>
+						<bool name="ServerOnly">true</bool>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">VIPServerOwnerId</string>
+						<bool name="ServerOnly">true</bool>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
 						<string name="Name">Workspace</string>
 					</Properties>
 				</Item>
@@ -4478,13 +4522,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 						<string name="Name">workspace</string>
 						<bool name="Deprecated">true</bool>
 						<string name="summary">Deprecated. Use Workspace</string>
-					</Properties>
-				</Item>
-				<Item class="ReflectionMetadataMember">
-					<Properties>
-						<string name="Name">ShowMouse</string>
-						<bool name="Deprecated">true</bool>
-						<string name="summary">Deprecated. Use Workspace.IsMouseCursorVisible</string>
 					</Properties>
 				</Item>
 				<Item class="ReflectionMetadataMember">
@@ -4836,9 +4873,9 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<Item class="ReflectionMetadataMember">
 					<Properties>
 						<string name="Name">Brightness</string>
-						<string name="summary">How much global light each Part in the Workspace receives. Standard range is 0 to 1 (0 being little light), but can be increased all the way to 5 (colors start to be appear very different at this value).</string>
+						<string name="summary">How much global light each Part in the Workspace receives. Standard range is 0 to 2 (0 being little light), but can be increased all the way to 10 (colors start to be appear very different at this value).</string>
 						<double name="UIMinimum">0</double>
-						<double name="UIMaximum">2</double>
+						<double name="UIMaximum">10</double>
 					</Properties>
 				</Item>
 				<Item class="ReflectionMetadataMember">
@@ -4947,25 +4984,25 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">DebuggerManager</string>
-				<!-- string name="ExplorerOrder">101</string-->
+				<bool name="Insertable">false</bool>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">ScriptDebugger</string>
-				<!--string name="ExplorerOrder">101</string-->
+				<bool name="Insertable">false</bool>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">DebuggerBreakpoint</string>
-				<!--string name="ExplorerOrder">101</string-->
+				<bool name="Insertable">false</bool>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">DebuggerWatch</string>
-				<!--string name="ExplorerOrder">101</string-->
+				<bool name="Insertable">false</bool>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -5225,6 +5262,18 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				</Item>
 				<Item class="ReflectionMetadataMember">
 					<Properties>
+						<string name="Name">Massless</string>
+						<string name="summary">If true the part will be massless when welded to another part that is not massless. The part will still have mass like a normal part if it is an assembly root part according to GetRootPart().</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">RootPriority</string>
+						<string name="summary">An integer from -127 to 127. Compares before other all other part properties besides massless for deciding which part is the assembly root part according to GetRootPart().</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
 						<string name="Name">Elasticity</string>
 						<string name="summary">A float value ranging from 0.0f to 1.0f. Sets how much the Part will rebound against another. a value of 1 is like a superball, and 0 is like a lead block.</string>
 						<double name="UIMinimum">0</double>
@@ -5283,18 +5332,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 					<Properties>
 						<string name="Name">Velocity</string>
 						<string name="summary">How fast the Part is traveling in studs/second. This property is NOT recommended to be modified directly, unless there is good reason.  Otherwise, try using a BodyForce to move a Part.</string>
-					</Properties>
-				</Item>
-				<Item class="ReflectionMetadataMember">
-					<Properties>
-						<string name="Name">PositionLocal</string>
-						<string name="summary">Position relative to parent part, or global space if there is no parent.</string>
-					</Properties>
-				</Item>
-				<Item class="ReflectionMetadataMember">
-					<Properties>
-						<string name="Name">OrientationLocal</string>
-						<string name="summary">Orientation relative to parent part, or global space if there is no parent.</string>
 					</Properties>
 				</Item>
 				<Item class="ReflectionMetadataMember">
@@ -5417,46 +5454,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
-				<string name="Name">PrismPart</string>
-				<string name="summary">A Prism Part</string>
-				<bool name="Browsable">false</bool>
-				<bool name="Deprecated">true</bool>
-				<string name="ExplorerOrder">12</string>
-				<string name="ExplorerImageIndex">1</string>
-			</Properties>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">PyramidPart</string>
-				<string name="summary">A Pyramid Part</string>
-				<bool name="Browsable">false</bool>
-				<bool name="Deprecated">true</bool>
-				<string name="ExplorerOrder">12</string>
-				<string name="ExplorerImageIndex">1</string>
-			</Properties>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">ParallelRampPart</string>
-				<string name="summary">A ParallelRamp Part</string>
-				<bool name="Browsable">false</bool>
-				<bool name="Deprecated">true</bool>
-				<string name="ExplorerOrder">12</string>
-				<string name="ExplorerImageIndex">1</string>
-			</Properties>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">RightAngleRampPart</string>
-				<string name="summary">A RightAngleRamp Part</string>
-				<bool name="Browsable">false</bool>
-				<bool name="Deprecated">true</bool>
-				<string name="ExplorerOrder">12</string>
-				<string name="ExplorerImageIndex">1</string>
-			</Properties>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
 				<string name="Name">CornerWedgePart</string>
 				<string name="ClassCategory">Parts</string>
 				<string name="summary">A CornerWedge Part</string>
@@ -5543,6 +5540,15 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerImageIndex">47</string>
 				<string name="PreferredParent">BasePlayerGui</string>
 				<string name="PreferredParents">BasePlayerGui</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PluginGui</string>
+				<string name="ClassCategory">GUI</string>
+				<string name="Insertable">false</string>
+				<string name="ExplorerOrder">14</string>
+				<string name="ExplorerImageIndex">47</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -5704,6 +5710,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">InputObject</string>
 				<string name="summary">An object that describes a particular user input, such as mouse movement, touches, keyboard, and more.</string>
+				<string name="Insertable">false</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6221,6 +6228,25 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">ViewportFrame</string>
+				<string name="ClassCategory">GUI</string>
+				<string name="summary">A GUI that can show 3D objects</string>
+				<string name="ExplorerOrder">30</string>
+				<string name="ExplorerImageIndex">52</string>
+				<string name="PreferredParent">GuiBase2d</string>
+				<string name="PreferredParents">GuiBase2d</string>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">CurrentCamera</string>
+						<string name="summary">Current Camera of children objects</string>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">Handles</string>
 				<string name="ClassCategory">Adornments</string>
 				<string name="summary">A 3D GUI object to represent draggable handles</string>
@@ -6274,6 +6300,14 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">HumanoidDescription</string>
+				<string name="summary">An object that specifies the appearance of Humanoid characters</string>
+				<string name="ExplorerOrder">22</string>
+				<string name="ExplorerImageIndex">79</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">Folder</string>
 				<string name="summary">An object that can be created to hold and organize objects</string>
 				<string name="ExplorerOrder">1</string>
@@ -6312,6 +6346,15 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">Pose</string>
 				<string name="summary">The pose of a joint relative to it's parent part in a keyframe</string>
 				<string name="ExplorerOrder">22</string>
+				<string name="ExplorerImageIndex">60</string>
+				<string name="Insertable">false</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">KeyframeMarker</string>
+				<string name="summary">Represents when an event should be fired in an animation</string>
+				<string name="ExplorerOrder">220</string>
 				<string name="ExplorerImageIndex">60</string>
 				<string name="Insertable">false</string>
 			</Properties>
@@ -6561,7 +6604,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 					<Properties>
 						<string name="Name">Brightness</string>
 						<double name="UIMinimum">0</double>
-						<double name="UIMaximum">10</double>
+						<double name="UIMaximum">40</double>
 						<double name="UINumTicks">2000</double>
 					</Properties>
 				</Item>
@@ -6987,6 +7030,17 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<Properties>
 					<string name="Name">Crop</string>
 					<string name="summary">Fill the available space, maintaining aspect ratio by cropping the edges if necessary.</string>
+				</Properties>
+			</Item>
+		</Item>
+		<Item class="ReflectionMetadataEnum">
+			<Properties>
+				<string name="Name">ExplosionType</string>
+			</Properties>
+			<Item class="ReflectionMetadataEnumItem">
+				<Properties>
+					<string name="Name">CratersAndDebris</string>
+					<bool name="Deprecated">true</bool>
 				</Properties>
 			</Item>
 		</Item>

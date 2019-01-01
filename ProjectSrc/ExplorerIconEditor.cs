@@ -16,31 +16,32 @@ namespace RobloxStudioModManager
     {
         private const int iconSize = 16;
         private const string iconPrefix = "explorer-icon-";
-
+        
         private static RegistryKey explRegistry = Program.GetSubKey("ExplorerIcons");
         private static RegistryKey iconRegistry = Program.GetSubKey(explRegistry, "EnabledIcons");
         private static RegistryKey infoRegistry = Program.GetSubKey(explRegistry, "ClassImagesInfo");
 
-        private static Rectangle iconRect = new Rectangle(0, 0, iconSize, iconSize);
-        private static Color darkColor = Color.FromArgb(44, 44, 44);
+        private static Color THEME_LIGHT_NORMAL = Color.White;
+        private static Color THEME_LIGHT_FLASH  = Color.FromArgb(220, 255, 220);
+        private static Color THEME_DARK_NORMAL  = Color.FromArgb(44, 44, 44);
+        private static Color THEME_DARK_FLASH   = Color.ForestGreen;
 
         private delegate void WindowStateDelegator(FormWindowState windowState);
         private delegate void ButtonColorDelegator(Button button, Color newColor);
         private delegate void StatusDelegator(Label label, string newText, Color newColor);
 
-        private Dictionary<Button, int> iconBtnIndex = new Dictionary<Button, int>();
-
         private List<Image> iconLookup = new List<Image>();
         private List<Button> buttonLookup = new List<Button>();
+        private Dictionary<Button, int> iconBtnIndex = new Dictionary<Button, int>();
 
         private string branch;
-        private int selectedIndex = 0;
+        private int selectedIndex;
         private bool darkTheme = false;
         private bool showModifiedIcons = false;
 
         private FileSystemWatcher iconWatcher;
         private Timer statusUpdateTimer;
-        private int lastStatusUpdate = -1;
+        private int lastStatusUpdate;
         
         public ExplorerIconEditor(string _branch)
         {
@@ -78,55 +79,61 @@ namespace RobloxStudioModManager
 
             while (true)
             {
+                // Search for a PNG header.
                 int begin = studioBin.IndexOf("PNG\r\n\x1a\n", pos);
+                
+                if (begin < 0)
+                    break;
 
-                if (begin >= 0)
+                // Search for the PNG's IHDR chunk near the header.
+                int ihdr = studioBin.IndexOf("IHDR", begin);
+
+                if ((ihdr - begin) > 16)
                 {
-                    int ihdr = studioBin.IndexOf("IHDR", begin);
+                    // This was probably some random png header, but the IHDR chunk might be real
+                    // See if we can jump behind it slightly and run into a proper file.
+                    pos = Math.Max(pos, ihdr - 16);
+                    continue;
+                }
+                
+                // Search for the PNG's IEND chunk.
+                int iend = studioBin.IndexOf("IEND", ihdr);
 
-                    if ((ihdr - begin) <= 16)
+                if (iend < 0)
+                {
+                    // This... ideally shouldn't happen. If it does,
+                    // move our start position past the IHDR chunk.
+                    pos = ihdr + 1;
+                    continue;
+                }
+
+                // Pull the PNG file out as a sequence of bytes.
+                string pngFile = studioBin.Substring(begin - 1, (iend + 10) - begin);
+                byte[] pngBuffer = WINDOWS_1252.GetBytes(pngFile);
+
+                try
+                {
+                    Image image;
+
+                    using (MemoryStream stream = new MemoryStream(pngBuffer))
+                        image = Image.FromStream(stream);
+
+                    if (image.Height == iconSize && image.Width % iconSize == 0)
                     {
-                        int iend = studioBin.IndexOf("IEND", ihdr);
-                        if (iend >= 0)
+                        if (icons == null || image.Width > icons.Width)
                         {
-                            string pngFile = studioBin.Substring(begin - 1, (iend + 10) - begin);
-                            byte[] pngBuffer = WINDOWS_1252.GetBytes(pngFile);
-
-                            try
-                            {
-                                Image image;
-                                using (MemoryStream stream = new MemoryStream(pngBuffer))
-                                    image = Image.FromStream(stream);
-
-                                if (image.Height == iconSize && image.Width % iconSize == 0)
-                                {
-                                    if (icons == null || image.Width > icons.Width)
-                                    {
-                                        icons = image;
-                                        memoryOffset = begin - 1;
-                                        memorySize = pngFile.Length;
-                                    }
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                Console.WriteLine("Error while processing image: " + e.Message);
-                            }
-
-                            pos = iend + 10;
+                            icons = image;
+                            memoryOffset = begin - 1;
+                            memorySize = pngFile.Length;
                         }
                     }
-                    else
-                    {
-                        // This was probably some random png header, but the IHDR chunk might be real
-                        // See if we can jump behind it slightly and run into a proper file.
-                        pos = Math.Max(pos, ihdr - 16);
-                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    break;
+                    Console.WriteLine("Error while processing image: " + e.Message);
                 }
+
+                pos = iend + 10;
             }
 
             if (icons == null)
@@ -246,7 +253,7 @@ namespace RobloxStudioModManager
             Bitmap compA = new Bitmap(a);
             Bitmap compB = new Bitmap(b);
 
-            bool result = true;
+            bool iconsEqual = true;
 
             for (int x = 0; x < a.Width; x++)
             {
@@ -254,7 +261,7 @@ namespace RobloxStudioModManager
                 {
                     if (compA.GetPixel(x, y) != compB.GetPixel(x, y))
                     {
-                        result = false;
+                        iconsEqual = false;
                         break;
                     }
                 }
@@ -263,7 +270,7 @@ namespace RobloxStudioModManager
             compA.Dispose();
             compB.Dispose();
 
-            return result;
+            return iconsEqual;
         }
 
         private static bool isRobloxStudioRunning()
@@ -331,13 +338,13 @@ namespace RobloxStudioModManager
 
         private void flashButton(Button button)
         {
-            button.BackColor = (darkTheme ? Color.ForestGreen : Color.FromArgb(220, 255, 220));
+            button.BackColor = (darkTheme ? THEME_DARK_FLASH : THEME_LIGHT_FLASH);
             
             Task reset = Task.Run(async () =>
             {
                 await Task.Delay(100);
 
-                Color resetColor = (darkTheme ? darkColor : Color.White);
+                Color resetColor = (darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL);
                 setButtonColor(button, resetColor);
             });
         }
@@ -430,35 +437,25 @@ namespace RobloxStudioModManager
             return result;
         }
 
-        private static void hideIconFile(int index)
+        private static bool setIconAttributes(int index, Func<FileAttributes, FileAttributes> set)
         {
             try
             {
                 string iconPath = getExplorerIconPath(index);
-                if (File.Exists(iconPath))
-                {
-                    File.SetAttributes(iconPath, File.GetAttributes(iconPath) | FileAttributes.Hidden);
-                }
-            }
-            catch
-            {
-                Console.WriteLine("Could not hide icon {0} at this time.", index);
-            }
-        }
 
-        private static void showIconFile(int index)
-        {
-            try
-            {
-                string iconPath = getExplorerIconPath(index);
                 if (File.Exists(iconPath))
                 {
-                    File.SetAttributes(iconPath, File.GetAttributes(iconPath) & ~FileAttributes.Hidden);
+                    FileAttributes oldAttributes = File.GetAttributes(iconPath);
+                    FileAttributes newAttributes = set(oldAttributes);
+
+                    File.SetAttributes(iconPath, newAttributes);
                 }
+
+                return true;
             }
             catch
             {
-                Console.WriteLine("Could not unhide icon {0} at this time.", index);
+                return false;
             }
         }
 
@@ -471,7 +468,7 @@ namespace RobloxStudioModManager
 
             if (enabled)
             {
-                showIconFile(index);
+                setIconAttributes(index, attributes => attributes & ~FileAttributes.Hidden);
             }
             else
             {
@@ -481,7 +478,7 @@ namespace RobloxStudioModManager
                 if (iconsAreEqual(original, current))
                 {
                     iconChanged = false;
-                    hideIconFile(index);
+                    setIconAttributes(index, attributes => attributes | FileAttributes.Hidden);
                 }
             }
 
@@ -550,7 +547,7 @@ namespace RobloxStudioModManager
         {
             Image icon = iconLookup[index];
             selectedIcon.BackgroundImage = getIconForIndex(index);
-            selectedIcon.BackColor = darkTheme ? darkColor : Color.White;
+            selectedIcon.BackColor = darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL;
             selectedIndex = index;
 
             bool enabled = hasIconOverride(index);
@@ -642,12 +639,13 @@ namespace RobloxStudioModManager
                     iconLookup.Add(icon);
 
                     Rectangle srcRect = new Rectangle(i * iconSize, 0, iconSize, iconSize);
+                    Rectangle iconRect = new Rectangle(0, 0, iconSize, iconSize);
 
                     using (Graphics graphics = Graphics.FromImage(icon))
                         graphics.DrawImage(explorerIcons, iconRect, srcRect, GraphicsUnit.Pixel);
 
                     Button iconBtn = new Button();
-                    iconBtn.BackColor = darkTheme ? darkColor : Color.White;
+                    iconBtn.BackColor = darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL;
                     iconBtn.BackgroundImageLayout = ImageLayout.Zoom;
                     iconBtn.Size = new Size(32, 32);
                     iconBtn.Click += iconBtnClicked;
@@ -680,7 +678,7 @@ namespace RobloxStudioModManager
             statusUpdateTimer.Interval = 1000;
             statusUpdateTimer.Start();
 
-            updateStatus();
+            updateStatusNow();
 
             Enabled = true;
             UseWaitCursor = false;
@@ -767,7 +765,7 @@ namespace RobloxStudioModManager
             explRegistry.SetValue("DarkTheme", darkTheme);
             themeSwitcher.Text = "Theme: " + (darkTheme ? "Dark" : "Light");
             
-            Color color = darkTheme ? darkColor : Color.White;
+            Color color = darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL;
             SuspendLayout();
 
             foreach (Button button in iconBtnIndex.Keys)
