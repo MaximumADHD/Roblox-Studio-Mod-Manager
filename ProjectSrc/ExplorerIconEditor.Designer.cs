@@ -35,8 +35,6 @@
             this.selectedIcon = new System.Windows.Forms.PictureBox();
             this.restoreOriginal = new System.Windows.Forms.Button();
             this.themeSwitcher = new System.Windows.Forms.Button();
-            this.memoryStatus = new System.Windows.Forms.Label();
-            this.studioStatus = new System.Windows.Forms.Label();
             this.errors = new System.Windows.Forms.Label();
             this.showModified = new System.Windows.Forms.CheckBox();
             this.openIconFolder = new System.Windows.Forms.Button();
@@ -119,24 +117,6 @@
             this.themeSwitcher.UseVisualStyleBackColor = true;
             this.themeSwitcher.Click += new System.EventHandler(this.themeSwitcher_Click);
             // 
-            // memoryStatus
-            // 
-            this.memoryStatus.AutoSize = true;
-            this.memoryStatus.Location = new System.Drawing.Point(9, 259);
-            this.memoryStatus.Name = "memoryStatus";
-            this.memoryStatus.Size = new System.Drawing.Size(134, 13);
-            this.memoryStatus.TabIndex = 8;
-            this.memoryStatus.Text = "Memory Budget: Loading...";
-            // 
-            // studioStatus
-            // 
-            this.studioStatus.AutoSize = true;
-            this.studioStatus.Location = new System.Drawing.Point(9, 272);
-            this.studioStatus.Name = "studioStatus";
-            this.studioStatus.Size = new System.Drawing.Size(123, 13);
-            this.studioStatus.TabIndex = 9;
-            this.studioStatus.Text = "Studio Status: Loading...";
-            // 
             // errors
             // 
             this.errors.AutoSize = true;
@@ -159,7 +139,7 @@
             // 
             // openIconFolder
             // 
-            this.openIconFolder.Location = new System.Drawing.Point(12, 326);
+            this.openIconFolder.Location = new System.Drawing.Point(13, 258);
             this.openIconFolder.Name = "openIconFolder";
             this.openIconFolder.Size = new System.Drawing.Size(259, 23);
             this.openIconFolder.TabIndex = 12;
@@ -171,12 +151,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 361);
+            this.ClientSize = new System.Drawing.Size(284, 295);
             this.Controls.Add(this.openIconFolder);
             this.Controls.Add(this.showModified);
             this.Controls.Add(this.errors);
-            this.Controls.Add(this.studioStatus);
-            this.Controls.Add(this.memoryStatus);
             this.Controls.Add(this.themeSwitcher);
             this.Controls.Add(this.restoreOriginal);
             this.Controls.Add(this.editIcon);
@@ -207,8 +185,6 @@
         private System.Windows.Forms.PictureBox selectedIcon;
         private System.Windows.Forms.Button restoreOriginal;
         private System.Windows.Forms.Button themeSwitcher;
-        private System.Windows.Forms.Label memoryStatus;
-        private System.Windows.Forms.Label studioStatus;
         private System.Windows.Forms.Label errors;
         private System.Windows.Forms.CheckBox showModified;
         private System.Windows.Forms.Button openIconFolder;

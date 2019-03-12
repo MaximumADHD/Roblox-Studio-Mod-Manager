@@ -16,10 +16,13 @@ namespace RobloxStudioModManager
     {
         private const int iconSize = 16;
         private const string iconPrefix = "explorer-icon-";
+        private const string iconManifest = @"content\textures\ClassImages.PNG";
         
-        private static RegistryKey explRegistry = Program.GetSubKey("ExplorerIcons");
-        private static RegistryKey iconRegistry = Program.GetSubKey(explRegistry, "EnabledIcons");
-        private static RegistryKey infoRegistry = Program.GetSubKey(explRegistry, "ClassImagesInfo");
+        private static RegistryKey explorerRegistry = Program.GetSubKey("ExplorerIcons");
+        private static RegistryKey manifestRegistry = Program.GetSubKey("FileManifest");
+
+        private static RegistryKey iconRegistry = Program.GetSubKey(explorerRegistry, "EnabledIcons");
+        private static RegistryKey infoRegistry = Program.GetSubKey(explorerRegistry, "ClassImagesInfo");
 
         private static Color THEME_LIGHT_NORMAL = Color.White;
         private static Color THEME_LIGHT_FLASH  = Color.FromArgb(220, 255, 220);
@@ -38,11 +41,8 @@ namespace RobloxStudioModManager
         private int selectedIndex;
         private bool darkTheme = false;
         private bool showModifiedIcons = false;
-
         private FileSystemWatcher iconWatcher;
-        private Timer statusUpdateTimer;
-        private int lastStatusUpdate;
-        
+
         public ExplorerIconEditor(string _branch)
         {
             InitializeComponent();
@@ -65,92 +65,25 @@ namespace RobloxStudioModManager
             return Path.Combine(getExplorerIconDir(), iconPrefix + index + ".png");
         }
 
-        private static void updateExplorerIcons(string studioPath)
+        private static void updateExplorerIcons(string studioDir)
         {
-            // Windows-1252 encoding is required to correctly read the exe.
-            Encoding WINDOWS_1252 = Encoding.GetEncoding(1252);
+            // Find the class icons file.
+            string iconPath = Path.Combine(studioDir, iconManifest);
 
-            string studioBin = File.ReadAllText(studioPath, WINDOWS_1252);
-            int pos = studioBin.Length / 2;
-
-            Image icons = null;
-            int memoryOffset = 0;
-            int memorySize = 0;
-
-            while (true)
-            {
-                // Search for a PNG header.
-                int begin = studioBin.IndexOf("PNG\r\n\x1a\n", pos);
-                
-                if (begin < 0)
-                    break;
-
-                // Search for the PNG's IHDR chunk near the header.
-                int ihdr = studioBin.IndexOf("IHDR", begin);
-
-                if ((ihdr - begin) > 16)
-                {
-                    // This was probably some random png header, but the IHDR chunk might be real
-                    // See if we can jump behind it slightly and run into a proper file.
-                    pos = Math.Max(pos, ihdr - 16);
-                    continue;
-                }
-                
-                // Search for the PNG's IEND chunk.
-                int iend = studioBin.IndexOf("IEND", ihdr);
-
-                if (iend < 0)
-                {
-                    // This... ideally shouldn't happen. If it does,
-                    // move our start position past the IHDR chunk.
-                    pos = ihdr + 1;
-                    continue;
-                }
-
-                // Pull the PNG file out as a sequence of bytes.
-                string pngFile = studioBin.Substring(begin - 1, (iend + 10) - begin);
-                byte[] pngBuffer = WINDOWS_1252.GetBytes(pngFile);
-
-                try
-                {
-                    Image image;
-
-                    using (MemoryStream stream = new MemoryStream(pngBuffer))
-                        image = Image.FromStream(stream);
-
-                    if (image.Height == iconSize && image.Width % iconSize == 0)
-                    {
-                        if (icons == null || image.Width > icons.Width)
-                        {
-                            icons = image;
-                            memoryOffset = begin - 1;
-                            memorySize = pngFile.Length;
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error while processing image: " + e.Message);
-                }
-
-                pos = iend + 10;
-            }
-
-            if (icons == null)
-                throw new InvalidDataException("Failed to locate the explorer icon spritesheet in RobloxStudioBeta.exe!");
+            if (!File.Exists(iconPath))
+                throw new Exception("Could not find " + iconManifest + "!");
 
             string explorerDir = getExplorerIconDir();
             string classImages = Path.Combine(explorerDir, "__classImageRef.png");
 
             FileInfo fileInfo = new FileInfo(classImages);
 
-            // If the file exists already, unlock it.
+            // If the file exists already, delete it.
             if (fileInfo.Exists)
                 fileInfo.Attributes = FileAttributes.Normal;
 
             // Write the updated icons file.
-            icons.Save(classImages);
-            icons.Dispose();
+            File.Copy(iconPath, classImages, true);
 
             // Lock the file so it isn't tampered with. This file is used as a
             // reference for the original icons in the sprite sheet.
@@ -158,23 +91,21 @@ namespace RobloxStudioModManager
 
             // Update the registry with some information about the sprite sheet.
             infoRegistry.SetValue("SourceLocation", classImages);
-            infoRegistry.SetValue("MemoryOffset", memoryOffset);
-            infoRegistry.SetValue("MemorySize", memorySize);
         }
 
         private static Image getExplorerIcons()
         {
-            string currentVersion = Program.GetRegistryString("BuildVersion");
-            string patchVersion = Program.GetRegistryString(explRegistry, "LastPatchVersion");
-        
-            if (currentVersion != patchVersion)
+            string manifestHash = Program.GetRegistryString(manifestRegistry, iconManifest);
+            string currentHash = Program.GetRegistryString(infoRegistry, "LastClassIconHash");
+
+            if (currentHash != manifestHash)
             {
-                string studioPath = RobloxInstaller.GetStudioPath();
-                updateExplorerIcons(studioPath);
+                string studioDir = RobloxInstaller.GetStudioDirectory();
+                updateExplorerIcons(studioDir);
 
-                explRegistry.SetValue("LastPatchVersion", currentVersion);
+                infoRegistry.SetValue("LastClassIconHash", manifestHash);
             }
-
+            
             string imagePath = Program.GetRegistryString(infoRegistry, "SourceLocation");
             return Image.FromFile(imagePath);
         }
@@ -197,6 +128,7 @@ namespace RobloxStudioModManager
                 if (hasIconOverride(i))
                 {
                     string filePath = getExplorerIconPath(i);
+
                     if (File.Exists(filePath))
                     {
                         try
@@ -228,15 +160,6 @@ namespace RobloxStudioModManager
                 newExplorerIcons = explorerIcons;
 
             return newExplorerIcons;
-        }
-
-        private static long measureImageSize(Image image)
-        {
-            using (MemoryStream stream = new MemoryStream())
-            {
-                image.Save(stream, ImageFormat.Png);
-                return stream.Length;
-            }
         }
 
         private static bool iconsAreEqual(Image a, Image b)
@@ -347,71 +270,6 @@ namespace RobloxStudioModManager
                 Color resetColor = (darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL);
                 setButtonColor(button, resetColor);
             });
-        }
-
-        private void updateStatus(object sender = null, EventArgs e = null)
-        {
-            int now = DateTime.Now.Second;
-
-            if (now == lastStatusUpdate)
-                return;
-
-            lastStatusUpdate = now;
-
-            // Update the memory status
-            Image mainIcons = getExplorerIcons();
-            Image patchIcons = getPatchedExplorerIcons();
-            
-            long mainLen = measureImageSize(mainIcons);
-            long patchLen = measureImageSize(patchIcons);
-
-            string available = (patchLen > mainLen ? "over" : "free");
-
-            modifyStatusLabel
-            (
-                memoryStatus,
-                "Memory Budget: " + patchLen + '/' + mainLen + " bytes used (" + Math.Abs(mainLen - patchLen) + " " + available + "!)",
-                patchLen > mainLen ? Color.Red : Color.Green
-            );
-
-            // Update the studio status
-            bool runningStudio = isRobloxStudioRunning();
-
-            modifyStatusLabel
-            (
-                studioStatus,
-                "Studio Status: " + (runningStudio ? "" : "Not") + " Running.",
-                runningStudio ? Color.Red : Color.Green
-            );
-
-            // Update the error details.
-            Color detailColor = Color.Red;
-            string detailMsg = "";
-
-            if (patchLen > mainLen)
-            {
-                detailMsg = "The size of the new explorer icon spritesheet exceeds\n"
-                          + " the original file's size. Try to optimize some icons!";
-            }
-            else if (runningStudio)
-            {
-                detailMsg = "The explorer icon spritesheet cannot be updated\n"
-                          + "while Roblox Studio is running!";
-            }
-            else
-            {
-                detailColor = Color.Green;
-                detailMsg = "All set! Your icons will be patched in once you launch\n"
-                          + "Roblox Studio from the Mod Manager!";
-            }
-
-            modifyStatusLabel(errors, detailMsg, detailColor);
-        }
-
-        private void updateStatusNow()
-        {
-            lastStatusUpdate = -1;
-            updateStatus();
         }
 
         private static bool hasIconOverride(int index)
@@ -564,8 +422,6 @@ namespace RobloxStudioModManager
 
             setIconOverridden(selectedIndex, isChecked);
             selectedIcon.BackgroundImage = getIconForIndex(selectedIndex);
-
-            updateStatusNow();
         }
 
         private void onIconBtnClicked(object sender, EventArgs e)
@@ -603,14 +459,11 @@ namespace RobloxStudioModManager
 
                 selectedIcon.BackgroundImage = icon;
                 setFormState(FormWindowState.Normal);
-
-                updateStatusNow();
             }
             else
             {
                 int index = resolveIndexForFile(e.Name);
                 setIconOverridden(index, true);
-                updateStatus();
             }
         }
 
@@ -622,10 +475,10 @@ namespace RobloxStudioModManager
             EventHandler iconBtnClicked = new EventHandler(onIconBtnClicked);
             string studioPath = RobloxInstaller.GetStudioPath();
 
-            bool.TryParse(Program.GetRegistryString(explRegistry, "ShowModifiedIcons"), out showModifiedIcons);
+            bool.TryParse(Program.GetRegistryString(explorerRegistry, "ShowModifiedIcons"), out showModifiedIcons);
             showModified.Checked = showModifiedIcons;
 
-            bool.TryParse(Program.GetRegistryString(explRegistry, "DarkTheme"), out darkTheme);
+            bool.TryParse(Program.GetRegistryString(explorerRegistry, "DarkTheme"), out darkTheme);
             themeSwitcher.Text = "Theme: " + (darkTheme ? "Dark" : "Light");
 
             using (Image explorerIcons = getExplorerIcons())
@@ -673,45 +526,21 @@ namespace RobloxStudioModManager
             iconWatcher.Changed += new FileSystemEventHandler(onFileChanged);
             iconWatcher.Deleted += new FileSystemEventHandler(onFileDeleted);
 
-            statusUpdateTimer = new Timer();
-            statusUpdateTimer.Tick += new EventHandler(updateStatus);
-            statusUpdateTimer.Interval = 1000;
-            statusUpdateTimer.Start();
-
-            updateStatusNow();
-
             Enabled = true;
             UseWaitCursor = false;
         }
 
-        public static async Task<bool> PatchExplorerIcons()
+        public static bool PatchExplorerIcons()
         {
             bool success = false;
 
             try
             {
-                // The procedure for grabbing the explorer icons
-                // *can* be expensive, so run it in a task.
+                string studioDir = RobloxInstaller.GetStudioDirectory();
+                string iconPath = Path.Combine(studioDir, iconManifest);
 
-                Image original = await Task.Factory.StartNew(getExplorerIcons);
                 Image patched = getPatchedExplorerIcons();
-
-                long oldSize = measureImageSize(original);
-                long newSize = measureImageSize(patched);
-
-                if (newSize <= oldSize && !isRobloxStudioRunning())
-                {
-                    string studioPath = RobloxInstaller.GetStudioPath();
-                    int memoryOffset = (int)infoRegistry.GetValue("MemoryOffset");
-
-                    using (FileStream studio = File.OpenWrite(studioPath))
-                    {
-                        studio.Position = memoryOffset;
-                        patched.Save(studio, ImageFormat.Png);
-                    }
-
-                    success = true;
-                }
+                patched.Save(iconPath);
             }
             catch (Exception e)
             {
@@ -726,7 +555,7 @@ namespace RobloxStudioModManager
             if (showModifiedIcons != showModified.Checked)
             {
                 showModifiedIcons = showModified.Checked;
-                explRegistry.SetValue("ShowModifiedIcons", showModifiedIcons);
+                explorerRegistry.SetValue("ShowModifiedIcons", showModifiedIcons);
             }
 
             foreach (Button button in iconBtnIndex.Keys)
@@ -762,7 +591,7 @@ namespace RobloxStudioModManager
         private void themeSwitcher_Click(object sender, EventArgs e)
         {
             darkTheme = !darkTheme;
-            explRegistry.SetValue("DarkTheme", darkTheme);
+            explorerRegistry.SetValue("DarkTheme", darkTheme);
             themeSwitcher.Text = "Theme: " + (darkTheme ? "Dark" : "Light");
             
             Color color = darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL;

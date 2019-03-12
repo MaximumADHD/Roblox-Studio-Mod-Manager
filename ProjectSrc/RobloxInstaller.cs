@@ -857,7 +857,7 @@ namespace RobloxStudioModManager
                 FlagEditor.ApplyFlags();
 
                 echo("Patching explorer icons...");
-                await ExplorerIconEditor.PatchExplorerIcons();
+                ExplorerIconEditor.PatchExplorerIcons();
             }
             
             setStatus("Starting Roblox Studio...");
