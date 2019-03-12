@@ -190,11 +190,13 @@ namespace RobloxStudioModManager
 
                         if (fileName.EndsWith(".zip"))
                         {
-                            RobloxPackageManifest pkgManifest = new RobloxPackageManifest();
-                            pkgManifest.Name = fileName;
-                            pkgManifest.Signature = signature;
-                            pkgManifest.PackedSize = packedSize;
-                            pkgManifest.Size = size;
+                            RobloxPackageManifest pkgManifest = new RobloxPackageManifest()
+                            {
+                                Name = fileName,
+                                Signature = signature,
+                                PackedSize = packedSize,
+                                Size = size
+                            };
 
                             result.Add(pkgManifest);
                         }
@@ -327,9 +329,20 @@ namespace RobloxStudioModManager
             return cache.LastResult;
         }
 
+        public static string GetStudioBinaryType()
+        {
+            string binaryType = "WindowsStudio";
+
+            if (Program.GetRegistryString("BuildType") == "64-bit")
+                binaryType += "64";
+
+            return binaryType;
+        }
+
         public static async Task<string> GetCurrentVersion(string branch)
         {
-            return await GetVersionInfo(branch, "CurrentClientVersionUpload", "WindowsStudio");
+            string binaryType = GetStudioBinaryType();
+            return await GetVersionInfo(branch, "CurrentClientVersionUpload", binaryType);
         }
 
         // YOU WERE SO CLOSE ROBLOX, AGHHHH
@@ -437,7 +450,8 @@ namespace RobloxStudioModManager
             {
                 echo("This build needs to be installed!");
 
-                string versionId = await GetVersionInfo(branch, "CurrentClientVersion", "WindowsStudio");
+                string binaryType = GetStudioBinaryType();
+                string versionId = await GetVersionInfo(branch, "CurrentClientVersion", binaryType);
 
                 bool safeToContinue = false;
                 bool cancelled = false;

@@ -16,6 +16,32 @@ namespace RobloxStudioModManager
         private WebClient http = new WebClient();
         private string[] args = null;
 
+        public Launcher(params string[] mainArgs)
+        {
+            if (mainArgs.Length > 0)
+                args = mainArgs;
+
+            InitializeComponent();
+        }
+
+        private void Launcher_Load(object sender, EventArgs e)
+        {
+            if (args != null)
+                openStudioDirectory.Enabled = false;
+
+            string build = Program.GetRegistryString("BuildBranch");
+            int buildIndex = branchSelect.Items.IndexOf(build);
+            branchSelect.SelectedIndex = Math.Max(buildIndex, 0);
+
+            string type = Program.GetRegistryString("BuildType");
+            if (type.Length == 0)
+                type = (Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit");
+
+            int typeIndex = buildType.Items.IndexOf(type);
+            buildType.SelectedIndex = Math.Max(typeIndex, 0);
+            buildType.Enabled = Environment.Is64BitOperatingSystem;
+        }
+
         public string getModPath()
         {
             string appData = Environment.GetEnvironmentVariable("AppData");
@@ -100,7 +126,9 @@ namespace RobloxStudioModManager
                 AutoSize = true,
 
                 Font = new Font("Microsoft Sans Serif", 9.75f),
-                Text = "Editing flags can make Roblox Studio unstable, and could potentially corrupt your places and game data.\n\nYou should not edit them unless you are just experimenting with new features locally, and you know what you're doing.\n\nAre you sure you would like to continue?",
+                Text = "Editing flags can make Roblox Studio unstable, and could potentially corrupt your places and game data.\n\n" +
+                       "You should not edit them unless you are just experimenting with new features locally, and you know what you're doing.\n\n" +
+                       "Are you sure you would like to continue?",
 
                 Location = new Point(50, 14),
                 MaximumSize = new Size(350, 0),
@@ -147,7 +175,7 @@ namespace RobloxStudioModManager
             bool allow = true;
 
             // Create a warning prompt if the user hasn't disabled this warning.
-            if (Program.GetRegistryString("Disable Flag Warning") != "True")
+            if (Program.GetRegistryString("Disable Flag Warning").ToLower() != "true")
             {
                 SystemSounds.Hand.Play();
                 allow = false;
@@ -178,6 +206,22 @@ namespace RobloxStudioModManager
                 Show();
                 BringToFront();
             }
+        }
+
+        private async void editExplorerIcons_Click(object sender, EventArgs e)
+        {
+            Hide();
+
+            string branch = (string)branchSelect.SelectedItem;
+
+            string liveVersion = await RobloxInstaller.GetCurrentVersion(branch);
+            await RobloxInstaller.BringUpToDate(branch, liveVersion, "The explorer icons may have been changed!");
+
+            ExplorerIconEditor editor = new ExplorerIconEditor(branch);
+            editor.ShowDialog();
+
+            Show();
+            BringToFront();
         }
 
         private async void launchStudio_Click(object sender = null, EventArgs e = null)
@@ -222,7 +266,7 @@ namespace RobloxStudioModManager
                 }
                 catch
                 {
-                    Console.WriteLine("Failed to overwrite " + modFile + "\nMight be open in another program\nThats their problem, not mine <3");
+                    Console.WriteLine("Failed to overwrite {0}!", modFile);
                 }
             }
 
@@ -307,7 +351,7 @@ namespace RobloxStudioModManager
                         if (launchMode == "plugin")
                             addToArgs = "InstallPlugin";
                         else if (launchMode == "edit")
-                            addToArgs += "EditPlace";
+                            addToArgs = "EditPlace";
 
                         robloxStudioInfo.Arguments += addToArgs;
                     }
@@ -334,21 +378,10 @@ namespace RobloxStudioModManager
             Environment.Exit(0);
         }
 
-        private void Launcher_Load(object sender, EventArgs e)
+
+        private void buildType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (args != null)
-                openStudioDirectory.Enabled = false;
-            
-            try
-            {
-                string build = Program.ModManagerRegistry.GetValue("BuildBranch") as string;
-                int index = branchSelect.Items.IndexOf(build);
-                branchSelect.SelectedIndex = Math.Max(index, 0);
-            }
-            catch
-            {
-                branchSelect.SelectedIndex = 0;
-            }
+            Program.ModManagerRegistry.SetValue("BuildType", buildType.SelectedItem);
         }
 
         private void onHelpRequested(object sender, HelpEventArgs e)
@@ -372,30 +405,6 @@ namespace RobloxStudioModManager
                 MessageBox.Show(msg, "Information about the \"" + controller.AccessibleName + "\" " + sender.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             e.Handled = true;
-        }
-
-        public Launcher(params string[] mainArgs)
-        {
-            if (mainArgs.Length > 0)
-                args = mainArgs;
-
-            InitializeComponent();
-        }
-
-        private async void editExplorerIcons_Click(object sender, EventArgs e)
-        {
-            Hide();
-
-            string branch = (string)branchSelect.SelectedItem;
-
-            string liveVersion = await RobloxInstaller.GetCurrentVersion(branch);
-            await RobloxInstaller.BringUpToDate(branch, liveVersion, "The explorer icons may have been changed!");
-
-            ExplorerIconEditor editor = new ExplorerIconEditor(branch);
-            editor.ShowDialog();
-
-            Show();
-            BringToFront();
         }
     }
 }
