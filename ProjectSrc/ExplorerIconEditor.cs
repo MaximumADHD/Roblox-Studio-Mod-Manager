@@ -31,7 +31,6 @@ namespace RobloxStudioModManager
 
         private delegate void WindowStateDelegator(FormWindowState windowState);
         private delegate void ButtonColorDelegator(Button button, Color newColor);
-        private delegate void StatusDelegator(Label label, string newText, Color newColor);
 
         private List<Image> iconLookup = new List<Image>();
         private List<Button> buttonLookup = new List<Button>();
@@ -78,7 +77,7 @@ namespace RobloxStudioModManager
 
             FileInfo fileInfo = new FileInfo(classImages);
 
-            // If the file exists already, delete it.
+            // If the file exists already, unlock it.
             if (fileInfo.Exists)
                 fileInfo.Attributes = FileAttributes.Normal;
 
@@ -195,28 +194,7 @@ namespace RobloxStudioModManager
 
             return iconsEqual;
         }
-
-        private static bool isRobloxStudioRunning()
-        {
-            var studioProcs = RobloxInstaller.GetRunningStudioProcesses();
-            return studioProcs.Count > 0;
-        }
         
-        private static void modifyStatusLabel(Label label, string newText, Color newColor)
-        {
-            if (label.InvokeRequired)
-            {
-                StatusDelegator update = new StatusDelegator(modifyStatusLabel);
-                label.Invoke(update, label, newText, newColor);
-            }
-            else
-            {
-                label.Text = newText;
-                label.ForeColor = newColor;
-                label.Refresh();
-            }
-        }
-
         private int resolveIndexForFile(string fileName)
         {
             int result = -1;
