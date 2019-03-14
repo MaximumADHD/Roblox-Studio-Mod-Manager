@@ -83,7 +83,7 @@ namespace RobloxStudioModManager
 
             FileInfo fileInfo = new FileInfo(classImages);
 
-            // If the file exists already, delete it.
+            // If the file exists already, unlock it.
             if (fileInfo.Exists)
                 fileInfo.Attributes = FileAttributes.Normal;
 
