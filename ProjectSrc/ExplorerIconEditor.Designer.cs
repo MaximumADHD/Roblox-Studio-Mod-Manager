@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.iconContainer = new System.Windows.Forms.FlowLayoutPanel();
-            this.selectIcon = new System.Windows.Forms.Label();
+            this.header = new System.Windows.Forms.Label();
             this.enableIconOverride = new System.Windows.Forms.CheckBox();
             this.editIcon = new System.Windows.Forms.Button();
             this.selectedIcon = new System.Windows.Forms.PictureBox();
@@ -38,7 +38,10 @@
             this.errors = new System.Windows.Forms.Label();
             this.showModified = new System.Windows.Forms.CheckBox();
             this.openIconFolder = new System.Windows.Forms.Button();
+            this.iconSlotsTitle = new System.Windows.Forms.Label();
+            this.itemSlots = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.selectedIcon)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.itemSlots)).BeginInit();
             this.SuspendLayout();
             // 
             // iconContainer
@@ -48,19 +51,19 @@
             this.iconContainer.Location = new System.Drawing.Point(12, 28);
             this.iconContainer.MaximumSize = new System.Drawing.Size(272, 9999);
             this.iconContainer.Name = "iconContainer";
-            this.iconContainer.Padding = new System.Windows.Forms.Padding(0, 0, 10, 0);
-            this.iconContainer.Size = new System.Drawing.Size(259, 170);
+            this.iconContainer.Padding = new System.Windows.Forms.Padding(0, 0, 5, 0);
+            this.iconContainer.Size = new System.Drawing.Size(254, 170);
             this.iconContainer.TabIndex = 0;
             // 
-            // selectIcon
+            // header
             // 
-            this.selectIcon.AutoSize = true;
-            this.selectIcon.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.selectIcon.Location = new System.Drawing.Point(8, 4);
-            this.selectIcon.Name = "selectIcon";
-            this.selectIcon.Size = new System.Drawing.Size(100, 20);
-            this.selectIcon.TabIndex = 2;
-            this.selectIcon.Text = "Select Icon";
+            this.header.AutoSize = true;
+            this.header.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.header.Location = new System.Drawing.Point(8, 4);
+            this.header.Name = "header";
+            this.header.Size = new System.Drawing.Size(105, 20);
+            this.header.TabIndex = 2;
+            this.header.Text = "Initializing...";
             // 
             // enableIconOverride
             // 
@@ -97,9 +100,9 @@
             // restoreOriginal
             // 
             this.restoreOriginal.Enabled = false;
-            this.restoreOriginal.Location = new System.Drawing.Point(159, 229);
+            this.restoreOriginal.Location = new System.Drawing.Point(158, 229);
             this.restoreOriginal.Name = "restoreOriginal";
-            this.restoreOriginal.Size = new System.Drawing.Size(112, 23);
+            this.restoreOriginal.Size = new System.Drawing.Size(107, 24);
             this.restoreOriginal.TabIndex = 6;
             this.restoreOriginal.Text = "Restore Original";
             this.restoreOriginal.UseCompatibleTextRendering = true;
@@ -108,9 +111,9 @@
             // 
             // themeSwitcher
             // 
-            this.themeSwitcher.Location = new System.Drawing.Point(159, 204);
+            this.themeSwitcher.Location = new System.Drawing.Point(160, 4);
             this.themeSwitcher.Name = "themeSwitcher";
-            this.themeSwitcher.Size = new System.Drawing.Size(112, 23);
+            this.themeSwitcher.Size = new System.Drawing.Size(107, 20);
             this.themeSwitcher.TabIndex = 7;
             this.themeSwitcher.Text = "Theme: Light";
             this.themeSwitcher.UseCompatibleTextRendering = true;
@@ -129,29 +132,54 @@
             // showModified
             // 
             this.showModified.AutoSize = true;
-            this.showModified.Location = new System.Drawing.Point(146, 7);
+            this.showModified.Location = new System.Drawing.Point(159, 208);
             this.showModified.Name = "showModified";
-            this.showModified.Size = new System.Drawing.Size(125, 17);
+            this.showModified.Size = new System.Drawing.Size(108, 17);
             this.showModified.TabIndex = 11;
-            this.showModified.Text = "Show Modified Icons";
+            this.showModified.Text = "Show Overridden";
             this.showModified.UseVisualStyleBackColor = true;
             this.showModified.CheckedChanged += new System.EventHandler(this.showModified_CheckedChanged);
             // 
             // openIconFolder
             // 
-            this.openIconFolder.Location = new System.Drawing.Point(13, 258);
+            this.openIconFolder.Location = new System.Drawing.Point(12, 285);
             this.openIconFolder.Name = "openIconFolder";
-            this.openIconFolder.Size = new System.Drawing.Size(259, 23);
+            this.openIconFolder.Size = new System.Drawing.Size(254, 23);
             this.openIconFolder.TabIndex = 12;
             this.openIconFolder.Text = "Open Explorer Icon Folder";
             this.openIconFolder.UseVisualStyleBackColor = true;
             this.openIconFolder.Click += new System.EventHandler(this.openIconFolder_Click);
             // 
+            // iconSlotsTitle
+            // 
+            this.iconSlotsTitle.AutoSize = true;
+            this.iconSlotsTitle.Location = new System.Drawing.Point(9, 261);
+            this.iconSlotsTitle.Name = "iconSlotsTitle";
+            this.iconSlotsTitle.Size = new System.Drawing.Size(106, 13);
+            this.iconSlotsTitle.TabIndex = 13;
+            this.iconSlotsTitle.Text = "Additional Icon Slots:";
+            // 
+            // itemSlots
+            // 
+            this.itemSlots.Location = new System.Drawing.Point(114, 259);
+            this.itemSlots.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+            this.itemSlots.Name = "itemSlots";
+            this.itemSlots.Size = new System.Drawing.Size(38, 20);
+            this.itemSlots.TabIndex = 14;
+            this.itemSlots.ValueChanged += new System.EventHandler(this.itemSlots_ValueChanged);
+            this.itemSlots.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemSlots_KeyDown);
+            // 
             // ExplorerIconEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 295);
+            this.ClientSize = new System.Drawing.Size(278, 315);
+            this.Controls.Add(this.itemSlots);
+            this.Controls.Add(this.iconSlotsTitle);
             this.Controls.Add(this.openIconFolder);
             this.Controls.Add(this.showModified);
             this.Controls.Add(this.errors);
@@ -160,7 +188,7 @@
             this.Controls.Add(this.editIcon);
             this.Controls.Add(this.enableIconOverride);
             this.Controls.Add(this.selectedIcon);
-            this.Controls.Add(this.selectIcon);
+            this.Controls.Add(this.header);
             this.Controls.Add(this.iconContainer);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = global::RobloxStudioModManager.Properties.Resources.Icon;
@@ -171,6 +199,7 @@
             this.TopMost = true;
             this.Load += new System.EventHandler(this.ExplorerIconEditor_Load);
             ((System.ComponentModel.ISupportInitialize)(this.selectedIcon)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.itemSlots)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -179,7 +208,7 @@
         #endregion
 
         private System.Windows.Forms.FlowLayoutPanel iconContainer;
-        private System.Windows.Forms.Label selectIcon;
+        private System.Windows.Forms.Label header;
         private System.Windows.Forms.CheckBox enableIconOverride;
         private System.Windows.Forms.Button editIcon;
         private System.Windows.Forms.PictureBox selectedIcon;
@@ -188,5 +217,7 @@
         private System.Windows.Forms.Label errors;
         private System.Windows.Forms.CheckBox showModified;
         private System.Windows.Forms.Button openIconFolder;
+        private System.Windows.Forms.Label iconSlotsTitle;
+        private System.Windows.Forms.NumericUpDown itemSlots;
     }
 }

@@ -17,11 +17,12 @@ namespace RobloxStudioModManager
     {
         private static RegistryKey flagRegistry = Program.GetSubKey("FlagEditor");
 
-        private static string[] fvarGroups = new string[3] { "F", "DF", "SF" };
-        private static string[] fvarTypes = new string[4] { "Flag", "String", "Int", "Log" };
+        private static string[] flagGroups = new string[3] { "F", "DF", "SF" };
+        private static string[] flagTypes = new string[4] { "Flag", "String", "Int", "Log" };
 
-        private static List<string> fvarPrefixes = new List<string>();
+        private static List<string> flagPrefixes = new List<string>();
 
+        private DataView  flagView;
         private DataTable flagTable;
         private DataTable overrideTable;
 
@@ -37,11 +38,11 @@ namespace RobloxStudioModManager
 
         static FlagEditor()
         {
-            foreach (string fvarType in fvarTypes)
+            foreach (string flagType in flagTypes)
             {
-                foreach (string fvarGroup in fvarGroups)
+                foreach (string flagGroup in flagGroups)
                 {
-                    fvarPrefixes.Add(fvarGroup + fvarType);
+                    flagPrefixes.Add(flagGroup + flagType);
                 }
             }
         }
@@ -114,21 +115,30 @@ namespace RobloxStudioModManager
             updateFlag = DateTime.Now.Ticks.ToString();
         }
 
-        private static DataTable initializeDataGridView(DataGridView dgv)
+        private static DataTable createFlagDataTable()
         {
             DataTable table = new DataTable();
-
-            // Initialize the columns.
-            table.Columns.Add("Name" );
-            table.Columns.Add("Type" );
+            table.Columns.Add("Name");
+            table.Columns.Add("Type");
             table.Columns.Add("Value");
 
-            // Disable the grid view layout, and apply the table as the data source.
-            dgv.SuspendLayout();
-            dgv.DataSource = table;
+            return table;
+        }
+
+        private static async Task<DataView> initializeDataGridView(DataGridView dgv, DataTable table)
+        {
+            foreach (DataColumn column in table.Columns)
+            {
+                string name = column.ColumnName;
+                int index = dgv.Columns.Add(name, name);
+
+                var viewColumn = dgv.Columns[index];
+                viewColumn.DataPropertyName = name;
+            }
 
             // Set the sort modes and widths of the columns.
             var columns = dgv.Columns;
+            dgv.AutoGenerateColumns = false;
 
             var nameColumn = columns[0];
             nameColumn.Width = 250;
@@ -142,11 +152,14 @@ namespace RobloxStudioModManager
             valueColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             valueColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
 
-            // Apply alphabetical sort to the name column.
-            dgv.Sort(nameColumn, ListSortDirection.Ascending);
-            dgv.ClearSelection();
+            // Disable the grid view layout, and apply the table as the data source.
+            DataView view = new DataView(table);
+            view.Sort = "Name";
 
-            return table;
+            dgv.SuspendLayout();
+            dgv.DataSource = view;
+
+            return view;
         }
 
         private void addFlagOverride(string name, string type, string value, bool initializing = false)
@@ -200,14 +213,8 @@ namespace RobloxStudioModManager
             }
         }
 
-        private async void FlagEditor_Load(object sender, EventArgs e)
+        private async void initializeEditor()
         {
-            Enabled = false;
-            UseWaitCursor = true;
-
-            TopMost = true;
-            BringToFront();
-
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             string settingsPath = Path.Combine(localAppData, "Roblox", "ClientSettings", "StudioAppSettings.json");
 
@@ -248,22 +255,22 @@ namespace RobloxStudioModManager
             string[] flagNames = flagRegistry.GetSubKeyNames();
             string settings = File.ReadAllText(settingsPath)
                 .Replace('\r', ' ').Replace('\n', ' ')
-                .Replace('{',  ' ').Replace('}',  ' ');
-            
+                .Replace('{', ' ').Replace('}', ' ');
+
             // Initialize Flag Table
-            flagTable = initializeDataGridView(flagDataGridView);
+            flagTable = createFlagDataTable();
 
             foreach (string kvPairStr in settings.Split(','))
             {
                 string[] kvPair = kvPairStr.Split(':');
 
-                if (kvPair.Length == 2 )
+                if (kvPair.Length == 2)
                 {
                     string key = kvPair[0].Replace('"', ' ').Trim();
                     string value = kvPair[1].Replace('"', ' ').Trim();
 
-                    string type = fvarPrefixes
-                        .Where(fvar => key.StartsWith(fvar))
+                    string type = flagPrefixes
+                        .Where(pre => key.StartsWith(pre))
                         .FirstOrDefault();
 
                     if (type.Length > 0)
@@ -282,6 +289,8 @@ namespace RobloxStudioModManager
             }
 
             // Setup flag->row lookup table.
+            flagView = await initializeDataGridView(flagDataGridView, flagTable);
+
             foreach (DataGridViewRow row in flagDataGridView.Rows)
             {
                 var cells = row.Cells;
@@ -294,14 +303,15 @@ namespace RobloxStudioModManager
             }
 
             // Initialize Override Table
-            overrideTable = initializeDataGridView(overrideDataGridView);
-            
+            overrideTable = createFlagDataTable();
+            await initializeDataGridView(overrideDataGridView, overrideTable);
+
             foreach (string flagName in flagNames)
             {
                 RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
 
-                string name  = Program.GetRegistryString(flagKey, "Name" );
-                string type  = Program.GetRegistryString(flagKey, "Type" );
+                string name  = Program.GetRegistryString(flagKey, "Name");
+                string type  = Program.GetRegistryString(flagKey, "Type");
                 string value = Program.GetRegistryString(flagKey, "Value");
 
                 addFlagOverride(name, type, value, true);
@@ -317,6 +327,24 @@ namespace RobloxStudioModManager
 
             overrideStatus.Visible = true;
             overrideDataGridView.ResumeLayout();
+        }
+
+        private async void FlagEditor_Load(object sender, EventArgs e)
+        {
+            Enabled = false;
+            UseWaitCursor = true;
+
+            TopMost = true;
+            BringToFront();
+
+            Refresh();
+            await Task.Delay(100);
+
+            await Task.Run(() =>
+            {
+                var initializer = new Action(initializeEditor);
+                Invoke(initializer);
+            });
 
             Enabled = true;
             UseWaitCursor = false;
@@ -335,8 +363,7 @@ namespace RobloxStudioModManager
             }
             else
             {
-                flagTable.DefaultView.RowFilter = string.Format("Name LIKE '%{0}%'", text);
-                flagDataGridView.Sort(flagDataGridView.Columns[0], ListSortDirection.Ascending);
+                flagView.RowFilter = string.Format("Name LIKE '%{0}%'", text);
                 markFlagEditorAsDirty();
             }
         }

@@ -195,9 +195,12 @@ namespace RobloxStudioModManager
             if (allow)
             {
                 string branch = (string)branchSelect.SelectedItem;
-                Hide();
+                Enabled = false;
+                UseWaitCursor = true;
 
                 string liveVersion = await RobloxInstaller.GetCurrentVersion(branch);
+                Hide();
+
                 await RobloxInstaller.BringUpToDate(branch, liveVersion, "The listed flags might be out of date!");
 
                 FlagEditor editor = new FlagEditor(branch);
@@ -205,16 +208,22 @@ namespace RobloxStudioModManager
 
                 Show();
                 BringToFront();
+
+                Enabled = true;
+                UseWaitCursor = false;
             }
         }
 
         private async void editExplorerIcons_Click(object sender, EventArgs e)
         {
-            Hide();
+            Enabled = false;
+            UseWaitCursor = true;
 
             string branch = (string)branchSelect.SelectedItem;
-
             string liveVersion = await RobloxInstaller.GetCurrentVersion(branch);
+
+            Hide();
+
             await RobloxInstaller.BringUpToDate(branch, liveVersion, "The explorer icons may have been changed!");
 
             ExplorerIconEditor editor = new ExplorerIconEditor(branch);
@@ -222,6 +231,9 @@ namespace RobloxStudioModManager
 
             Show();
             BringToFront();
+
+            Enabled = true;
+            UseWaitCursor = false;
         }
 
         private async void launchStudio_Click(object sender = null, EventArgs e = null)
