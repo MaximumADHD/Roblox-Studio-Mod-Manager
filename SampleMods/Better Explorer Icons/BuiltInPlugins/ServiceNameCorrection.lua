@@ -6,12 +6,14 @@
 function markService(service)
 	pcall(function ()
 		-- In a pcall because this doesn't always work.
-		service.Name = service.ClassName
+		if service.ClassName ~= "" then
+			service.Name = service.ClassName
+		end
 	end)
 end
 
-for _,v in pairs(game:GetChildren()) do
-	markService(v)
+for _,service in pairs(game:GetChildren()) do
+	markService(service)
 end
 
-game.ServiceAdded:connect(markService)
+game.ServiceAdded:Connect(markService)

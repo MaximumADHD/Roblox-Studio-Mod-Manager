@@ -74,11 +74,13 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">PluginManager</string>
+				<string name="ExplorerImageIndex">120</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">TeleportService</string>
+				<string name="ExplorerImageIndex">70</string>
 				<string name="summary">Allows players to seamlessly leave a game and join another</string>
 			</Properties>
 			<Item class="ReflectionMetadataMember">
@@ -92,6 +94,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Plugin</string>
+				<string name="ExplorerImageIndex">120</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -110,6 +113,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">CollectionService</string>
+				<string name="ExplorerImageIndex">98</string>
 				<string name="summary">A service which provides collections of instances based on tags assigned to them.</string>
 			</Properties>
 			<Item class="ReflectionMetadataEvents">
@@ -183,26 +187,265 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">JointsService</string>
+				<string name="ExplorerImageIndex">34</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">RunService</string>
+				<string name="ExplorerImageIndex">125</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">BadgeService</string>
+				<string name="ExplorerImageIndex">126</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">GamePassService</string>
+				<string name="ExplorerImageIndex">116</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">LogService</string>
+				<string name="ExplorerImageIndex">130</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">HapticService</string>
+				<string name="ExplorerImageIndex">107</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ControllerService</string>
+				<string name="ExplorerImageIndex">127</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Controller</string>
+				<string name="ExplorerImageIndex">127</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">GamepadService</string>
+				<string name="ExplorerImageIndex">107</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">VirtualInputManager</string>
+				<string name="ExplorerImageIndex">107</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">HapticService</string>
+				<string name="ExplorerImageIndex">107</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">TextService</string>
+				<string name="ExplorerImageIndex">50</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Geometry</string>
+				<string name="ExplorerImageIndex">2</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">FriendService</string>
+				<string name="ExplorerImageIndex">21</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">CSGDictionaryService</string>
+				<string name="ExplorerImageIndex">73</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">NonReplicatedCSGDictionaryService</string>
+				<string name="ExplorerImageIndex">73</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">LuaWebService</string>
+				<string name="ExplorerImageIndex">132</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">HttpRbxApiService</string>
+				<string name="ExplorerImageIndex">132</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">CookiesService</string>
+				<string name="ExplorerImageIndex">110</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Selection</string>
+				<string name="ExplorerImageIndex">54</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Visit</string>
+				<string name="ExplorerImageIndex">12</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">SolidModelContentProvider</string>
+				<string name="ExplorerImageIndex">73</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">MeshContentProvider</string>
+				<string name="ExplorerImageIndex">8</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">AdService</string>
+				<string name="ExplorerImageIndex">115</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">TouchInputService</string>
+				<string name="ExplorerImageIndex">41</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">KeyframeSequenceProvider</string>
+				<string name="ExplorerImageIndex">60</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">TimerService</string>
+				<string name="ExplorerImageIndex">122</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">AnalyticsService</string>
+				<string name="ExplorerImageIndex">131</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">NotificationService</string>
+				<string name="ExplorerImageIndex">134</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">VRService</string>
+				<string name="ExplorerImageIndex">105</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ScriptService</string>
+				<string name="ExplorerImageIndex">78</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">RuntimeScriptService</string>
+				<string name="ExplorerImageIndex">78</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">KeyboardService</string>
+				<string name="ExplorerImageIndex">119</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">MouseService</string>
+				<string name="ExplorerImageIndex">121</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Animator</string>
+				<string name="ExplorerImageIndex">127</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PackageService</string>
+				<string name="ExplorerImageIndex">117</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">CoreScriptSyncService</string>
+				<string name="ExplorerImageIndex">139</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">SocialService</string>
+				<string name="ExplorerImageIndex">21</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">MessagingService</string>
+				<string name="ExplorerImageIndex">15</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">VirtualUser</string>
+				<string name="ExplorerImageIndex">127</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PathfindingService</string>
+				<string name="ExplorerImageIndex">140</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Path</string>
+				<string name="ExplorerImageIndex">141</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ABTestService</string>
+				<string name="ExplorerImageIndex">68</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">AssetService</string>
+				<string name="ExplorerImageIndex">138</string>
 				<string name="summary">A service used to set and get information about assets stored on the Roblox website.</string>
 			</Properties>
 			<Item class="ReflectionMetadataYieldFunctions">
@@ -241,6 +484,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">HttpService</string>
+				<string name="ExplorerImageIndex">129</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -270,6 +514,7 @@
 			<Properties>
 				<string name="Name">InsertService</string>
 				<string name="summary">A service used to insert objects stored on the website into the game.</string>
+				<string name="ExplorerImageIndex">138</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -425,6 +670,30 @@
 					<Properties>
 						<string name="Name">WorldOrientation</string>
 						<string name="summary">Euler angles applied in YXZ order</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Axis</string>
+						<string name="summary">Primary axis. Corresponds to the LookVector, or the first column in the part-local Attachment CFrame rotation matrix</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">SecondaryAxis</string>
+						<string name="summary">Secondary axis. Corresponds to the UpVector, or the second column in the part-local Attachment CFrame rotation matrix</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">WorldAxis</string>
+						<string name="summary">Primary axis in world space. Corresponds to the LookVector, or the first column in the world space Attachment CFrame rotation matrix.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">SecondaryWorldAxis</string>
+						<string name="summary">Secondary axis in world space. Corresponds to the UpVector, or the second column in the world space Attachment CFrame rotation matrix.</string>
 					</Properties>
 				</Item>
 			</Item>
@@ -662,7 +931,7 @@
 				<string name="Name">WeldConstraint</string>
 				<string name="ClassCategory">Constraints</string>
 				<string name="ExplorerOrder">3</string>
-				<string name="ExplorerImageIndex">34</string>
+				<string name="ExplorerImageIndex">94</string>
 				<string name="PreferredParent">PVInstance</string>
 				<string name="PreferredParents">PVInstance</string>
 				<Item class="ReflectionMetadataProperties">
@@ -972,7 +1241,7 @@
 				<string name="Name">AlignOrientation</string>
 				<string name="ClassCategory">Constraints</string>
 				<string name="ExplorerOrder">3</string>
-				<string name="ExplorerImageIndex">22</string>
+				<string name="ExplorerImageIndex">100</string>
 				<string name="PreferredParent">BasePart</string>
 				<string name="PreferredParents">BasePart</string>
 			</Properties>
@@ -982,7 +1251,7 @@
 				<string name="Name">AlignPosition</string>
 				<string name="ClassCategory">Constraints</string>
 				<string name="ExplorerOrder">3</string>
-				<string name="ExplorerImageIndex">32</string>
+				<string name="ExplorerImageIndex">99</string>
 				<string name="PreferredParent">BasePart</string>
 				<string name="PreferredParents">BasePart</string>
 			</Properties>
@@ -992,7 +1261,7 @@
 				<string name="Name">VectorForce</string>
 				<string name="ClassCategory">Constraints</string>
 				<string name="ExplorerOrder">3</string>
-				<string name="ExplorerImageIndex">82</string>
+				<string name="ExplorerImageIndex">101</string>
 				<string name="PreferredParent">Model</string>
 				<string name="PreferredParents">BasePart,Model</string>
 			</Properties>
@@ -1002,7 +1271,7 @@
 				<string name="Name">LineForce</string>
 				<string name="ClassCategory">Constraints</string>
 				<string name="ExplorerOrder">3</string>
-				<string name="ExplorerImageIndex">94</string>
+				<string name="ExplorerImageIndex">102</string>
 				<string name="PreferredParent">BasePart</string>
 				<string name="PreferredParents">BasePart</string>
 			</Properties>
@@ -1012,7 +1281,17 @@
 				<string name="Name">Torque</string>
 				<string name="ClassCategory">Constraints</string>
 				<string name="ExplorerOrder">3</string>
-				<string name="ExplorerImageIndex">98</string>
+				<string name="ExplorerImageIndex">103</string>
+				<string name="PreferredParent">BasePart</string>
+				<string name="PreferredParents">BasePart</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">AngularVelocity</string>
+				<string name="ClassCategory">Constraints</string>
+				<string name="ExplorerOrder">3</string>
+				<string name="ExplorerImageIndex">103</string>
 				<string name="PreferredParent">BasePart</string>
 				<string name="PreferredParents">BasePart</string>
 			</Properties>
@@ -1021,6 +1300,7 @@
 			<Properties>
 				<string name="Name">Mouse</string>
 				<string name="summary">Used to receive input from the user. Actually tracks mouse events and keyboard events.</string>
+				<string name="ExplorerImageIndex">121</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -1167,6 +1447,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">ChangeHistoryService</string>
+				<string name="ExplorerImageIndex">69</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1190,11 +1471,6 @@
 				<string name="Name">ScriptContext</string>
 				<string name="ExplorerOrder">99</string>
 				<string name="ExplorerImageIndex">78</string>
-			</Properties>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">Selection</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1242,21 +1518,21 @@
 			<Properties>
 				<string name="Name">Stats</string>
 				<string name="ExplorerOrder">99</string>
-				<string name="ExplorerImageIndex">97</string>
+				<string name="ExplorerImageIndex">113</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">StatsItem</string>
 				<string name="ExplorerOrder">3</string>
-				<string name="ExplorerImageIndex">4</string>
+				<string name="ExplorerImageIndex">113</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">CorePackages</string>
 				<string name="ExplorerOrder">99</string>
-				<string name="ExplorerImageIndex">58</string>
+				<string name="ExplorerImageIndex">117</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1846,7 +2122,7 @@
 				<string name="Name">CustomEvent</string>
 				<string name="ExplorerOrder">3</string>
 				<bool name="Deprecated">true</bool>
-				<string name="ExplorerImageIndex">4</string>
+				<string name="ExplorerImageIndex">118</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1854,7 +2130,7 @@
 				<string name="Name">CustomEventReceiver</string>
 				<string name="ExplorerOrder">3</string>
 				<bool name="Deprecated">true</bool>
-				<string name="ExplorerImageIndex">4</string>
+				<string name="ExplorerImageIndex">118</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1862,7 +2138,7 @@
 				<string name="Name">FloorWire</string>
 				<bool name="Deprecated">true</bool>
 				<string name="ExplorerOrder">3</string>
-				<string name="ExplorerImageIndex">4</string>
+				<string name="ExplorerImageIndex">57</string>
 				<string name="summary">Renders a thin cylinder than can be adorned with textures that 'flow' from one object to the next. Has basic pathing abilities and attempts to to not intersect anything. &lt;a href="http://wiki.roblox.com/index.php/FloorWire_Guide" target="_blank"&gt;More info&lt;/a&gt;</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
@@ -2939,6 +3215,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Tween</string>
+				<string name="ExplorerImageIndex">112</string>
 				<string name="summary">An object linked to an instance that animates properties on the instance over a specified period of time. Useful for easily moving UI objects around, rotating objects, etc. without having to write a lot of code. To create a new tween, please use TweenService:Create.</string>
 				<string name="Insertable">false</string>
 			</Properties>
@@ -2960,16 +3237,21 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">TweenService</string>
+				<string name="ExplorerImageIndex">112</string>
 				<string name="summary">Service responsible for creating tweens on instances.</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
-				<Item class="ReflectionMetadataEvents">
-					<Item class="ReflectionMetadataMember">
-						<Properties>
-							<string name="Name">Create</string>
-							<string name="summary">Creates a Tween object bound to a particular Instance. The first arg is the Instance to tween. The second arg is a TweenInfo struct, which specifies how a tween should behave. The third arg is a table, which should specify the properties to tween as keys, with the end value specified as values to the keys.</string>
-						</Properties>
-					</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Create</string>
+						<string name="summary">Creates a Tween object bound to a particular Instance. The first arg is the Instance to tween. The second arg is a TweenInfo struct, which specifies how a tween should behave. The third arg is a table, which should specify the properties to tween as keys, with the end value specified as values to the keys.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">GetValue</string>
+						<string name="summary">Transforms a linear alpha to a given EasingStyle and EasingDirection.</string>
+					</Properties>
 				</Item>
 			</Item>
 		</Item>
@@ -2999,7 +3281,7 @@
 				<string name="Name">GuiService</string>
 				<string name="summary">The GuiService is a special service, which currently allows developers to control what GuiObject is currently being selected by the Gamepad Gui navigator, and allows clients to check if Roblox's main menu is currently open. This service has a lot of hidden members, which are mainly used internally by Roblox's CoreScripts.</string>
 				<string name="ExplorerOrder">99</string>
-				<string name="ExplorerImageIndex">47</string>
+				<string name="ExplorerImageIndex">27</string>
 				</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -3013,6 +3295,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">ContextActionService</string>
+				<string name="ExplorerImageIndex">114</string>
 				<string name="summary">A service used to bind input to various lua functions.</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
@@ -3083,6 +3366,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">PointsService</string>
+				<string name="ExplorerImageIndex">128</string>
 				<string name="summary">A service used to query and award points for Roblox users using the universal point system.</string>
 				<bool name="Deprecated">true</bool>
 			</Properties>
@@ -3171,7 +3455,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">MarketplaceService</string>
-				<string name="ExplorerImageIndex">46</string>
+				<string name="ExplorerImageIndex">111</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -3227,7 +3511,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">UserInputService</string>
 				<string name="ExplorerOrder">60</string>
-				<string name="ExplorerImageIndex">27</string>
+				<string name="ExplorerImageIndex">107</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3399,7 +3683,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">ContentProvider</string>
 				<string name="ExplorerOrder">99</string>
-				<string name="ExplorerImageIndex">28</string>
+				<string name="ExplorerImageIndex">138</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -3621,7 +3905,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">BodyColors</string>
 				<string name="ClassCategory">Avatar</string>
 				<string name="ExplorerOrder">2</string>
-				<string name="ExplorerImageIndex">3</string>
+				<string name="ExplorerImageIndex">108</string>
 				<string name="PreferredParent">Model</string>
 				<string name="PreferredParents">Model</string>
 			</Properties>
@@ -4460,7 +4744,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">Status</string>
 				<bool name="Deprecated">true</bool>
 				<string name="ExplorerOrder">10</string>
-				<string name="ExplorerImageIndex">2</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -4560,7 +4843,8 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">DataStoreService</string>
 				<string name="summary">Responsible for storing data across multiple user created places</string>
-				<string name="ExplorerOrder">-1</string>
+				<string name="ExplorerOrder">99</string>
+				<string name="ExplorerImageIndex">123</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -4587,7 +4871,8 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">GlobalDataStore</string>
 				<string name="summary">Exposes functions for saving and loading data for the DataStoreService</string>
-				<string name="ExplorerOrder">-1</string>
+				<string name="ExplorerOrder">9999</string>
+				<string name="ExplorerImageIndex">69</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -4628,7 +4913,8 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">OrderedDataStore</string>
 				<string name="summary">A type of DataStore where values must be positive integers. This makes OrderedDataStore suitable for leaderboard related scripting where you are required to order large amounts of data efficiently.</string>
-				<string name="ExplorerOrder">-1</string>
+				<string name="ExplorerOrder">9999</string>
+				<string name="ExplorerImageIndex">69</string>
 			</Properties>
 			<Item class="ReflectionMetadataYieldFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -4643,7 +4929,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">HopperBin</string>
 				<bool name="Deprecated">true</bool>
-				<string name="ExplorerOrder">24</string>
+				<string name="ExplorerOrder">22</string>
 				<string name="ExplorerImageIndex">17</string>
 			</Properties>
 		</Item>
@@ -4782,7 +5068,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">RobloxReplicatedStorage</string>
 				<string name="ExplorerOrder">99</string>
-				<string name="ExplorerImageIndex">70</string>
+				<string name="ExplorerImageIndex">133</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -4820,8 +5106,16 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">StudioService</string>
-				<string name="ExplorerOrder">-1</string>
+				<string name="ExplorerImageIndex">106</string>
 				<string name="summary">A service for interfacing with the current studio state from Lua.</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ServerStorage</string>
+				<string name="ExplorerOrder">3</string>
+				<string name="ExplorerImageIndex">69</string>
+				<string name="summary">A container whose contents are only on the server.</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -5008,7 +5302,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Debris</string>
-				<string name="ExplorerOrder">-1</string>
+				<string name="ExplorerImageIndex">30</string>
 				<string name="summary">A service that provides utility in cleaning up objects</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
@@ -5035,6 +5329,12 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 					</Properties>
 				</Item>
 			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PhysicsService</string>
+				<string name="ExplorerImageIndex">30</string>
+			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
@@ -5436,7 +5736,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ClassCategory">Parts</string>
 				<string name="summary">An extendable building truss</string>
 				<string name="ExplorerOrder">12</string>
-				<string name="ExplorerImageIndex">1</string>
+				<string name="ExplorerImageIndex">135</string>
 				<string name="PreferredParent">Model</string>
 				<string name="PreferredParents">Model</string>
 			</Properties>
@@ -5447,7 +5747,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ClassCategory">Parts</string>
 				<string name="summary">A Wedge Part</string>
 				<string name="ExplorerOrder">12</string>
-				<string name="ExplorerImageIndex">1</string>
+				<string name="ExplorerImageIndex">136</string>
 				<string name="PreferredParent">Model</string>
 				<string name="PreferredParents">Model</string>
 			</Properties>
@@ -5458,7 +5758,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ClassCategory">Parts</string>
 				<string name="summary">A CornerWedge Part</string>
 				<string name="ExplorerOrder">12</string>
-				<string name="ExplorerImageIndex">1</string>
+				<string name="ExplorerImageIndex">137</string>
 				<string name="PreferredParent">Workspace</string>
 				<string name="PreferredParents">Workspace,Model</string>
 			</Properties>
@@ -5652,7 +5952,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ClassCategory">GUI</string>
 				<string name="summary">Renders its contained GuiObjects flat against the face of a part.</string>
 				<string name="ExplorerOrder">14</string>
-				<string name="ExplorerImageIndex">30</string>
+				<string name="ExplorerImageIndex">109</string>
 				<string name="PreferredParent">GuiBase2d</string>
 				<string name="PreferredParents">GuiBase2d</string>
 			</Properties>
@@ -5711,6 +6011,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">InputObject</string>
 				<string name="summary">An object that describes a particular user input, such as mouse movement, touches, keyboard, and more.</string>
 				<string name="Insertable">false</string>
+				<string name="ExplorerImageIndex">114</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6232,7 +6533,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ClassCategory">GUI</string>
 				<string name="summary">A GUI that can show 3D objects</string>
 				<string name="ExplorerOrder">30</string>
-				<string name="ExplorerImageIndex">52</string>
+				<string name="ExplorerImageIndex">142</string>
 				<string name="PreferredParent">GuiBase2d</string>
 				<string name="PreferredParents">GuiBase2d</string>
 			</Properties>
@@ -6303,7 +6604,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">HumanoidDescription</string>
 				<string name="summary">An object that specifies the appearance of Humanoid characters</string>
 				<string name="ExplorerOrder">22</string>
-				<string name="ExplorerImageIndex">79</string>
+				<string name="ExplorerImageIndex">104</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -6795,7 +7096,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">CoreScript</string>
 				<string name="ExplorerOrder">5</string>
-				<string name="ExplorerImageIndex">71</string>
+				<string name="ExplorerImageIndex">139</string>
 			</Properties>
 		</Item>
 	</Item>
