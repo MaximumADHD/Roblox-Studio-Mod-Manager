@@ -4872,7 +4872,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">GlobalDataStore</string>
 				<string name="summary">Exposes functions for saving and loading data for the DataStoreService</string>
 				<string name="ExplorerOrder">9999</string>
-				<string name="ExplorerImageIndex">69</string>
+				<string name="ExplorerImageIndex">124</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -4914,7 +4914,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">OrderedDataStore</string>
 				<string name="summary">A type of DataStore where values must be positive integers. This makes OrderedDataStore suitable for leaderboard related scripting where you are required to order large amounts of data efficiently.</string>
 				<string name="ExplorerOrder">9999</string>
-				<string name="ExplorerImageIndex">69</string>
+				<string name="ExplorerImageIndex">124</string>
 			</Properties>
 			<Item class="ReflectionMetadataYieldFunctions">
 				<Item class="ReflectionMetadataMember">
