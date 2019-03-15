@@ -30,8 +30,7 @@ namespace RobloxStudioModManager
         private static Color THEME_DARK_NORMAL  = Color.FromArgb(44, 44, 44);
         private static Color THEME_DARK_FLASH   = Color.ForestGreen;
 
-        private delegate void AddButtonDelegator(Control parent, Control child);
-        private delegate void WindowStateDelegator(FormWindowState windowState);
+        private delegate void AddControlDelegator(Control parent, Control child);
         private delegate void ButtonColorDelegator(Button button, Color newColor);
 
         private List<Image> iconLookup = new List<Image>();
@@ -237,19 +236,6 @@ namespace RobloxStudioModManager
                 itemSlots.Value = Math.Max(getExtraItemSlots(), result - numIcons + 1); 
 
             return result;
-        }
-
-        private void setFormState(FormWindowState state)
-        {
-            if (InvokeRequired)
-            {
-                WindowStateDelegator delegator = new WindowStateDelegator(setFormState);
-                Invoke(delegator, state);
-            }
-            else
-            {
-                WindowState = state;
-            }
         }
 
         private void setButtonColor(Button button, Color color)
@@ -465,7 +451,6 @@ namespace RobloxStudioModManager
 
                 selectedIcon.BackgroundImage = icon;
                 WindowState = FormWindowState.Normal;
-                setFormState(FormWindowState.Normal);
             }
             else
             {
@@ -503,8 +488,8 @@ namespace RobloxStudioModManager
         {
             if (parent.InvokeRequired)
             {
-                AddButtonDelegator addButton = new AddButtonDelegator(addControlAcrossThread);
-                parent.Invoke(addButton, parent, child);
+                AddControlDelegator addControl = new AddControlDelegator(addControlAcrossThread);
+                parent.Invoke(addControl, parent, child);
             }
             else
             {
