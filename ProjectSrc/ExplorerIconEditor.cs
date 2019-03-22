@@ -461,16 +461,7 @@ namespace RobloxStudioModManager
 
         private FileSystemEventHandler safeFileEventHandler(FileSystemEventHandler handler)
         {
-            return new FileSystemEventHandler((sender, e) =>
-            {
-                if (InvokeRequired)
-                {
-                    Invoke(handler, sender, e);
-                    return;
-                }
-
-                handler(sender, e);
-            });
+            return new FileSystemEventHandler((sender, e) => Invoke(handler, sender, e));
         }
 
         private Button createIconButton(EventHandler clickEvent)
