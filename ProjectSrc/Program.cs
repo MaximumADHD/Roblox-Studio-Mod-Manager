@@ -81,21 +81,9 @@ namespace RobloxStudioModManager
             }
         }
 
-        private static bool validateCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors)
+        private static bool validateCert(object sender, X509Certificate cert, X509Chain chain, SslPolicyErrors errors)
         {
-            if (errors == SslPolicyErrors.None)
-            {
-                return true;
-            }
-            else if (errors == SslPolicyErrors.RemoteCertificateNameMismatch)
-            {
-                // TODO: This is handled poorly.
-                return certificate.Subject.Contains("Amazon.com Inc.");
-            }
-            else
-            {
-                return false;
-            }
+            return (errors == SslPolicyErrors.None);
         }
 
         [STAThread]
@@ -120,9 +108,10 @@ namespace RobloxStudioModManager
             {
                 Console.WriteLine("Ran into problem while removing deprecated startup protocol. Ignoring for now?");
             }
-            
+
             // Add Roblox HTTPS validation 
-            ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(validateCertificate);
+            var httpsValidator = new RemoteCertificateValidationCallback(validateCert);
+            ServicePointManager.ServerCertificateValidationCallback += httpsValidator;
 
             // Start launcher
             Application.EnableVisualStyles();
