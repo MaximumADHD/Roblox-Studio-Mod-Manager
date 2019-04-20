@@ -741,7 +741,7 @@ namespace RobloxStudioModManager
 
                                         if (!fileManifest.SignatureToFiles.ContainsKey(signature))
                                         {
-                                            echo("Deleting unused file {fileName}");
+                                            echo($"Deleting unused file {fileName}");
                                             File.Delete(filePath);
                                             fileRegistry.DeleteValue(fileName);
                                         }

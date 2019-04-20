@@ -12,7 +12,7 @@ namespace RobloxStudioModManager
 
         public static async Task<RobloxFileManifest> Get(string branch, string versionGuid)
         {
-            string fileManifestUrl = $"https://s3.amazonaws.com/setup.{branch}.com/{versionGuid}-rbxPkgManifest.txt";
+            string fileManifestUrl = $"https://s3.amazonaws.com/setup.{branch}.com/{versionGuid}-rbxManifest.txt";
             string fileManifestData;
 
             using (WebClient http = new WebClient())
