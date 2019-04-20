@@ -14,32 +14,7 @@ using Microsoft.Win32;
 
 namespace RobloxStudioModManager
 {
-    public struct RobloxPackageManifest
-    {
-        public string Name;
-        public string Signature;
-        public int PackedSize;
-        public int Size;
-
-        public override string ToString()
-        {
-            return Name + " = " + Signature + " [Packed-Size: " + PackedSize + "] [Size: " + Size + ']';
-        }
-    }
-
-    public struct RobloxFileManifest
-    {
-        public Dictionary<string, List<string>> SignatureToFiles;
-        public Dictionary<string, string> FileToSignature;
-    }
-
-    public struct RobloxInfoCache
-    {
-        public DateTime LastFetch;
-        public string LastResult;
-    }
-
-    public partial class RobloxInstaller : Form
+    public partial class RobloxStudioInstaller : Form
     {
         [DllImport("user32.dll")]
         static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -57,23 +32,19 @@ namespace RobloxStudioModManager
         private int actualProgressBarSum = 0;
         private bool exitWhenClosed = true;
 
-        private const string gitContentUrl = "https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/master/";
-        private const string amazonAws = "https://s3.amazonaws.com/";
-
         private const string appSettingsXml =
             "<Settings>\n" +
             "   <ContentFolder>content</ContentFolder>\n" +
             "   <BaseUrl>http://www.roblox.com</BaseUrl>\n" +
             "</Settings>";
 
-        private static WebClient http = new WebClient();
-        private static string versionCompKey;
+        private const string amazonAws = "https://s3.amazonaws.com/";
 
         private static RegistryKey pkgRegistry = Program.GetSubKey("PackageManifest");
         private static RegistryKey fileRegistry = Program.GetSubKey("FileManifest");
         private static RegistryKey fixedRegistry = Program.GetSubKey(fileRegistry, "Fixed");
 
-        private static Dictionary<string, RobloxInfoCache> infoCache = new Dictionary<string, RobloxInfoCache>();
+        private static WebClient http = new WebClient();
 
         private static string computeSignature(Stream source)
         {
@@ -165,92 +136,6 @@ namespace RobloxStudioModManager
             return amazonAws + setupDir + buildVersion + '-' + file;
         }
 
-        private async Task<List<RobloxPackageManifest>> getPackageManifest()
-        {
-            string pkgManifestUrl = constructDownloadUrl("rbxPkgManifest.txt");
-            string pkgManifestData = await http.DownloadStringTaskAsync(pkgManifestUrl);
-
-            List<RobloxPackageManifest> result = new List<RobloxPackageManifest>();
-
-            using (StringReader reader = new StringReader(pkgManifestData))
-            {
-                string version = reader.ReadLine();
-                if (version != "v0")
-                    throw new NotSupportedException("Unexpected package manifest version: " + version + " (expected v0!)\nPlease contact CloneTrooper1019 if you see this error.");
-
-                while (true)
-                {
-                    try
-                    {
-                        string fileName = reader.ReadLine();
-                        string signature = reader.ReadLine();
-
-                        int packedSize = int.Parse(reader.ReadLine());
-                        int size = int.Parse(reader.ReadLine());
-
-                        if (fileName.EndsWith(".zip"))
-                        {
-                            RobloxPackageManifest pkgManifest = new RobloxPackageManifest()
-                            {
-                                Name = fileName,
-                                Signature = signature,
-                                PackedSize = packedSize,
-                                Size = size
-                            };
-
-                            result.Add(pkgManifest);
-                        }
-                    }
-                    catch
-                    {
-                        break;
-                    }
-                }
-            }
-
-            return result;
-        }
-
-        private async Task<RobloxFileManifest> getFileManifest()
-        {
-            string fileManifestUrl = constructDownloadUrl("rbxManifest.txt");
-            string fileManifestData = await http.DownloadStringTaskAsync(fileManifestUrl);
-
-            RobloxFileManifest result = new RobloxFileManifest();
-            result.FileToSignature = new Dictionary<string, string>();
-            result.SignatureToFiles = new Dictionary<string, List<string>>();
-
-            using (StringReader reader = new StringReader(fileManifestData))
-            {
-                string path = "";
-                string signature = "";
-
-                while (path != null && signature != null)
-                {
-                    try
-                    {
-                        path = reader.ReadLine();
-                        signature = reader.ReadLine();
-
-                        if (path == null || signature == null)
-                            break;
-
-                        if (!result.SignatureToFiles.ContainsKey(signature))
-                            result.SignatureToFiles.Add(signature, new List<string>());
-
-                        result.SignatureToFiles[signature].Add(path);
-                        result.FileToSignature.Add(path, signature);
-                    }
-                    catch
-                    {
-                        break;
-                    }
-                }
-            }
-
-            return result;
-        }
-
         public static async Task BringUpToDate(string branch, string expectedVersion, string updateReason)
         {
             string currentVersion = Program.GetRegistryString("BuildVersion");
@@ -270,7 +155,7 @@ namespace RobloxStudioModManager
 
                 if (check == DialogResult.Yes)
                 {
-                    RobloxInstaller installer = new RobloxInstaller(false);
+                    RobloxStudioInstaller installer = new RobloxStudioInstaller(false);
 
                     await installer.RunInstaller(branch);
                     installer.Dispose();
@@ -278,7 +163,7 @@ namespace RobloxStudioModManager
             }
         }
 
-        public RobloxInstaller(bool _exitWhenClosed = true)
+        public RobloxStudioInstaller(bool _exitWhenClosed = true)
         {
             InitializeComponent();
             http.Headers.Set(HttpRequestHeader.UserAgent, "Roblox");
@@ -295,40 +180,6 @@ namespace RobloxStudioModManager
             return basePath;
         }
 
-        public static async Task<string> GetVersionInfo(string branch, string endpoint, string binaryType)
-        {
-            if (versionCompKey == null)
-                versionCompKey = await http.DownloadStringTaskAsync(gitContentUrl + "VersionCompatibilityApiKey");
-
-            string versionUrl = "https://versioncompatibility.api." + branch +
-                                ".com/Get" + endpoint + "/?apiKey=" + versionCompKey +
-                                "&binaryType=" + binaryType;
-
-            RobloxInfoCache cache;
-
-            if (infoCache.ContainsKey(versionUrl))
-            {
-                cache = infoCache[versionUrl];
-            }
-            else
-            {
-                cache = new RobloxInfoCache();
-                cache.LastFetch = DateTime.MinValue;
-                infoCache.Add(versionUrl, cache);
-            }
-
-            TimeSpan updateCheck = DateTime.Now - cache.LastFetch;
-
-            if (updateCheck.TotalSeconds >= 300)
-            {
-                string newFetch = await http.DownloadStringTaskAsync(versionUrl);
-                cache.LastResult = newFetch.Replace('"', ' ').Trim();
-                cache.LastFetch = DateTime.Now;
-            }
-
-            return cache.LastResult;
-        }
-
         public static string GetStudioBinaryType()
         {
             string binaryType = "WindowsStudio";
@@ -339,10 +190,81 @@ namespace RobloxStudioModManager
             return binaryType;
         }
 
-        public static async Task<string> GetCurrentVersion(string branch)
+        // This does a quick check of /versionQTStudio without resolving
+        // if its the proper version-guid for gametest builds. This should
+        // make gametest update checks faster... at least for 64-bit users.
+        public static async Task<string> GetFastVersionGuid(string branch)
+        {
+            if (branch == "roblox")
+            {
+                string binaryType = GetStudioBinaryType();
+                var info = await ClientVersionInfo.Get(binaryType);
+
+                return info.Guid;
+            }
+            else
+            {
+                string fastUrl = $"{amazonAws}/setup.{branch}.com/versionQTStudio";
+                return await http.DownloadStringTaskAsync(fastUrl);
+            }
+        }
+
+        public static async Task<ClientVersionInfo> GetCurrentVersionInfo(string branch)
         {
             string binaryType = GetStudioBinaryType();
-            return await GetVersionInfo(branch, "CurrentClientVersionUpload", binaryType);
+
+            if (branch == "roblox")
+            {
+                var info = await ClientVersionInfo.Get(binaryType);
+                return info;
+            }
+            else
+            {
+                // Unfortunately as of right now, the ClientVersionInfo end-point on 
+                // gametest isn't available to the public, so I have to use some hacks
+                // with the DeployHistory.txt file to figure out what version guid to use.
+
+                var logData = await StudioDeployLogs.Get(branch);
+
+                var currentLogs = logData.CurrentLogs;
+                int numLogs = currentLogs.Count;
+
+                DeployLog latest = currentLogs[numLogs - 1];
+                DeployLog prev = currentLogs[numLogs - 2];
+
+                DeployLog build_x86, build_x64;
+
+                // If these builds aren't using the same perforce changelist,
+                // then the 64-bit version hasn't been deployed yet. There is
+                // usually a ~5 minute gap between the new 32-bit version being
+                // deployed, and the 64-bit version proceeding it.
+
+                if (prev.Changelist != latest.Changelist)
+                {
+                    build_x86 = latest;
+                    build_x64 = prev;
+                }
+                else
+                {
+                    build_x86 = prev;
+                    build_x64 = latest;
+                }
+
+                var info = new ClientVersionInfo();
+
+                if (binaryType == "WindowsStudio64")
+                {
+                    info.Version = build_x64.ToString();
+                    info.Guid = build_x64.VersionGuid;
+                }
+                else
+                {
+                    info.Version = build_x86.ToString();
+                    info.Guid = build_x86.VersionGuid;
+                }
+                
+                return info;
+            }
         }
 
         // YOU WERE SO CLOSE ROBLOX, AGHHHH
@@ -364,6 +286,7 @@ namespace RobloxStudioModManager
             if (!forceInstall)
             {
                 string oldFileSig = fileRegistry.GetValue(filePath, "") as string;
+
                 if (oldFileSig == newFileSig)
                 {
                     incrementProgress(length);
@@ -382,14 +305,14 @@ namespace RobloxStudioModManager
                 if (File.Exists(extractPath))
                     File.Delete(extractPath);
 
-                echo("Writing " + filePath + "...");
+                echo($"Writing {filePath}...");
                 entry.ExtractToFile(extractPath);
 
                 fileRegistry.SetValue(filePath, newFileSig);
             }
             catch
             {
-                echo("FILE WRITE FAILED: " + filePath + " (This build may not run as expected)");
+                echo($"FILE WRITE FAILED: {filePath} (This build may not run as expected)");
             }
 
             incrementProgress(length);
@@ -435,23 +358,42 @@ namespace RobloxStudioModManager
             BringToFront();
             TopMost = true;
 
-            setStatus("Checking for updates");
-
-            setupDir = "setup." + branch + ".com/";
-            buildVersion = await GetCurrentVersion(branch);
+            setupDir = $"setup.{branch}.com/";
             robloxStudioBetaPath = GetStudioPath();
 
+            setStatus("Checking for updates");
             echo("Checking build installation...");
 
             string currentBranch = Program.GetRegistryString("BuildBranch");
             string currentVersion = Program.GetRegistryString("BuildVersion");
 
-            if (currentBranch != branch || currentVersion != buildVersion || forceInstall)
+            bool shouldInstall = (forceInstall || currentBranch != branch);
+            string fastVersion = await GetFastVersionGuid(currentBranch);
+
+            if (branch == "roblox")
+                buildVersion = fastVersion;
+
+            ClientVersionInfo versionInfo = null;
+
+            if (shouldInstall || fastVersion != currentVersion)
+            {
+                if (currentBranch != "roblox")
+                    echo("Possible update detected, verifying...");
+
+                versionInfo = await GetCurrentVersionInfo(branch);
+                buildVersion = versionInfo.Guid;
+            }
+            else
+            {
+                buildVersion = fastVersion;
+            }
+
+            if (currentVersion != buildVersion || shouldInstall)
             {
                 echo("This build needs to be installed!");
 
                 string binaryType = GetStudioBinaryType();
-                string versionId = await GetVersionInfo(branch, "CurrentClientVersion", binaryType);
+                string versionId = versionInfo.Version;
 
                 bool safeToContinue = false;
                 bool cancelled = false;
@@ -535,14 +477,17 @@ namespace RobloxStudioModManager
 
                 if (!cancelled)
                 {
-                    setStatus("Installing Version " + versionId + " of Roblox Studio...");
+                    TopMost = true;
+                    BringToFront();
+
+                    setStatus($"Installing Version {versionId} of Roblox Studio...");
                     List<Task> taskQueue = new List<Task>();
 
                     echo("Grabbing package manifest...");
-                    List<RobloxPackageManifest> pkgManifest = await getPackageManifest();
+                    List<RobloxPackageManifest> pkgManifest = await RobloxPackageManifest.Get(branch, buildVersion);
 
                     echo("Grabbing file manifest...");
-                    RobloxFileManifest fileManifest = await getFileManifest();
+                    RobloxFileManifest fileManifest = await RobloxFileManifest.Get(branch, buildVersion);
 
                     progressBar.Maximum = 1;
                     progressBar.Value = 0;
@@ -560,7 +505,7 @@ namespace RobloxStudioModManager
 
                         if (oldSig == newSig && !forceInstall)
                         {
-                            echo("Package '" + pkgName + "' hasn't changed between builds, skipping.");
+                            echo($"Package '{pkgName}' hasn't changed between builds, skipping.");
                             continue;
                         }
 
@@ -571,7 +516,7 @@ namespace RobloxStudioModManager
                             string zipFileUrl = constructDownloadUrl(package.Name);
                             string zipExtractPath = Path.Combine(downloads, package.Name);
 
-                            echo("Installing package " + zipFileUrl);
+                            echo($"Installing package {zipFileUrl}");
 
                             WebClient localHttp = new WebClient();
                             localHttp.Headers.Set("UserAgent", "Roblox");
@@ -583,7 +528,7 @@ namespace RobloxStudioModManager
                             // in the manifest, then this file has been tampered with.
 
                             if (fileContents.Length != package.PackedSize)
-                                throw new InvalidDataException(package.Name + " expected packed size: " + package.PackedSize + " but got: " + fileContents.Length);
+                                throw new InvalidDataException($"{package.Name} expected packed size: {package.PackedSize} but got: {fileContents.Length}");
 
                             using (MemoryStream fileBuffer = new MemoryStream(fileContents))
                             {
@@ -592,7 +537,7 @@ namespace RobloxStudioModManager
 
                                 string checkSig = computeSignature(fileBuffer);
                                 if (checkSig != newSig)
-                                    throw new InvalidDataException(package.Name + " expected signature: " + newSig + " but got: " + checkSig);
+                                    throw new InvalidDataException($"{package.Name} expected signature: {newSig} but got: {checkSig}");
 
                                 // Write the zip file.
                                 File.WriteAllBytes(zipExtractPath, fileContents);
@@ -796,7 +741,7 @@ namespace RobloxStudioModManager
 
                                         if (!fileManifest.SignatureToFiles.ContainsKey(signature))
                                         {
-                                            echo("Deleting unused file " + fileName);
+                                            echo("Deleting unused file {fileName}");
                                             File.Delete(filePath);
                                             fileRegistry.DeleteValue(fileName);
                                         }
@@ -847,8 +792,8 @@ namespace RobloxStudioModManager
             }
             
             setStatus("Configuring Roblox Studio...");
-
             echo("Updating registry protocols...");
+
             Program.UpdateStudioRegistryProtocols(setupDir, buildVersion, robloxStudioBetaPath);
 
             if (exitWhenClosed)
@@ -867,7 +812,7 @@ namespace RobloxStudioModManager
             return robloxStudioBetaPath;
         }
 
-        private void RobloxInstaller_FormClosed(object sender, FormClosedEventArgs e)
+        private void RobloxStudioInstaller_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (exitWhenClosed)
             {

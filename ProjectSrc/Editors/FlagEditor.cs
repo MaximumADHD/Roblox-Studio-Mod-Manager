@@ -125,7 +125,7 @@ namespace RobloxStudioModManager
             return table;
         }
 
-        private static async Task<DataView> initializeDataGridView(DataGridView dgv, DataTable table)
+        private static DataView initializeDataGridView(DataGridView dgv, DataTable table)
         {
             foreach (DataColumn column in table.Columns)
             {
@@ -229,7 +229,7 @@ namespace RobloxStudioModManager
                     CreateNoWindow = true,
                     UseShellExecute = false,
                     WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = RobloxInstaller.GetStudioPath()
+                    FileName = RobloxStudioInstaller.GetStudioPath()
                 };
 
                 Process studio = Process.Start(studioStartInfo);
@@ -289,7 +289,7 @@ namespace RobloxStudioModManager
             }
 
             // Setup flag->row lookup table.
-            flagView = await initializeDataGridView(flagDataGridView, flagTable);
+            flagView = initializeDataGridView(flagDataGridView, flagTable);
 
             foreach (DataGridViewRow row in flagDataGridView.Rows)
             {
@@ -304,7 +304,7 @@ namespace RobloxStudioModManager
 
             // Initialize Override Table
             overrideTable = createFlagDataTable();
-            await initializeDataGridView(overrideDataGridView, overrideTable);
+            initializeDataGridView(overrideDataGridView, overrideTable);
 
             foreach (string flagName in flagNames)
             {
@@ -603,7 +603,7 @@ namespace RobloxStudioModManager
 
                 string json = "{\r\n" + string.Join(",\r\n", configs.ToArray()) + "\r\n}";
 
-                string studioDir = RobloxInstaller.GetStudioDirectory();
+                string studioDir = RobloxStudioInstaller.GetStudioDirectory();
                 string clientSettings = Path.Combine(studioDir, "ClientSettings");
 
                 if (!Directory.Exists(clientSettings))

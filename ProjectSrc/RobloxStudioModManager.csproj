@@ -91,28 +91,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExplorerIconEditor.cs">
+    <Compile Include="History\ClientVersionInfo.cs" />
+    <Compile Include="History\DeployLog.cs" />
+    <Compile Include="History\HistoryCache.cs" />
+    <Compile Include="History\StudioDeployLogs.cs" />
+    <Compile Include="Editors\ExplorerIconEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ExplorerIconEditor.Designer.cs">
+    <Compile Include="Editors\ExplorerIconEditor.Designer.cs">
       <DependentUpon>ExplorerIconEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="FlagEditor.cs">
+    <Compile Include="Editors\FlagEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FlagEditor.Designer.cs">
+    <Compile Include="Editors\FlagEditor.Designer.cs">
       <DependentUpon>FlagEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Installer\RobloxFileManifest.cs" />
+    <Compile Include="Installer\RobloxPackageManifest.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RobloxInstaller.cs">
+    <Compile Include="Installer\RobloxStudioInstaller.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="RobloxInstaller.Designer.cs">
-      <DependentUpon>RobloxInstaller.cs</DependentUpon>
+    <Compile Include="Installer\RobloxStudioInstaller.Designer.cs">
+      <DependentUpon>RobloxStudioInstaller.cs</DependentUpon>
     </Compile>
     <Compile Include="Launcher.cs">
       <SubType>Form</SubType>
@@ -156,6 +162,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\Icon.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /y "$(TargetDir)$(TargetFileName)" "$(ProjectDir)..\$(TargetFileName)"</PostBuildEvent>

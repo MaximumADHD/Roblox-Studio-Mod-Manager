@@ -107,8 +107,8 @@ namespace RobloxStudioModManager
             CheckBox dontShowAgain = new CheckBox()
             {
                 AutoSize = true,
-                Text = "Do not show this warning again.",
                 Location = new Point(54, 145),
+                Text = "Do not show this warning again.",
                 Font = new Font("Microsoft Sans Serif", 9.75f),
             };
 
@@ -195,13 +195,14 @@ namespace RobloxStudioModManager
             if (allow)
             {
                 string branch = (string)branchSelect.SelectedItem;
+
                 Enabled = false;
                 UseWaitCursor = true;
 
-                string liveVersion = await RobloxInstaller.GetCurrentVersion(branch);
+                ClientVersionInfo info = await RobloxStudioInstaller.GetCurrentVersionInfo(branch);
                 Hide();
 
-                await RobloxInstaller.BringUpToDate(branch, liveVersion, "The listed flags might be out of date!");
+                await RobloxStudioInstaller.BringUpToDate(branch, info.Guid, "The listed flags might be out of date!");
 
                 FlagEditor editor = new FlagEditor(branch);
                 editor.ShowDialog();
@@ -220,11 +221,11 @@ namespace RobloxStudioModManager
             UseWaitCursor = true;
 
             string branch = (string)branchSelect.SelectedItem;
-            string liveVersion = await RobloxInstaller.GetCurrentVersion(branch);
+            ClientVersionInfo info = await RobloxStudioInstaller.GetCurrentVersionInfo(branch);
 
             Hide();
 
-            await RobloxInstaller.BringUpToDate(branch, liveVersion, "The explorer icons may have been changed!");
+            await RobloxStudioInstaller.BringUpToDate(branch, info.Guid, "The explorer icons may have been changed!");
 
             ExplorerIconEditor editor = new ExplorerIconEditor(branch);
             editor.ShowDialog();
@@ -241,7 +242,7 @@ namespace RobloxStudioModManager
             Hide();
 
             string branch = (string)branchSelect.SelectedItem;
-            RobloxInstaller installer = new RobloxInstaller();
+            RobloxStudioInstaller installer = new RobloxStudioInstaller();
 
             string studioPath = await installer.RunInstaller(branch, forceRebuild.Checked);
             string studioRoot = Directory.GetParent(studioPath).ToString();
@@ -266,6 +267,7 @@ namespace RobloxStudioModManager
                     if (File.Exists(relativeFile))
                     {
                         byte[] relativeContents = File.ReadAllBytes(relativeFile);
+
                         if (!fileContents.SequenceEqual(relativeContents))
                         {
                             modFileControl.CopyTo(relativeFile, true);
@@ -304,6 +306,7 @@ namespace RobloxStudioModManager
 
                 string metaScriptFile = Path.Combine(dir, "__rbxModManagerMetadata.lua");
                 FileInfo info = new FileInfo(metaScriptFile);
+
                 if (info.Exists)
                     info.Attributes = FileAttributes.Normal;
 
@@ -400,6 +403,7 @@ namespace RobloxStudioModManager
         {
             Control controller = sender as Control;
             string msg = null;
+
             if (sender.Equals(launchStudio))
                 msg = "Click to Launch Roblox Studio!";
             else if (sender.Equals(manageMods))

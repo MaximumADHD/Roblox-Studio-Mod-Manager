@@ -1,6 +1,6 @@
 ﻿namespace RobloxStudioModManager
 {
-    partial class RobloxInstaller
+    partial class RobloxStudioInstaller
     {
         /// <summary>
         /// Required designer variable.
@@ -81,7 +81,7 @@
             this.log.TabIndex = 12;
             this.log.Text = "";
             // 
-            // RobloxInstaller
+            // RobloxStudioInstaller
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -96,11 +96,11 @@
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "RobloxInstaller";
+            this.Name = "RobloxStudioInstaller";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Roblox Studio Updater";
             this.TopMost = true;
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.RobloxInstaller_FormClosed);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.RobloxStudioInstaller_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
