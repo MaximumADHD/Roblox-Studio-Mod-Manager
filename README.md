@@ -14,7 +14,7 @@ The _Roblox Studio Mod Manager_ is an unofficial, open-source, custom bootstrapp
 
 
 # Features
-* Runs and installs 100% independently of Roblox Studio's standard bootstrapper, in a directory separate from the one Roblox uses.
+* Runs and installs 100% independently of Roblox Studio's bootstrapper, in a directory separate from the one Roblox uses.
 * File overrides are sustained between updates.
 * Updates are applied incrementally to a single directory.
 * Provides a flexible flag editor, allowing you to toggle engine features.
