@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
@@ -255,15 +254,18 @@ namespace RobloxStudioModManager
             string[] flagNames = flagRegistry.GetSubKeyNames();
             string settings = File.ReadAllText(settingsPath)
                 .Replace('\r', ' ').Replace('\n', ' ')
-                .Replace('{', ' ').Replace('}', ' ');
+                .Replace("{\"", "").Replace("\"}", "");
 
             // Initialize Flag Table
             flagTable = createFlagDataTable();
+            var splitPairs = new string[1] { ",\"" };
 
-            foreach (string kvPairStr in settings.Split(','))
+            foreach (string kvPairStr in settings.Split(splitPairs, StringSplitOptions.None))
             {
-                string[] kvPair = kvPairStr.Split(':');
-
+                string[] kvPair = kvPairStr
+                    .Replace("\"", "")
+                    .Split(':');
+                
                 if (kvPair.Length == 2)
                 {
                     string key = kvPair[0].Replace('"', ' ').Trim();
