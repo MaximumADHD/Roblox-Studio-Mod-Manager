@@ -7,7 +7,7 @@ namespace RobloxStudioModManager
 {
     public class StudioDeployLogs
     {
-        private const string LogPattern = "New Studio (version-[a-f\\d]+) at \\d+/\\d+/\\d+ \\d+:\\d+:\\d+ [A,P]M, file version: (\\d+), (\\d+), (\\d+), (\\d+)";
+        private const string LogPattern = "New Studio (version-[a-f\\d]+) at \\d+/\\d+/\\d+ \\d+:\\d+:\\d+ [A,P]M, file version: (\\d+), (\\d+), (\\d+), (\\d+)...Done!";
         public string Branch { get; private set; }
 
         private static Dictionary<string, StudioDeployLogs> LogCache = new Dictionary<string, StudioDeployLogs>();
