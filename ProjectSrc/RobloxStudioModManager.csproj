@@ -107,8 +107,8 @@
     <Compile Include="Editors\FlagEditor.Designer.cs">
       <DependentUpon>FlagEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Installer\RobloxFileManifest.cs" />
-    <Compile Include="Installer\RobloxPackageManifest.cs" />
+    <Compile Include="Installer\FileManifest.cs" />
+    <Compile Include="Installer\PackageManifest.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -16,14 +13,16 @@ namespace RobloxStudioModManager
     public partial class ExplorerIconEditor : Form
     {
         private const int iconSize = 16;
+        private const int maxExtraIcons = 99;
+
         private const string iconPrefix = "explorer-icon-";
         private const string iconManifest = @"content\textures\ClassImages.PNG";
 
         private static RegistryKey explorerRegistry = Program.GetSubKey("ExplorerIcons");
         private static RegistryKey manifestRegistry = Program.GetSubKey("FileManifest");
 
-        private static RegistryKey iconRegistry = Program.GetSubKey(explorerRegistry, "EnabledIcons");
-        private static RegistryKey infoRegistry = Program.GetSubKey(explorerRegistry, "ClassImagesInfo");
+        private static RegistryKey iconRegistry = explorerRegistry.GetSubKey("EnabledIcons");
+        private static RegistryKey infoRegistry = explorerRegistry.GetSubKey("ClassImagesInfo");
 
         private static Color THEME_LIGHT_NORMAL = Color.White;
         private static Color THEME_LIGHT_FLASH  = Color.FromArgb(220, 255, 220);
@@ -44,7 +43,6 @@ namespace RobloxStudioModManager
         private bool initializedExtraSlots = false;
 
         private static int numIcons = 0;
-        private const int maxExtraIcons = 99;
         private FileSystemWatcher iconWatcher;
 
         public ExplorerIconEditor(string _branch)
@@ -99,8 +97,8 @@ namespace RobloxStudioModManager
 
         private static Image getExplorerIcons()
         {
-            string manifestHash = Program.GetRegistryString(manifestRegistry, iconManifest);
-            string currentHash = Program.GetRegistryString(infoRegistry, "LastClassIconHash");
+            string manifestHash = manifestRegistry.GetString(iconManifest);
+            string currentHash = infoRegistry.GetString("LastClassIconHash");
 
             if (currentHash != manifestHash)
             {
@@ -110,7 +108,7 @@ namespace RobloxStudioModManager
                 infoRegistry.SetValue("LastClassIconHash", manifestHash);
             }
             
-            string imagePath = Program.GetRegistryString(infoRegistry, "SourceLocation");
+            string imagePath = infoRegistry.GetString("SourceLocation");
             Image explorerIcons = Image.FromFile(imagePath);
 
             numIcons = explorerIcons.Width / iconSize;
@@ -267,7 +265,7 @@ namespace RobloxStudioModManager
         private static bool hasIconOverride(int index)
         {
             string key = iconPrefix + index;
-            string value = Program.GetRegistryString(iconRegistry, key);
+            string value = iconRegistry.GetString(key);
 
             bool result = false;
             bool.TryParse(value, out result);
@@ -479,7 +477,7 @@ namespace RobloxStudioModManager
         {
             if (parent.InvokeRequired)
             {
-                AddControlDelegator addControl = new AddControlDelegator(addControlAcrossThread);
+                var addControl = new AddControlDelegator(addControlAcrossThread);
                 parent.Invoke(addControl, parent, child);
             }
             else
@@ -496,10 +494,10 @@ namespace RobloxStudioModManager
             EventHandler iconBtnClicked = new EventHandler(onIconBtnClicked);
             string studioPath = RobloxStudioInstaller.GetStudioPath();
 
-            bool.TryParse(Program.GetRegistryString(explorerRegistry, "ShowModifiedIcons"), out showModifiedIcons);
-            showModified.Checked = showModifiedIcons;
+            showModifiedIcons = explorerRegistry.GetBool("ShowModifiedIcons");
+            darkTheme = explorerRegistry.GetBool("DarkTheme");
 
-            bool.TryParse(Program.GetRegistryString(explorerRegistry, "DarkTheme"), out darkTheme);
+            showModified.Checked = showModifiedIcons;
             themeSwitcher.Text = "Theme: " + (darkTheme ? "Dark" : "Light");
 
             selectedIcon.BackColor = (darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL);

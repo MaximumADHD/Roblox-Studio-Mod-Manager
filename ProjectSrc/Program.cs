@@ -11,52 +11,76 @@ namespace RobloxStudioModManager
 {
     static class Program
     {
-        public static RegistryKey ModManagerRegistry = GetSubKey(Registry.CurrentUser, "SOFTWARE", "Roblox Studio Mod Manager");
+        public static RegistryKey MainRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
+        public static RegistryKey VersionRegistry = MainRegistry.GetSubKey("VersionData");
+
         private const string _ = ""; // Default key/value used for stuff in UpdateStudioRegistryProtocols.
 
-        public static RegistryKey GetSubKey(RegistryKey key, params string[] path)
+        public static RegistryKey GetSubKey(this RegistryKey key, params string[] path)
         {
-            string constructedPath = "";
-
-            foreach (string p in path)
-                constructedPath = Path.Combine(constructedPath, p);
-
+            string constructedPath = Path.Combine(path);
             return key.CreateSubKey(constructedPath, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryOptions.None);
+        }
+
+        public static string GetString(this RegistryKey key, string name)
+        {
+            var result = key.GetValue(name, "");
+            return result.ToString();
+        }
+
+        public static bool GetBool(this RegistryKey key, string name)
+        {
+            string value = key.GetString(name);
+            bool result = false;
+
+            bool.TryParse(value, out result);
+            return result;
         }
 
         public static RegistryKey GetSubKey(params string[] path)
         {
-            return GetSubKey(ModManagerRegistry, path);
+            return MainRegistry.GetSubKey(path);
         }
 
-        public static string GetRegistryString(RegistryKey key, string name)
+        public static string GetString(string name)
         {
-            return key.GetValue(name, "") as string;
+            return MainRegistry.GetString(name);
         }
 
-        public static string GetRegistryString(string name)
+        public static bool GetBool(string name)
         {
-            return GetRegistryString(ModManagerRegistry, name);
+            return MainRegistry.GetBool(name);
         }
 
+        public static void SetValue(string name, object value)
+        {
+            MainRegistry.SetValue(name, value);
+        }
+        
         // This sets up the following:
         // 1: The File Protocol to open .rbxl/.rbxlx files using my mod manager.
         // 2: The URI Protcol to open places from the website through my mod manager.
 
-        public static void UpdateStudioRegistryProtocols(string setupDir, string buildName, string robloxStudioBetaPath)
+        public static void UpdateStudioRegistryProtocols()
         {
             string modManagerPath = Application.ExecutablePath;
 
             // Register the base "Roblox.Place" open protocol.
-            RegistryKey classes = GetSubKey(Registry.CurrentUser, "SOFTWARE", "Classes");
-            RegistryKey robloxPlace = GetSubKey(classes, "Roblox.Place");
+            RegistryKey classes = Registry.CurrentUser.GetSubKey("SOFTWARE", "Classes");
+
+            RegistryKey robloxPlace = classes.GetSubKey("Roblox.Place");
             robloxPlace.SetValue(_, "Roblox Place");
 
-            RegistryKey robloxPlaceCmd = GetSubKey(robloxPlace, "shell", "open", "command");
-            robloxPlaceCmd.SetValue(_, '"' + modManagerPath + "\" -task EditFile -localPlaceFile \"%1\"");
+            RegistryKey robloxPlaceCmd = robloxPlace.GetSubKey("shell", "open", "command");
+            robloxPlaceCmd.SetValue(_, $"\"{modManagerPath}\"\" -task EditFile -localPlaceFile \"%1\"");
 
             // Pass the .rbxl and .rbxlx file formats to Roblox.Place
-            RegistryKey[] robloxLevelPass = { GetSubKey(classes, ".rbxl"), GetSubKey(classes, ".rbxlx") };
+            RegistryKey[] robloxLevelPass = 
+            {
+                GetSubKey(classes, ".rbxl"),
+                GetSubKey(classes, ".rbxlx")
+            };
+
             foreach (RegistryKey rbxLevel in robloxLevelPass)
             {
                 rbxLevel.SetValue(_, "Roblox.Place");
@@ -73,11 +97,16 @@ namespace RobloxStudioModManager
             studioUrlCmd.SetValue(_, modManagerPath + " %1");
 
             // Set the default icon for both protocols.
-            RegistryKey[] appReg = { robloxPlace, robloxStudioUrl };
+            RegistryKey[] appReg = 
+            {
+                robloxPlace,
+                robloxStudioUrl
+            };
+
             foreach (RegistryKey app in appReg)
             {
                 RegistryKey defaultIcon = GetSubKey(app, "DefaultIcon");
-                defaultIcon.SetValue(_, modManagerPath + ",0");
+                defaultIcon.SetValue(_, $"{modManagerPath},0");
             }
         }
 
@@ -92,16 +121,16 @@ namespace RobloxStudioModManager
             // Delete deprecated startup protocol if it exists.
             try
             {
-                bool registryInit = bool.Parse(ModManagerRegistry.GetValue("Initialized Startup Protocol", "False") as string);
+                bool registryInit = GetBool("Initialized Startup Protocol");
 
                 if (registryInit)
                 {
                     string myPath = Application.ExecutablePath;
 
-                    RegistryKey startUpBin = GetSubKey(Registry.CurrentUser, "SOFTWARE", "Microsoft", "Windows", "CurrentVersion", "Run");
+                    RegistryKey startUpBin = Registry.CurrentUser.GetSubKey("SOFTWARE", "Microsoft", "Windows", "CurrentVersion", "Run");
                     startUpBin.DeleteValue("RobloxStudioModManager");
 
-                    ModManagerRegistry.SetValue("Initialized Startup Protocol", false);
+                    SetValue("Initialized Startup Protocol", false);
                 }
             }
             catch

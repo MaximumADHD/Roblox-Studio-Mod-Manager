@@ -6,16 +6,18 @@ using System.Threading.Tasks;
 
 namespace RobloxStudioModManager
 {
-    public class RobloxPackageManifest
+    public class PackageManifest
     {
+        public string Branch;
+
         public string Name;
         public string Signature;
         public int PackedSize;
         public int Size;
 
-        public static async Task<List<RobloxPackageManifest>> Get(string branch, string versionGuid)
+        public static async Task<List<PackageManifest>> Get(string branch, string versionGuid)
         {
-            var result = new List<RobloxPackageManifest>();
+            var result = new List<PackageManifest>();
             
             string pkgManifestUrl = $"https://s3.amazonaws.com/setup.{branch}.com/{versionGuid}-rbxPkgManifest.txt";
             string pkgManifestData;
@@ -47,9 +49,10 @@ namespace RobloxStudioModManager
 
                         if (fileName.EndsWith(".zip"))
                         {
-                            var pkgManifest = new RobloxPackageManifest()
+                            var pkgManifest = new PackageManifest()
                             {
                                 Name = fileName,
+                                Branch = branch,
                                 Signature = signature,
                                 PackedSize = packedSize,
                                 Size = size

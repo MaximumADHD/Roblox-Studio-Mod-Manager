@@ -9,10 +9,14 @@ using System.Net;
 using System.Reflection;
 using System.Windows.Forms;
 
+using Microsoft.Win32;
+
 namespace RobloxStudioModManager
 {
     public partial class Launcher : Form
     {
+        private static RegistryKey versionRegistry = Program.GetSubKey("VersionData");
+
         private WebClient http = new WebClient();
         private string[] args = null;
 
@@ -29,11 +33,11 @@ namespace RobloxStudioModManager
             if (args != null)
                 openStudioDirectory.Enabled = false;
 
-            string build = Program.GetRegistryString("BuildBranch");
+            string build = Program.GetString("BuildBranch");
             int buildIndex = branchSelect.Items.IndexOf(build);
             branchSelect.SelectedIndex = Math.Max(buildIndex, 0);
 
-            string type = Program.GetRegistryString("BuildType");
+            string type = Program.GetString("BuildType");
             if (type.Length == 0)
                 type = (Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit");
 
@@ -84,7 +88,7 @@ namespace RobloxStudioModManager
 
         private static Form createFlagWarningPrompt()
         {
-            Form warningForm = new Form()
+            var warningForm = new Form()
             {
                 Text = "WARNING: HERE BE DRAGONS",
                 
@@ -97,14 +101,14 @@ namespace RobloxStudioModManager
                 ShowInTaskbar = false
             };
 
-            PictureBox errorIcon = new PictureBox()
+            var errorIcon = new PictureBox()
             {
                 Image = SystemIcons.Error.ToBitmap(),
                 Location = new Point(12, 12),
                 Size = new Size(32, 32),
             };
 
-            CheckBox dontShowAgain = new CheckBox()
+            var dontShowAgain = new CheckBox()
             {
                 AutoSize = true,
                 Location = new Point(54, 145),
@@ -112,7 +116,7 @@ namespace RobloxStudioModManager
                 Font = new Font("Microsoft Sans Serif", 9.75f),
             };
 
-            FlowLayoutPanel buttonPanel = new FlowLayoutPanel()
+            var buttonPanel = new FlowLayoutPanel()
             {
                 FlowDirection = FlowDirection.RightToLeft,
                 BackColor = SystemColors.ControlLight,
@@ -121,7 +125,7 @@ namespace RobloxStudioModManager
                 Size = new Size(0, 40)
             };
 
-            Label infoLabel = new Label()
+            var infoLabel = new Label()
             {
                 AutoSize = true,
 
@@ -134,13 +138,13 @@ namespace RobloxStudioModManager
                 MaximumSize = new Size(350, 0),
             };
 
-            Button yes = new Button()
+            var yes = new Button()
             {
                 Size = new Size(100, 23),
                 Text = "Yes",
             };
 
-            Button no = new Button()
+            var no = new Button()
             {
                 Size = new Size(100, 23),
                 Text = "No",
@@ -162,6 +166,7 @@ namespace RobloxStudioModManager
 
             buttonPanel.Controls.Add(no);
             buttonPanel.Controls.Add(yes);
+
             warningForm.Controls.Add(errorIcon);
             warningForm.Controls.Add(infoLabel);
             warningForm.Controls.Add(buttonPanel);
@@ -175,7 +180,9 @@ namespace RobloxStudioModManager
             bool allow = true;
 
             // Create a warning prompt if the user hasn't disabled this warning.
-            if (Program.GetRegistryString("Disable Flag Warning").ToLower() != "true")
+            var warningDisabled = Program.GetBool("Disable Flag Warning");
+
+            if (!warningDisabled)
             {
                 SystemSounds.Hand.Play();
                 allow = false;
@@ -187,7 +194,7 @@ namespace RobloxStudioModManager
 
                 if (result == DialogResult.Yes)
                 {
-                    Program.ModManagerRegistry.SetValue("Disable Flag Warning", warningPrompt.Enabled);
+                    Program.SetValue("Disable Flag Warning", warningPrompt.Enabled);
                     allow = true;
                 }
             }
@@ -202,7 +209,7 @@ namespace RobloxStudioModManager
                 ClientVersionInfo info = await RobloxStudioInstaller.GetCurrentVersionInfo(branch);
                 Hide();
 
-                await RobloxStudioInstaller.BringUpToDate(branch, info.Guid, "The listed flags might be out of date!");
+                await RobloxStudioInstaller.BringUpToDate(branch, info.Guid, "Some newer flags might be missing.");
 
                 FlagEditor editor = new FlagEditor(branch);
                 editor.ShowDialog();
@@ -224,10 +231,9 @@ namespace RobloxStudioModManager
             ClientVersionInfo info = await RobloxStudioInstaller.GetCurrentVersionInfo(branch);
 
             Hide();
+            await RobloxStudioInstaller.BringUpToDate(branch, info.Guid, "The explorer icons may have received an update.");
 
-            await RobloxStudioInstaller.BringUpToDate(branch, info.Guid, "The explorer icons may have been changed!");
-
-            ExplorerIconEditor editor = new ExplorerIconEditor(branch);
+            var editor = new ExplorerIconEditor(branch);
             editor.ShowDialog();
 
             Show();
@@ -242,10 +248,11 @@ namespace RobloxStudioModManager
             Hide();
 
             string branch = (string)branchSelect.SelectedItem;
-            RobloxStudioInstaller installer = new RobloxStudioInstaller();
 
-            string studioPath = await installer.RunInstaller(branch, forceRebuild.Checked);
-            string studioRoot = Directory.GetParent(studioPath).ToString();
+            RobloxStudioInstaller installer = new RobloxStudioInstaller(forceRebuild.Checked);
+            await installer.RunInstaller(branch);
+
+            string studioRoot = RobloxStudioInstaller.GetStudioDirectory();
             string modPath = getModPath();
 
             string[] studioFiles = Directory.GetFiles(studioRoot);
@@ -259,7 +266,9 @@ namespace RobloxStudioModManager
                     FileInfo modFileControl = new FileInfo(modFile);
                     
                     string relativeFile = modFile.Replace(modPath, studioRoot);
-                    string relativeDir = Directory.GetParent(relativeFile).ToString();
+                    string relativeDir = Directory
+                        .GetParent(relativeFile)
+                        .ToString();
 
                     if (!Directory.Exists(relativeDir))
                         Directory.CreateDirectory(relativeDir);
@@ -322,8 +331,8 @@ namespace RobloxStudioModManager
                 Console.WriteLine("Failed to write __rbxModManagerMetadata.lua");
             }
 
-            ProcessStartInfo robloxStudioInfo = new ProcessStartInfo();
-            robloxStudioInfo.FileName = studioPath;
+            var robloxStudioInfo = new ProcessStartInfo();
+            robloxStudioInfo.FileName = RobloxStudioInstaller.GetStudioPath();
 
             if (args != null)
             {
@@ -385,8 +394,9 @@ namespace RobloxStudioModManager
             }
             else
             {
-                string currentVersion = Program.GetRegistryString("BuildVersion");
-                Program.ModManagerRegistry.SetValue("LastExecutedVersion", currentVersion);
+                string currentVersion = versionRegistry.GetString("VersionGuid");
+                versionRegistry.SetValue("LastExecutedVersion", currentVersion);
+
                 Process.Start(robloxStudioInfo);
             }
             
@@ -396,12 +406,12 @@ namespace RobloxStudioModManager
 
         private void buildType_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Program.ModManagerRegistry.SetValue("BuildType", buildType.SelectedItem);
+            Program.SetValue("BuildType", buildType.SelectedItem);
         }
 
         private void onHelpRequested(object sender, HelpEventArgs e)
         {
-            Control controller = sender as Control;
+            var controller = sender as Control;
             string msg = null;
 
             if (sender.Equals(launchStudio))

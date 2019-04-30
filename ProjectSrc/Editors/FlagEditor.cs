@@ -14,6 +14,7 @@ namespace RobloxStudioModManager
 {
     public partial class FlagEditor : Form
     {
+        private static RegistryKey versionRegistry = Program.VersionRegistry;
         private static RegistryKey flagRegistry = Program.GetSubKey("FlagEditor");
 
         private static string[] flagGroups = new string[3] { "F", "DF", "SF" };
@@ -152,7 +153,7 @@ namespace RobloxStudioModManager
             valueColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
 
             // Disable the grid view layout, and apply the table as the data source.
-            DataView view = new DataView(table);
+            var view = new DataView(table);
             view.Sort = "Name";
 
             dgv.SuspendLayout();
@@ -217,8 +218,8 @@ namespace RobloxStudioModManager
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             string settingsPath = Path.Combine(localAppData, "Roblox", "ClientSettings", "StudioAppSettings.json");
 
-            string lastExecVersion = Program.GetRegistryString("LastExecutedVersion");
-            string installedVersion = Program.GetRegistryString("BuildVersion");
+            string lastExecVersion = versionRegistry.GetString("LastExecutedVersion");
+            string installedVersion = versionRegistry.GetString("InstalledVersion");
 
             if (lastExecVersion != installedVersion || settingsPath == "")
             {
@@ -247,7 +248,7 @@ namespace RobloxStudioModManager
                 await Task.Delay(500);
 
                 // Should be good now. Nuke studio and flag the version we updated with.
-                Program.ModManagerRegistry.SetValue("LastExecutedVersion", installedVersion);
+                versionRegistry.SetValue("LastExecutedVersion", installedVersion);
                 studio.Kill();
             }
 
@@ -310,11 +311,11 @@ namespace RobloxStudioModManager
 
             foreach (string flagName in flagNames)
             {
-                RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
+                RegistryKey flagKey = flagRegistry.GetSubKey(flagName);
 
-                string name  = Program.GetRegistryString(flagKey, "Name");
-                string type  = Program.GetRegistryString(flagKey, "Type");
-                string value = Program.GetRegistryString(flagKey, "Value");
+                string name  = flagKey.GetString("Name"),
+                       type  = flagKey.GetString("Type"),
+                       value = flagKey.GetString("Value");
 
                 addFlagOverride(name, type, value, true);
             }
@@ -410,6 +411,7 @@ namespace RobloxStudioModManager
         private void removeSelected_Click(object sender, EventArgs e)
         {
             var selectedRows = overrideDataGridView.SelectedRows;
+
             if (selectedRows.Count > 0)
             {
                 var selectedRow = selectedRows[0];
@@ -533,6 +535,7 @@ namespace RobloxStudioModManager
                 Type cellType = valueCell.GetType();
 
                 string flagType = cells[1].Value as string;
+
                 if (flagType.EndsWith("Flag") && cellType != typeof(DataGridViewComboBoxCell))
                 {
                     // Switch the cell to a combo box.
@@ -559,6 +562,7 @@ namespace RobloxStudioModManager
                 Type cellType = valueCell.GetType();
 
                 string flagType = cells[1].Value as string;
+
                 if (flagType.EndsWith("Flag") && cellType != typeof(DataGridViewTextBoxCell))
                 {
                     var newValueCell = new DataGridViewTextBoxCell();
@@ -575,6 +579,7 @@ namespace RobloxStudioModManager
         private void flagDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             var row = flagDataGridView.Rows[e.RowIndex];
+
             if (row.Tag == null || row.Tag.ToString() != updateFlag)
             {
                 row.Tag = updateFlag;
@@ -592,15 +597,16 @@ namespace RobloxStudioModManager
                 {
                     RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
 
-                    string name  = flagKey.GetValue("Name")  as string;
-                    string type  = flagKey.GetValue("Type")  as string;
-                    string value = flagKey.GetValue("Value") as string;
+                    string name  = flagKey.GetString("Name"),
+                           type  = flagKey.GetString("Type"),
+                           value = flagKey.GetString("Value");
 
                     string key = type + name;
+
                     if (type.EndsWith("String"))
                         value = '"' + value.Replace("\"", "\\\"").Replace("\\\\", "\\") + '"';
 
-                    configs.Add("\t\"" + key + "\": " + value);
+                    configs.Add($"\t\"{key}\": {value}");
                 };
 
                 string json = "{\r\n" + string.Join(",\r\n", configs.ToArray()) + "\r\n}";
