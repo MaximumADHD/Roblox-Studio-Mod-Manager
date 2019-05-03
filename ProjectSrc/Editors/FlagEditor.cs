@@ -219,9 +219,9 @@ namespace RobloxStudioModManager
             string settingsPath = Path.Combine(localAppData, "Roblox", "ClientSettings", "StudioAppSettings.json");
 
             string lastExecVersion = versionRegistry.GetString("LastExecutedVersion");
-            string installedVersion = versionRegistry.GetString("InstalledVersion");
+            string versionGuid = versionRegistry.GetString("VersionGuid");
 
-            if (lastExecVersion != installedVersion || settingsPath == "")
+            if (lastExecVersion != versionGuid || settingsPath == "")
             {
                 // Run Roblox Studio briefly so we can update the settings file.
                 ProcessStartInfo studioStartInfo = new ProcessStartInfo()
@@ -248,7 +248,7 @@ namespace RobloxStudioModManager
                 await Task.Delay(500);
 
                 // Should be good now. Nuke studio and flag the version we updated with.
-                versionRegistry.SetValue("LastExecutedVersion", installedVersion);
+                versionRegistry.SetValue("LastExecutedVersion", versionGuid);
                 studio.Kill();
             }
 
