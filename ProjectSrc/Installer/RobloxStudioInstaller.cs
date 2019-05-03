@@ -705,6 +705,7 @@ namespace RobloxStudioModManager
             echo("Checking build installation...");
 
             string currentBranch = Program.GetString("BuildBranch");
+            if (string.IsNullOrEmpty(currentBranch)) currentBranch = "roblox";
             string currentVersion = versionRegistry.GetString("VersionGuid");
 
             bool shouldInstall = (forceInstall || currentBranch != branch);
