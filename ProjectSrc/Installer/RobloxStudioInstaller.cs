@@ -123,7 +123,7 @@ namespace RobloxStudioModManager
         {
             if (progressBar.InvokeRequired)
             {
-                IncrementDelegator increment = new IncrementDelegator(incrementProgressBarMax);
+                var increment = new IncrementDelegator(incrementProgressBarMax);
                 progressBar.Invoke(increment, count);
             }
             else
@@ -481,7 +481,7 @@ namespace RobloxStudioModManager
             string pkgName = package.Name;
             string branch = package.Branch;
 
-            string oldSig = pkgRegistry.GetValue(pkgName, "") as string;
+            string oldSig = pkgRegistry.GetString(pkgName);
             string newSig = package.Signature;
 
             if (oldSig == newSig && !forceInstall)
