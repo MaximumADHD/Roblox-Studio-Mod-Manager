@@ -707,11 +707,11 @@ namespace RobloxStudioModManager
             string currentBranch = Program.GetString("BuildBranch");
             string currentVersion = versionRegistry.GetString("VersionGuid");
 
+            if (string.IsNullOrWhiteSpace(currentBranch))
+                currentBranch = "roblox";
+
             bool shouldInstall = (forceInstall || currentBranch != branch);
             string fastVersion = await GetFastVersionGuid(currentBranch);
-            
-            if (currentBranch == null)
-                currentBranch = "roblox";
                 
             if (branch == "roblox")
                 buildVersion = fastVersion;
