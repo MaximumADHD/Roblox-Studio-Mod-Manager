@@ -704,15 +704,12 @@ namespace RobloxStudioModManager
             setStatus("Checking for updates");
             echo("Checking build installation...");
 
-            string currentBranch = Program.GetString("BuildBranch");
+            string currentBranch = Program.GetString("BuildBranch", "roblox");
             string currentVersion = versionRegistry.GetString("VersionGuid");
-
-            if (string.IsNullOrWhiteSpace(currentBranch))
-                currentBranch = "roblox";
 
             bool shouldInstall = (forceInstall || currentBranch != branch);
             string fastVersion = await GetFastVersionGuid(currentBranch);
-                
+            
             if (branch == "roblox")
                 buildVersion = fastVersion;
 

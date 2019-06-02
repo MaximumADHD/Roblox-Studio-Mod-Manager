@@ -22,9 +22,9 @@ namespace RobloxStudioModManager
             return key.CreateSubKey(constructedPath, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryOptions.None);
         }
 
-        public static string GetString(this RegistryKey key, string name)
+        public static string GetString(this RegistryKey key, string name, string fallback = "")
         {
-            var result = key.GetValue(name, "");
+            var result = key.GetValue(name, fallback);
             return result.ToString();
         }
 
@@ -42,9 +42,9 @@ namespace RobloxStudioModManager
             return MainRegistry.GetSubKey(path);
         }
 
-        public static string GetString(string name)
+        public static string GetString(string name, string fallback = "")
         {
-            return MainRegistry.GetString(name);
+            return MainRegistry.GetString(name, fallback);
         }
 
         public static bool GetBool(string name)
