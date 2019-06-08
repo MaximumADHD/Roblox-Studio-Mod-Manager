@@ -2831,11 +2831,13 @@
 			<Properties>
 				<string name="Name">PluginGuiService</string>
 				<string name="ExplorerOrder">3</string>
+				<string name="ExplorerImageIndex">152</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">RobloxPluginGuiService</string>
+				<string name="ExplorerOrder">99</string>
 				<string name="ExplorerImageIndex">153</string>
 			</Properties>
 		</Item>
@@ -4600,8 +4602,8 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Hole</string>
-				<string name="ExplorerImageIndex">149</string>
 				<string name="ExplorerOrder">2</string>
+				<string name="ExplorerImageIndex">149</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -5937,6 +5939,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ClassCategory">GUI</string>
 				<string name="Insertable">false</string>
 				<string name="ExplorerOrder">14</string>
+				<string name="ExplorerImageIndex">151</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -7386,6 +7389,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		<Item class="ReflectionMetadataEnum">
 			<Properties>
 				<string name="Name">GearType</string>
+				<bool name="Deprecated">true</bool>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataEnum">
