@@ -188,6 +188,7 @@
 			<Properties>
 				<string name="Name">JointsService</string>
 				<string name="ExplorerImageIndex">34</string>
+				<bool name="Deprecated">true</bool>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -337,7 +338,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">KeyframeSequenceProvider</string>
-				<string name="ExplorerImageIndex">60</string>
+				<string name="ExplorerImageIndex">127</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -348,7 +349,7 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
-				<string name="Name">AnalyticsService</string>
+				<string name="Name">RbxAnalyticsService</string>
 				<string name="ExplorerImageIndex">131</string>
 			</Properties>
 		</Item>
@@ -361,7 +362,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">VRService</string>
-				<string name="ExplorerImageIndex">105</string>
+				<string name="ExplorerImageIndex">150</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -975,6 +976,24 @@
 						<Properties>
 							<string name="Name">Active</string>
 							<string name="summary">Read-only boolean, true if the joint is active in world. Rigid joints may be inactive if they are redundant or form cycles.</string>
+						</Properties>
+					</Item>
+				</Item>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">NoCollisionConstraint</string>
+				<string name="ClassCategory">Constraints</string>
+				<string name="ExplorerOrder">3</string>
+				<string name="ExplorerImageIndex">105</string>
+				<string name="PreferredParent">PVInstance</string>
+				<string name="PreferredParents">PVInstance</string>
+				<Item class="ReflectionMetadataProperties">
+					<Item class="ReflectionMetadataMember">
+						<Properties>
+							<string name="Name">Enabled</string>
+							<string name="summary">If true Part0 and Part1 will not collide, if false the parts will collide.</string>
 						</Properties>
 					</Item>
 				</Item>
@@ -2006,6 +2025,13 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">FlagStandService</string>
+				<bool name="Deprecated">true</bool>
+				<string name="ExplorerImageIndex">39</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">BackpackItem</string>
 				<string name="ExplorerOrder">2</string>
 			</Properties>
@@ -2805,7 +2831,12 @@
 			<Properties>
 				<string name="Name">PluginGuiService</string>
 				<string name="ExplorerOrder">3</string>
-				<string name="ExplorerImageIndex">46</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">RobloxPluginGuiService</string>
+				<string name="ExplorerImageIndex">153</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -2888,6 +2919,17 @@
 					</Properties>
 				</Item>
 			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">UIListLayout</string>
+				<string name="ExplorerOrder">3</string>
+				<string name="ExplorerImageIndex">26</string>
+				<string name="ClassCategory">GUI</string>
+				<string name="summary">Sets the position of UI elements inline. You can use a UIInlineLayout by parenting it to a GuiObject. The UIListLayout will then apply itself to all of its GuiObject siblings.</string>
+				<string name="PreferredParent">GuiBase2d</string>
+				<string name="PreferredParents">GuiObject,GuiBase2d</string>
+			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
@@ -3933,6 +3975,11 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 						<string name="summary">In R6 this property get the player's right leg. In R15 this gets nothing.</string>
 						<bool name="Deprecated">true</bool>
 					</Properties>
+					<Properties>
+						<string name="Name">CollisionType</string>
+						<string name="summary">An emum that selects the collision type for R15 and Rthro characters. InnerBox is classic style collisions for all characters, OuterBox is dynamically sized collisions based on Mesh size.</string>
+						<bool name="Deprecated">true</bool>
+					</Properties>
 				</Item>
 			</Item>
 		</Item>
@@ -4553,7 +4600,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Hole</string>
-				<bool name="Deprecated">true</bool>
+				<string name="ExplorerImageIndex">149</string>
 				<string name="ExplorerOrder">2</string>
 			</Properties>
 		</Item>
@@ -5144,6 +5191,12 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">StudioService</string>
 				<string name="ExplorerImageIndex">106</string>
 				<string name="summary">A service for interfacing with the current studio state from Lua.</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">StudioData</string>
+				<string name="ExplorerImageIndex">106</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -5884,7 +5937,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ClassCategory">GUI</string>
 				<string name="Insertable">false</string>
 				<string name="ExplorerOrder">14</string>
-				<string name="ExplorerImageIndex">47</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -6580,6 +6632,40 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 						<string name="summary">Current Camera of children objects</string>
 					</Properties>
 				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">ImageTransparency</string>
+						<string name="summary">A number value that specifies how transparent the rendered image of the ViewportFrame is</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">ImageColor3</string>
+						<string name="summary">The rendered image of the ViewportFrame will be multiplied by this color</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Ambient</string>
+						<string name="summary">Changing this changes the color tint of all objects in the ViewportFrame</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">LightColor</string>
+						<string name="summary">Directional light color for objects in the ViewportFrame.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">LightDirection</string>
+						<string name="summary">Light direction. Value will be normalized. All values valid except (0,0,0).</string>
+					</Properties>
+				</Item>
 			</Item>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -6684,7 +6770,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="summary">The pose of a joint relative to it's parent part in a keyframe</string>
 				<string name="ExplorerOrder">22</string>
 				<string name="ExplorerImageIndex">60</string>
-				<string name="Insertable">false</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -6693,7 +6778,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="summary">Represents when an event should be fired in an animation</string>
 				<string name="ExplorerOrder">220</string>
 				<string name="ExplorerImageIndex">60</string>
-				<string name="Insertable">false</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -6702,7 +6786,14 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="summary">One keyframe of an animation</string>
 				<string name="ExplorerOrder">22</string>
 				<string name="ExplorerImageIndex">60</string>
-				<string name="Insertable">false</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">KeyframeSequence</string>
+				<string name="summary">A sequence of keyframes that make up an animation</string>
+				<string name="ExplorerOrder">22</string>
+				<string name="ExplorerImageIndex">127</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -6735,7 +6826,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">CharacterMesh</string>
 				<string name="ClassCategory">Meshes</string>
-				<string name="summary">Modifies the appearance of a body part.</string>
+				<string name="summary">Modifies the appearance of an R6 body part.</string>
 				<string name="ExplorerOrder">22</string>
 				<string name="ExplorerImageIndex">60</string>
 				<string name="PreferredParent">Model</string>
@@ -6824,7 +6915,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="summary">A UnionOperation is a union of multiple parts</string>
 				<bool name="Browsable">true</bool>
 				<bool name="Insertable">false</bool>
-				<string name="ExplorerOrder">2</string>
+				<string name="ExplorerOrder">105</string>
 				<string name="ExplorerImageIndex">73</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
@@ -6842,7 +6933,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="summary">A NegateOperation can be used to create holes in other parts</string>
 				<bool name="Browsable">true</bool>
 				<bool name="Insertable">false</bool>
-				<string name="ExplorerOrder">2</string>
+				<string name="ExplorerOrder">104</string>
 				<string name="ExplorerImageIndex">72</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
@@ -6861,7 +6952,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="summary">A MeshPart is a physically simulatable mesh</string>
 				<bool name="Browsable">true</bool>
 				<bool name="Insertable">true</bool>
-				<string name="ExplorerOrder">11</string>
+				<string name="ExplorerOrder">105</string>
 				<string name="ExplorerImageIndex">73</string>
 				<string name="PreferredParent">Model</string>
 				<string name="PreferredParents">Model</string>
@@ -7290,6 +7381,11 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">GearGenreSetting</string>
 				<bool name="Deprecated">true</bool>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataEnum">
+			<Properties>
+				<string name="Name">GearType</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataEnum">
