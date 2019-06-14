@@ -986,15 +986,15 @@
 				<string name="ExplorerImageIndex">94</string>
 				<string name="PreferredParent">PVInstance</string>
 				<string name="PreferredParents">PVInstance</string>
-				<Item class="ReflectionMetadataProperties">
-					<Item class="ReflectionMetadataMember">
-						<Properties>
-							<string name="Name">Active</string>
-							<string name="summary">Read-only boolean, true if the joint is active in world. Rigid joints may be inactive if they are redundant or form cycles.</string>
-						</Properties>
-					</Item>
-				</Item>
 			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Active</string>
+						<string name="summary">Read-only boolean, true if the joint is active in world. Rigid joints may be inactive if they are redundant or form cycles.</string>
+					</Properties>
+				</Item>
+			</Item>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
@@ -1004,15 +1004,15 @@
 				<string name="ExplorerImageIndex">105</string>
 				<string name="PreferredParent">PVInstance</string>
 				<string name="PreferredParents">PVInstance</string>
-				<Item class="ReflectionMetadataProperties">
-					<Item class="ReflectionMetadataMember">
-						<Properties>
-							<string name="Name">Enabled</string>
-							<string name="summary">If true Part0 and Part1 will not collide, if false the parts will collide.</string>
-						</Properties>
-					</Item>
-				</Item>
 			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Enabled</string>
+						<string name="summary">If true Part0 and Part1 will not collide, if false the parts will collide.</string>
+					</Properties>
+				</Item>
+			</Item>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
@@ -3965,33 +3965,47 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 						<string name="Name">NameOcclusion</string>
 						<string name="summary">Sets how to display other humanoid names to this humanoid's player. &lt;a href="http://wiki.roblox.com/index.php/NameOcclusion" target="_blank"&gt;More info&lt;/a&gt;</string>
 					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
 					<Properties>
 						<string name="Name">Health</string>
 						<string name="summary">How many hit points the Humanoid has.  When this number reaches 0 or goes below 0, the Humanoid's character falls apart and will respawn.</string>
 					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
 					<Properties>
 						<string name="Name">MaxHealth</string>
 						<string name="summary">The maximum number of hit points a Humanoid's health can reach.  If the Humanoid's health is set over this amount, the health gets set to this value.</string>
 					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
 					<Properties>
 						<string name="Name">TargetPoint</string>
 						<string name="summary">The location that the Humanoid is trying to walk to.</string>
 					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
 					<Properties>
 						<string name="Name">Torso</string>
 						<string name="summary">Humanoid.RootPart will be the preferred way of getting a character's humanoid root part.</string>
 						<bool name="Deprecated">true</bool>
 					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
 					<Properties>
 						<string name="Name">LeftLeg</string>
 						<string name="summary">In R6 this property get the player's left leg. In R15 this gets nothing.</string>
 						<bool name="Deprecated">true</bool>
 					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
 					<Properties>
 						<string name="Name">RightLeg</string>
 						<string name="summary">In R6 this property get the player's right leg. In R15 this gets nothing.</string>
 						<bool name="Deprecated">true</bool>
 					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
 					<Properties>
 						<string name="Name">CollisionType</string>
 						<string name="summary">An emum that selects the collision type for R15 and Rthro characters. InnerBox is classic style collisions for all characters, OuterBox is dynamically sized collisions based on Mesh size.</string>
