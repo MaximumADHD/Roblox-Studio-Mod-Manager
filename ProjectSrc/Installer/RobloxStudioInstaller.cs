@@ -696,9 +696,8 @@ namespace RobloxStudioModManager
             return studioProcs;
         }
         
-        public async Task RunInstaller(string branch, bool forceInstall = false)
+        public async Task RunInstaller(string branch)
         {
-            this.forceInstall = forceInstall;
             restore();
 
             setStatus("Checking for updates");

@@ -35,12 +35,12 @@
             this.forceRebuild = new System.Windows.Forms.CheckBox();
             this.openFlagEditor = new System.Windows.Forms.Button();
             this.editExplorerIcons = new System.Windows.Forms.Button();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.logo = new System.Windows.Forms.PictureBox();
             this.openStudioDirectory = new System.Windows.Forms.CheckBox();
             this.buildTypeLabel = new System.Windows.Forms.Label();
             this.buildType = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.title = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.logo)).BeginInit();
             this.SuspendLayout();
             // 
             // launchStudio
@@ -98,9 +98,9 @@
             this.branchLabel.ForeColor = System.Drawing.SystemColors.ControlText;
             this.branchLabel.Location = new System.Drawing.Point(178, 97);
             this.branchLabel.Name = "branchLabel";
-            this.branchLabel.Size = new System.Drawing.Size(47, 13);
+            this.branchLabel.Size = new System.Drawing.Size(80, 13);
             this.branchLabel.TabIndex = 11;
-            this.branchLabel.Text = "Branch: ";
+            this.branchLabel.Text = "Studio Branch: ";
             // 
             // forceRebuild
             // 
@@ -109,9 +109,9 @@
             this.forceRebuild.Location = new System.Drawing.Point(181, 181);
             this.forceRebuild.Margin = new System.Windows.Forms.Padding(2);
             this.forceRebuild.Name = "forceRebuild";
-            this.forceRebuild.Size = new System.Drawing.Size(121, 17);
+            this.forceRebuild.Size = new System.Drawing.Size(144, 17);
             this.forceRebuild.TabIndex = 12;
-            this.forceRebuild.Text = "Force Client Rebuild";
+            this.forceRebuild.Text = "Force Reinstall of Studio ";
             this.forceRebuild.UseVisualStyleBackColor = true;
             this.forceRebuild.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
@@ -138,15 +138,15 @@
             this.editExplorerIcons.UseVisualStyleBackColor = true;
             this.editExplorerIcons.Click += new System.EventHandler(this.editExplorerIcons_Click);
             // 
-            // pictureBox1
+            // logo
             // 
-            this.pictureBox1.Image = global::RobloxStudioModManager.Properties.Resources.Logo;
-            this.pictureBox1.Location = new System.Drawing.Point(23, 12);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(102, 76);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this.pictureBox1.TabIndex = 19;
-            this.pictureBox1.TabStop = false;
+            this.logo.Image = global::RobloxStudioModManager.Properties.Resources.Logo;
+            this.logo.Location = new System.Drawing.Point(23, 12);
+            this.logo.Name = "logo";
+            this.logo.Size = new System.Drawing.Size(102, 76);
+            this.logo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.logo.TabIndex = 19;
+            this.logo.TabStop = false;
             // 
             // openStudioDirectory
             // 
@@ -155,9 +155,9 @@
             this.openStudioDirectory.Location = new System.Drawing.Point(181, 202);
             this.openStudioDirectory.Margin = new System.Windows.Forms.Padding(2);
             this.openStudioDirectory.Name = "openStudioDirectory";
-            this.openStudioDirectory.Size = new System.Drawing.Size(132, 17);
+            this.openStudioDirectory.Size = new System.Drawing.Size(152, 17);
             this.openStudioDirectory.TabIndex = 14;
-            this.openStudioDirectory.Text = "Just Open Studio Path";
+            this.openStudioDirectory.Text = "Just Open Studio Directory";
             this.openStudioDirectory.UseVisualStyleBackColor = true;
             this.openStudioDirectory.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
@@ -170,9 +170,9 @@
             this.buildTypeLabel.ForeColor = System.Drawing.SystemColors.ControlText;
             this.buildTypeLabel.Location = new System.Drawing.Point(178, 137);
             this.buildTypeLabel.Name = "buildTypeLabel";
-            this.buildTypeLabel.Size = new System.Drawing.Size(60, 13);
+            this.buildTypeLabel.Size = new System.Drawing.Size(93, 13);
             this.buildTypeLabel.TabIndex = 17;
-            this.buildTypeLabel.Text = "Build Type:";
+            this.buildTypeLabel.Text = "Studio Build Type:";
             // 
             // buildType
             // 
@@ -188,15 +188,15 @@
             this.buildType.TabIndex = 18;
             this.buildType.SelectedIndexChanged += new System.EventHandler(this.buildType_SelectedIndexChanged);
             // 
-            // label1
+            // title
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Lucida Console", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(116, 28);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(205, 48);
-            this.label1.TabIndex = 20;
-            this.label1.Text = "Roblox Studio\r\nMod Manager";
+            this.title.AutoSize = true;
+            this.title.Font = new System.Drawing.Font("Lucida Console", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.title.Location = new System.Drawing.Point(116, 28);
+            this.title.Name = "title";
+            this.title.Size = new System.Drawing.Size(205, 48);
+            this.title.TabIndex = 20;
+            this.title.Text = "Roblox Studio\r\nMod Manager";
             // 
             // Launcher
             // 
@@ -204,8 +204,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(340, 238);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.title);
+            this.Controls.Add(this.logo);
             this.Controls.Add(this.buildType);
             this.Controls.Add(this.buildTypeLabel);
             this.Controls.Add(this.editExplorerIcons);
@@ -226,7 +226,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Roblox Studio Mod Manager";
             this.Load += new System.EventHandler(this.Launcher_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.logo)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -241,11 +241,11 @@
         private System.Windows.Forms.CheckBox forceRebuild;
         private System.Windows.Forms.Button openFlagEditor;
         private System.Windows.Forms.Button editExplorerIcons;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox logo;
         private System.Windows.Forms.CheckBox openStudioDirectory;
         private System.Windows.Forms.Label buildTypeLabel;
         private System.Windows.Forms.ComboBox buildType;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label title;
     }
 }
 

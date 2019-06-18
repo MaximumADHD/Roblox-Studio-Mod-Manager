@@ -2939,11 +2939,11 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
-				<string name="Name">UIListLayout</string>
+				<string name="Name">UIInlineLayout</string>
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">26</string>
 				<string name="ClassCategory">GUI</string>
-				<string name="summary">Sets the position of UI elements inline. You can use a UIInlineLayout by parenting it to a GuiObject. The UIListLayout will then apply itself to all of its GuiObject siblings.</string>
+				<string name="summary">Sets the position of UI elements inline. You can use a UIInlineLayout by parenting it to a GuiObject. The UIInlineLayout will then apply itself to all of its GuiObject siblings.</string>
 				<string name="PreferredParent">GuiBase2d</string>
 				<string name="PreferredParents">GuiObject,GuiBase2d</string>
 			</Properties>
