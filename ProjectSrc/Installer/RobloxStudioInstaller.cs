@@ -413,34 +413,44 @@ namespace RobloxStudioModManager
                 }
             }
 
-            // Unfortunately as of right now, the ClientVersionInfo end-point on 
-            // gametest isn't available to the public, so I have to use some hacks
-            // with the DeployHistory.txt file to figure out what version guid to use.
+            // Unfortunately, the ClientVersionInfo end-point on gametest
+            // isn't available to the public, so I have to parse the 
 
             var logData = await StudioDeployLogs.Get(branch);
 
             var currentLogs = logData.CurrentLogs;
             int numLogs = currentLogs.Count;
 
-            DeployLog latest = currentLogs[numLogs - 1];
-            DeployLog prev = currentLogs[numLogs - 2];
+            var latest = currentLogs[numLogs - 1];
+            var prev = currentLogs[numLogs - 2];
 
             DeployLog build_x86, build_x64;
 
-            // If these builds aren't using the same perforce changelist,
-            // then the 64-bit version hasn't been deployed yet. There is
-            // usually a ~5 minute gap between the new 32-bit version being
-            // deployed, and the 64-bit version proceeding it.
-
-            if (prev.Changelist != latest.Changelist)
+            if (logData.Has64BitLogs)
             {
-                build_x86 = latest;
-                build_x64 = prev;
+                if (prev.Is64Bit)
+                {
+                    build_x64 = prev;
+                    build_x86 = latest;
+                }
+                else
+                {
+                    build_x64 = latest;
+                    build_x86 = prev;
+                }
             }
             else
             {
-                build_x86 = prev;
-                build_x64 = latest;
+                if (prev.Changelist != latest.Changelist)
+                {
+                    build_x86 = latest;
+                    build_x64 = prev;
+                }
+                else
+                {
+                    build_x86 = prev;
+                    build_x64 = latest;
+                }
             }
 
             var info = new ClientVersionInfo();

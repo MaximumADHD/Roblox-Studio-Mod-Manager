@@ -408,29 +408,5 @@ namespace RobloxStudioModManager
         {
             Program.SetValue("BuildType", buildType.SelectedItem);
         }
-
-        private void onHelpRequested(object sender, HelpEventArgs e)
-        {
-            var controller = sender as Control;
-            string msg = null;
-
-            if (sender.Equals(launchStudio))
-                msg = "Click to Launch Roblox Studio!";
-            else if (sender.Equals(manageMods))
-                msg = "Opens your ModFolder directory, which contains all of the files to be overridden in Roblox Studio's client directory.";
-            else if (sender.Equals(branchSelect))
-                msg = "Indicates which setup web-domain we should use to download Roblox Studio.\nThe gametest domains are QA testing versions of Roblox Studio that are not available on production yet.";
-            else if (sender.Equals(forceRebuild))
-                msg = "Should the mod manager forcefully reinstall this version of the client, even if its already installed?\nThis can be used if you are experiencing a problem with launching Roblox Studio.";
-            else if (sender.Equals(openStudioDirectory))
-                msg = "Should the mod manager just open the directory of Roblox Studio after installing?\nThis may come in handy for users who want to run .bat on Studio's files.";
-            else if (sender.Equals(openFlagEditor))
-                msg = "Allows you to enable certain Roblox engine features before they are available.\nThis is for expert users only, and you should avoid using this if you don't know how to.";
-
-            if (msg != null)
-                MessageBox.Show(msg, "Information about the \"" + controller.AccessibleName + "\" " + sender.GetType().Name, MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-            e.Handled = true;
-        }
     }
 }

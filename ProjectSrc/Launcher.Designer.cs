@@ -56,7 +56,6 @@
             this.launchStudio.Text = "Launch Studio";
             this.launchStudio.UseVisualStyleBackColor = true;
             this.launchStudio.Click += new System.EventHandler(this.launchStudio_Click);
-            this.launchStudio.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
             // manageMods
             // 
@@ -69,7 +68,6 @@
             this.manageMods.Text = "Open Mod Folder";
             this.manageMods.UseVisualStyleBackColor = true;
             this.manageMods.Click += new System.EventHandler(this.manageMods_Click);
-            this.manageMods.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
             // branchSelect
             // 
@@ -87,7 +85,6 @@
             this.branchSelect.Name = "branchSelect";
             this.branchSelect.Size = new System.Drawing.Size(140, 21);
             this.branchSelect.TabIndex = 10;
-            this.branchSelect.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
             // branchLabel
             // 
@@ -113,7 +110,6 @@
             this.forceRebuild.TabIndex = 12;
             this.forceRebuild.Text = "Force Reinstall of Studio ";
             this.forceRebuild.UseVisualStyleBackColor = true;
-            this.forceRebuild.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
             // openFlagEditor
             // 
@@ -125,7 +121,6 @@
             this.openFlagEditor.Text = "Edit Fast Flags";
             this.openFlagEditor.UseVisualStyleBackColor = true;
             this.openFlagEditor.Click += new System.EventHandler(this.editFVariables_Click);
-            this.openFlagEditor.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
             // editExplorerIcons
             // 
@@ -159,7 +154,6 @@
             this.openStudioDirectory.TabIndex = 14;
             this.openStudioDirectory.Text = "Just Open Studio Directory";
             this.openStudioDirectory.UseVisualStyleBackColor = true;
-            this.openStudioDirectory.HelpRequested += new System.Windows.Forms.HelpEventHandler(this.onHelpRequested);
             // 
             // buildTypeLabel
             // 
@@ -218,10 +212,10 @@
             this.Controls.Add(this.launchStudio);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.HelpButton = true;
+            this.HelpButton = false;
             this.Icon = global::RobloxStudioModManager.Properties.Resources.Icon;
             this.MaximizeBox = false;
-            this.MinimizeBox = false;
+            this.MinimizeBox = true;
             this.Name = "Launcher";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Roblox Studio Mod Manager";
