@@ -1,6 +1,6 @@
 ﻿namespace RobloxStudioModManager
 {
-    partial class ExplorerIconEditor
+    partial class ClassIconEditor
     {
         /// <summary>
         /// Required designer variable.
@@ -146,7 +146,7 @@
             this.openIconFolder.Name = "openIconFolder";
             this.openIconFolder.Size = new System.Drawing.Size(254, 23);
             this.openIconFolder.TabIndex = 12;
-            this.openIconFolder.Text = "Open Explorer Icon Folder";
+            this.openIconFolder.Text = "Open Class Icon Folder";
             this.openIconFolder.UseVisualStyleBackColor = true;
             this.openIconFolder.Click += new System.EventHandler(this.openIconFolder_Click);
             // 
@@ -173,7 +173,7 @@
             this.itemSlots.ValueChanged += new System.EventHandler(this.itemSlots_ValueChanged);
             this.itemSlots.KeyDown += new System.Windows.Forms.KeyEventHandler(this.itemSlots_KeyDown);
             // 
-            // ExplorerIconEditor
+            // ClassIconEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -193,11 +193,11 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = global::RobloxStudioModManager.Properties.Resources.Icon;
             this.MaximizeBox = false;
-            this.Name = "ExplorerIconEditor";
+            this.Name = "ClassIconEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Explorer Icon Editor";
+            this.Text = "Class Icon Editor";
             this.TopMost = true;
-            this.Load += new System.EventHandler(this.ExplorerIconEditor_Load);
+            this.Load += new System.EventHandler(this.ClassIconEditor_Load);
             ((System.ComponentModel.ISupportInitialize)(this.selectedIcon)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.itemSlots)).EndInit();
             this.ResumeLayout(false);

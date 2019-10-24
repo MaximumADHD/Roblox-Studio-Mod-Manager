@@ -14,7 +14,7 @@ using Microsoft.Win32;
 
 namespace RobloxStudioModManager
 {
-    public partial class RobloxStudioInstaller : Form
+    public partial class StudioBootstrapper : Form
     {
         [DllImport("user32.dll")]
         static extern bool SetForegroundWindow(IntPtr hWnd);
@@ -45,7 +45,7 @@ namespace RobloxStudioModManager
         private static RegistryKey fileRegistry = Program.GetSubKey("FileManifest");
         private static RegistryKey fileRepairs = fileRegistry.GetSubKey("Repairs");
         
-        public RobloxStudioInstaller(bool forceInstall = false, bool exitWhenClosed = true)
+        public StudioBootstrapper(bool forceInstall = false, bool exitWhenClosed = true)
         {
             InitializeComponent();
             http.Headers.Set(HttpRequestHeader.UserAgent, "Roblox");
@@ -341,7 +341,7 @@ namespace RobloxStudioModManager
 
                 if (check == DialogResult.Yes)
                 {
-                    RobloxStudioInstaller installer = new RobloxStudioInstaller(false);
+                    StudioBootstrapper installer = new StudioBootstrapper(false);
 
                     await installer.RunInstaller(branch);
                     installer.Dispose();
@@ -813,7 +813,7 @@ namespace RobloxStudioModManager
                 FlagEditor.ApplyFlags();
 
                 echo("Patching explorer icons...");
-                await ExplorerIconEditor.PatchExplorerIcons();
+                await ClassIconEditor.PatchExplorerIcons();
             }
             
             setStatus("Starting Roblox Studio...");
@@ -822,7 +822,7 @@ namespace RobloxStudioModManager
             await Task.Delay(1000);
         }
 
-        private void RobloxStudioInstaller_FormClosed(object sender, FormClosedEventArgs e)
+        private void StudioBootstrapper_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (exitWhenClosed)
             {

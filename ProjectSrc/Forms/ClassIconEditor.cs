@@ -10,7 +10,7 @@ using Microsoft.Win32;
 
 namespace RobloxStudioModManager
 {
-    public partial class ExplorerIconEditor : Form
+    public partial class ClassIconEditor : Form
     {
         private const int iconSize = 16;
         private const int maxExtraIcons = 99;
@@ -45,7 +45,7 @@ namespace RobloxStudioModManager
         private static int numIcons = 0;
         private FileSystemWatcher iconWatcher;
 
-        public ExplorerIconEditor(string _branch)
+        public ClassIconEditor(string _branch)
         {
             InitializeComponent();
             branch = _branch;
@@ -53,7 +53,7 @@ namespace RobloxStudioModManager
 
         private static string getExplorerIconDir()
         {
-            string studioBin = RobloxStudioInstaller.GetStudioDirectory();
+            string studioBin = StudioBootstrapper.GetStudioDirectory();
             string explorerBin = Path.Combine(studioBin, "ExplorerIcons");
 
             if (!Directory.Exists(explorerBin))
@@ -102,7 +102,7 @@ namespace RobloxStudioModManager
 
             if (currentHash != manifestHash)
             {
-                string studioDir = RobloxStudioInstaller.GetStudioDirectory();
+                string studioDir = StudioBootstrapper.GetStudioDirectory();
                 updateExplorerIcons(studioDir);
 
                 infoRegistry.SetValue("LastClassIconHash", manifestHash);
@@ -486,13 +486,13 @@ namespace RobloxStudioModManager
             }
         }
 
-        private async void ExplorerIconEditor_Load(object sender, EventArgs e)
+        private async void ClassIconEditor_Load(object sender, EventArgs e)
         {
             Enabled = false;
             UseWaitCursor = true;
 
             EventHandler iconBtnClicked = new EventHandler(onIconBtnClicked);
-            string studioPath = RobloxStudioInstaller.GetStudioPath();
+            string studioPath = StudioBootstrapper.GetStudioPath();
 
             showModifiedIcons = explorerRegistry.GetBool("ShowModifiedIcons");
             darkTheme = explorerRegistry.GetBool("DarkTheme");
@@ -597,7 +597,7 @@ namespace RobloxStudioModManager
 
             try
             {
-                string studioDir = RobloxStudioInstaller.GetStudioDirectory();
+                string studioDir = StudioBootstrapper.GetStudioDirectory();
                 string iconPath = Path.Combine(studioDir, iconManifest);
 
                 Image patched = await Task.Factory.StartNew(getPatchedExplorerIcons);

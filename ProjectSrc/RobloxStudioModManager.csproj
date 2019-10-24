@@ -23,10 +23,9 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <SupportUrl>https://www.twitter.com/MaxGee1019</SupportUrl>
-    <ProductName>ROBLOX Studio Mod Manager</ProductName>
+    <ProductName>Roblox Studio Mod Manager</ProductName>
     <PublisherName>CloneTrooper1019</PublisherName>
     <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -91,39 +90,40 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="History\ClientVersionInfo.cs" />
-    <Compile Include="History\DeployLog.cs" />
-    <Compile Include="History\HistoryCache.cs" />
-    <Compile Include="History\StudioDeployLogs.cs" />
-    <Compile Include="Editors\ExplorerIconEditor.cs">
+    <Compile Include="Bootstrapper\History\ClientVersionInfo.cs" />
+    <Compile Include="Bootstrapper\History\DeployLog.cs" />
+    <Compile Include="Bootstrapper\History\HistoryCache.cs" />
+    <Compile Include="Bootstrapper\History\StudioDeployLogs.cs" />
+    <Compile Include="Forms\ClassIconEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Editors\ExplorerIconEditor.Designer.cs">
-      <DependentUpon>ExplorerIconEditor.cs</DependentUpon>
+    <Compile Include="Forms\ClassIconEditor.Designer.cs">
+      <DependentUpon>ClassIconEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Editors\FlagEditor.cs">
+    <Compile Include="Forms\FlagEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Editors\FlagEditor.Designer.cs">
+    <Compile Include="Forms\FlagEditor.Designer.cs">
       <DependentUpon>FlagEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Installer\FileManifest.cs" />
-    <Compile Include="Installer\PackageManifest.cs" />
+    <Compile Include="Bootstrapper\FileManifest.cs" />
+    <Compile Include="Bootstrapper\PackageManifest.cs" />
+    <Compile Include="Bootstrapper\SystemEvent.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Installer\RobloxStudioInstaller.cs">
+    <Compile Include="Forms\StudioBootstrapper.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Installer\RobloxStudioInstaller.Designer.cs">
-      <DependentUpon>RobloxStudioInstaller.cs</DependentUpon>
+    <Compile Include="Forms\StudioBootstrapper.Designer.cs">
+      <DependentUpon>StudioBootstrapper.cs</DependentUpon>
     </Compile>
-    <Compile Include="Launcher.cs">
+    <Compile Include="Forms\Launcher.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Launcher.Designer.cs">
+    <Compile Include="Forms\Launcher.Designer.cs">
       <DependentUpon>Launcher.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
@@ -134,7 +134,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="Properties\app.manifest" />
-    <EmbeddedResource Include="Resources\ModManagerMetadata.lua" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

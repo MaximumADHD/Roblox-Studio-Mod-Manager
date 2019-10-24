@@ -216,38 +216,43 @@ namespace RobloxStudioModManager
         private async void initializeEditor()
         {
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
-            string settingsPath = Path.Combine(localAppData, "Roblox", "ClientSettings", "StudioAppSettings.json");
+
+            string settingsDir = Path.Combine(localAppData, "Roblox", "ClientSettings");
+            string settingsPath = Path.Combine(settingsDir, "StudioAppSettings.json");
 
             string lastExecVersion = versionRegistry.GetString("LastExecutedVersion");
             string versionGuid = versionRegistry.GetString("VersionGuid");
 
             if (lastExecVersion != versionGuid || settingsPath == "")
             {
+                // Reset the settings file.
+                Directory.CreateDirectory(settingsDir);
+                File.WriteAllText(settingsPath, "");
+
+                // Create some system events for studio so we can hide the splash screen.
+                SystemEvent start = new SystemEvent("FFlagExtract");
+                SystemEvent show = new SystemEvent("NoSplashScreen");
+
                 // Run Roblox Studio briefly so we can update the settings file.
                 ProcessStartInfo studioStartInfo = new ProcessStartInfo()
                 {
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    FileName = RobloxStudioInstaller.GetStudioPath()
+                    FileName = StudioBootstrapper.GetStudioPath(),
+                    Arguments = $"-startEvent {start.Name} -showEvent {show.Name}"
                 };
 
                 Process studio = Process.Start(studioStartInfo);
+                await start.WaitForEvent();
 
-                DateTime startTime = DateTime.Now;
                 FileInfo info = new FileInfo(settingsPath);
 
-                // Wait for the settings path file to exist or for it to be updated.
-                while (!info.Exists || info.LastWriteTime.Ticks < startTime.Ticks)
+                // Wait for the settings path to be written.
+                while (info.Length == 0)
                 {
-                    await Task.Delay(100);
+                    await Task.Delay(30);
                     info.Refresh();
                 }
 
-                // Wait just a moment so we don't access the file while its in a write lock.
-                await Task.Delay(500);
-
-                // Should be good now. Nuke studio and flag the version we updated with.
+                // Nuke studio and flag the version we updated with.
                 versionRegistry.SetValue("LastExecutedVersion", versionGuid);
                 studio.Kill();
             }
@@ -611,7 +616,7 @@ namespace RobloxStudioModManager
 
                 string json = "{\r\n" + string.Join(",\r\n", configs.ToArray()) + "\r\n}";
 
-                string studioDir = RobloxStudioInstaller.GetStudioDirectory();
+                string studioDir = StudioBootstrapper.GetStudioDirectory();
                 string clientSettings = Path.Combine(studioDir, "ClientSettings");
 
                 if (!Directory.Exists(clientSettings))

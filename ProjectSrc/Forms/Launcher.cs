@@ -206,10 +206,10 @@ namespace RobloxStudioModManager
                 Enabled = false;
                 UseWaitCursor = true;
 
-                ClientVersionInfo info = await RobloxStudioInstaller.GetCurrentVersionInfo(branch);
+                ClientVersionInfo info = await StudioBootstrapper.GetCurrentVersionInfo(branch);
                 Hide();
 
-                await RobloxStudioInstaller.BringUpToDate(branch, info.Guid, "Some newer flags might be missing.");
+                await StudioBootstrapper.BringUpToDate(branch, info.Guid, "Some newer flags might be missing.");
 
                 FlagEditor editor = new FlagEditor(branch);
                 editor.ShowDialog();
@@ -228,12 +228,12 @@ namespace RobloxStudioModManager
             UseWaitCursor = true;
 
             string branch = (string)branchSelect.SelectedItem;
-            ClientVersionInfo info = await RobloxStudioInstaller.GetCurrentVersionInfo(branch);
+            ClientVersionInfo info = await StudioBootstrapper.GetCurrentVersionInfo(branch);
 
             Hide();
-            await RobloxStudioInstaller.BringUpToDate(branch, info.Guid, "The explorer icons may have received an update.");
+            await StudioBootstrapper.BringUpToDate(branch, info.Guid, "The explorer icons may have received an update.");
 
-            var editor = new ExplorerIconEditor(branch);
+            var editor = new ClassIconEditor(branch);
             editor.ShowDialog();
 
             Show();
@@ -249,10 +249,10 @@ namespace RobloxStudioModManager
 
             string branch = (string)branchSelect.SelectedItem;
 
-            RobloxStudioInstaller installer = new RobloxStudioInstaller(forceRebuild.Checked);
+            StudioBootstrapper installer = new StudioBootstrapper(forceRebuild.Checked);
             await installer.RunInstaller(branch);
 
-            string studioRoot = RobloxStudioInstaller.GetStudioDirectory();
+            string studioRoot = StudioBootstrapper.GetStudioDirectory();
             string modPath = getModPath();
 
             string[] studioFiles = Directory.GetFiles(studioRoot);
@@ -293,46 +293,8 @@ namespace RobloxStudioModManager
                 }
             }
 
-            // Hack in the metadata plugin.
-            // This is used to provide an end-point to custom StarterScripts that are trying to fork what branch they are on.
-            // It creates a BindableFunction inside of the ScriptContext called GetModManagerBranch, which returns the branch set in the launcher.
-
-            try
-            {
-                Assembly self = Assembly.GetExecutingAssembly();
-                string metaScript;
-
-                using (Stream stream = self.GetManifestResourceStream("RobloxStudioModManager.Resources.ModManagerMetadata.lua"))
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    metaScript = reader.ReadToEnd();
-                    metaScript = metaScript.Replace("%MOD_MANAGER_VERSION%", '"' + branch + '"'); // TODO: Make this something more generic?
-                }
-
-                string dir = Path.Combine(studioRoot, "BuiltInPlugins");
-                if (!Directory.Exists(dir))
-                    Directory.CreateDirectory(dir);
-
-                string metaScriptFile = Path.Combine(dir, "__rbxModManagerMetadata.lua");
-                FileInfo info = new FileInfo(metaScriptFile);
-
-                if (info.Exists)
-                    info.Attributes = FileAttributes.Normal;
-
-                File.WriteAllText(metaScriptFile, metaScript);
-               
-                // Make the file as readonly so that it (hopefully) won't be messed with.
-                // I can't hide the file because Roblox Studio will ignore it.
-                // If someone has the file open with write permissions, it will fail to write.
-                info.Attributes = FileAttributes.ReadOnly;
-            }
-            catch
-            {
-                Console.WriteLine("Failed to write __rbxModManagerMetadata.lua");
-            }
-
             var robloxStudioInfo = new ProcessStartInfo();
-            robloxStudioInfo.FileName = RobloxStudioInstaller.GetStudioPath();
+            robloxStudioInfo.FileName = StudioBootstrapper.GetStudioPath();
 
             if (args != null)
             {
