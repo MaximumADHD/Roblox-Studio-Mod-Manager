@@ -108,7 +108,8 @@
     </Compile>
     <Compile Include="Bootstrapper\FileManifest.cs" />
     <Compile Include="Bootstrapper\PackageManifest.cs" />
-    <Compile Include="Bootstrapper\SystemEvent.cs" />
+    <Compile Include="Utility\FVariable.cs" />
+    <Compile Include="Utility\SystemEvent.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

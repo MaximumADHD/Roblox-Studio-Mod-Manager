@@ -24,7 +24,8 @@ namespace RobloxStudioModManager
 
         public delegate void EchoDelegator(string text);
         public delegate void IncrementDelegator(int count);
-        
+
+        private Task autoExitTask;
         private string buildVersion;
         private FileManifest fileManifest;
         private bool forceInstall = false;
@@ -90,16 +91,15 @@ namespace RobloxStudioModManager
             Show();
         }
 
-        private static bool tryToKillProcess(Process process)
+        private static void tryToKillProcess(Process process)
         {
             try
             {
                 process.Kill();
-                return true;
             }
             catch
             {
-                return false;
+                Console.WriteLine($"Cannot terminate process {process.Id}!");
             }
         }
 
@@ -189,7 +189,7 @@ namespace RobloxStudioModManager
                     }
                 }
 
-                if (!fileManifest.FileToSignature.ContainsKey(fileName))
+                if (!fileManifest.ContainsKey(fileName))
                 {
                     if (File.Exists(filePath))
                     {
@@ -198,16 +198,16 @@ namespace RobloxStudioModManager
                             try
                             {
                                 // Confirm that this file no longer exists in the manifest.
-                                string signature;
+                                string sig;
 
                                 using (FileStream file = File.OpenRead(filePath))
-                                    signature = computeSignature(file);
-
-                                if (!fileManifest.SignatureToFiles.ContainsKey(signature))
+                                    sig = computeSignature(file);
+                                
+                                if (!fileManifest.ContainsValue(sig))
                                 {
                                     echo($"Deleting unused file {fileName}");
-                                    File.Delete(filePath);
                                     fileRegistry.DeleteValue(fileName);
+                                    File.Delete(filePath);
                                 }
                                 else if (!fileName.StartsWith("content"))
                                 {
@@ -215,7 +215,11 @@ namespace RobloxStudioModManager
                                     // Record it for future reference so we don't have to
                                     // waste time computing the signature later on.
 
-                                    string fixedName = fileManifest.SignatureToFiles[signature].First();
+                                    string fixedName = fileManifest
+                                        .Where(pair => pair.Value == sig)
+                                        .Select(pair => pair.Key)
+                                        .First();
+
                                     fileRepairs.SetValue(fileName, fixedName);
                                 }
                             }
@@ -234,7 +238,7 @@ namespace RobloxStudioModManager
                 }
             }
 
-            return Task.WhenAll(taskQueue.ToArray());
+            return Task.WhenAll(taskQueue);
         }
 
         private async Task<bool> shutdownStudioProcesses()
@@ -390,9 +394,9 @@ namespace RobloxStudioModManager
                 string latestGuid;
 
                 if (binaryType == "WindowsStudio64")
-                    latestGuid = versionRegistry.GetString("LatestGuid_x86");
-                else
                     latestGuid = versionRegistry.GetString("LatestGuid_x64");
+                else
+                    latestGuid = versionRegistry.GetString("LatestGuid_x86");
 
                 // If we already determined the fast version guid is pointing
                 // to the other version of Roblox Studio, fallback to the
@@ -413,56 +417,24 @@ namespace RobloxStudioModManager
                 }
             }
 
-            // Unfortunately, the ClientVersionInfo end-point on gametest
-            // isn't available to the public, so I have to parse the 
-
-            var logData = await StudioDeployLogs.Get(branch);
-
-            var currentLogs = logData.CurrentLogs;
-            int numLogs = currentLogs.Count;
-
-            var latest = currentLogs[numLogs - 1];
-            var prev = currentLogs[numLogs - 2];
-
-            DeployLog build_x86, build_x64;
-
-            if (logData.Has64BitLogs)
-            {
-                if (prev.Is64Bit)
-                {
-                    build_x64 = prev;
-                    build_x86 = latest;
-                }
-                else
-                {
-                    build_x64 = latest;
-                    build_x86 = prev;
-                }
-            }
-            else
-            {
-                if (prev.Changelist != latest.Changelist)
-                {
-                    build_x86 = latest;
-                    build_x64 = prev;
-                }
-                else
-                {
-                    build_x86 = prev;
-                    build_x64 = latest;
-                }
-            }
+            // Unfortunately the ClientVersionInfo end-point on gametest
+            // isn't available to the public, so I have to parse the
+            // DeployHistory.txt file on their setup s3 bucket.
 
             var info = new ClientVersionInfo();
+            var logData = await StudioDeployLogs.Get(branch);
+
+            DeployLog build_x86 = logData.CurrentLogs_x86.Last();
+            DeployLog build_x64 = logData.CurrentLogs_x64.Last();
 
             if (binaryType == "WindowsStudio64")
             {
-                info.Version = build_x64.ToString();
+                info.Version = build_x64.VersionId;
                 info.Guid = build_x64.VersionGuid;
             }
             else
             {
-                info.Version = build_x86.ToString();
+                info.Version = build_x86.VersionId;
                 info.Guid = build_x86.VersionGuid;
             }
 
@@ -483,13 +455,12 @@ namespace RobloxStudioModManager
             return filePath;
         }
 
-        private async Task installPackage(PackageManifest package)
+        private async Task installPackage(string branch, Package package)
         {
+            string pkgName = package.Name;
+
             string studioDir = GetStudioDirectory();
             string downloads = getDirectory(studioDir, "downloads");
-
-            string pkgName = package.Name;
-            string branch = package.Branch;
 
             string oldSig = pkgRegistry.GetString(pkgName);
             string newSig = package.Signature;
@@ -547,10 +518,8 @@ namespace RobloxStudioModManager
 
                     if (localRootDir != null)
                     {
-                        var fileSignatures = fileManifest.FileToSignature;
-
                         string filePath = entry.FullName.Replace('/', '\\');
-                        bool hasFilePath = fileSignatures.ContainsKey(filePath);
+                        bool hasFilePath = fileManifest.ContainsKey(filePath);
 
                         // If we can't find this file in the signature lookup table,
                         // try appending the local directory to it. This resolves some
@@ -559,13 +528,13 @@ namespace RobloxStudioModManager
                         if (!hasFilePath)
                         {
                             filePath = localRootDir + filePath;
-                            hasFilePath = fileSignatures.ContainsKey(filePath);
+                            hasFilePath = fileManifest.ContainsKey(filePath);
                         }
 
                         // If we can find this file path in the file manifest, then we will
                         // use its pre-computed signature to check if the file has changed.
 
-                        newFileSig = hasFilePath ? fileSignatures[filePath] : null;
+                        newFileSig = hasFilePath ? fileManifest[filePath] : null;
                     }
 
                     // If we couldn't pre-determine the file signature from the manifest,
@@ -575,11 +544,12 @@ namespace RobloxStudioModManager
                         newFileSig = computeSignature(entry);
 
                     // Now check what files this signature corresponds with.
-                    if (fileManifest.SignatureToFiles.ContainsKey(newFileSig))
-                    {
-                        // Write this package to each of the files specified.
-                        List<string> files = fileManifest.SignatureToFiles[newFileSig];
+                    var files = fileManifest
+                        .Where(pair => pair.Value == newFileSig)
+                        .Select(pair => pair.Key);
 
+                    if (files.Count() > 0)
+                    {
                         foreach (string file in files)
                         {
                             // Write the file from this signature.
@@ -689,24 +659,24 @@ namespace RobloxStudioModManager
         
         public static List<Process> GetRunningStudioProcesses()
         {
-            List<Process> studioProcs = new List<Process>();
+            var studioProcs = new List<Process>();
             
             foreach (Process process in Process.GetProcessesByName("RobloxStudioBeta"))
             {
+                Action<Process> action;
+
                 if (process.MainWindowHandle != IntPtr.Zero)
-                {
-                    studioProcs.Add(process);
-                }
+                    action = studioProcs.Add;
                 else
-                {
-                    tryToKillProcess(process);
-                }
+                    action = tryToKillProcess;
+
+                action(process);
             }
 
             return studioProcs;
         }
         
-        public async Task RunInstaller(string branch)
+        public async Task<SystemEvent> RunInstaller(string branch)
         {
             restore();
 
@@ -719,9 +689,6 @@ namespace RobloxStudioModManager
             bool shouldInstall = (forceInstall || currentBranch != branch);
             string fastVersion = await GetFastVersionGuid(currentBranch);
             
-            if (branch == "roblox")
-                buildVersion = fastVersion;
-
             ClientVersionInfo versionInfo = null;
 
             if (shouldInstall || fastVersion != currentVersion)
@@ -754,7 +721,7 @@ namespace RobloxStudioModManager
                     var taskQueue = new List<Task>();
 
                     echo("Grabbing package manifest...");
-                    List<PackageManifest> pkgManifest = await PackageManifest.Get(branch, buildVersion);
+                    var pkgManifest = await PackageManifest.Get(branch, buildVersion);
 
                     echo("Grabbing file manifest...");
                     fileManifest = await FileManifest.Get(branch, buildVersion);
@@ -765,13 +732,13 @@ namespace RobloxStudioModManager
                     progressBar.Style = ProgressBarStyle.Continuous;
                     progressBar.Refresh();
                     
-                    foreach (PackageManifest package in pkgManifest)
+                    foreach (var package in pkgManifest)
                     {
-                        Task installer = Task.Run(() => installPackage(package));
+                        Task installer = Task.Run(() => installPackage(branch, package));
                         taskQueue.Add(installer);
                     }
 
-                    await Task.WhenAll(taskQueue.ToArray());
+                    await Task.WhenAll(taskQueue);
 
                     echo("Writing AppSettings.xml...");
 
@@ -819,7 +786,23 @@ namespace RobloxStudioModManager
             setStatus("Starting Roblox Studio...");
             echo("Roblox Studio is up to date!");
 
-            await Task.Delay(1000);
+            if (exitWhenClosed)
+            {
+                SystemEvent start = new SystemEvent("RobloxStudioModManagerStart");
+
+                autoExitTask = Task.Run(async () =>
+                {
+                    await start.WaitForEvent();
+                    start.Close();
+
+                    await Task.Delay(500);
+                    Application.Exit();
+                });
+
+                return start;
+            }
+
+            return null;
         }
 
         private void StudioBootstrapper_FormClosed(object sender, FormClosedEventArgs e)
@@ -828,6 +811,30 @@ namespace RobloxStudioModManager
             {
                 Application.Exit();
             }
+        }
+
+        private void StudioBootstrapper_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason != CloseReason.UserClosing)
+                return;
+
+            DialogResult result = MessageBox.Show
+            (
+                this,
+
+                "The installation has not finished yet!\n" +
+                "Are you sure you want to close this window?",
+
+                "Warning",
+
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            if (result != DialogResult.No)
+                return;
+
+            e.Cancel = true;
         }
     }
 }

@@ -17,35 +17,20 @@ namespace RobloxStudioModManager
         private static RegistryKey versionRegistry = Program.VersionRegistry;
         private static RegistryKey flagRegistry = Program.GetSubKey("FlagEditor");
 
-        private static string[] flagGroups = new string[3] { "F", "DF", "SF" };
-        private static string[] flagTypes = new string[4] { "Flag", "String", "Int", "Log" };
-
-        private static List<string> flagPrefixes = new List<string>();
-
-        private DataView  flagView;
-        private DataTable flagTable;
-        private DataTable overrideTable;
-
         private string branch;
-        
-        private Dictionary<string, DataGridViewRow> flagRowLookup = new Dictionary<string, DataGridViewRow>();
+
+        private DataTable overrideTable;
         private Dictionary<string, DataRow> overrideRowLookup = new Dictionary<string, DataRow>();
 
         private const string OVERRIDE_STATUS_OFF = "No local overrides were found on load.";
         private const string OVERRIDE_STATUS_ON = "Values highlighted in red were overridden locally.";
 
-        private string updateFlag = "";
+        private List<FVariable> flags;
+        private List<FVariable> allFlags;
+        private Dictionary<string, int> flagLookup = new Dictionary<string, int>();
 
-        static FlagEditor()
-        {
-            foreach (string flagType in flagTypes)
-            {
-                foreach (string flagGroup in flagGroups)
-                {
-                    flagPrefixes.Add(flagGroup + flagType);
-                }
-            }
-        }
+        private string currentSearch = "";
+        private bool enterPressed = false;
 
         public FlagEditor(string _branch)
         {
@@ -73,7 +58,7 @@ namespace RobloxStudioModManager
             }
         }
         
-        private static string getFlagNameByRow(DataGridViewRow row)
+        private static string getFlagKeyByRow(DataGridViewRow row)
         {
             var cells = row.Cells;
 
@@ -88,129 +73,75 @@ namespace RobloxStudioModManager
             if (flagDataGridView.SelectedRows.Count == 1)
             {
                 DataGridViewRow selectedRow = flagDataGridView.SelectedRows[0];
-                return getFlagNameByRow(selectedRow) == getFlagNameByRow(row);
+                FVariable selectedFlag = flags[selectedRow.Index];
+
+                return selectedFlag.Key == getFlagKeyByRow(row);
             }
 
             return false;
         }
 
-        private void refreshViewFlagRow(DataGridViewRow row)
+        private void addFlagOverride(FVariable flag, bool init = false)
         {
-            string flagName = getFlagNameByRow(row);
-            string[] flagNames = flagRegistry.GetSubKeyNames();
-
-            if (flagNames.Contains(flagName))
-            {
-                RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
-
-                var valueCell = row.Cells[2];
-                valueCell.Value = flagKey.GetValue("Value");
-
-                applyRowColor(row, Color.Pink);
-            }
-        }
-
-        private void markFlagEditorAsDirty()
-        {
-            updateFlag = DateTime.Now.Ticks.ToString();
-        }
-
-        private static DataTable createFlagDataTable()
-        {
-            DataTable table = new DataTable();
-            table.Columns.Add("Name");
-            table.Columns.Add("Type");
-            table.Columns.Add("Value");
-
-            return table;
-        }
-
-        private static DataView initializeDataGridView(DataGridView dgv, DataTable table)
-        {
-            foreach (DataColumn column in table.Columns)
-            {
-                string name = column.ColumnName;
-                int index = dgv.Columns.Add(name, name);
-
-                var viewColumn = dgv.Columns[index];
-                viewColumn.DataPropertyName = name;
-            }
-
-            // Set the sort modes and widths of the columns.
-            var columns = dgv.Columns;
-            dgv.AutoGenerateColumns = false;
-
-            var nameColumn = columns[0];
-            nameColumn.Width = 250;
-            nameColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-
-            var typeColumn = columns[1];
-            typeColumn.Width = 50;
-            typeColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-
-            var valueColumn = columns[2];
-            valueColumn.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            valueColumn.SortMode = DataGridViewColumnSortMode.NotSortable;
-
-            // Disable the grid view layout, and apply the table as the data source.
-            var view = new DataView(table);
-            view.Sort = "Name";
-
-            dgv.SuspendLayout();
-            dgv.DataSource = view;
-
-            return view;
-        }
-
-        private void addFlagOverride(string name, string type, string value, bool initializing = false)
-        {
-            string[] names = flagRegistry.GetSubKeyNames();
-            string key = type + name;
+            string key = flag.Key;
 
             if (!overrideRowLookup.ContainsKey(key))
             {
-                RegistryKey flagKey = null;
-                
-                if (names.Contains(key))
-                {
-                    flagKey = flagRegistry.OpenSubKey(key);
-                }
-                else
-                {
-                    flagKey = flagRegistry.CreateSubKey(key);
-                    flagKey.SetValue("Name", name);
-                    flagKey.SetValue("Type", type);
-                    flagKey.SetValue("Value", value);
-                    flagKey.SetValue("Reset", value);
-                }
-                
-                if (flagRowLookup.ContainsKey(key))
-                {
-                    DataGridViewRow viewFlagRow = flagRowLookup[key];
-                    refreshViewFlagRow(viewFlagRow);
-                }
+                RegistryKey editor = flagRegistry.GetSubKey(key);
+                flag.SetEditor(editor);
 
-                DataRow row = overrideTable.Rows.Add(name, type, value);
+                DataRow row = overrideTable.Rows.Add
+                (
+                    flag.Name, 
+                    flag.Type, 
+                    flag.Value
+                );
+
                 overrideRowLookup.Add(key, row);
             }
 
             overrideStatus.Text = OVERRIDE_STATUS_ON;
             overrideStatus.ForeColor = Color.Red;
 
-            if (!initializing)
+            if (!init)
             {
                 // Find the row that corresponds to the flag we added.
-                DataGridViewRow overrideRow = overrideDataGridView.Rows
+                var query = overrideDataGridView.Rows
                     .Cast<DataGridViewRow>()
-                    .Where(rowMatchesSelectedRow)
-                    .First();
+                    .Where(rowMatchesSelectedRow);
 
-                // Select it.
-                overrideDataGridView.CurrentCell = overrideRow.Cells[0];
-
+                if (query.Count() > 0)
+                {
+                    // Select it.
+                    var overrideRow = query.First();
+                    overrideDataGridView.CurrentCell = overrideRow.Cells[0];
+                }
+                
                 // Switch to the overrides tab.
                 tabs.SelectedTab = overridesTab;
             }
+        }
+
+        private void refreshFlags()
+        {
+            string search = flagSearchFilter.Text;
+
+            flags = allFlags
+                .Where(flag => flag.Name.Contains(search))
+                .OrderBy(flag => flag.Name)
+                .ToList();
+
+            flagLookup.Clear();
+
+            for (int i = 0; i < flags.Count; i++)
+            {
+                FVariable flag = flags[i];
+                flagLookup[flag.Key] = i;
+                flag.Dirty = true;
+            }
+
+            // Start populating flag browser rows.
+            flagDataGridView.RowCount = flags.Count;
         }
 
         private async void initializeEditor()
@@ -223,7 +154,7 @@ namespace RobloxStudioModManager
             string lastExecVersion = versionRegistry.GetString("LastExecutedVersion");
             string versionGuid = versionRegistry.GetString("VersionGuid");
 
-            if (lastExecVersion != versionGuid || settingsPath == "")
+            if (lastExecVersion != versionGuid)
             {
                 // Reset the settings file.
                 Directory.CreateDirectory(settingsDir);
@@ -257,84 +188,66 @@ namespace RobloxStudioModManager
                 studio.Kill();
             }
 
+            // Initialize flag browser
             string[] flagNames = flagRegistry.GetSubKeyNames();
-            string settings = File.ReadAllText(settingsPath)
-                .Replace('\r', ' ').Replace('\n', ' ')
-                .Replace("{\"", "").Replace("\"}", "");
 
-            // Initialize Flag Table
-            flagTable = createFlagDataTable();
-            var splitPairs = new string[1] { ",\"" };
+            string settings = File.ReadAllText(settingsPath);
+            var json = Program.ReadJsonDictionary(settings);
 
-            foreach (string kvPairStr in settings.Split(splitPairs, StringSplitOptions.None))
+            int numFlags = json.Count;
+            var flagSetup = new List<FVariable>(numFlags);
+
+            var autoComplete = new AutoCompleteStringCollection();
+            
+            foreach (var pair in json)
             {
-                string[] kvPair = kvPairStr
-                    .Replace("\"", "")
-                    .Split(':');
+                string key = pair.Key,
+                       value = pair.Value;
+
+                FVariable flag = new FVariable(key, value);
+                autoComplete.Add(flag.Name);
+                flagSetup.Add(flag);
                 
-                if (kvPair.Length == 2)
+                if (flagNames.Contains(flag.Name))
                 {
-                    string key = kvPair[0].Replace('"', ' ').Trim();
-                    string value = kvPair[1].Replace('"', ' ').Trim();
+                    // Update what the flag should be reset to if removed?
+                    RegistryKey flagKey = flagRegistry.GetSubKey(flag.Name);
+                    flagKey.SetValue("Reset", value);
 
-                    string type = flagPrefixes
-                        .Where(pre => key.StartsWith(pre))
-                        .FirstOrDefault();
-
-                    if (type.Length > 0)
-                    {
-                        string name = key.Substring(type.Length);
-                        flagTable.Rows.Add(name, type, value);
-
-                        if (flagNames.Contains(name))
-                        {
-                            // Update what the flag should be reset to if removed?
-                            RegistryKey flagKey = flagRegistry.OpenSubKey(name);
-                            flagKey.SetValue("Reset", value);
-                        }
-                    }
+                    // Set the flag's editor.
+                    flag.SetEditor(flagKey);
                 }
             }
 
-            // Setup flag->row lookup table.
-            flagView = initializeDataGridView(flagDataGridView, flagTable);
+            flagSearchFilter.AutoCompleteCustomSource = autoComplete;
 
-            foreach (DataGridViewRow row in flagDataGridView.Rows)
-            {
-                var cells = row.Cells;
+            allFlags = flagSetup
+                .OrderBy(flag => flag.Name)
+                .ToList();
 
-                string name  = cells[0].Value as string;
-                string type  = cells[1].Value as string;
-                string value = cells[2].Value as string;
+            refreshFlags();
 
-                flagRowLookup.Add(type + name, row);
-            }
+            // Initialize override table.
+            overrideTable = new DataTable();
 
-            // Initialize Override Table
-            overrideTable = createFlagDataTable();
-            initializeDataGridView(overrideDataGridView, overrideTable);
+            foreach (DataGridViewColumn column in overrideDataGridView.Columns)
+                overrideTable.Columns.Add(column.DataPropertyName);
+
+            DataView overrideView = new DataView(overrideTable);
+            overrideView.Sort = "Name";
 
             foreach (string flagName in flagNames)
             {
-                RegistryKey flagKey = flagRegistry.GetSubKey(flagName);
-
-                string name  = flagKey.GetString("Name"),
-                       type  = flagKey.GetString("Type"),
-                       value = flagKey.GetString("Value");
-
-                addFlagOverride(name, type, value, true);
+                if (flagLookup.ContainsKey(flagName))
+                {
+                    int index = flagLookup[flagName];
+                    FVariable flag = flags[index];
+                    addFlagOverride(flag, true);
+                }
             }
-
-            var columns = overrideDataGridView.Columns;
-            columns[0].ReadOnly = true;
-            columns[1].ReadOnly = true;
-
-            // Resume layout and enable interaction.
-            flagDataGridView.CurrentCell = flagDataGridView[0, 0];
-            flagDataGridView.ResumeLayout();
-
+            
             overrideStatus.Visible = true;
-            overrideDataGridView.ResumeLayout();
+            overrideDataGridView.DataSource = overrideView;
         }
 
         private async void FlagEditor_Load(object sender, EventArgs e)
@@ -346,7 +259,6 @@ namespace RobloxStudioModManager
             BringToFront();
 
             Refresh();
-            await Task.Delay(100);
 
             await Task.Run(() =>
             {
@@ -358,43 +270,59 @@ namespace RobloxStudioModManager
             UseWaitCursor = false;
         }
 
-        private void flagSearchFilter_TextChanged(object sender, EventArgs e)
+        private void flagDataGridView_CellValueNeeded(object sender, DataGridViewCellValueEventArgs e)
         {
-            string text = flagSearchFilter.Text;
-            string filtered = new string(text.Where(char.IsLetterOrDigit).ToArray());
+            int row = e.RowIndex;
+            int col = e.ColumnIndex;
 
-            if (text != filtered)
-            {
-                int selectionStart = flagSearchFilter.SelectionStart;
-                flagSearchFilter.Text = filtered;
-                flagSearchFilter.SelectionStart = selectionStart;
-            }
-            else
-            {
-                flagView.RowFilter = string.Format("Name LIKE '%{0}%'", text);
-                markFlagEditorAsDirty();
-            }
+            FVariable flag = flags[row];
+            string value = "?";
+
+            if (col == 0)
+                value = flag.Name;
+            else if (col == 1)
+                value = flag.Type;
+            else if (col == 2)
+                value = flag.Value;
+
+            e.Value = value;
         }
 
         private void flagSearchFilter_KeyDown(object sender, KeyEventArgs e)
         {
-            KeysConverter converter = new KeysConverter();
-            string keyName = converter.ConvertToString(e.KeyCode);
-
-            if (keyName.Length == 1)
+            if (e.KeyCode == Keys.Enter)
             {
-                char key = keyName[0];
+                enterPressed = true;
+                e.Handled = true;
+                ActiveControl = null;
+            }
+        }
 
-                if (!char.IsLetterOrDigit(key))
+        private void flagSearchFilter_Leave(object sender, EventArgs e)
+        {
+            if (enterPressed)
+            {
+                enterPressed = false;
+
+                if (flagSearchFilter.Text != currentSearch)
                 {
-                    e.SuppressKeyPress = true;
-                    e.Handled = true;
+                    currentSearch = flagSearchFilter.Text;
+
+                    Enabled = false;
+                    Cursor = Cursors.WaitCursor;
+
+                    flagDataGridView.RowCount = 0;
+                    flagDataGridView.Refresh();
+
+                    refreshFlags();
+
+                    Enabled = true;
+                    Cursor = Cursors.Default;
                 }
             }
-            else if (e.KeyCode != Keys.Back)
+            else
             {
-                e.SuppressKeyPress = true;
-                e.Handled = true;
+                flagSearchFilter.Text = currentSearch;
             }
         }
 
@@ -403,13 +331,9 @@ namespace RobloxStudioModManager
             if (flagDataGridView.SelectedRows.Count == 1)
             {
                 var selectedRow = flagDataGridView.SelectedRows[0];
-                var cells = selectedRow.Cells;
-
-                string name  = cells[0].Value as string;
-                string type  = cells[1].Value as string;
-                string value = cells[2].Value as string;
-
-                addFlagOverride(name, type, value);
+                FVariable selectedFlag = flags[selectedRow.Index];
+                
+                addFlagOverride(selectedFlag);
             }
         }
 
@@ -420,31 +344,26 @@ namespace RobloxStudioModManager
             if (selectedRows.Count > 0)
             {
                 var selectedRow = selectedRows[0];
+                string flagKey = getFlagKeyByRow(selectedRow);
 
-                string flagName = getFlagNameByRow(selectedRow);
-                RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
-
-                if (flagRowLookup.ContainsKey(flagName))
+                if (flagLookup.ContainsKey(flagKey))
                 {
-                    var flagRow = flagRowLookup[flagName];
-                    applyRowColor(flagRow, Color.White);
-
-                    var valueCell = flagRow.Cells[2];
-                    valueCell.Value = flagKey.GetValue("Reset");
+                    int index = flagLookup[flagKey];
+                    FVariable flag = flags[index];
+                    flag.ClearEditor();
                 }
-
-                if (overrideRowLookup.ContainsKey(flagName))
+                
+                if (overrideRowLookup.ContainsKey(flagKey))
                 {
-                    DataRow rowToDelete = overrideRowLookup[flagName];
-                    overrideRowLookup.Remove(flagName);
+                    DataRow rowToDelete = overrideRowLookup[flagKey];
+                    overrideRowLookup.Remove(flagKey);
                     rowToDelete.Delete();
                 }
 
                 selectedRow.Visible = false;
                 selectedRow.Dispose();
 
-                flagRegistry.DeleteSubKey(flagName);
-                markFlagEditorAsDirty();
+                flagRegistry.DeleteSubKey(flagKey);
             }
 
             if (overrideDataGridView.Rows.Count == 0)
@@ -462,15 +381,11 @@ namespace RobloxStudioModManager
             {
                 foreach (string flagName in flagRegistry.GetSubKeyNames())
                 {
-                    RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
-
-                    if (flagRowLookup.ContainsKey(flagName))
+                    if (flagLookup.ContainsKey(flagName))
                     {
-                        DataGridViewRow row = flagRowLookup[flagName];
-                        applyRowColor(row, Color.White);
-
-                        var valueCell = row.Cells[2];
-                        valueCell.Value = flagKey.GetValue("Reset");
+                        int index = flagLookup[flagName];
+                        FVariable flag = flags[index];
+                        flag.ClearEditor();
                     }
 
                     flagRegistry.DeleteSubKey(flagName);
@@ -486,7 +401,7 @@ namespace RobloxStudioModManager
         private void overrideDataGridView_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
             DataGridViewRow row = overrideDataGridView.Rows[e.RowIndex];
-            string flagName = getFlagNameByRow(row);
+            string flagKey = getFlagKeyByRow(row);
 
             DataGridViewCell cell = row.Cells[e.ColumnIndex];
             string value = cell.Value as string;
@@ -508,25 +423,20 @@ namespace RobloxStudioModManager
                 badInput = !int.TryParse(value, out test);
             }
 
-            RegistryKey flagKey = flagRegistry.OpenSubKey(flagName, true);
-
-            if (!badInput)
+            if (flagLookup.ContainsKey(flagKey))
             {
-                if (flagRowLookup.ContainsKey(flagName))
+                int index = flagLookup[flagKey];
+                FVariable flag = flags[index];
+
+                if (!badInput)
                 {
-                    DataGridViewRow viewRow = flagRowLookup[flagName];
-                    DataGridViewCell viewCell = viewRow.Cells[e.ColumnIndex];
-                    viewCell.Value = cell.Value;
+                    flag.SetValue(value);
+                    return;
                 }
 
-                flagKey.SetValue("Value", value);
-                markFlagEditorAsDirty();
-
-                return;
+                // If we have bad input, reset the value to the original value.
+                cell.Value = flag.Reset;
             }
-
-            // If we have bad input, reset the value to the original value.
-            cell.Value = flagKey.GetValue("Reset");
         }
 
         private void overrideDataGridView_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
@@ -548,7 +458,10 @@ namespace RobloxStudioModManager
                     var newValueCell = new DataGridViewComboBoxCell();
                     newValueCell.Items.Add("true");
                     newValueCell.Items.Add("false");
-                    newValueCell.Value = valueCell.Value.ToString().ToLower();
+
+                    newValueCell.Value = valueCell.Value
+                        .ToString()
+                        .ToLower();
 
                     row.Cells[2] = newValueCell;
                     newValueCell.ReadOnly = false;
@@ -579,16 +492,27 @@ namespace RobloxStudioModManager
             }
         }
 
-        // Whenever the updateFlag string is explicitly updated by the program, this will force
-        // each cell to be redrawn. This will prevent any red-highlighted cells from being reset.
         private void flagDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            var row = flagDataGridView.Rows[e.RowIndex];
-
-            if (row.Tag == null || row.Tag.ToString() != updateFlag)
+            int index = e.RowIndex;
+            FVariable flag = flags[index];
+            
+            if (flag.Dirty)
             {
-                row.Tag = updateFlag;
-                refreshViewFlagRow(row);
+                var row = flagDataGridView.Rows[index];
+
+                if (flag.Editor != null)
+                {
+                    var valueCell = row.Cells[2];
+                    valueCell.Value = flag.Value;
+                    applyRowColor(row, Color.Pink);
+                }
+                else
+                {
+                    applyRowColor(row, Color.White);
+                }
+
+                flag.Dirty = false;
             }
         }
 
@@ -602,25 +526,20 @@ namespace RobloxStudioModManager
                 {
                     RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
 
-                    string name  = flagKey.GetString("Name"),
-                           type  = flagKey.GetString("Type"),
+                    string type = flagKey.GetString("Type"),
                            value = flagKey.GetString("Value");
-
-                    string key = type + name;
-
+                    
                     if (type.EndsWith("String"))
-                        value = '"' + value.Replace("\"", "\\\"").Replace("\\\\", "\\") + '"';
+                        value = $"\"{value.Replace("\"", "")}\"";
 
-                    configs.Add($"\t\"{key}\": {value}");
+                    configs.Add($"\t\"{flagName}\": {value}");
                 };
 
-                string json = "{\r\n" + string.Join(",\r\n", configs.ToArray()) + "\r\n}";
-
+                string json = "{\r\n" + string.Join(",\r\n", configs) + "\r\n}";
                 string studioDir = StudioBootstrapper.GetStudioDirectory();
-                string clientSettings = Path.Combine(studioDir, "ClientSettings");
 
-                if (!Directory.Exists(clientSettings))
-                    Directory.CreateDirectory(clientSettings);
+                string clientSettings = Path.Combine(studioDir, "ClientSettings");
+                Directory.CreateDirectory(clientSettings);
 
                 string filePath = Path.Combine(clientSettings, "ClientAppSettings.json");
                 File.WriteAllText(filePath, json);

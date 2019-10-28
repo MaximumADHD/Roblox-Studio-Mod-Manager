@@ -5,26 +5,11 @@ using System.Threading.Tasks;
 
 namespace RobloxStudioModManager
 {
-    public class FileManifest
+    public class FileManifest : Dictionary<string, string>
     {
-        public Dictionary<string, List<string>> SignatureToFiles;
-        public Dictionary<string, string> FileToSignature;
-
-        public static async Task<FileManifest> Get(string branch, string versionGuid)
+        private FileManifest(string data)
         {
-            string fileManifestUrl = $"https://s3.amazonaws.com/setup.{branch}.com/{versionGuid}-rbxManifest.txt";
-            string fileManifestData;
-
-            using (WebClient http = new WebClient())
-                fileManifestData = await http.DownloadStringTaskAsync(fileManifestUrl);
-
-            FileManifest result = new FileManifest()
-            {
-                FileToSignature = new Dictionary<string, string>(),
-                SignatureToFiles = new Dictionary<string, List<string>>()
-            };
-
-            using (StringReader reader = new StringReader(fileManifestData))
+            using (StringReader reader = new StringReader(data))
             {
                 string path = "";
                 string signature = "";
@@ -39,11 +24,7 @@ namespace RobloxStudioModManager
                         if (path == null || signature == null)
                             break;
 
-                        if (!result.SignatureToFiles.ContainsKey(signature))
-                            result.SignatureToFiles.Add(signature, new List<string>());
-
-                        result.SignatureToFiles[signature].Add(path);
-                        result.FileToSignature.Add(path, signature);
+                        Add(path, signature);
                     }
                     catch
                     {
@@ -51,8 +32,17 @@ namespace RobloxStudioModManager
                     }
                 }
             }
+        }
 
-            return result;
+        public static async Task<FileManifest> Get(string branch, string versionGuid)
+        {
+            string fileManifestUrl = $"https://s3.amazonaws.com/setup.{branch}.com/{versionGuid}-rbxManifest.txt";
+            string fileManifestData;
+
+            using (WebClient http = new WebClient())
+                fileManifestData = await http.DownloadStringTaskAsync(fileManifestUrl);
+
+            return new FileManifest(fileManifestData);
         }
     }
 }

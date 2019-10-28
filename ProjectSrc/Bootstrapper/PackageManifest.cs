@@ -6,26 +6,19 @@ using System.Threading.Tasks;
 
 namespace RobloxStudioModManager
 {
-    public class PackageManifest
+    public struct Package
     {
-        public string Branch;
-
         public string Name;
         public string Signature;
         public int PackedSize;
         public int Size;
+    }
 
-        public static async Task<List<PackageManifest>> Get(string branch, string versionGuid)
+    public class PackageManifest : List<Package>
+    {
+        private PackageManifest(string data)
         {
-            var result = new List<PackageManifest>();
-            
-            string pkgManifestUrl = $"https://s3.amazonaws.com/setup.{branch}.com/{versionGuid}-rbxPkgManifest.txt";
-            string pkgManifestData;
-
-            using (WebClient http = new WebClient())
-                pkgManifestData = await http.DownloadStringTaskAsync(pkgManifestUrl);
-
-            using (StringReader reader = new StringReader(pkgManifestData))
+            using (StringReader reader = new StringReader(data))
             {
                 string version = reader.ReadLine();
 
@@ -49,16 +42,15 @@ namespace RobloxStudioModManager
 
                         if (fileName.EndsWith(".zip"))
                         {
-                            var pkgManifest = new PackageManifest()
+                            var package = new Package()
                             {
                                 Name = fileName,
-                                Branch = branch,
                                 Signature = signature,
                                 PackedSize = packedSize,
                                 Size = size
                             };
 
-                            result.Add(pkgManifest);
+                            Add(package);
                         }
                     }
                     catch
@@ -67,8 +59,17 @@ namespace RobloxStudioModManager
                     }
                 }
             }
+        }
 
-            return result;
+        public static async Task<PackageManifest> Get(string branch, string versionGuid)
+        {
+            string pkgManifestUrl = $"https://s3.amazonaws.com/setup.{branch}.com/{versionGuid}-rbxPkgManifest.txt";
+            string pkgManifestData;
+
+            using (WebClient http = new WebClient())
+                pkgManifestData = await http.DownloadStringTaskAsync(pkgManifestUrl);
+            
+            return new PackageManifest(pkgManifestData);
         }
 
     }

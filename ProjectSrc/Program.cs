@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
@@ -14,7 +17,7 @@ namespace RobloxStudioModManager
         public static RegistryKey MainRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
         public static RegistryKey VersionRegistry = MainRegistry.GetSubKey("VersionData");
 
-        private const string _ = ""; // Default key/value used for stuff in UpdateStudioRegistryProtocols.
+        private static Regex jsonPattern = new Regex("\"([^\"]*)\":\"?([^\"]*)\"?[,|}]");
 
         public static RegistryKey GetSubKey(this RegistryKey key, params string[] path)
         {
@@ -56,6 +59,27 @@ namespace RobloxStudioModManager
         {
             MainRegistry.SetValue(name, value);
         }
+
+        public static Dictionary<string, string> ReadJsonDictionary(string json)
+        {
+            var matches = jsonPattern.Matches(json);
+            var result = new Dictionary<string, string>();
+
+            foreach (Match match in matches)
+            {
+                var data = match.Groups
+                    .Cast<Group>()
+                    .Select(g => g.Value)
+                    .ToArray();
+
+                string key = data[1],
+                       val = data[2];
+
+                result.Add(key, val);
+            }
+
+            return result;
+        }
         
         // This sets up the following:
         // 1: The File Protocol to open .rbxl/.rbxlx files using my mod manager.
@@ -63,6 +87,7 @@ namespace RobloxStudioModManager
 
         public static void UpdateStudioRegistryProtocols()
         {
+            const string _ = ""; // Default empty key/value.
             string modManagerPath = Application.ExecutablePath;
 
             // Register the base "Roblox.Place" open protocol.
@@ -77,15 +102,14 @@ namespace RobloxStudioModManager
             // Pass the .rbxl and .rbxlx file formats to Roblox.Place
             RegistryKey[] robloxLevelPass = 
             {
-                GetSubKey(classes, ".rbxl"),
-                GetSubKey(classes, ".rbxlx")
+                classes.GetSubKey(".rbxl"),
+                classes.GetSubKey(".rbxlx")
             };
 
             foreach (RegistryKey rbxLevel in robloxLevelPass)
             {
                 rbxLevel.SetValue(_, "Roblox.Place");
-                GetSubKey(rbxLevel, "Roblox.Place", "ShellNew");
-                rbxLevel.Close();
+                rbxLevel.GetSubKey("Roblox.Place", "ShellNew");
             }
 
             // Setup the URI protocol for opening the mod manager through the website.

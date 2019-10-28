@@ -100,6 +100,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Roblox Studio Updater";
             this.TopMost = true;
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.StudioBootstrapper_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.StudioBootstrapper_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);

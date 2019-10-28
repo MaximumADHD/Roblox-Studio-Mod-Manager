@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabs = new System.Windows.Forms.TabControl();
             this.viewFlagsTab = new System.Windows.Forms.TabPage();
             this.overrideStatus = new System.Windows.Forms.Label();
@@ -36,10 +36,16 @@
             this.flagSearchFilter = new System.Windows.Forms.TextBox();
             this.searchTitle = new System.Windows.Forms.Label();
             this.flagDataGridView = new System.Windows.Forms.DataGridView();
+            this.nameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.typeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.valueColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.overridesTab = new System.Windows.Forms.TabPage();
             this.removeAll = new System.Windows.Forms.Button();
             this.removeSelected = new System.Windows.Forms.Button();
             this.overrideDataGridView = new System.Windows.Forms.DataGridView();
+            this.overrideNameColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.overrideTypeColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.initialOverrideValueColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tabs.SuspendLayout();
             this.viewFlagsTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.flagDataGridView)).BeginInit();
@@ -93,13 +99,15 @@
             // 
             // flagSearchFilter
             // 
+            this.flagSearchFilter.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.flagSearchFilter.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.flagSearchFilter.Location = new System.Drawing.Point(59, 6);
             this.flagSearchFilter.Margin = new System.Windows.Forms.Padding(1, 3, 3, 3);
             this.flagSearchFilter.Name = "flagSearchFilter";
             this.flagSearchFilter.Size = new System.Drawing.Size(387, 20);
             this.flagSearchFilter.TabIndex = 2;
-            this.flagSearchFilter.TextChanged += new System.EventHandler(this.flagSearchFilter_TextChanged);
             this.flagSearchFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.flagSearchFilter_KeyDown);
+            this.flagSearchFilter.Leave += new System.EventHandler(this.flagSearchFilter_Leave);
             // 
             // searchTitle
             // 
@@ -121,6 +129,10 @@
             this.flagDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
             this.flagDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.flagDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.flagDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.nameColumn,
+            this.typeColumn,
+            this.valueColumn});
             this.flagDataGridView.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flagDataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.flagDataGridView.Location = new System.Drawing.Point(3, 58);
@@ -132,7 +144,38 @@
             this.flagDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.flagDataGridView.Size = new System.Drawing.Size(448, 352);
             this.flagDataGridView.TabIndex = 0;
+            this.flagDataGridView.VirtualMode = true;
             this.flagDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.flagDataGridView_CellFormatting);
+            this.flagDataGridView.CellValueNeeded += new System.Windows.Forms.DataGridViewCellValueEventHandler(this.flagDataGridView_CellValueNeeded);
+            // 
+            // nameColumn
+            // 
+            this.nameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.nameColumn.FillWeight = 250F;
+            this.nameColumn.HeaderText = "Name";
+            this.nameColumn.Name = "nameColumn";
+            this.nameColumn.ReadOnly = true;
+            this.nameColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.nameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // typeColumn
+            // 
+            this.typeColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.typeColumn.FillWeight = 50F;
+            this.typeColumn.HeaderText = "Type";
+            this.typeColumn.Name = "typeColumn";
+            this.typeColumn.ReadOnly = true;
+            this.typeColumn.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.typeColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // valueColumn
+            // 
+            this.valueColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.valueColumn.FillWeight = 150F;
+            this.valueColumn.HeaderText = "Value";
+            this.valueColumn.Name = "valueColumn";
+            this.valueColumn.ReadOnly = true;
+            this.valueColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // overridesTab
             // 
@@ -176,6 +219,10 @@
             this.overrideDataGridView.BackgroundColor = System.Drawing.SystemColors.Control;
             this.overrideDataGridView.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.overrideDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.overrideDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.overrideNameColumn,
+            this.overrideTypeColumn,
+            this.initialOverrideValueColumn});
             this.overrideDataGridView.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.overrideDataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.overrideDataGridView.Location = new System.Drawing.Point(3, 35);
@@ -183,8 +230,8 @@
             this.overrideDataGridView.Name = "overrideDataGridView";
             this.overrideDataGridView.RowHeadersVisible = false;
             this.overrideDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.Silver;
-            this.overrideDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.Silver;
+            this.overrideDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.overrideDataGridView.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.White;
             this.overrideDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.overrideDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -193,6 +240,34 @@
             this.overrideDataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.overrideDataGridView_CellEndEdit);
             this.overrideDataGridView.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.overrideDataGridView_CellMouseEnter);
             this.overrideDataGridView.CellMouseLeave += new System.Windows.Forms.DataGridViewCellEventHandler(this.overrideDataGridView_CellMouseLeave);
+            // 
+            // overrideNameColumn
+            // 
+            this.overrideNameColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.overrideNameColumn.DataPropertyName = "Name";
+            this.overrideNameColumn.FillWeight = 150F;
+            this.overrideNameColumn.HeaderText = "Name";
+            this.overrideNameColumn.Name = "overrideNameColumn";
+            this.overrideNameColumn.ReadOnly = true;
+            this.overrideNameColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // overrideTypeColumn
+            // 
+            this.overrideTypeColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.overrideTypeColumn.DataPropertyName = "Type";
+            this.overrideTypeColumn.FillWeight = 40F;
+            this.overrideTypeColumn.HeaderText = "Type";
+            this.overrideTypeColumn.Name = "overrideTypeColumn";
+            this.overrideTypeColumn.ReadOnly = true;
+            this.overrideTypeColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+            // 
+            // initialOverrideValueColumn
+            // 
+            this.initialOverrideValueColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.initialOverrideValueColumn.DataPropertyName = "Value";
+            this.initialOverrideValueColumn.HeaderText = "Value";
+            this.initialOverrideValueColumn.Name = "initialOverrideValueColumn";
+            this.initialOverrideValueColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
             // 
             // FlagEditor
             // 
@@ -230,5 +305,11 @@
         private System.Windows.Forms.Label overrideStatus;
         private System.Windows.Forms.Button removeAll;
         private System.Windows.Forms.Button removeSelected;
+        private System.Windows.Forms.DataGridViewTextBoxColumn nameColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn typeColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn valueColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn overrideNameColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn overrideTypeColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn initialOverrideValueColumn;
     }
 }

@@ -11,6 +11,7 @@
         public int Changelist;
 
         public bool Is64Bit => BuildType.EndsWith("64");
+        public string VersionId => ToString();
 
         public override string ToString()
         {

@@ -250,7 +250,7 @@ namespace RobloxStudioModManager
             string branch = (string)branchSelect.SelectedItem;
 
             StudioBootstrapper installer = new StudioBootstrapper(forceRebuild.Checked);
-            await installer.RunInstaller(branch);
+            SystemEvent start = await installer.RunInstaller(branch);
 
             string studioRoot = StudioBootstrapper.GetStudioDirectory();
             string modPath = getModPath();
@@ -295,6 +295,7 @@ namespace RobloxStudioModManager
 
             var robloxStudioInfo = new ProcessStartInfo();
             robloxStudioInfo.FileName = StudioBootstrapper.GetStudioPath();
+            robloxStudioInfo.Arguments = $"-startEvent {start.Name}";
 
             if (args != null)
             {
@@ -329,7 +330,7 @@ namespace RobloxStudioModManager
 
                     if (argMap.ContainsKey("launchmode") && !argMap.ContainsKey("task"))
                     {
-                        robloxStudioInfo.Arguments += "-task ";
+                        robloxStudioInfo.Arguments += " -task ";
 
                         string launchMode = argMap["launchmode"];
                         string addToArgs = "";
@@ -353,6 +354,7 @@ namespace RobloxStudioModManager
             if (openStudioDirectory.Checked)
             {
                 Process.Start(studioRoot);
+                Environment.Exit(0);
             }
             else
             {
@@ -361,8 +363,6 @@ namespace RobloxStudioModManager
 
                 Process.Start(robloxStudioInfo);
             }
-            
-            Environment.Exit(0);
         }
 
 
