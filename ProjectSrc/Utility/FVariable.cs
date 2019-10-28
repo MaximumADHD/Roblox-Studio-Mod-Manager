@@ -33,11 +33,11 @@ namespace RobloxStudioModManager
 
         public void SetValue(string value)
         {
+            if (Editor != null && Editor.GetString("Value") != value)
+                Editor.SetValue("Value", value);
+            
             if (Value != value)
             {
-                if (Editor != null)
-                    Editor.SetValue("Value", value);
-
                 Value = value;
                 Dirty = true;
             } 
@@ -45,6 +45,8 @@ namespace RobloxStudioModManager
         
         public void SetEditor(RegistryKey editor)
         {
+            Editor = editor;
+
             if (editor != null)
             {
                 string value = editor.GetString("Value", Value);
@@ -55,7 +57,6 @@ namespace RobloxStudioModManager
                 editor.SetValue("Reset", Reset);
             }
 
-            Editor = editor;
             Dirty = true;
         }
 

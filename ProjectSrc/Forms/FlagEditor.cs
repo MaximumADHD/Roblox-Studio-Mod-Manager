@@ -395,6 +395,7 @@ namespace RobloxStudioModManager
                 overrideStatus.ForeColor = Color.Black;
 
                 overrideTable.Rows.Clear();
+                overrideRowLookup.Clear();
             }
         }
 
