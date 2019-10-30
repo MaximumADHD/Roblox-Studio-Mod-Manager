@@ -25,12 +25,14 @@ namespace RobloxStudioModManager
         public delegate void EchoDelegator(string text);
         public delegate void IncrementDelegator(int count);
 
-        private Task autoExitTask;
         private string buildVersion;
         private FileManifest fileManifest;
         private bool forceInstall = false;
         private bool exitWhenClosed = true;
         private int actualProgressBarSum = 0;
+
+        public SystemEvent StartEvent { get; private set; }
+        private Task autoExitTask;
 
         private const string appSettingsXml =
             "<Settings>\n" +
@@ -347,7 +349,7 @@ namespace RobloxStudioModManager
                 {
                     StudioBootstrapper installer = new StudioBootstrapper(false);
 
-                    await installer.RunInstaller(branch);
+                    await installer.RunInstaller(branch, false);
                     installer.Dispose();
                 }
             }
@@ -389,34 +391,34 @@ namespace RobloxStudioModManager
             if (branch == "roblox")
                 return await ClientVersionInfo.Get(binaryType);
 
-            if (fastVersionGuid != "")
+            if (fastVersionGuid == "")
+               fastVersionGuid = await GetFastVersionGuid(branch);
+
+            string latestGuid;
+
+            if (binaryType == "WindowsStudio64")
+                latestGuid = versionRegistry.GetString("LatestGuid_x64");
+            else
+                latestGuid = versionRegistry.GetString("LatestGuid_x86");
+
+            // If we already determined the fast version guid is pointing
+            // to the other version of Roblox Studio, fallback to the
+            // version data that has been cached already.
+
+            if (fastVersionGuid == latestGuid)
             {
-                string latestGuid;
+                string versionId = versionRegistry.GetString("Version");
+                string versionGuid = versionRegistry.GetString("VersionGuid");
 
-                if (binaryType == "WindowsStudio64")
-                    latestGuid = versionRegistry.GetString("LatestGuid_x64");
-                else
-                    latestGuid = versionRegistry.GetString("LatestGuid_x86");
-
-                // If we already determined the fast version guid is pointing
-                // to the other version of Roblox Studio, fallback to the
-                // version data that has been cached already.
-
-                if (fastVersionGuid == latestGuid)
+                ClientVersionInfo proxy = new ClientVersionInfo()
                 {
-                    string versionId = versionRegistry.GetString("Version");
-                    string versionGuid = versionRegistry.GetString("VersionGuid");
+                    Version = versionId,
+                    Guid = versionGuid
+                };
 
-                    ClientVersionInfo proxy = new ClientVersionInfo()
-                    {
-                        Version = versionId,
-                        Guid = versionGuid
-                    };
-
-                    return proxy;
-                }
+                return proxy;
             }
-
+            
             // Unfortunately the ClientVersionInfo end-point on gametest
             // isn't available to the public, so I have to parse the
             // DeployHistory.txt file on their setup s3 bucket.
@@ -676,7 +678,7 @@ namespace RobloxStudioModManager
             return studioProcs;
         }
         
-        public async Task<SystemEvent> RunInstaller(string branch)
+        public async Task RunInstaller(string branch, bool setStartEvent = false)
         {
             restore();
 
@@ -786,28 +788,29 @@ namespace RobloxStudioModManager
             setStatus("Starting Roblox Studio...");
             echo("Roblox Studio is up to date!");
 
-            if (exitWhenClosed)
+            if (setStartEvent)
             {
                 SystemEvent start = new SystemEvent("RobloxStudioModManagerStart");
 
                 autoExitTask = Task.Run(async () =>
                 {
-                    await start.WaitForEvent();
+                    bool started = await start.WaitForEvent();
                     start.Close();
 
-                    await Task.Delay(500);
-                    Application.Exit();
+                    if (started)
+                    {
+                        await Task.Delay(500);
+                        Application.Exit();
+                    }
                 });
 
-                return start;
+                StartEvent = start;
             }
-
-            return null;
         }
 
         private void StudioBootstrapper_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if (exitWhenClosed)
+            if (exitWhenClosed && e.CloseReason == CloseReason.UserClosing)
             {
                 Application.Exit();
             }

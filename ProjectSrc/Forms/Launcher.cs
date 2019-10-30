@@ -250,7 +250,7 @@ namespace RobloxStudioModManager
             string branch = (string)branchSelect.SelectedItem;
 
             StudioBootstrapper installer = new StudioBootstrapper(forceRebuild.Checked);
-            SystemEvent start = await installer.RunInstaller(branch);
+            await installer.RunInstaller(branch, true);
 
             string studioRoot = StudioBootstrapper.GetStudioDirectory();
             string modPath = getModPath();
@@ -293,9 +293,11 @@ namespace RobloxStudioModManager
                 }
             }
 
-            var robloxStudioInfo = new ProcessStartInfo();
-            robloxStudioInfo.FileName = StudioBootstrapper.GetStudioPath();
-            robloxStudioInfo.Arguments = $"-startEvent {start.Name}";
+            var robloxStudioInfo = new ProcessStartInfo()
+            {
+                FileName = StudioBootstrapper.GetStudioPath(),
+                Arguments = $"-startEvent {installer.StartEvent.Name}"
+            };
 
             if (args != null)
             {
