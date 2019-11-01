@@ -71,6 +71,5 @@ namespace RobloxStudioModManager
             
             return new PackageManifest(pkgManifestData);
         }
-
     }
 }
