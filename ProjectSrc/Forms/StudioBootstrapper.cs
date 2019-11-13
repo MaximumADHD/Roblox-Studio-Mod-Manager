@@ -384,46 +384,44 @@ namespace RobloxStudioModManager
             }
         }
 
-        public static async Task<ClientVersionInfo> GetCurrentVersionInfo(string branch, string fastVersionGuid = "")
+        public static async Task<ClientVersionInfo> GetCurrentVersionInfo(string branch, string fastGuid = "")
         {
             string binaryType = GetStudioBinaryType();
+            bool is64Bit = (binaryType == "WindowsStudio64");
             
             if (branch == "roblox")
                 return await ClientVersionInfo.Get(binaryType);
 
-            if (fastVersionGuid == "")
-               fastVersionGuid = await GetFastVersionGuid(branch);
+            if (fastGuid == "")
+                fastGuid = await GetFastVersionGuid(branch);
 
-            string latestGuid;
+            string latestFastGuid = versionRegistry.GetString("LatestFastGuid");
+            var info = new ClientVersionInfo();
 
-            if (binaryType == "WindowsStudio64")
-                latestGuid = versionRegistry.GetString("LatestGuid_x64");
-            else
-                latestGuid = versionRegistry.GetString("LatestGuid_x86");
-
-            // If we already determined the fast version guid is pointing
-            // to the other version of Roblox Studio, fallback to the
-            // version data that has been cached already.
-
-            if (fastVersionGuid == latestGuid)
+            if (latestFastGuid == fastGuid)
             {
-                string versionId = versionRegistry.GetString("Version");
-                string versionGuid = versionRegistry.GetString("VersionGuid");
+                string version = versionRegistry.GetString("Version");
+                info.Version = version;
 
-                ClientVersionInfo proxy = new ClientVersionInfo()
+                string latest_x86 = versionRegistry.GetString("LatestGuid_x86");
+                string latest_x64 = versionRegistry.GetString("LatestGuid_x64");
+
+                if (latestFastGuid == latest_x64 && is64Bit)
                 {
-                    Version = versionId,
-                    Guid = versionGuid
-                };
+                    info.Guid = latest_x64;
+                    return info;
+                }
 
-                return proxy;
+                if (latestFastGuid == latest_x86 && !is64Bit)
+                {
+                    info.Guid = latest_x86;
+                    return info;
+                }
             }
             
             // Unfortunately the ClientVersionInfo end-point on gametest
             // isn't available to the public, so I have to parse the
             // DeployHistory.txt file on their setup s3 bucket.
-
-            var info = new ClientVersionInfo();
             var logData = await StudioDeployLogs.Get(branch);
 
             DeployLog build_x86 = logData.CurrentLogs_x86.Last();
@@ -440,6 +438,7 @@ namespace RobloxStudioModManager
                 info.Guid = build_x86.VersionGuid;
             }
 
+            versionRegistry.SetValue("LatestFastGuid", fastGuid);
             versionRegistry.SetValue("LatestGuid_x86", build_x86.VersionGuid);
             versionRegistry.SetValue("LatestGuid_x64", build_x64.VersionGuid);
 
