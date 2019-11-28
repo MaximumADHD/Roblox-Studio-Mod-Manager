@@ -332,17 +332,17 @@ namespace RobloxStudioModManager
 
                     if (argMap.ContainsKey("launchmode") && !argMap.ContainsKey("task"))
                     {
-                        robloxStudioInfo.Arguments += " -task ";
-
                         string launchMode = argMap["launchmode"];
-                        string addToArgs = "";
-
+                        
                         if (launchMode == "plugin")
-                            addToArgs = "InstallPlugin";
+                        {
+                            string pluginId = argMap["pluginid"];
+                            robloxStudioInfo.Arguments += "-task InstallPlugin -pluginId " + pluginId;
+                        }
                         else if (launchMode == "edit")
-                            addToArgs = "EditPlace";
-
-                        robloxStudioInfo.Arguments += addToArgs;
+                        {
+                            robloxStudioInfo.Arguments += "-task EditPlace";
+                        } 
                     }
                 }
                 else
