@@ -1,21 +1,24 @@
-﻿namespace RobloxStudioModManager
+﻿using System;
+
+namespace RobloxStudioModManager
 {
     public class DeployLog
     {
+        public bool Is64Bit;
         public string VersionGuid;
-        public string BuildType;
+        public DateTime TimeStamp;
 
         public int MajorRev;
         public int Version;
         public int Patch;
         public int Changelist;
 
-        public bool Is64Bit => BuildType.EndsWith("64");
-        public string VersionId => ToString();
+        public string VersionId => string.Join(".", MajorRev, Version, Patch, Changelist);
 
         public override string ToString()
         {
-            return string.Join(".", MajorRev, Version, Patch, Changelist);
+            string date = TimeStamp.ToString("MMM dd");
+            return $"{VersionId} ({date})";
         }
     }
 }

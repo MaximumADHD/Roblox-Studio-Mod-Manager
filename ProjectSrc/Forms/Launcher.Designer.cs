@@ -37,9 +37,9 @@
             this.editExplorerIcons = new System.Windows.Forms.Button();
             this.logo = new System.Windows.Forms.PictureBox();
             this.openStudioDirectory = new System.Windows.Forms.CheckBox();
-            this.buildTypeLabel = new System.Windows.Forms.Label();
-            this.buildType = new System.Windows.Forms.ComboBox();
+            this.targetVersionLabel = new System.Windows.Forms.Label();
             this.title = new System.Windows.Forms.Label();
+            this.targetVersion = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.logo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -83,8 +83,9 @@
             "gametest5.robloxlabs"});
             this.branchSelect.Location = new System.Drawing.Point(181, 113);
             this.branchSelect.Name = "branchSelect";
-            this.branchSelect.Size = new System.Drawing.Size(140, 21);
+            this.branchSelect.Size = new System.Drawing.Size(152, 21);
             this.branchSelect.TabIndex = 10;
+            this.branchSelect.SelectedIndexChanged += new System.EventHandler(this.branchSelect_SelectedIndexChanged);
             // 
             // branchLabel
             // 
@@ -106,9 +107,9 @@
             this.forceRebuild.Location = new System.Drawing.Point(181, 181);
             this.forceRebuild.Margin = new System.Windows.Forms.Padding(2);
             this.forceRebuild.Name = "forceRebuild";
-            this.forceRebuild.Size = new System.Drawing.Size(144, 17);
+            this.forceRebuild.Size = new System.Drawing.Size(119, 17);
             this.forceRebuild.TabIndex = 12;
-            this.forceRebuild.Text = "Force Reinstall of Studio ";
+            this.forceRebuild.Text = "Force Reinstallation";
             this.forceRebuild.UseVisualStyleBackColor = true;
             // 
             // openFlagEditor
@@ -155,32 +156,18 @@
             this.openStudioDirectory.Text = "Just Open Studio Directory";
             this.openStudioDirectory.UseVisualStyleBackColor = true;
             // 
-            // buildTypeLabel
+            // targetVersionLabel
             // 
-            this.buildTypeLabel.AutoSize = true;
-            this.buildTypeLabel.BackColor = System.Drawing.Color.Transparent;
-            this.buildTypeLabel.CausesValidation = false;
-            this.buildTypeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buildTypeLabel.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.buildTypeLabel.Location = new System.Drawing.Point(178, 137);
-            this.buildTypeLabel.Name = "buildTypeLabel";
-            this.buildTypeLabel.Size = new System.Drawing.Size(93, 13);
-            this.buildTypeLabel.TabIndex = 17;
-            this.buildTypeLabel.Text = "Studio Build Type:";
-            // 
-            // buildType
-            // 
-            this.buildType.AccessibleName = "Build Type Selector";
-            this.buildType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.buildType.FormattingEnabled = true;
-            this.buildType.Items.AddRange(new object[] {
-            "32-bit",
-            "64-bit"});
-            this.buildType.Location = new System.Drawing.Point(181, 153);
-            this.buildType.Name = "buildType";
-            this.buildType.Size = new System.Drawing.Size(140, 21);
-            this.buildType.TabIndex = 18;
-            this.buildType.SelectedIndexChanged += new System.EventHandler(this.buildType_SelectedIndexChanged);
+            this.targetVersionLabel.AutoSize = true;
+            this.targetVersionLabel.BackColor = System.Drawing.Color.Transparent;
+            this.targetVersionLabel.CausesValidation = false;
+            this.targetVersionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.targetVersionLabel.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.targetVersionLabel.Location = new System.Drawing.Point(178, 137);
+            this.targetVersionLabel.Name = "targetVersionLabel";
+            this.targetVersionLabel.Size = new System.Drawing.Size(79, 13);
+            this.targetVersionLabel.TabIndex = 17;
+            this.targetVersionLabel.Text = "Target Version:";
             // 
             // title
             // 
@@ -192,16 +179,29 @@
             this.title.TabIndex = 20;
             this.title.Text = "Roblox Studio\r\nMod Manager";
             // 
+            // targetVersion
+            // 
+            this.targetVersion.AccessibleName = "Target Version";
+            this.targetVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.targetVersion.FormattingEnabled = true;
+            this.targetVersion.Items.AddRange(new object[] {
+            "(Use Latest)"});
+            this.targetVersion.Location = new System.Drawing.Point(181, 153);
+            this.targetVersion.Name = "targetVersion";
+            this.targetVersion.Size = new System.Drawing.Size(152, 21);
+            this.targetVersion.TabIndex = 18;
+            this.targetVersion.SelectedIndexChanged += new System.EventHandler(this.targetVersion_SelectedIndexChanged);
+            // 
             // Launcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(340, 238);
+            this.ClientSize = new System.Drawing.Size(354, 229);
             this.Controls.Add(this.title);
             this.Controls.Add(this.logo);
-            this.Controls.Add(this.buildType);
-            this.Controls.Add(this.buildTypeLabel);
+            this.Controls.Add(this.targetVersion);
+            this.Controls.Add(this.targetVersionLabel);
             this.Controls.Add(this.editExplorerIcons);
             this.Controls.Add(this.openFlagEditor);
             this.Controls.Add(this.openStudioDirectory);
@@ -212,10 +212,8 @@
             this.Controls.Add(this.launchStudio);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.HelpButton = false;
             this.Icon = global::RobloxStudioModManager.Properties.Resources.Icon;
             this.MaximizeBox = false;
-            this.MinimizeBox = true;
             this.Name = "Launcher";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Roblox Studio Mod Manager";
@@ -237,9 +235,9 @@
         private System.Windows.Forms.Button editExplorerIcons;
         private System.Windows.Forms.PictureBox logo;
         private System.Windows.Forms.CheckBox openStudioDirectory;
-        private System.Windows.Forms.Label buildTypeLabel;
-        private System.Windows.Forms.ComboBox buildType;
+        private System.Windows.Forms.Label targetVersionLabel;
         private System.Windows.Forms.Label title;
+        private System.Windows.Forms.ComboBox targetVersion;
     }
 }
 

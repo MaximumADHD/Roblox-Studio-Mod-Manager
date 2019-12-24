@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -133,40 +130,10 @@ namespace RobloxStudioModManager
                 defaultIcon.SetValue(_, $"{modManagerPath},0");
             }
         }
-
-        private static bool validateCert(object sender, X509Certificate cert, X509Chain chain, SslPolicyErrors errors)
-        {
-            return (errors == SslPolicyErrors.None);
-        }
-
+        
         [STAThread]
         static void Main(string[] args)
         {
-            // Delete deprecated startup protocol if it exists.
-            try
-            {
-                bool registryInit = GetBool("Initialized Startup Protocol");
-
-                if (registryInit)
-                {
-                    string myPath = Application.ExecutablePath;
-
-                    RegistryKey startUpBin = Registry.CurrentUser.GetSubKey("SOFTWARE", "Microsoft", "Windows", "CurrentVersion", "Run");
-                    startUpBin.DeleteValue("RobloxStudioModManager");
-
-                    SetValue("Initialized Startup Protocol", false);
-                }
-            }
-            catch
-            {
-                Console.WriteLine("Ran into problem while removing deprecated startup protocol. Ignoring for now?");
-            }
-
-            // Add Roblox HTTPS validation 
-            var httpsValidator = new RemoteCertificateValidationCallback(validateCert);
-            ServicePointManager.ServerCertificateValidationCallback += httpsValidator;
-
-            // Start launcher
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Launcher(args));

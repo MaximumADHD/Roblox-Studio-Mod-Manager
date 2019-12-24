@@ -4,7 +4,7 @@ using Microsoft.Win32;
 
 namespace RobloxStudioModManager
 {
-    public class FVariable // : IComparable
+    public class FVariable
     {
         private static Regex flagTypes = new Regex("((F|DF|SF)(Flag|String|Int|Log))");
 
@@ -70,16 +70,5 @@ namespace RobloxStudioModManager
         {
             return Key;
         }
-
-        /*public int CompareTo(object obj)
-        {
-            if (obj is FVariable)
-            {
-                var other = obj as FVariable;
-                return Key.CompareTo(other.Key);
-            }
-
-            throw new NotImplementedException();
-        }*/
     }
 }

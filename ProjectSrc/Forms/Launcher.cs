@@ -28,6 +28,12 @@ namespace RobloxStudioModManager
             InitializeComponent();
         }
 
+        private string getSelectedBranch()
+        {
+            var result = branchSelect.SelectedItem;
+            return result.ToString();
+        }
+
         private void Launcher_Load(object sender, EventArgs e)
         {
             if (args != null)
@@ -35,15 +41,8 @@ namespace RobloxStudioModManager
 
             string build = Program.GetString("BuildBranch");
             int buildIndex = branchSelect.Items.IndexOf(build);
+
             branchSelect.SelectedIndex = Math.Max(buildIndex, 0);
-
-            string type = Program.GetString("BuildType");
-            if (type.Length == 0)
-                type = (Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit");
-
-            int typeIndex = buildType.Items.IndexOf(type);
-            buildType.SelectedIndex = Math.Max(typeIndex, 0);
-            buildType.Enabled = Environment.Is64BitOperatingSystem;
         }
 
         public string getModPath()
@@ -201,7 +200,7 @@ namespace RobloxStudioModManager
 
             if (allow)
             {
-                string branch = (string)branchSelect.SelectedItem;
+                string branch = getSelectedBranch();
 
                 Enabled = false;
                 UseWaitCursor = true;
@@ -231,7 +230,7 @@ namespace RobloxStudioModManager
             ClientVersionInfo info = await StudioBootstrapper.GetCurrentVersionInfo(branch);
 
             Hide();
-            await StudioBootstrapper.BringUpToDate(branch, info.Guid, "The explorer icons may have received an update.");
+            await StudioBootstrapper.BringUpToDate(branch, info.Guid, "The class icons may have received an update.");
 
             var editor = new ClassIconEditor(branch);
             editor.ShowDialog();
@@ -245,12 +244,11 @@ namespace RobloxStudioModManager
 
         private async void launchStudio_Click(object sender = null, EventArgs e = null)
         {
-            Hide();
-
-            string branch = (string)branchSelect.SelectedItem;
-
+            string branch = getSelectedBranch();
             StudioBootstrapper installer = new StudioBootstrapper(forceRebuild.Checked);
-            await installer.RunInstaller(branch, true);
+
+            Hide();
+            await installer.RunInstaller(branch, /* bool setStartEvent = */ true);
 
             string studioRoot = StudioBootstrapper.GetStudioDirectory();
             string modPath = getModPath();
@@ -277,15 +275,14 @@ namespace RobloxStudioModManager
                     {
                         byte[] relativeContents = File.ReadAllBytes(relativeFile);
 
-                        if (!fileContents.SequenceEqual(relativeContents))
-                        {
-                            modFileControl.CopyTo(relativeFile, true);
-                        }
+                        if (fileContents.SequenceEqual(relativeContents))
+                            continue;
+
+                        modFileControl.CopyTo(relativeFile, true);
+                        continue;
                     }
-                    else
-                    {
-                        File.WriteAllBytes(relativeFile, fileContents);
-                    }
+
+                    File.WriteAllBytes(relativeFile, fileContents);
                 }
                 catch
                 {
@@ -367,10 +364,68 @@ namespace RobloxStudioModManager
             }
         }
 
-
-        private void buildType_SelectedIndexChanged(object sender, EventArgs e)
+        private async void branchSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
-            Program.SetValue("BuildType", buildType.SelectedItem);
+            // Save the user's branch preference.
+            string branch = getSelectedBranch();
+            Program.SetValue("BuildBranch", branch);
+            
+            // Grab the version currently being targetted.
+            string targetId = Program.GetString("TargetVersion");
+
+            // Clear the current list of target items.
+            targetVersion.Items.Clear();
+            targetVersion.Items.Add("(Use Latest)");
+
+            // Populate the items list using the deploy history.
+            Enabled = false;
+            UseWaitCursor = true;
+
+            StudioDeployLogs deployLogs = await StudioDeployLogs.Get(branch);
+
+            Enabled = true;
+            UseWaitCursor = false;
+
+            HashSet<DeployLog> targets;
+
+            if (Environment.Is64BitOperatingSystem)
+                targets = deployLogs.CurrentLogs_x64;
+            else
+                targets = deployLogs.CurrentLogs_x86;
+
+            var items = targets
+                .OrderByDescending(log => log.Changelist)
+                .Cast<object>()
+                .Skip(1)
+                .ToArray();
+
+            targetVersion.Items.AddRange(items);
+
+            // Select the deploy log being targetted.
+            DeployLog target = targets
+                .Where(log => log.VersionId == targetId)
+                .FirstOrDefault();
+
+            if (target != null)
+            {
+                targetVersion.SelectedItem = target;
+                return;
+            }
+
+            // If the target isn't valid, fallback to the latest version.
+            targetVersion.SelectedIndex = 0;
+        }
+
+        private void targetVersion_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (targetVersion.SelectedIndex == 0)
+            {
+                Program.SetValue("TargetVersion", "");
+                return;
+            }
+
+            var target = targetVersion.SelectedItem as DeployLog;
+            Program.SetValue("TargetVersion", target.VersionId);
         }
     }
 }

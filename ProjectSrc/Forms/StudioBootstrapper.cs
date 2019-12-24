@@ -359,7 +359,7 @@ namespace RobloxStudioModManager
         {
             string binaryType = "WindowsStudio";
 
-            if (Program.GetString("BuildType") == "64-bit")
+            if (Environment.Is64BitOperatingSystem)
                 binaryType += "64";
 
             return binaryType;
@@ -384,10 +384,42 @@ namespace RobloxStudioModManager
             }
         }
 
+        public static async Task<ClientVersionInfo> GetTargetVersionInfo(string branch, string targetVersion, string fastGuid = "")
+        {
+            var logData = await StudioDeployLogs.Get(branch);
+            HashSet<DeployLog> targets;
+
+            if (Environment.Is64BitOperatingSystem)
+                targets = logData.CurrentLogs_x64;
+            else
+                targets = logData.CurrentLogs_x86;
+
+            DeployLog target = targets
+                .Where(log => log.VersionId == targetVersion)
+                .FirstOrDefault();
+
+            if (target == null)
+            {
+                Program.SetValue("TargetVersion", "");
+                return await GetCurrentVersionInfo(branch, fastGuid);
+            }
+
+            return new ClientVersionInfo()
+            {
+                Guid = target.VersionGuid,
+                Version = target.VersionId
+            };
+        }
+
         public static async Task<ClientVersionInfo> GetCurrentVersionInfo(string branch, string fastGuid = "")
         {
+            string targetVersion = Program.GetString("TargetVersion");
+
+            if (targetVersion != "")
+                return await GetTargetVersionInfo(branch, targetVersion);
+
             string binaryType = GetStudioBinaryType();
-            bool is64Bit = (binaryType == "WindowsStudio64");
+            bool is64Bit = Environment.Is64BitOperatingSystem;
             
             if (branch == "roblox")
                 return await ClientVersionInfo.Get(binaryType);
@@ -422,12 +454,13 @@ namespace RobloxStudioModManager
             // Unfortunately the ClientVersionInfo end-point on gametest
             // isn't available to the public, so I have to parse the
             // DeployHistory.txt file on their setup s3 bucket.
+
             var logData = await StudioDeployLogs.Get(branch);
 
             DeployLog build_x86 = logData.CurrentLogs_x86.Last();
             DeployLog build_x64 = logData.CurrentLogs_x64.Last();
 
-            if (binaryType == "WindowsStudio64")
+            if (is64Bit)
             {
                 info.Version = build_x64.VersionId;
                 info.Guid = build_x64.VersionGuid;
