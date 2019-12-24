@@ -11,8 +11,6 @@
 
 The _Roblox Studio Mod Manager_ is an unofficial, open-source, custom bootstrapper for Roblox Studio that aims to provide more flexibility for power users who want to make experimental customizations to Roblox Studio, and test new features before they are available to the public.
 
-
-
 # Features
 * Runs and installs in a separate directory, 100% independent of Roblox Studio's bootstrapper.
 * File overrides are sustained between updates.
@@ -25,6 +23,10 @@ The _Roblox Studio Mod Manager_ is an unofficial, open-source, custom bootstrapp
 
 # Downloads
 
+The latest version can be found on the ***Releases*** page of this repository:<br/>
+https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/releases
+
+You can also download the latest committed versions here:
 * <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/raw/master/RobloxStudioModManager.exe">Download (.exe)</a></h1>
 * <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/archive/master.zip">Download (.zip)</a>
 
