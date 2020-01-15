@@ -367,7 +367,7 @@ namespace RobloxStudioModManager
 
         // This does a quick check of /versionQTStudio without resolving
         // if its the proper version-guid for gametest builds. This should
-        // make gametest update checks faster... at least for 64-bit users.
+        // make sitetest update checks faster... at least for 64-bit users.
         public static async Task<string> GetFastVersionGuid(string branch)
         {
             if (branch == "roblox")
@@ -451,7 +451,7 @@ namespace RobloxStudioModManager
                 }
             }
             
-            // Unfortunately the ClientVersionInfo end-point on gametest
+            // Unfortunately the ClientVersionInfo end-point on sitetest
             // isn't available to the public, so I have to parse the
             // DeployHistory.txt file on their setup s3 bucket.
 
