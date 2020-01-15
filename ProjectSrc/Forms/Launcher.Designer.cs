@@ -76,11 +76,9 @@
             this.branchSelect.FormattingEnabled = true;
             this.branchSelect.Items.AddRange(new object[] {
             "roblox",
-            "gametest1.robloxlabs",
-            "gametest2.robloxlabs",
-            "gametest3.robloxlabs",
-            "gametest4.robloxlabs",
-            "gametest5.robloxlabs"});
+            "sitetest1.robloxlabs",
+            "sitetest2.robloxlabs",
+            "sitetest3.robloxlabs"});
             this.branchSelect.Location = new System.Drawing.Point(181, 113);
             this.branchSelect.Name = "branchSelect";
             this.branchSelect.Size = new System.Drawing.Size(152, 21);
