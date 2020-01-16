@@ -17,7 +17,7 @@ The _Roblox Studio Mod Manager_ is an unofficial, open-source, custom bootstrapp
 * Updates are applied incrementally to a single directory.
 * Provides a flexible flag editor, allowing you to toggle engine features.
 * Provides a tool for integrating custom class icons into Roblox Studio's explorer.
-* Smooth transitions between development builds of Roblox Studio (gametest1-gametest5).
+* Smooth transitions between development builds of Roblox Studio.
 * Support for launching from the website, and from saved _RBXL_ files.
 * File updates from Roblox's deployment servers are only applied where needed.
 
