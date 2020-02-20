@@ -478,13 +478,14 @@ namespace RobloxStudioModManager
             return info;
         }
 
-        // YOU WERE SO CLOSE ROBLOX, AGHHHH
         private static string fixFilePath(string pkgName, string filePath)
         {
             string pkgDir = pkgName.Replace(".zip", "");
 
             if ((pkgDir == "Plugins" || pkgDir == "Qml") && !filePath.StartsWith(pkgDir))
                 filePath = pkgDir + '\\' + filePath;
+            else if (filePath.StartsWith("ExtraContent"))
+                filePath = filePath.Replace("ExtraContent", "content");
 
             return filePath;
         }
