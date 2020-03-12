@@ -163,7 +163,11 @@ namespace RobloxStudioModManager
             var taskQueue = new List<Task>();
             string studioDir = GetStudioDirectory();
 
-            foreach (string rawFileName in fileRegistry.GetValueNames())
+            var fileNames = fileRegistry
+                .GetValueNames()
+                .ToList();
+
+            foreach (string rawFileName in fileNames)
             {
                 // Temporary variable so we can change what file we are testing,
                 // without breaking the foreach loop.
@@ -233,7 +237,7 @@ namespace RobloxStudioModManager
 
                         taskQueue.Add(verify);
                     }
-                    else
+                    else if (fileNames.Contains(fileName))
                     {
                         fileRegistry.DeleteValue(fileName);
                     }
