@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Resources;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -8,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Roblox Studio Mod Manager")]
 [assembly: AssemblyDescription("A custom bootstrapper for Roblox Studio. Provides the ability to override files and edit FVariables in Roblox Studio.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("@MaxGeee1019")]
+[assembly: AssemblyCompany("@CloneTeee1019")]
 [assembly: AssemblyProduct("Roblox Studio Mod Manager")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
@@ -34,3 +35,4 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: NeutralResourcesLanguage("en-US")]

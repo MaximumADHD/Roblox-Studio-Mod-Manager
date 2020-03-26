@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Media;
 using System.Net;
-using System.Reflection;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
