@@ -29,7 +29,9 @@ namespace RobloxStudioModManager
         private FileManifest fileManifest;
         private bool forceInstall = false;
         private bool exitWhenClosed = true;
-        private int actualProgressBarSum = 0;
+
+        private int actualProgress = 0;
+        private HashSet<string> writtenFiles;
 
         public SystemEvent StartEvent { get; private set; }
         private Task autoExitTask;
@@ -130,8 +132,8 @@ namespace RobloxStudioModManager
             }
             else
             {
-                actualProgressBarSum += count;
-                progressBar.Maximum = Math.Max(progressBar.Maximum, actualProgressBarSum);
+                actualProgress += count;
+                progressBar.Maximum = Math.Max(progressBar.Maximum, actualProgress);
             }
         }
 
@@ -497,23 +499,28 @@ namespace RobloxStudioModManager
         private async Task installPackage(string branch, Package package)
         {
             string pkgName = package.Name;
+            var pkgInfo = pkgRegistry.GetSubKey(pkgName);
 
             string studioDir = GetStudioDirectory();
             string downloads = getDirectory(studioDir, "downloads");
 
-            string oldSig = pkgRegistry.GetString(pkgName);
+            string oldSig = pkgInfo.GetString("Signature");
             string newSig = package.Signature;
 
             if (oldSig == newSig && !forceInstall)
             {
+                int fileCount = pkgInfo.GetInt("NumFiles");
                 echo($"Package '{pkgName}' hasn't changed between builds, skipping.");
+
+                incrementProgressBarMax(fileCount);
+                incrementProgress(fileCount);
+
                 return;
             }
 
             string zipFileUrl = $"https://s3.amazonaws.com/setup.{branch}.com/{buildVersion}-{pkgName}";
             string zipExtractPath = Path.Combine(downloads, package.Name);
 
-            incrementProgressBarMax(package.Size);
             echo($"Installing package {zipFileUrl}");
 
             var localHttp = new WebClient();
@@ -542,9 +549,15 @@ namespace RobloxStudioModManager
             }
 
             ZipArchive archive = ZipFile.OpenRead(zipExtractPath);
-            string localRootDir = null;
+            var deferred = new Dictionary<ZipArchiveEntry, string>();
 
-            var reprocess = new Dictionary<ZipArchiveEntry, string>();
+            int numFiles = archive.Entries
+                .Select(entry => entry.FullName)
+                .Where(name => !name.EndsWith("/"))
+                .Count();
+
+            string localRootDir = null;
+            incrementProgressBarMax(numFiles);
 
             foreach (ZipArchiveEntry entry in archive.Entries)
             {
@@ -616,7 +629,7 @@ namespace RobloxStudioModManager
                         {
                             // Check back on this file after we extract the regular files,
                             // so we can make sure this is extracted to the correct directory.
-                            reprocess.Add(entry, newFileSig);
+                            deferred.Add(entry, newFileSig);
                         }
                         else
                         {
@@ -629,10 +642,10 @@ namespace RobloxStudioModManager
             }
 
             // Process any files that we deferred from writing immediately.
-            foreach (ZipArchiveEntry entry in reprocess.Keys)
+            foreach (ZipArchiveEntry entry in deferred.Keys)
             {
                 string file = entry.FullName;
-                string newFileSig = reprocess[entry];
+                string newFileSig = deferred[entry];
 
                 if (localRootDir != null)
                     file = localRootDir + file;
@@ -642,21 +655,25 @@ namespace RobloxStudioModManager
 
             // Update the signature in the package registry so we can check
             // if this zip file needs to be updated in future versions.
-            pkgRegistry.SetValue(pkgName, package.Signature);
+
+            pkgInfo.SetValue("Signature", package.Signature);
+            pkgInfo.SetValue("NumFiles", numFiles);
         }
 
         private void writePackageFile(string studioDir, string pkgName, string file, string newFileSig, ZipArchiveEntry entry)
         {
             string filePath = fixFilePath(pkgName, file);
-            int length = (int)entry.Length;
+            
+            if (writtenFiles.Contains(filePath))
+                return;
 
             if (!forceInstall)
             {
-                string oldFileSig = fileRegistry.GetValue(filePath, "") as string;
+                string oldFileSig = fileRegistry.GetString(filePath);
 
                 if (oldFileSig == newFileSig)
                 {
-                    incrementProgress(length);
+                    incrementProgress();
                     return;
                 }
             }
@@ -681,7 +698,8 @@ namespace RobloxStudioModManager
                 echo($"FILE WRITE FAILED: {filePath} (This build may not run as expected!)");
             }
 
-            incrementProgress(length);
+            incrementProgress();
+            writtenFiles.Add(filePath);
         }
 
         public static string GetStudioDirectory()
@@ -758,6 +776,7 @@ namespace RobloxStudioModManager
                     setStatus($"Installing Version {versionId} of Roblox Studio...");
 
                     var taskQueue = new List<Task>();
+                    writtenFiles = new HashSet<string>();
 
                     echo("Grabbing package manifest...");
                     var pkgManifest = await PackageManifest.Get(branch, buildVersion);
@@ -765,7 +784,7 @@ namespace RobloxStudioModManager
                     echo("Grabbing file manifest...");
                     fileManifest = await FileManifest.Get(branch, buildVersion);
 
-                    progressBar.Maximum = 1;
+                    progressBar.Maximum = 5000;
                     progressBar.Value = 0;
 
                     progressBar.Style = ProgressBarStyle.Continuous;
@@ -778,7 +797,6 @@ namespace RobloxStudioModManager
                     }
 
                     await Task.WhenAll(taskQueue);
-
                     echo("Writing AppSettings.xml...");
 
                     string appSettings = Path.Combine(studioDir, "AppSettings.xml");

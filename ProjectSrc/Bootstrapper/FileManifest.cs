@@ -24,6 +24,9 @@ namespace RobloxStudioModManager
                         if (path == null || signature == null)
                             break;
 
+                        if (path.StartsWith("ExtraContent"))
+                            path = path.Replace("ExtraContent", "content");
+
                         Add(path, signature);
                     }
                     catch

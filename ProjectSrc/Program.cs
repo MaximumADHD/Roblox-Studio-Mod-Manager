@@ -38,6 +38,15 @@ namespace RobloxStudioModManager
             return result;
         }
 
+        public static int GetInt(this RegistryKey key, string name)
+        {
+            string value = key.GetString(name);
+            int result = 0;
+
+            int.TryParse(value, out result);
+            return result;
+        }
+
         public static RegistryKey GetSubKey(params string[] path)
         {
             return MainRegistry.GetSubKey(path);
@@ -51,6 +60,11 @@ namespace RobloxStudioModManager
         public static bool GetBool(string name)
         {
             return MainRegistry.GetBool(name);
+        }
+
+        public static int GetInt(string name)
+        {
+            return MainRegistry.GetInt(name);
         }
 
         public static void SetValue(string name, object value)
