@@ -29,7 +29,3 @@ https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/releases
 You can also download the latest committed versions here:
 * <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/raw/master/RobloxStudioModManager.exe">Download (.exe)</a></h1>
 * <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/archive/master.zip">Download (.zip)</a>
-
-# Notice about application signature
-
-This program is currently unsigned because I haven't purchased any certificate to sign the application with. I do intend to take care of this in the near future, but for now you may have to dismiss the windows smartscreen filter in order to allow the program to run.
