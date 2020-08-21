@@ -8,6 +8,10 @@ using System.Windows.Forms;
 
 using Microsoft.Win32;
 
+#pragma warning disable IDE1006 // Naming Styles
+#pragma warning disable CA1303  // Do not pass literals as localized parameters
+#pragma warning disable CA1031  // Do not catch general exception types
+
 namespace RobloxStudioModManager
 {
     public partial class ClassIconEditor : Form
@@ -18,25 +22,24 @@ namespace RobloxStudioModManager
         private const string iconPrefix = "explorer-icon-";
         private const string iconManifest = @"content\textures\ClassImages.PNG";
 
-        private static RegistryKey explorerRegistry = Program.GetSubKey("ExplorerIcons");
-        private static RegistryKey manifestRegistry = Program.GetSubKey("FileManifest");
+        private static readonly RegistryKey explorerRegistry = Program.GetSubKey("ExplorerIcons");
+        private static readonly RegistryKey manifestRegistry = Program.GetSubKey("FileManifest");
 
-        private static RegistryKey iconRegistry = explorerRegistry.GetSubKey("EnabledIcons");
-        private static RegistryKey infoRegistry = explorerRegistry.GetSubKey("ClassImagesInfo");
+        private static readonly RegistryKey iconRegistry = explorerRegistry.GetSubKey("EnabledIcons");
+        private static readonly RegistryKey infoRegistry = explorerRegistry.GetSubKey("ClassImagesInfo");
 
-        private static Color THEME_LIGHT_NORMAL = Color.White;
-        private static Color THEME_LIGHT_FLASH  = Color.FromArgb(220, 255, 220);
-        private static Color THEME_DARK_NORMAL  = Color.FromArgb(44, 44, 44);
-        private static Color THEME_DARK_FLASH   = Color.ForestGreen;
+        private static readonly Color THEME_LIGHT_NORMAL = Color.White;
+        private static readonly Color THEME_LIGHT_FLASH  = Color.FromArgb(220, 255, 220);
+        private static readonly Color THEME_DARK_NORMAL  = Color.FromArgb(44, 44, 44);
+        private static readonly Color THEME_DARK_FLASH   = Color.ForestGreen;
 
         private delegate void AddControlDelegator(Control parent, Control child);
         private delegate void ButtonColorDelegator(Button button, Color newColor);
 
-        private List<Image> iconLookup = new List<Image>();
-        private List<Button> buttonLookup = new List<Button>();
-        private Dictionary<Button, int> iconBtnIndex = new Dictionary<Button, int>();
+        private readonly List<Image> iconLookup = new List<Image>();
+        private readonly List<Button> buttonLookup = new List<Button>();
+        private readonly Dictionary<Button, int> iconBtnIndex = new Dictionary<Button, int>();
         
-        private string branch;
         private int selectedIndex;
         private bool darkTheme = false;
         private bool showModifiedIcons = false;
@@ -45,10 +48,20 @@ namespace RobloxStudioModManager
         private static int numIcons = 0;
         private FileSystemWatcher iconWatcher;
 
-        public ClassIconEditor(string _branch)
+        public ClassIconEditor()
         {
             InitializeComponent();
-            branch = _branch;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && components != null)
+                components.Dispose();
+
+            if (disposing && iconWatcher != null)
+                iconWatcher.Dispose();
+
+            base.Dispose(disposing);
         }
 
         private static string getExplorerIconDir()
@@ -67,7 +80,7 @@ namespace RobloxStudioModManager
             return Path.Combine(getExplorerIconDir(), iconPrefix + index + ".png");
         }
 
-        private static void updateExplorerIcons(string studioDir)
+        private static void UpdateExplorerIcons(string studioDir)
         {
             // Find the class icons file.
             string iconPath = Path.Combine(studioDir, iconManifest);
@@ -98,12 +111,12 @@ namespace RobloxStudioModManager
         private static Image getExplorerIcons()
         {
             string manifestHash = manifestRegistry.GetString(iconManifest);
-            string currentHash = infoRegistry.GetString("LastClassIconHash");
+            string currentHash = infoRegistry.GetString("LastClassIconhash");
 
             if (currentHash != manifestHash)
             {
                 string studioDir = StudioBootstrapper.GetStudioDirectory();
-                updateExplorerIcons(studioDir);
+                UpdateExplorerIcons(studioDir);
 
                 infoRegistry.SetValue("LastClassIconHash", manifestHash);
             }
@@ -117,11 +130,10 @@ namespace RobloxStudioModManager
 
         private static int getExtraItemSlots()
         {
-            int value = 0;
             string slots = explorerRegistry.GetValue("ExtraItemSlots") as string;
-
-            int.TryParse(slots, out value);
-            value = Math.Max(0, Math.Min(99, value));
+            
+            if (int.TryParse(slots, out int value))
+                value = Math.Max(0, Math.Min(99, value));
 
             return value;
         }
@@ -159,7 +171,7 @@ namespace RobloxStudioModManager
                         }
                         catch
                         {
-                            Console.WriteLine("Error while trying to load {0}", filePath);
+                            Console.WriteLine($"Error while trying to load {filePath}");
                         }
                     }
                 }
@@ -182,7 +194,7 @@ namespace RobloxStudioModManager
             return newExplorerIcons;
         }
 
-        private static bool iconsAreEqual(Image a, Image b)
+        private static bool IconsAreEqual(Image a, Image b)
         {
             // Compare by literal object
             if (a == b)
@@ -219,16 +231,17 @@ namespace RobloxStudioModManager
         private int resolveIndexForFile(string fileName)
         {
             int result = -1;
+            bool success = false;
 
-            if (fileName != iconPrefix + ".png" && fileName.StartsWith(iconPrefix) && fileName.EndsWith(".png"))
+            if (fileName != iconPrefix + ".png" && fileName.StartsWith(iconPrefix, Program.StringFormat) && fileName.EndsWith(".png", Program.StringFormat))
             {
                 string value = fileName.Substring(iconPrefix.Length, fileName.Length - iconPrefix.Length - 4);
-                int.TryParse(value, out result);
+                success = int.TryParse(value, out result);
             }
 
-            if (result >= numIcons + maxExtraIcons)
+            if (!success || result >= numIcons + maxExtraIcons)
                 // Out of range
-                result = -1; 
+                result = -1;
             else if (result >= numIcons)
                 // Make sure these icon slots are allocated.
                 itemSlots.Value = Math.Max(getExtraItemSlots(), result - numIcons + 1); 
@@ -255,7 +268,9 @@ namespace RobloxStudioModManager
             
             Task reset = Task.Run(async () =>
             {
-                await Task.Delay(100);
+                await Task
+                    .Delay(100)
+                    .ConfigureAwait(true);
 
                 Color resetColor = (darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL);
                 setButtonColor(button, resetColor);
@@ -267,10 +282,7 @@ namespace RobloxStudioModManager
             string key = iconPrefix + index;
             string value = iconRegistry.GetString(key);
 
-            bool result = false;
-            bool.TryParse(value, out result);
-
-            if (result)
+            if (bool.TryParse(value, out bool result) && result)
             {
                 // Double check that the file still exists.
                 string fileName = getExplorerIconPath(index);
@@ -323,7 +335,7 @@ namespace RobloxStudioModManager
                 Image current = getIconForIndex(index);
                 Image original = iconLookup[index];
 
-                if (iconsAreEqual(original, current))
+                if (IconsAreEqual(original, current))
                 {
                     iconChanged = false;
                     setIconAttributes(index, attributes => attributes | FileAttributes.Hidden);
@@ -377,6 +389,7 @@ namespace RobloxStudioModManager
 
                         result = Image.FromStream(stream);
                     }
+
                     catch
                     {
                         result = iconLookup[index];
@@ -393,14 +406,13 @@ namespace RobloxStudioModManager
 
         private void setSelectedIndex(int index)
         {
-            Image icon = iconLookup[index];
-            selectedIcon.BackgroundImage = getIconForIndex(index);
-            selectedIcon.BackColor = darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL;
-            selectedIndex = index;
-
             bool enabled = hasIconOverride(index);
             enableIconOverride.Checked = enabled;
             restoreOriginal.Enabled = enabled;
+            
+            selectedIcon.BackgroundImage = getIconForIndex(index);
+            selectedIcon.BackColor = darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL;
+            selectedIndex = index;
 
             editIcon.Text = "Edit Icon " + index;
         }
@@ -464,20 +476,23 @@ namespace RobloxStudioModManager
 
         private Button createIconButton(EventHandler clickEvent)
         {
-            Button iconBtn = new Button();
-            iconBtn.BackColor = darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL;
-            iconBtn.BackgroundImageLayout = ImageLayout.Zoom;
-            iconBtn.Size = new Size(32, 32);
+            Button iconBtn = new Button
+            {
+                BackColor = darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL,
+                BackgroundImageLayout = ImageLayout.Zoom,
+                Size = new Size(32, 32)
+            };
+
             iconBtn.Click += clickEvent;
 
             return iconBtn;
         }
 
-        private void addControlAcrossThread(Control parent, Control child)
+        private void AddControlAcrossThread(Control parent, Control child)
         {
             if (parent.InvokeRequired)
             {
-                var addControl = new AddControlDelegator(addControlAcrossThread);
+                var addControl = new AddControlDelegator(AddControlAcrossThread);
                 parent.Invoke(addControl, parent, child);
             }
             else
@@ -508,7 +523,7 @@ namespace RobloxStudioModManager
 
             SuspendLayout();
 
-            await Task.Run(() =>
+            var load = Task.Run(() =>
             {
                 Image explorerIcons = getExplorerIcons();
 
@@ -537,7 +552,7 @@ namespace RobloxStudioModManager
                     else
                         iconBtn.BackgroundImage = icon;
 
-                    addControlAcrossThread(iconContainer, iconBtn);
+                    AddControlAcrossThread(iconContainer, iconBtn);
                 }
 
                 // Load Extra Slots
@@ -567,11 +582,13 @@ namespace RobloxStudioModManager
                     buttonLookup.Add(iconBtn);
                     iconBtnIndex.Add(iconBtn, slot);
 
-                    addControlAcrossThread(iconContainer, iconBtn);
+                    AddControlAcrossThread(iconContainer, iconBtn);
                 }
 
                 explorerIcons.Dispose();
             });
+
+            await load.ConfigureAwait(true);
 
             setSelectedIndex(0);
             ResumeLayout();
@@ -579,9 +596,11 @@ namespace RobloxStudioModManager
             itemSlots.Value = extraSlots;
             header.Text = "Select Icon";
 
-            iconWatcher = new FileSystemWatcher(getExplorerIconDir());
-            iconWatcher.Filter = "*.png";
-            iconWatcher.EnableRaisingEvents = true;
+            iconWatcher = new FileSystemWatcher(getExplorerIconDir())
+            {
+                Filter = "*.png",
+                EnableRaisingEvents = true
+            };
 
             iconWatcher.Created += safeFileEventHandler(onFileCreated);
             iconWatcher.Changed += safeFileEventHandler(onFileChanged);
@@ -600,7 +619,9 @@ namespace RobloxStudioModManager
                 string studioDir = StudioBootstrapper.GetStudioDirectory();
                 string iconPath = Path.Combine(studioDir, iconManifest);
 
-                Image patched = await Task.Factory.StartNew(getPatchedExplorerIcons);
+                var getPatched = Task.Run(() => getPatchedExplorerIcons());
+                Image patched = await getPatched.ConfigureAwait(true);
+                
                 patched.Save(iconPath);
             }
             catch (Exception e)
@@ -643,7 +664,7 @@ namespace RobloxStudioModManager
             if (selectedIndex >= (numIcons + extraSlots))
                 setSelectedIndex(scrollToIndex);
 
-            explorerRegistry.SetValue("ExtraItemSlots", extraSlots.ToString());
+            explorerRegistry.SetValue("ExtraItemSlots", extraSlots.ToString(Program.NumberFormat));
             initializedExtraSlots = true;
         }
 
@@ -658,7 +679,7 @@ namespace RobloxStudioModManager
             foreach (Button button in iconBtnIndex.Keys)
             {
                 int index = iconBtnIndex[button];
-                Image icon = null;
+                Image icon;
 
                 if (showModifiedIcons && hasIconOverride(index))
                     icon = getIconForIndex(index);

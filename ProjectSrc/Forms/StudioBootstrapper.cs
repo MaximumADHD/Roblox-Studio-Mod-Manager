@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -11,6 +12,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
+
+#pragma warning disable IDE1006 // Naming Styles
+#pragma warning disable CA1031  // Do not catch general exception types
+#pragma warning disable CA1303  // Do not pass literals as localized parameters
+#pragma warning disable CA5351  // Do Not Use Broken Cryptographic Algorithms [ WILL FIX LATER :( ]
 
 namespace RobloxStudioModManager
 {
@@ -27,28 +33,27 @@ namespace RobloxStudioModManager
 
         private string buildVersion;
         private FileManifest fileManifest;
-        private bool forceInstall = false;
-        private bool exitWhenClosed = true;
+        private readonly bool forceInstall = false;
+        private readonly bool exitWhenClosed = true;
 
         private int actualProgress = 0;
         private HashSet<string> writtenFiles;
 
         public SystemEvent StartEvent { get; private set; }
-        private Task autoExitTask;
-
+        
         private const string appSettingsXml =
             "<Settings>\n" +
             "   <ContentFolder>content</ContentFolder>\n" +
             "   <BaseUrl>http://www.roblox.com</BaseUrl>\n" +
             "</Settings>";
 
-        private static WebClient http = new WebClient();
+        private static readonly WebClient http = new WebClient();
 
-        private static RegistryKey versionRegistry = Program.VersionRegistry;
-        private static RegistryKey pkgRegistry = Program.GetSubKey("PackageManifest");
+        private static readonly RegistryKey versionRegistry = Program.VersionRegistry;
+        private static readonly RegistryKey pkgRegistry = Program.GetSubKey("PackageManifest");
         
-        private static RegistryKey fileRegistry = Program.GetSubKey("FileManifest");
-        private static RegistryKey fileRepairs = fileRegistry.GetSubKey("Repairs");
+        private static readonly RegistryKey fileRegistry = Program.GetSubKey("FileManifest");
+        private static readonly RegistryKey fileRepairs = fileRegistry.GetSubKey("Repairs");
         
         public StudioBootstrapper(bool forceInstall = false, bool exitWhenClosed = true)
         {
@@ -61,15 +66,17 @@ namespace RobloxStudioModManager
 
         private static string computeSignature(Stream source)
         {
-            string result;
+            string stringHash;
 
             using (MD5 md5 = MD5.Create())
             {
                 byte[] hash = md5.ComputeHash(source);
-                result = BitConverter.ToString(hash)
-                    .Replace("-", "")
-                    .ToLower();
+                stringHash = BitConverter.ToString(hash);
             }
+
+            string result = stringHash
+                .Replace("-", "")
+                .ToLower(Program.Format);
 
             return result;
         }
@@ -77,9 +84,7 @@ namespace RobloxStudioModManager
         private static string computeSignature(ZipArchiveEntry entry)
         {
             using (Stream stream = entry.Open())
-            {
-                return computeSignature(stream);
-            }
+            return computeSignature(stream);
         }
 
         private void setStatus(string status)
@@ -101,6 +106,7 @@ namespace RobloxStudioModManager
             {
                 process.Kill();
             }
+
             catch
             {
                 Console.WriteLine($"Cannot terminate process {process.Id}!");
@@ -116,7 +122,7 @@ namespace RobloxStudioModManager
             }
             else
             {
-                if (log.Text != "")
+                if (log.Text.Length != 0)
                     log.AppendText("\n");
 
                 log.AppendText(text);
@@ -179,7 +185,10 @@ namespace RobloxStudioModManager
                 // mod manager do not record which files are outside of the manifest, but valid otherwise.
                 // TODO: Need a more proper way of handling this
 
-                if (fileName.Contains("/") || fileName.EndsWith(".dll") && !fileName.Contains("\\"))
+                if (fileName.Contains("/") || !fileName.Contains("\\"))
+                    continue;
+                
+                if (fileName.EndsWith(".dll", Program.StringFormat))
                     continue;
 
                 string filePath = Path.Combine(studioDir, fileName);
@@ -217,7 +226,7 @@ namespace RobloxStudioModManager
                                     fileRegistry.DeleteValue(fileName);
                                     File.Delete(filePath);
                                 }
-                                else if (!fileName.StartsWith("content"))
+                                else if (!fileName.StartsWith("content", Program.StringFormat))
                                 {
                                     // The path may have been labeled incorrectly in the manifest.
                                     // Record it for future reference so we don't have to
@@ -270,8 +279,10 @@ namespace RobloxStudioModManager
                         SetForegroundWindow(p.MainWindowHandle);
                         FlashWindow(p.MainWindowHandle, true);
 
+                        var delay = Task.Delay(50);
                         p.CloseMainWindow();
-                        await Task.Delay(50);
+
+                        await delay.ConfigureAwait(true);
                     }
                     
                     List<Process> runningNow = null;
@@ -298,8 +309,10 @@ namespace RobloxStudioModManager
                         }
                         else
                         {
+                            var delay = Task.Delay(1000);
                             progressBar.Increment(granularity);
-                            await Task.Delay(1000);
+
+                            await delay.ConfigureAwait(true);
                         }
                     }
 
@@ -353,10 +366,11 @@ namespace RobloxStudioModManager
 
                 if (check == DialogResult.Yes)
                 {
-                    StudioBootstrapper installer = new StudioBootstrapper(false);
-
-                    await installer.RunInstaller(branch, false);
-                    installer.Dispose();
+                    using (var installer = new StudioBootstrapper(false))
+                    {
+                        var install = installer.RunInstaller(branch, false);
+                        await install.ConfigureAwait(true);
+                    }
                 }
             }
         }
@@ -379,20 +393,31 @@ namespace RobloxStudioModManager
             if (branch == "roblox")
             {
                 string binaryType = GetStudioBinaryType();
-                var info = await ClientVersionInfo.Get(binaryType);
+
+                var info = await ClientVersionInfo
+                    .Get(binaryType)
+                    .ConfigureAwait(false);
 
                 return info.Guid;
             }
             else
             {
                 string fastUrl = $"https://s3.amazonaws.com/setup.{branch}.com/versionQTStudio";
-                return await http.DownloadStringTaskAsync(fastUrl);
+
+                var result = await http
+                    .DownloadStringTaskAsync(fastUrl)
+                    .ConfigureAwait(false);
+
+                return result;
             }
         }
 
         public static async Task<ClientVersionInfo> GetTargetVersionInfo(string branch, string targetVersion, string fastGuid = "")
         {
-            var logData = await StudioDeployLogs.Get(branch);
+            var logData = await StudioDeployLogs
+                .Get(branch)
+                .ConfigureAwait(false);
+
             HashSet<DeployLog> targets;
 
             if (Environment.Is64BitOperatingSystem)
@@ -407,7 +432,9 @@ namespace RobloxStudioModManager
             if (target == null)
             {
                 Program.SetValue("TargetVersion", "");
-                return await GetCurrentVersionInfo(branch, fastGuid);
+
+                var result = GetCurrentVersionInfo(branch, fastGuid);
+                return await result.ConfigureAwait(false);
             }
 
             return new ClientVersionInfo()
@@ -419,20 +446,30 @@ namespace RobloxStudioModManager
 
         public static async Task<ClientVersionInfo> GetCurrentVersionInfo(string branch, string fastGuid = "")
         {
+            Contract.Requires(fastGuid != null);
             string targetVersion = Program.GetString("TargetVersion");
 
-            if (targetVersion != "")
-                return await GetTargetVersionInfo(branch, targetVersion);
-
+            if (targetVersion.Length > 0)
+            {
+                var result = GetTargetVersionInfo(branch, targetVersion);
+                return await result.ConfigureAwait(false);
+            }
+            
             string binaryType = GetStudioBinaryType();
             bool is64Bit = Environment.Is64BitOperatingSystem;
             
             if (branch == "roblox")
-                return await ClientVersionInfo.Get(binaryType);
+            {
+                var result = ClientVersionInfo.Get(binaryType);
+                return await result.ConfigureAwait(false);
+            }
 
-            if (fastGuid == "")
-                fastGuid = await GetFastVersionGuid(branch);
-
+            if (fastGuid.Length == 0)
+            {
+                var getFastGuid = GetFastVersionGuid(branch);
+                fastGuid = await getFastGuid.ConfigureAwait(false);
+            }
+            
             string latestFastGuid = versionRegistry.GetString("LatestFastGuid");
             var info = new ClientVersionInfo();
 
@@ -456,12 +493,14 @@ namespace RobloxStudioModManager
                     return info;
                 }
             }
-            
+
             // Unfortunately the ClientVersionInfo end-point on sitetest
             // isn't available to the public, so I have to parse the
             // DeployHistory.txt file on their setup s3 bucket.
 
-            var logData = await StudioDeployLogs.Get(branch);
+            var logData = await StudioDeployLogs
+                .Get(branch)
+                .ConfigureAwait(false);
 
             DeployLog build_x86 = logData.CurrentLogs_x86.Last();
             DeployLog build_x64 = logData.CurrentLogs_x64.Last();
@@ -488,11 +527,9 @@ namespace RobloxStudioModManager
         {
             string pkgDir = pkgName.Replace(".zip", "");
 
-            if ((pkgDir == "Plugins" || pkgDir == "Qml") && !filePath.StartsWith(pkgDir))
+            if ((pkgDir == "Plugins" || pkgDir == "Qml") && !filePath.StartsWith(pkgDir, Program.StringFormat))
                 filePath = pkgDir + '\\' + filePath;
-            else if (filePath.StartsWith("ExtraContent"))
-                filePath = filePath.Replace("ExtraContent", "content");
-
+            
             return filePath;
         }
 
@@ -523,144 +560,151 @@ namespace RobloxStudioModManager
 
             echo($"Installing package {zipFileUrl}");
 
-            var localHttp = new WebClient();
-            localHttp.Headers.Set("UserAgent", "Roblox");
-
-            // Download the zip file package.
-            byte[] fileContents = await localHttp.DownloadDataTaskAsync(zipFileUrl);
-
-            // If the size of the file we downloaded does not match the packed size specified
-            // in the manifest, then this file has been tampered with.
-
-            if (fileContents.Length != package.PackedSize)
-                throw new InvalidDataException($"{package.Name} expected packed size: {package.PackedSize} but got: {fileContents.Length}");
-
-            using (MemoryStream fileBuffer = new MemoryStream(fileContents))
+            using (var localHttp = new WebClient())
             {
-                // Compute the MD5 signature of this zip file, and make sure it matches with the
-                // signature specified in the package manifest.
-                string checkSig = computeSignature(fileBuffer);
+                localHttp.Headers.Set("UserAgent", "Roblox/WinInet");
 
-                if (checkSig != newSig)
-                    throw new InvalidDataException($"{package.Name} expected signature: {newSig} but got: {checkSig}");
+                // Download the zip file package.
+                byte[] fileContents = await localHttp
+                    .DownloadDataTaskAsync(zipFileUrl)
+                    .ConfigureAwait(false);
 
-                // Write the zip file.
-                File.WriteAllBytes(zipExtractPath, fileContents);
-            }
+                // If the size of the file we downloaded does not match the packed size specified
+                // in the manifest, then this file has been tampered with.
 
-            ZipArchive archive = ZipFile.OpenRead(zipExtractPath);
-            var deferred = new Dictionary<ZipArchiveEntry, string>();
+                if (fileContents.Length != package.PackedSize)
+                    throw new InvalidDataException($"{package.Name} expected packed size: {package.PackedSize} but got: {fileContents.Length}");
 
-            int numFiles = archive.Entries
-                .Select(entry => entry.FullName)
-                .Where(name => !name.EndsWith("/"))
-                .Count();
-
-            string localRootDir = null;
-            incrementProgressBarMax(numFiles);
-
-            foreach (ZipArchiveEntry entry in archive.Entries)
-            {
-                if (entry.Length > 0)
+                using (MemoryStream fileBuffer = new MemoryStream(fileContents))
                 {
-                    string newFileSig = null;
+                    // Compute the MD5 signature of this zip file, and make sure it matches with the
+                    // signature specified in the package manifest.
+                    string checkSig = computeSignature(fileBuffer);
 
-                    // If we have figured out what our root directory is, try to resolve
-                    // what the signature of this file is.
+                    if (checkSig != newSig)
+                        throw new InvalidDataException($"{package.Name} expected signature: {newSig} but got: {checkSig}");
 
-                    if (localRootDir != null)
-                    {
-                        string filePath = entry.FullName.Replace('/', '\\');
-                        bool hasFilePath = fileManifest.ContainsKey(filePath);
-
-                        // If we can't find this file in the signature lookup table,
-                        // try appending the local directory to it. This resolves some
-                        // edge cases relating to the fixFilePath function above.
-
-                        if (!hasFilePath)
-                        {
-                            filePath = localRootDir + filePath;
-                            hasFilePath = fileManifest.ContainsKey(filePath);
-                        }
-
-                        // If we can find this file path in the file manifest, then we will
-                        // use its pre-computed signature to check if the file has changed.
-
-                        newFileSig = hasFilePath ? fileManifest[filePath] : null;
-                    }
-
-                    // If we couldn't pre-determine the file signature from the manifest,
-                    // then we have to compute it manually. This is slower.
-
-                    if (newFileSig == null)
-                        newFileSig = computeSignature(entry);
-
-                    // Now check what files this signature corresponds with.
-                    var files = fileManifest
-                        .Where(pair => pair.Value == newFileSig)
-                        .Select(pair => pair.Key);
-
-                    if (files.Count() > 0)
-                    {
-                        foreach (string file in files)
-                        {
-                            // Write the file from this signature.
-                            writePackageFile(studioDir, pkgName, file, newFileSig, entry);
-
-                            if (localRootDir == null)
-                            {
-                                string filePath = fixFilePath(pkgName, file);
-                                string entryPath = entry.FullName.Replace('/', '\\');
-                                
-                                if (filePath.EndsWith(entryPath))
-                                {
-                                    // We can infer what the root extraction  
-                                    // directory is for the files in this package!                                 
-                                    localRootDir = filePath.Replace(entryPath, "");
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        string file = entry.FullName;
-
-                        if (localRootDir == null)
-                        {
-                            // Check back on this file after we extract the regular files,
-                            // so we can make sure this is extracted to the correct directory.
-                            deferred.Add(entry, newFileSig);
-                        }
-                        else
-                        {
-                            // Append the local root directory.
-                            file = localRootDir + file;
-                            writePackageFile(studioDir, pkgName, file, newFileSig, entry);
-                        }
-                    }
+                    // Write the zip file.
+                    File.WriteAllBytes(zipExtractPath, fileContents);
                 }
             }
 
-            // Process any files that we deferred from writing immediately.
-            foreach (ZipArchiveEntry entry in deferred.Keys)
+
+            using (var archive = ZipFile.OpenRead(zipExtractPath))
             {
-                string file = entry.FullName;
-                string newFileSig = deferred[entry];
+                var deferred = new Dictionary<ZipArchiveEntry, string>();
 
-                if (localRootDir != null)
-                    file = localRootDir + file;
+                int numFiles = archive.Entries
+                    .Select(entry => entry.FullName)
+                    .Where(name => !name.EndsWith("/", Program.StringFormat))
+                    .Count();
 
-                writePackageFile(studioDir, pkgName, file, newFileSig, entry);
+                string localRootDir = null;
+                incrementProgressBarMax(numFiles);
+
+                foreach (ZipArchiveEntry entry in archive.Entries)
+                {
+                    if (entry.Length > 0)
+                    {
+                        string newFileSig = null;
+
+                        // If we have figured out what our root directory is, try to resolve
+                        // what the signature of this file is.
+
+                        if (localRootDir != null)
+                        {
+                            string filePath = entry.FullName.Replace('/', '\\');
+                            bool hasFilePath = fileManifest.ContainsKey(filePath);
+
+                            // If we can't find this file in the signature lookup table,
+                            // try appending the local directory to it. This resolves some
+                            // edge cases relating to the fixFilePath function above.
+
+                            if (!hasFilePath)
+                            {
+                                filePath = localRootDir + filePath;
+                                hasFilePath = fileManifest.ContainsKey(filePath);
+                            }
+
+                            // If we can find this file path in the file manifest, then we will
+                            // use its pre-computed signature to check if the file has changed.
+
+                            newFileSig = hasFilePath ? fileManifest[filePath] : null;
+                        }
+
+                        // If we couldn't pre-determine the file signature from the manifest,
+                        // then we have to compute it manually. This is slower.
+
+                        if (newFileSig == null)
+                            newFileSig = computeSignature(entry);
+
+                        // Now check what files this signature corresponds with.
+                        var files = fileManifest
+                            .Where(pair => pair.Value == newFileSig)
+                            .Select(pair => pair.Key);
+
+                        if (files.Any())
+                        {
+                            foreach (string file in files)
+                            {
+                                // Write the file from this signature.
+                                WritePackageFile(studioDir, pkgName, file, newFileSig, entry);
+
+                                if (localRootDir == null)
+                                {
+                                    string filePath = fixFilePath(pkgName, file);
+                                    string entryPath = entry.FullName.Replace('/', '\\');
+
+                                    if (filePath.EndsWith(entryPath, Program.StringFormat))
+                                    {
+                                        // We can infer what the root extraction  
+                                        // directory is for the files in this package!                                 
+                                        localRootDir = filePath.Replace(entryPath, "");
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            string file = entry.FullName;
+
+                            if (localRootDir == null)
+                            {
+                                // Check back on this file after we extract the regular files,
+                                // so we can make sure this is extracted to the correct directory.
+                                deferred.Add(entry, newFileSig);
+                            }
+                            else
+                            {
+                                // Append the local root directory.
+                                file = localRootDir + file;
+                                WritePackageFile(studioDir, pkgName, file, newFileSig, entry);
+                            }
+                        }
+                    }
+                }
+
+                // Process any files that we deferred from writing immediately.
+                foreach (ZipArchiveEntry entry in deferred.Keys)
+                {
+                    string file = entry.FullName;
+                    string newFileSig = deferred[entry];
+
+                    if (localRootDir != null)
+                        file = localRootDir + file;
+
+                    WritePackageFile(studioDir, pkgName, file, newFileSig, entry);
+                }
+
+                // Update the signature in the package registry so we can check
+                // if this zip file needs to be updated in future versions.
+
+                pkgInfo.SetValue("Signature", package.Signature);
+                pkgInfo.SetValue("NumFiles", numFiles);
             }
-
-            // Update the signature in the package registry so we can check
-            // if this zip file needs to be updated in future versions.
-
-            pkgInfo.SetValue("Signature", package.Signature);
-            pkgInfo.SetValue("NumFiles", numFiles);
         }
 
-        private void writePackageFile(string studioDir, string pkgName, string file, string newFileSig, ZipArchiveEntry entry)
+        private void WritePackageFile(string studioDir, string pkgName, string file, string newFileSig, ZipArchiveEntry entry)
         {
             string filePath = fixFilePath(pkgName, file);
             
@@ -744,8 +788,10 @@ namespace RobloxStudioModManager
             string currentVersion = versionRegistry.GetString("VersionGuid");
 
             bool shouldInstall = (forceInstall || currentBranch != branch);
-            string fastVersion = await GetFastVersionGuid(currentBranch);
-            
+
+            var getFastVersion = GetFastVersionGuid(currentBranch);
+            string fastVersion = await getFastVersion.ConfigureAwait(true);
+
             ClientVersionInfo versionInfo = null;
 
             if (shouldInstall || fastVersion != currentVersion)
@@ -753,7 +799,9 @@ namespace RobloxStudioModManager
                 if (currentBranch != "roblox")
                     echo("Possible update detected, verifying...");
 
-                versionInfo = await GetCurrentVersionInfo(branch, fastVersion);
+                var getVersionInfo = GetCurrentVersionInfo(branch, fastVersion);
+                versionInfo = await getVersionInfo.ConfigureAwait(true);
+
                 buildVersion = versionInfo.Guid;
             }
             else
@@ -764,7 +812,9 @@ namespace RobloxStudioModManager
             if (currentVersion != buildVersion || shouldInstall)
             {
                 echo("This build needs to be installed!");
-                bool studioClosed = await shutdownStudioProcesses();
+
+                var closeStudio = shutdownStudioProcesses();
+                bool studioClosed = await closeStudio.ConfigureAwait(true);
 
                 if (studioClosed)
                 {
@@ -779,10 +829,16 @@ namespace RobloxStudioModManager
                     writtenFiles = new HashSet<string>();
 
                     echo("Grabbing package manifest...");
-                    var pkgManifest = await PackageManifest.Get(branch, buildVersion);
+
+                    var pkgManifest = await PackageManifest
+                        .Get(branch, buildVersion)
+                        .ConfigureAwait(true);
 
                     echo("Grabbing file manifest...");
-                    fileManifest = await FileManifest.Get(branch, buildVersion);
+
+                    fileManifest = await FileManifest
+                        .Get(branch, buildVersion)
+                        .ConfigureAwait(true);
 
                     progressBar.Maximum = 5000;
                     progressBar.Value = 0;
@@ -796,14 +852,19 @@ namespace RobloxStudioModManager
                         taskQueue.Add(installer);
                     }
 
-                    await Task.WhenAll(taskQueue);
+                    await Task
+                        .WhenAll(taskQueue)
+                        .ConfigureAwait(true);
+
                     echo("Writing AppSettings.xml...");
 
                     string appSettings = Path.Combine(studioDir, "AppSettings.xml");
                     File.WriteAllText(appSettings, appSettingsXml);
 
                     setStatus("Deleting unused files...");
-                    await deleteUnusedFiles();
+
+                    var delete = deleteUnusedFiles();
+                    await delete.ConfigureAwait(true);
 
                     progressBar.Style = ProgressBarStyle.Marquee;
                     progressBar.Refresh();
@@ -837,7 +898,9 @@ namespace RobloxStudioModManager
                 FlagEditor.ApplyFlags();
 
                 echo("Patching explorer icons...");
-                await ClassIconEditor.PatchExplorerIcons();
+                var patch = ClassIconEditor.PatchExplorerIcons();
+
+                await patch.ConfigureAwait(true);
             }
             
             setStatus("Starting Roblox Studio...");
@@ -847,14 +910,19 @@ namespace RobloxStudioModManager
             {
                 SystemEvent start = new SystemEvent("RobloxStudioModManagerStart");
 
-                autoExitTask = Task.Run(async () =>
+                var autoExitTask = Task.Run(async () =>
                 {
-                    bool started = await start.WaitForEvent();
+                    bool started = await start
+                        .WaitForEvent()
+                        .ConfigureAwait(true);
+
                     start.Close();
 
                     if (started)
                     {
-                        await Task.Delay(500);
+                        var delay = Task.Delay(500);
+                        await delay.ConfigureAwait(false);
+
                         Application.Exit();
                     }
                 });

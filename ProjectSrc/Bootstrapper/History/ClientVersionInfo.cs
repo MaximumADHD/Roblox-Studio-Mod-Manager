@@ -1,12 +1,26 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1720 // Identifier contains type name
+
 namespace RobloxStudioModManager
 {
     public class ClientVersionInfo
     {
-        public string Version;
-        public string Guid;
+        private string RawVersion;
+        private string RawGuid;
+
+        public string Version
+        {
+            get => RawVersion;
+            set => RawVersion = value;
+        }
+
+        public string Guid
+        {
+            get => RawGuid;
+            set => RawGuid = value;
+        }
 
         public static async Task<ClientVersionInfo> Get(string buildType = "WindowsStudio", string branch = "roblox")
         {
@@ -14,13 +28,14 @@ namespace RobloxStudioModManager
 
             using (WebClient http = new WebClient())
             {
-                string jsonData = await http.DownloadStringTaskAsync(jsonUrl);
+                var getJsonData = http.DownloadStringTaskAsync(jsonUrl);
+                string jsonData = await getJsonData.ConfigureAwait(false); 
 
                 var json = Program.ReadJsonDictionary(jsonData);
                 var versionInfo = new ClientVersionInfo();
 
-                json.TryGetValue("version", out versionInfo.Version);
-                json.TryGetValue("clientVersionUpload", out versionInfo.Guid);
+                json.TryGetValue("version", out versionInfo.RawVersion);
+                json.TryGetValue("clientVersionUpload", out versionInfo.RawGuid);
 
                 return versionInfo;
             }

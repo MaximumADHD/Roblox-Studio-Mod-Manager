@@ -4,14 +4,17 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
+#pragma warning disable CA1710 // Identifiers should have correct suffix
+#pragma warning disable CA1031 // Do not catch general exception types
+
 namespace RobloxStudioModManager
 {
-    public struct Package
+    public class Package
     {
-        public string Name;
-        public string Signature;
-        public int PackedSize;
-        public int Size;
+        public string Name      { get; set; }
+        public string Signature { get; set; }
+        public int PackedSize   { get; set; }
+        public int Size         { get; set; }
     }
 
     public class PackageManifest : List<Package>
@@ -37,10 +40,10 @@ namespace RobloxStudioModManager
                         string fileName = reader.ReadLine();
                         string signature = reader.ReadLine();
 
-                        int packedSize = int.Parse(reader.ReadLine());
-                        int size = int.Parse(reader.ReadLine());
+                        int packedSize = int.Parse(reader.ReadLine(), Program.NumberFormat);
+                        int size = int.Parse(reader.ReadLine(), Program.NumberFormat);
 
-                        if (fileName.EndsWith(".zip"))
+                        if (fileName.EndsWith(".zip", Program.StringFormat))
                         {
                             var package = new Package()
                             {
@@ -67,7 +70,10 @@ namespace RobloxStudioModManager
             string pkgManifestData;
 
             using (WebClient http = new WebClient())
-                pkgManifestData = await http.DownloadStringTaskAsync(pkgManifestUrl);
+            {
+                var getData = http.DownloadStringTaskAsync(pkgManifestUrl);
+                pkgManifestData = await getData.ConfigureAwait(false);
+            }
             
             return new PackageManifest(pkgManifestData);
         }

@@ -7,7 +7,7 @@ namespace RobloxStudioModManager
 {
     public class HistoryCache
     {
-        private static Dictionary<string, HistoryCache> BranchCache = new Dictionary<string, HistoryCache>();
+        private static readonly Dictionary<string, HistoryCache> BranchCache = new Dictionary<string, HistoryCache>();
 
         public string Branch { get; private set; }
         public string History { get; private set; }
@@ -23,7 +23,7 @@ namespace RobloxStudioModManager
 
         public static async Task<string> GetDeployHistory(string branch)
         {
-            return await Task.Run(() =>
+            var deployHistory = Task.Run(() =>
             {
                 HistoryCache cache = null;
 
@@ -49,6 +49,8 @@ namespace RobloxStudioModManager
                     return cache.History;
                 }
             });
+
+            return await deployHistory.ConfigureAwait(false);
         }
     }
 }

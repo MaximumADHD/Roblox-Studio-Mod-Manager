@@ -10,40 +10,50 @@ using System.Windows.Forms;
 
 using Microsoft.Win32;
 
+#pragma warning disable CA1303  // Do not pass literals as localized parameters
+#pragma warning disable CA1031  // Do not catch general exception types
+#pragma warning disable IDE1006 // Naming Styles
+
 namespace RobloxStudioModManager
 {
     public partial class FlagEditor : Form
     {
-        private static RegistryKey versionRegistry = Program.VersionRegistry;
-        private static RegistryKey flagRegistry = Program.GetSubKey("FlagEditor");
-
-        private string branch;
+        private static readonly RegistryKey versionRegistry = Program.VersionRegistry;
+        private static readonly RegistryKey flagRegistry = Program.GetSubKey("FlagEditor");
 
         private DataTable overrideTable;
-        private Dictionary<string, DataRow> overrideRowLookup = new Dictionary<string, DataRow>();
+        private readonly Dictionary<string, DataRow> overrideRowLookup = new Dictionary<string, DataRow>();
 
         private const string OVERRIDE_STATUS_OFF = "No local overrides were found on load.";
         private const string OVERRIDE_STATUS_ON = "Values highlighted in red were overridden locally.";
 
         private List<FVariable> flags;
         private List<FVariable> allFlags;
-        private Dictionary<string, int> flagLookup = new Dictionary<string, int>();
+        private readonly Dictionary<string, int> flagLookup = new Dictionary<string, int>();
 
         private string currentSearch = "";
         private bool enterPressed = false;
 
-        public FlagEditor(string _branch)
+        public FlagEditor()
         {
             InitializeComponent();
             
-            branch = _branch;
-
             overrideStatus.Text = OVERRIDE_STATUS_OFF;
             overrideStatus.Visible = false;
 
             overrideStatus.Refresh();
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && components != null)
+                components.Dispose();
+
+            if (disposing && overrideTable != null)
+                overrideTable.Dispose();
+
+            base.Dispose(disposing);
+        }
         private bool confirm(string header, string message)
         {
             DialogResult result = MessageBox.Show(message, header, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -110,7 +120,7 @@ namespace RobloxStudioModManager
                     .Cast<DataGridViewRow>()
                     .Where(rowMatchesSelectedRow);
 
-                if (query.Count() > 0)
+                if (query.Any())
                 {
                     // Select it.
                     var overrideRow = query.First();
@@ -144,7 +154,7 @@ namespace RobloxStudioModManager
             flagDataGridView.RowCount = flags.Count;
         }
 
-        private async void initializeEditor()
+        private async void InitializeEditor()
         {
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
 
@@ -161,31 +171,36 @@ namespace RobloxStudioModManager
                 File.WriteAllText(settingsPath, "");
 
                 // Create some system events for studio so we can hide the splash screen.
-                SystemEvent start = new SystemEvent("FFlagExtract");
-                SystemEvent show = new SystemEvent("NoSplashScreen");
-
-                // Run Roblox Studio briefly so we can update the settings file.
-                ProcessStartInfo studioStartInfo = new ProcessStartInfo()
+                using (var start = new SystemEvent("FFlagExtract"))
+                using (var show = new SystemEvent("NoSplashScreen"))
                 {
-                    FileName = StudioBootstrapper.GetStudioPath(),
-                    Arguments = $"-startEvent {start.Name} -showEvent {show.Name}"
-                };
+                    // Run Roblox Studio briefly so we can update the settings file.
+                    ProcessStartInfo studioStartInfo = new ProcessStartInfo()
+                    {
+                        FileName = StudioBootstrapper.GetStudioPath(),
+                        Arguments = $"-startEvent {start.Name} -showEvent {show.Name}"
+                    };
 
-                Process studio = Process.Start(studioStartInfo);
-                await start.WaitForEvent();
+                    Process studio = Process.Start(studioStartInfo);
+                    
+                    var onStart = start.WaitForEvent();
+                    await onStart.ConfigureAwait(true);
 
-                FileInfo info = new FileInfo(settingsPath);
+                    FileInfo info = new FileInfo(settingsPath);
 
-                // Wait for the settings path to be written.
-                while (info.Length == 0)
-                {
-                    await Task.Delay(30);
-                    info.Refresh();
+                    // Wait for the settings path to be written.
+                    while (info.Length == 0)
+                    {
+                        var delay = Task.Delay(30);
+                        await delay.ConfigureAwait(true);
+
+                        info.Refresh();
+                    }
+
+                    // Nuke studio and flag the version we updated with.
+                    versionRegistry.SetValue("LastExecutedVersion", versionGuid);
+                    studio.Kill();
                 }
-
-                // Nuke studio and flag the version we updated with.
-                versionRegistry.SetValue("LastExecutedVersion", versionGuid);
-                studio.Kill();
             }
 
             // Initialize flag browser
@@ -233,9 +248,8 @@ namespace RobloxStudioModManager
             foreach (DataGridViewColumn column in overrideDataGridView.Columns)
                 overrideTable.Columns.Add(column.DataPropertyName);
 
-            DataView overrideView = new DataView(overrideTable);
-            overrideView.Sort = "Name";
-
+            var overrideView = new DataView(overrideTable) { Sort = "Name" };
+            
             foreach (string flagName in flagNames)
             {
                 if (flagLookup.ContainsKey(flagName))
@@ -260,11 +274,13 @@ namespace RobloxStudioModManager
 
             Refresh();
 
-            await Task.Run(() =>
+            var init = Task.Run(() =>
             {
-                var initializer = new Action(initializeEditor);
+                var initializer = new Action(InitializeEditor);
                 Invoke(initializer);
             });
+
+            await init.ConfigureAwait(true);
 
             Enabled = true;
             UseWaitCursor = false;
@@ -411,17 +427,20 @@ namespace RobloxStudioModManager
             var flagType = cells[1].Value as string;
 
             // Check if this input should be cancelled.
+            var format = Program.StringFormat;
             bool badInput = false;
 
-            if (flagType.EndsWith("Flag"))
+            if (flagType.EndsWith("Flag", format))
             {
-                string test = value.ToLower().Trim();
-                badInput = (test != "false" && test != "true");
+                string test = value
+                    .ToUpperInvariant()
+                    .Trim();
+
+                badInput = (test != "FALSE" && test != "TRUE");
             }
-            else if (flagType.EndsWith("Int") || flagType.EndsWith("Log"))
+            else if (flagType.EndsWith("Int", format) || flagType.EndsWith("Log", format))
             {
-                int test = 0;
-                badInput = !int.TryParse(value, out test);
+                badInput = !int.TryParse(value, out int _);
             }
 
             if (flagLookup.ContainsKey(flagKey))
@@ -452,7 +471,7 @@ namespace RobloxStudioModManager
 
                 string flagType = cells[1].Value as string;
 
-                if (flagType.EndsWith("Flag") && cellType != typeof(DataGridViewComboBoxCell))
+                if (flagType.EndsWith("Flag", Program.StringFormat) && cellType != typeof(DataGridViewComboBoxCell))
                 {
                     // Switch the cell to a combo box.
                     // The user needs to select either true or false.
@@ -462,7 +481,7 @@ namespace RobloxStudioModManager
 
                     newValueCell.Value = valueCell.Value
                         .ToString()
-                        .ToLower();
+                        .ToLower(Program.Format);
 
                     row.Cells[2] = newValueCell;
                     newValueCell.ReadOnly = false;
@@ -482,13 +501,15 @@ namespace RobloxStudioModManager
 
                 string flagType = cells[1].Value as string;
 
-                if (flagType.EndsWith("Flag") && cellType != typeof(DataGridViewTextBoxCell))
+                if (flagType.EndsWith("Flag", Program.StringFormat) && cellType != typeof(DataGridViewTextBoxCell))
                 {
-                    var newValueCell = new DataGridViewTextBoxCell();
-                    newValueCell.Value = valueCell.Value.ToString();
+                    var newValueCell = new DataGridViewTextBoxCell()
+                    {
+                        Value = valueCell.Value.ToString(),
+                        ReadOnly = true
+                    };
 
                     row.Cells[2] = newValueCell;
-                    newValueCell.ReadOnly = true;
                 }
             }
         }
@@ -530,7 +551,7 @@ namespace RobloxStudioModManager
                     string type = flagKey.GetString("Type"),
                            value = flagKey.GetString("Value");
                     
-                    if (type.EndsWith("String"))
+                    if (type.EndsWith("String", Program.StringFormat))
                         value = $"\"{value.Replace("\"", "")}\"";
 
                     configs.Add($"\t\"{flagName}\": {value}");

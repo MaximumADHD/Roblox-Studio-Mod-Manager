@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+
+#pragma warning disable CA1710 // Identifiers should have correct suffix
+#pragma warning disable CA2237 // Mark ISerializable types with serializable
 
 namespace RobloxStudioModManager
 {
@@ -16,23 +20,16 @@ namespace RobloxStudioModManager
 
                 while (path != null && signature != null)
                 {
-                    try
-                    {
-                        path = reader.ReadLine();
-                        signature = reader.ReadLine();
+                    path = reader.ReadLine();
+                    signature = reader.ReadLine();
 
-                        if (path == null || signature == null)
-                            break;
-
-                        if (path.StartsWith("ExtraContent"))
-                            path = path.Replace("ExtraContent", "content");
-
-                        Add(path, signature);
-                    }
-                    catch
-                    {
+                    if (path == null || signature == null)
                         break;
-                    }
+
+                    if (path.StartsWith("ExtraContent", Program.StringFormat))
+                        path = path.Replace("ExtraContent", "content");
+
+                    Add(path, signature);
                 }
             }
         }
@@ -43,8 +40,11 @@ namespace RobloxStudioModManager
             string fileManifestData;
 
             using (WebClient http = new WebClient())
-                fileManifestData = await http.DownloadStringTaskAsync(fileManifestUrl);
-
+            {
+                var download = http.DownloadStringTaskAsync(fileManifestUrl);
+                fileManifestData = await download.ConfigureAwait(false);
+            }
+            
             return new FileManifest(fileManifestData);
         }
     }

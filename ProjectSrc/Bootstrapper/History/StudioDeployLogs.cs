@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
+#pragma warning disable CA1707 // Identifiers should not contain underscores
 
 namespace RobloxStudioModManager
 {
@@ -14,10 +17,11 @@ namespace RobloxStudioModManager
         public string Branch { get; private set; }
 
         private string LastDeployHistory = "";
-        private static Dictionary<string, StudioDeployLogs> LogCache = new Dictionary<string, StudioDeployLogs>();
+        private static readonly Dictionary<string, StudioDeployLogs> LogCache = new Dictionary<string, StudioDeployLogs>();
 
-        public HashSet<DeployLog> CurrentLogs_x86 = new HashSet<DeployLog>();
-        public HashSet<DeployLog> CurrentLogs_x64 = new HashSet<DeployLog>();
+        public HashSet<DeployLog> CurrentLogs_x86 { get; private set; } = new HashSet<DeployLog>();
+
+        public HashSet<DeployLog> CurrentLogs_x64 { get; private set; } = new HashSet<DeployLog>();
 
         private StudioDeployLogs(string branch)
         {
@@ -25,7 +29,7 @@ namespace RobloxStudioModManager
             LogCache[branch] = this;
         }
 
-        private void MakeDistinct(HashSet<DeployLog> targetSet)
+        private static void MakeDistinct(HashSet<DeployLog> targetSet)
         {
             var byChangelist = new Dictionary<int, DeployLog>();
             var rejected = new List<DeployLog>();
@@ -67,20 +71,19 @@ namespace RobloxStudioModManager
                     .ToArray();
 
                 string buildType = data[1];
-                bool is64Bit = buildType.EndsWith("64");
+                bool is64Bit = buildType.EndsWith("64", Program.StringFormat);
 
                 DeployLog deployLog = new DeployLog()
                 {
                     Is64Bit = is64Bit,
-                    VersionGuid = data[2]
+                    VersionGuid = data[2],
+                    TimeStamp = DateTime.Parse(data[3], DateTimeFormatInfo.InvariantInfo),
+
+                    MajorRev   = int.Parse(data[4], Program.NumberFormat),
+                    Version    = int.Parse(data[5], Program.NumberFormat),
+                    Patch      = int.Parse(data[6], Program.NumberFormat),
+                    Changelist = int.Parse(data[7], Program.NumberFormat)
                 };
-
-                DateTime.TryParse(data[3], out deployLog.TimeStamp);
-
-                int.TryParse(data[4], out deployLog.MajorRev);
-                int.TryParse(data[5], out deployLog.Version);
-                int.TryParse(data[6], out deployLog.Patch);
-                int.TryParse(data[7], out deployLog.Changelist);
 
                 if (deployLog.Changelist < EarliestChangelist || deployLog.Version > maxVersion)
                     continue;
@@ -108,7 +111,8 @@ namespace RobloxStudioModManager
             else
                 logs = new StudioDeployLogs(branch);
 
-            string deployHistory = await HistoryCache.GetDeployHistory(branch);
+            var getDeployHistory = HistoryCache.GetDeployHistory(branch);
+            string deployHistory = await getDeployHistory.ConfigureAwait(false);
 
             if (logs.LastDeployHistory != deployHistory)
             {
@@ -117,7 +121,9 @@ namespace RobloxStudioModManager
                 if (branch == "roblox")
                 {
                     string binaryType = StudioBootstrapper.GetStudioBinaryType();
-                    var info = await ClientVersionInfo.Get(binaryType);
+
+                    var getInfo = ClientVersionInfo.Get(binaryType);
+                    var info = await getInfo.ConfigureAwait(false);
 
                     int version = info.Version
                         .Split('.')

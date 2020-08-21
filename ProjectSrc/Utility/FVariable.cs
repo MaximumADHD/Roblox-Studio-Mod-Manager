@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Text.RegularExpressions;
 using Microsoft.Win32;
 
@@ -6,20 +7,21 @@ namespace RobloxStudioModManager
 {
     public class FVariable
     {
-        private static Regex flagTypes = new Regex("((F|DF|SF)(Flag|String|Int|Log))");
+        private static readonly Regex flagTypes = new Regex("((F|DF|SF)(Flag|String|Int|Log))");
 
-        public readonly string Name;
-        public readonly string Type;
-        public readonly string Reset;
+        public string Name  { get; private set; }
+        public string Type  { get; private set; }
+        public string Reset { get; private set; }
 
         public string Key => Type + Name;
         public string Value { get; private set; }
 
         public RegistryKey Editor { get; private set; }
-        public bool Dirty = false;
+        public bool Dirty { get; set; } = false;
 
         public FVariable(string key, string value)
         {
+            Contract.Requires(key != null && value != null);
             var match = flagTypes.Match(key);
 
             Type = match.Value;

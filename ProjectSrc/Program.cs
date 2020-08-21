@@ -7,15 +7,22 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
+using System.Globalization;
+
+#pragma warning disable CA2000 // Dispose objects before losing scope (Application.Run handles it?)
 
 namespace RobloxStudioModManager
 {
     static class Program
     {
-        public static RegistryKey MainRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
-        public static RegistryKey VersionRegistry = MainRegistry.GetSubKey("VersionData");
+        public static readonly RegistryKey MainRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
+        public static readonly RegistryKey VersionRegistry = MainRegistry.GetSubKey("VersionData");
 
-        private static Regex jsonPattern = new Regex("\"([^\"]*)\":\"?([^\"]*)\"?[,|}]");
+        public static readonly CultureInfo Format = CultureInfo.InvariantCulture;
+        public const StringComparison StringFormat = StringComparison.InvariantCulture;
+        public static readonly NumberFormatInfo NumberFormat = NumberFormatInfo.InvariantInfo;
+
+        private static readonly Regex jsonPattern = new Regex("\"([^\"]*)\":\"?([^\"]*)\"?[,|}]");
 
         public static RegistryKey GetSubKey(this RegistryKey key, params string[] path)
         {
@@ -32,18 +39,20 @@ namespace RobloxStudioModManager
         public static bool GetBool(this RegistryKey key, string name)
         {
             string value = key.GetString(name);
-            bool result = false;
 
-            bool.TryParse(value, out result);
+            if (!bool.TryParse(value, out bool result))
+                return false;
+
             return result;
         }
 
         public static int GetInt(this RegistryKey key, string name)
         {
             string value = key.GetString(name);
-            int result = 0;
 
-            int.TryParse(value, out result);
+            if (!int.TryParse(value, out int result))
+                return 0;
+
             return result;
         }
 
@@ -150,9 +159,8 @@ namespace RobloxStudioModManager
         static void Main(string[] args)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-            Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Application.EnableVisualStyles();
             Application.Run(new Launcher(args));
         }
     }

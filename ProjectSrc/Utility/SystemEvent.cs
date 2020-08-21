@@ -7,8 +7,7 @@ namespace RobloxStudioModManager
     public class SystemEvent : EventWaitHandle
     {
         public string Name { get; private set; }
-        public bool FireEvent() => Set();
-
+        
         public SystemEvent(string name, bool init = false, EventResetMode mode = EventResetMode.AutoReset) : base(init, mode, name)
         {
             if (init)
@@ -26,17 +25,17 @@ namespace RobloxStudioModManager
 
         public Task<bool> WaitForEvent()
         {
-            return Task.Factory.StartNew(WaitOne);
+            return Task.Run(WaitOne);
         }
 
         public Task<bool> WaitForEvent(TimeSpan timeout, bool exitContext = false)
         {
-            return Task.Factory.StartNew(() => WaitOne(timeout, exitContext));
+            return Task.Run(() => WaitOne(timeout, exitContext));
         }
 
         public Task<bool> WaitForEvent(int millisecondsTimeout, bool exitContext = false)
         {
-            return Task.Factory.StartNew(() => WaitOne(millisecondsTimeout, exitContext));
+            return Task.Run(() => WaitOne(millisecondsTimeout, exitContext));
         }
     }
 }
