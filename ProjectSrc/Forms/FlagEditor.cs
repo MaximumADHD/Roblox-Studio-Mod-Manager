@@ -503,13 +503,11 @@ namespace RobloxStudioModManager
 
                 if (flagType.EndsWith("Flag", Program.StringFormat) && cellType != typeof(DataGridViewTextBoxCell))
                 {
-                    var newValueCell = new DataGridViewTextBoxCell()
-                    {
-                        Value = valueCell.Value.ToString(),
-                        ReadOnly = true
-                    };
-
+                    var newValueCell = new DataGridViewTextBoxCell();
                     row.Cells[2] = newValueCell;
+
+                    newValueCell.Value = valueCell.Value.ToString();
+                    newValueCell.ReadOnly = true;
                 }
             }
         }
