@@ -21,6 +21,10 @@ The _Roblox Studio Mod Manager_ is an unofficial, open-source, custom bootstrapp
 * Support for launching from the website, and from saved _RBXL_ files.
 * File updates from Roblox's deployment servers are only applied where needed.
 
+# ANTI-VIRUS DISCLAIMER
+
+If you have an anti-virus program installed, it may flag this program as malicious due to this application being misdiagnosed as a trojan horse. It was flagged as such due to the fact that it installs Roblox Studio's files from Amazon S3 and executes them from the mod manager itself. I've attempted to get this cleared several times, but haven't had any luck so far. I may need to get the application signed by a proper certificate authority, which will cost me some money to do.
+
 # Downloads
 
 The latest version can be found on the ***Releases*** page of this repository:<br/>

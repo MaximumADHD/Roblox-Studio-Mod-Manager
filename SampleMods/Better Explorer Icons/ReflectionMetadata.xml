@@ -3,6 +3,15 @@
 		<Properties></Properties>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">Actor</string>
+				<string name="ClassCategory">Scripting</string>
+				<string name="summary">A logical grouping of datamodel nodes</string>
+				<string name="ExplorerOrder">10</string>
+				<string name="ExplorerImageIndex">113</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">BindableFunction</string>
 				<string name="ClassCategory">Scripting</string>
 				<string name="summary">Allow functions defined in one script to be called by another script</string>
@@ -68,13 +77,42 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">37</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">Model</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">PluginManager</string>
-				<string name="ExplorerImageIndex">120</string>
+				<string name="ExplorerImageIndex">169</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PluginManagerInterface</string>
+				<string name="ExplorerImageIndex">169</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PluginDebugService</string>
+				<string name="ExplorerImageIndex">169</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PluginMenu</string>
+				<string name="ExplorerImageIndex">3</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PluginToolbar</string>
+				<string name="ExplorerImageIndex">170</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PluginToolbarButton</string>
+				<string name="ExplorerImageIndex">52</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -94,7 +132,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Plugin</string>
-				<string name="ExplorerImageIndex">120</string>
+				<string name="ExplorerImageIndex">169</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -106,7 +144,6 @@
 			<Properties>
 				<string name="Name">Glue</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 				<string name="Deprecated">true</string>
 			</Properties>
 		</Item>
@@ -206,7 +243,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">GamePassService</string>
-				<string name="ExplorerImageIndex">116</string>
+				<string name="ExplorerImageIndex">166</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -218,7 +255,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">HapticService</string>
-				<string name="ExplorerImageIndex">107</string>
+				<string name="ExplorerImageIndex">157</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -236,19 +273,19 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">GamepadService</string>
-				<string name="ExplorerImageIndex">107</string>
+				<string name="ExplorerImageIndex">157</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">VirtualInputManager</string>
-				<string name="ExplorerImageIndex">107</string>
+				<string name="ExplorerImageIndex">157</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">HapticService</string>
-				<string name="ExplorerImageIndex">107</string>
+				<string name="ExplorerImageIndex">157</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -296,7 +333,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">CookiesService</string>
-				<string name="ExplorerImageIndex">110</string>
+				<string name="ExplorerImageIndex">145</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -326,7 +363,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">AdService</string>
-				<string name="ExplorerImageIndex">115</string>
+				<string name="ExplorerImageIndex">165</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -380,7 +417,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">KeyboardService</string>
-				<string name="ExplorerImageIndex">119</string>
+				<string name="ExplorerImageIndex">169</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -398,7 +435,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">PackageService</string>
-				<string name="ExplorerImageIndex">117</string>
+				<string name="ExplorerImageIndex">167</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -445,38 +482,134 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">MemStorageService</string>
+				<string name="ExplorerImageIndex">138</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">MemStorageConnection</string>
+				<string name="ExplorerImageIndex">48</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PlayerEmulatorService</string>
+				<string name="ExplorerImageIndex">79</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ClusterPacketCache</string>
+				<string name="ExplorerImageIndex">48</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PermissionsService</string>
+				<string name="ExplorerImageIndex">160</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">SpawnerService</string>
+				<string name="ExplorerImageIndex">25</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">BulkImportService</string>
+				<string name="ExplorerImageIndex">161</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">BrowserService</string>
+				<string name="ExplorerImageIndex">129</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">GroupService</string>
+				<string name="ExplorerImageIndex">21</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">UGCValidationService</string>
+				<string name="ExplorerImageIndex">163</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DraftsService</string>
+				<string name="ExplorerImageIndex">113</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">VersionControlService</string>
+				<string name="ExplorerImageIndex">113</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">GuidRegistryService</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PolicyService</string>
+				<string name="ExplorerImageIndex">160</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">AssetManagerService</string>
+				<string name="ExplorerImageIndex">138</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">EventIngestService</string>
+				<string name="ExplorerImageIndex">45</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">BoxHandleAdornment</string>
-				<string name="ExplorerImageIndex">54</string>
+				<string name="ExplorerImageIndex">111</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">ConeHandleAdornment</string>
-				<string name="ExplorerImageIndex">143</string>
+				<string name="ExplorerImageIndex">110</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">SphereHandleAdornment</string>
-				<string name="ExplorerImageIndex">144</string>
+				<string name="ExplorerImageIndex">112</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">CylinderHandleAdornment</string>
-				<string name="ExplorerImageIndex">145</string>
+				<string name="ExplorerImageIndex">109</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">LineHandleAdornment</string>
-				<string name="ExplorerImageIndex">146</string>
+				<string name="ExplorerImageIndex">107</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">ImageHandleAdornment</string>
-				<string name="ExplorerImageIndex">147</string>
+				<string name="ExplorerImageIndex">108</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -671,7 +804,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">45</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">Model</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -688,6 +820,7 @@
 			<Properties>
 				<string name="Name">MotorFeature</string>
 				<bool name="Deprecated">true</bool>
+				<string name="ExplorerImageIndex">58</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -697,7 +830,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">81</string>
 				<string name="PreferredParent">PVInstance</string>
-				<string name="PreferredParents">PVInstance</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -750,6 +882,50 @@
 				</Item>
 			</Item>
 		</Item>
+		
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Bone</string>
+				<string name="ClassCategory">Animations</string>
+				<string name="ExplorerOrder">30</string>
+				<string name="ExplorerImageIndex">114</string>
+				<string name="PreferredParent">PVInstance</string>
+				<string name="PreferredParents">PVInstance</string>
+				<string name="PreferredParents">Bone</string>
+			</Properties>
+		</Item>
+
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">AnimationConstraint</string>
+				<string name="ClassCategory">Animation</string>
+				<string name="ExplorerOrder">30</string>
+				<string name="ExplorerImageIndex">86</string>
+				<string name="PreferredParent">BasePart</string>
+				<string name="PreferredParents">BasePart</string>
+			</Properties>
+
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Attachment0</string>
+						<string name="summary">The attachment to the "child" part. Only this part will be moved in Dynamic modes if ReactionEnabled is not enabled.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Attachment1</string>
+						<string name="summary">The attachment to the "parent" part.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Transform</string>
+						<string name="summary">The transform from the "parent" attachment (Attachment1) to the "child" attachment (Attachment0).</string>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Constraint</string>
@@ -757,7 +933,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">86</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -787,7 +962,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">86</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -841,7 +1015,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">89</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -877,7 +1050,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">90</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -907,7 +1079,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">91</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -985,7 +1156,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">94</string>
 				<string name="PreferredParent">PVInstance</string>
-				<string name="PreferredParents">PVInstance</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -1003,7 +1173,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">105</string>
 				<string name="PreferredParent">PVInstance</string>
-				<string name="PreferredParents">PVInstance</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -1021,7 +1190,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">87</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -1111,7 +1279,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">88</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -1201,7 +1368,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">88</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1211,7 +1377,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">95</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -1313,7 +1478,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">100</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1323,7 +1487,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">99</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1333,7 +1496,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">101</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">BasePart,Model</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1343,7 +1505,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">102</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1353,7 +1514,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">103</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1363,7 +1523,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">103</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1524,16 +1683,16 @@
 			<Properties>
 				<string name="Name">RotateP</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 				<string name="Deprecated">true</string>
+				<string name="ExplorerImageIndex">155</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">RotateV</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 				<string name="Deprecated">true</string>
+				<string name="ExplorerImageIndex">155</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1547,8 +1706,8 @@
 			<Properties>
 				<string name="Name">VelocityMotor</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 				<string name="Deprecated">true</string>
+				<string name="ExplorerImageIndex">155</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1557,52 +1716,35 @@
 				<string name="ExplorerOrder">20</string>
 				<string name="ExplorerImageIndex">34</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Motor6D</string>
 				<string name="ExplorerOrder">20</string>
-				<string name="ExplorerImageIndex">86</string>
+				<string name="ExplorerImageIndex">106</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">TaskScheduler</string>
-				<bool name="Insertable">false</bool>
-			</Properties>
-			<Item class="ReflectionMetadataFunctions">
-				<Item class="ReflectionMetadataMember">
-					<Properties>
-						<string name="Name">SetThreadShare</string>
-						<bool name="Deprecated">true</bool>
-						<string name="summary">Deprecated</string>
-					</Properties>
-				</Item>
-			</Item>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Stats</string>
 				<string name="ExplorerOrder">99</string>
-				<string name="ExplorerImageIndex">113</string>
+				<string name="ExplorerImageIndex">159</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">StatsItem</string>
 				<string name="ExplorerOrder">3</string>
-				<string name="ExplorerImageIndex">113</string>
+				<string name="ExplorerImageIndex">159</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">CorePackages</string>
-				<string name="ExplorerOrder">99</string>
-				<string name="ExplorerImageIndex">117</string>
+				<string name="ExplorerOrder">30</string>
+				<string name="ExplorerImageIndex">167</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1611,14 +1753,20 @@
 				<string name="ExplorerOrder">20</string>
 				<string name="ExplorerImageIndex">34</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Snap</string>
+				<string name="ExplorerOrder">20</string>
+				<string name="ExplorerImageIndex">34</string>
+				<string name="PreferredParent">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">FileMesh</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 				<string name="Browsable">false</string>
 			</Properties>
 		</Item>
@@ -1630,7 +1778,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">41</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">PVInstance</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -1663,6 +1810,195 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">ProximityPrompt</string>
+				<string name="ClassCategory">3D Interfaces</string>
+				<string name="summary">Provides a UI for the player to interact with an object when near.</string>
+				<string name="ExplorerOrder">30</string>
+				<string name="ExplorerImageIndex">41</string>
+				<string name="PreferredParent">BasePart</string>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">MaxActivationDistance</string>
+						<string name="summary">The maximum distance a Player's character can be from the ProximityPrompt for the prompt to appear.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">ActionText</string>
+						<string name="summary">The action text shown to the user.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">ObjectText</string>
+						<string name="summary">The object name text shown to the user.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">KeyboardKeyCode</string>
+						<string name="summary">The key the player should press to trigger the prompt.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">GamepadKeyCode</string>
+						<string name="summary">The gamepad button the player should press to trigger the prompt.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Enabled</string>
+						<string name="summary">When false, this prompt will not be shown, and events will not fire.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">HoldDuration</string>
+						<string name="summary">The user must hold the button down for this duration to trigger the prompt.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Exclusivity</string>
+						<string name="summary">Describes which prompts will be shown when multiple may be visible.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Style</string>
+						<string name="summary">When set to custom, no default UI will be provided.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">UIOffset</string>
+						<string name="summary">a pixel offset applied to the UI.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">RequiresLineOfSight</string>
+						<string name="summary">If true, this prompt will only be shown if there is a clear path from the camera to the object.</string>
+					</Properties>
+				</Item>
+			</Item>
+			<Item class="ReflectionMetadataFunctions">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">InputHoldBegin</string>
+						<string name="summary">Used to signal that the player began triggering this prompt.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">InputHoldEnd</string>
+						<string name="summary">Used to signal that the player ended triggering this prompt.</string>
+					</Properties>
+				</Item>
+			</Item>
+			<Item class="ReflectionMetadataEvents">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Triggered</string>
+						<string name="summary">Fired when a player triggers the ProximityPrompt.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">TriggeEnded</string>
+						<string name="summary">Fired when a player releases a button to end triggering the ProximityPrompt.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">PromptShown</string>
+						<string name="summary">Fired in local scripts when this prompt is shown.	Can be used for customization.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">PromptHidden</string>
+						<string name="summary">Fired in local scripts when this prompt is hidden.	Can be used for customization.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">PromptButtonHoldBegan</string>
+						<string name="summary">Fired in local scripts when the user begins holding down the button on a prompt with a non-zero HoldDuration.	This can be used to animate a progress bar.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">PromptButtonHoldEnded</string>
+						<string name="summary">Fired in local scripts when the user ends holding down the button on a prompt with a non-zero HoldDuration.	This can be used to animate a progress bar.</string>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ProximityPromptService</string>
+				<bool name="Browsable">false</bool>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Enabled</string>
+						<string name="summary">When false, no prompts will be shown.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">MaxPromptsVisible</string>
+						<string name="summary">The maximum number of ProximityPrompts that will be shown.</string>
+					</Properties>
+				</Item>
+			</Item>
+			<Item class="ReflectionMetadataEvents">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Triggered</string>
+						<string name="summary">Fired when a player triggers the ProximityPrompt.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">TriggeEnded</string>
+						<string name="summary">Fired when a player releases a button to end triggering the ProximityPrompt.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">PromptShown</string>
+						<string name="summary">Fired in local scripts when a prompt is shown.	Can be used for customization.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">PromptHidden</string>
+						<string name="summary">Fired in local scripts when a prompt is hidden.	Can be used for customization.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">PromptButtonHoldBegan</string>
+						<string name="summary">Fired in local scripts when the user begins holding down the button on a prompt with a non-zero HoldDuration.	This can be used to animate a progress bar.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">PromptButtonHoldEnded</string>
+						<string name="summary">Fired in local scripts when the user ends holding down the button on a prompt with a non-zero HoldDuration.	This can be used to animate a progress bar.</string>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">Clothing</string>
 				<string name="ExplorerOrder">2</string>
 			</Properties>
@@ -1675,7 +2011,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">59</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1686,7 +2021,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">93</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">BasePart,Model</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -1742,7 +2076,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">96</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart,Model</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -1799,13 +2132,60 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">SurfaceAppearance</string>
+				<string name="ClassCategory">3D Interfaces</string>
+				<string name="summary">Overrides the visual appearance of a parent BasePart</string>
+				<string name="ExplorerOrder">40</string>
+				<string name="ExplorerImageIndex">10</string>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">AlphaMode</string>
+						<string name="summary">Determines how the ColorMap's alpha channel behaves. Not scriptable at runtime.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">ColorMap</string>
+						<string name="summary">Image ID used to color the surface. If left empty, surface uses Part Color. Not scriptable at runtime.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">MetalnessMap</string>
+						<string name="summary">Grayscale Image ID that determines the metalness of the surface. Not scriptable at runtime.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">NormalMap</string>
+						<string name="summary">Image ID of the normal map used to control surface bumps and curvature. Not scriptable at runtime.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">RoughnessMap</string>
+						<string name="summary">Grayscale Image ID that determines the roughness of the surface. Not scriptable at runtime.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">TexturePack</string>
+						<bool name="EditingDisabled">true</bool>
+						<string name="summary">Internal asset link</string>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">ParticleEmitter</string>
 				<string name="ClassCategory">Effects</string>
 				<string name="summary">A generic particle system.</string>
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">80</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart,Attachment</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -1886,7 +2266,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">42</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1897,7 +2276,6 @@
 				<string name="ExplorerImageIndex">36</string>
 				<string name="summary">Creates an Explosion! This can be used as a purely graphical effect, or can be made to damage objects.</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">Basepart,Model</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -1934,7 +2312,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">61</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -1995,7 +2372,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">35</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">Model</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -2005,7 +2381,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">17</string>
 				<string name="PreferredParent">StarterPack</string>
-				<string name="PreferredParents">StarterPack,Backpack</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -2057,9 +2432,8 @@
 				<string name="ClassCategory">3D Interfaces</string>
 				<string name="ExplorerOrder">4</string>
 				<string name="ExplorerImageIndex">7</string>
-				<string name="summary">Descibes a texture that is placed on one of the sides of the Part it is parented to.</string>
+				<string name="summary">Describes a texture that is placed on one of the sides of the Part it is parented to.</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -2111,7 +2485,6 @@
 				<string name="ExplorerOrder">11</string>
 				<string name="ExplorerImageIndex">33</string>
 				<string name="PreferredParent">StarterGui</string>
-				<string name="PreferredParents">StarterGui</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -2199,7 +2572,7 @@
 				<string name="Name">CustomEvent</string>
 				<string name="ExplorerOrder">3</string>
 				<bool name="Deprecated">true</bool>
-				<string name="ExplorerImageIndex">118</string>
+				<string name="ExplorerImageIndex">168</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -2207,7 +2580,7 @@
 				<string name="Name">CustomEventReceiver</string>
 				<string name="ExplorerOrder">3</string>
 				<bool name="Deprecated">true</bool>
-				<string name="ExplorerImageIndex">118</string>
+				<string name="ExplorerImageIndex">168</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -2344,7 +2717,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">8</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -2354,7 +2726,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">8</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 				<bool name="Deprecated">true</bool>
 			</Properties>
 		</Item>
@@ -2365,7 +2736,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">8</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 				<bool name="Deprecated">true</bool>
 			</Properties>
 		</Item>
@@ -2390,7 +2760,6 @@
 				<string name="ExplorerOrder">4</string>
 				<string name="ExplorerImageIndex">10</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -2399,7 +2768,6 @@
 				<string name="ClassCategory">Sounds</string>
 				<string name="ExplorerOrder">1</string>
 				<string name="ExplorerImageIndex">11</string>
-				<string name="PreferredParents">SoundGroup,SoundService</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -2427,7 +2795,6 @@
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">84</string>
 				<string name="PreferredParent">Sound</string>
-				<string name="PreferredParents">Sound,SoundGroup</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -2472,7 +2839,6 @@
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">84</string>
 				<string name="PreferredParent">Sound</string>
-				<string name="PreferredParents">Sound,SoundGroup</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -2509,7 +2875,6 @@
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">84</string>
 				<string name="PreferredParent">Sound</string>
-				<string name="PreferredParents">Sound,SoundGroup</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -2530,7 +2895,6 @@
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">84</string>
 				<string name="PreferredParent">Sound</string>
-				<string name="PreferredParents">Sound,SoundGroup</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -2551,7 +2915,6 @@
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">84</string>
 				<string name="PreferredParent">Sound</string>
-				<string name="PreferredParents">Sound,SoundGroup</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -2588,7 +2951,6 @@
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">84</string>
 				<string name="PreferredParent">Sound</string>
-				<string name="PreferredParents">Sound,SoundGroup</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -2625,7 +2987,6 @@
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">84</string>
 				<string name="PreferredParent">Sound</string>
-				<string name="PreferredParents">Sound,SoundGroup</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -2678,7 +3039,6 @@
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">84</string>
 				<string name="PreferredParent">Sound</string>
-				<string name="PreferredParents">Sound,SoundGroup</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -2715,7 +3075,6 @@
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">84</string>
 				<string name="PreferredParent">Sound</string>
-				<string name="PreferredParents">Sound,SoundGroup</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -2767,7 +3126,6 @@
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">85</string>
 				<string name="PreferredParent">SoundService</string>
-				<string name="PreferredParents">SoundService</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties"></Item>
 		</Item>
@@ -2810,7 +3168,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">20</string>
 				<string name="Insertable">false</string>
-				<string name="PreferredParents">Player</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -2858,23 +3215,10 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
-				<string name="Name">Studio</string>
-			</Properties>
-			<Item class="ReflectionMetadataProperties">
-				<Item class="ReflectionMetadataMember">
-					<Properties>
-						<string name="Name">Show Plugin GUI Service in Explorer</string>
-					</Properties>
-				</Item>
-			</Item>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
 				<string name="Name">UIGridStyleLayout</string>
 				<string name="ClassCategory">GUI</string>
 				<string name="Browsable">false</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiObject,GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -2926,7 +3270,6 @@
 				<string name="ClassCategory">GUI</string>
 				<string name="summary">Sets the position of UI elements in a list. You can use a UIListLayout by parenting it to a GuiObject. The UIListLayout will then apply itself to all of its GuiObject siblings.</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiObject,GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -2939,24 +3282,12 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
-				<string name="Name">UIInlineLayout</string>
-				<string name="ExplorerOrder">3</string>
-				<string name="ExplorerImageIndex">26</string>
-				<string name="ClassCategory">GUI</string>
-				<string name="summary">Sets the position of UI elements inline. You can use a UIInlineLayout by parenting it to a GuiObject. The UIInlineLayout will then apply itself to all of its GuiObject siblings.</string>
-				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiObject,GuiBase2d</string>
-			</Properties>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
 				<string name="Name">UIGridLayout</string>
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">26</string>
 				<string name="ClassCategory">GUI</string>
 				<string name="summary">Sets the position of UI elements in a 2D grid (this can be modified to 1D grid for list layout). This will also set the elements to a particular size, although this can be overridden with particular constraints on elements. You can use a UIGridLayout by parenting it to a GuiObject. The UIGridLayout will then apply itself to all of its GuiObject siblings.</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiObject,GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -2999,7 +3330,6 @@
 				<string name="ClassCategory">GUI</string>
 				<string name="summary">Creates a paged viewing window, like the home screen of a mobile device. You can use a UIPageLayout by parenting it to a GuiObject. The UIPageLayout will then apply itself to all of its GuiObject siblings.</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiObject,GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3100,7 +3430,6 @@
 				<string name="ClassCategory">GUI</string>
 				<string name="summary">Provides a layout of rows and columns that are sized based on the cells in them.</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiObject,GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3137,7 +3466,6 @@
 				<string name="ClassCategory">GUI</string>
 				<string name="summary">Ensures a GuiObject does not become smaller or larger than the min and max size. If an element with a constraint is under the control of a layout, the constraint takes precedence in determining the element’s size, but not position. You can use a Constraint by parenting it to the element you wish to constrain.</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiObject,GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3162,7 +3490,6 @@
 				<string name="ClassCategory">GUI</string>
 				<string name="summary">Ensures a GuiObject with text does not allow the font size to become larger or smaller than min and max text sizes. If an element with a constraint is under the control of a layout, the constraint takes precedence in determining the element’s size, but not position. You can use a Constraint by parenting it to the element you wish to constrain.</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiObject,GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3186,7 +3513,6 @@
 				<string name="ExplorerImageIndex">26</string>
 				<string name="ClassCategory">GUI</string>
 				<string name="summary">Ensures a GuiObject will always have a particular aspect ratio. If an element with a constraint is under the control of a layout, the constraint takes precedence in determining the element’s size, but not position. You can use a Constraint by parenting it to the element you wish to constrain.</string>
-				<string name="PreferredParents">GuiObject,GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3217,7 +3543,6 @@
 				<string name="ClassCategory">GUI</string>
 				<string name="summary">Uniformly scales a GUI object and all its children.</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiObject,GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3236,7 +3561,6 @@
 				<string name="ClassCategory">GUI</string>
 				<string name="Summary">Insets the children of the GuiObject this is parented to, by the specified padding.</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiObject,GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3261,6 +3585,62 @@
 					<Properties>
 						<string name="Name">PaddingBottom</string>
 						<string name="summary">The padding to apply on the bottom side relative to the parent's normal size.</string>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">UIGradient</string>
+				<string name="ExplorerOrder">30</string>
+				<string name="ExplorerImageIndex">26</string>
+				<string name="ClassCategory">GUI</string>
+				<string name="summary">Apply a gradient to the parent GuiObject.</string>
+				<string name="PreferredParent">GuiBase2d</string>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Color</string>
+						<string name="summary">The (sequence of) color3 of the gradient.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Transparency</string>
+						<string name="summary">The (sequence of) transparency of the gradient.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Rotation</string>
+						<string name="summary">Clockwise rotation in degrees.</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">360</double>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Offset</string>
+						<string name="summary">Offset of gradient center in scale.</string>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">UICorner</string>
+				<string name="ExplorerOrder">30</string>
+				<string name="ExplorerImageIndex">26</string>
+				<string name="ClassCategory">GUI</string>
+				<string name="summary">Modify corner properties of parent GuiObject.</string>
+				<string name="PreferredParent">GuiBase2d</string>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">CornerRadius</string>
+						<string name="summary">Round corner with specified radius.</string>
 					</Properties>
 				</Item>
 			</Item>
@@ -3310,7 +3690,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Tween</string>
-				<string name="ExplorerImageIndex">112</string>
+				<string name="ExplorerImageIndex">143</string>
 				<string name="summary">An object linked to an instance that animates properties on the instance over a specified period of time. Useful for easily moving UI objects around, rotating objects, etc. without having to write a lot of code. To create a new tween, please use TweenService:Create.</string>
 				<string name="Insertable">false</string>
 			</Properties>
@@ -3332,7 +3712,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">TweenService</string>
-				<string name="ExplorerImageIndex">112</string>
+				<string name="ExplorerImageIndex">143</string>
 				<string name="summary">Service responsible for creating tweens on instances.</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
@@ -3524,7 +3904,6 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">97</string>
 				<string name="ClassCategory">Localization</string>
-				<string name="PreferredParents">LocalizationService</string>
 				<string name="summary">A database of strings used in the game and their translations.</string>
 			</Properties>
 		</Item>
@@ -3550,7 +3929,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">MarketplaceService</string>
-				<string name="ExplorerImageIndex">111</string>
+				<string name="ExplorerImageIndex">144</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -3606,7 +3985,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">UserInputService</string>
 				<string name="ExplorerOrder">60</string>
-				<string name="ExplorerImageIndex">107</string>
+				<string name="ExplorerImageIndex">157</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3767,11 +4146,107 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">Atmosphere</string>
+				<string name="ClassCategory">Environment</string>
+				<string name="ExplorerOrder">5</string>
+				<string name="ExplorerImageIndex">162</string>
+				<string name="PreferredParent">Lighting</string>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Density</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+						<double name="UINumTicks">1000</double>
+						<string name="summary">A value that controls the air particulates density. The proportion of airborne particles per unit of view depth between the camera and the sky.</string>
+				</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Offset</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+						<double name="UINumTicks">1000</double>
+						<string name="summary">A value that offsets the quantity of light scattering events among particles in the atmosphere between the camera and the sky.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Height</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">3</double>
+						<double name="UINumTicks">1000</double>
+						<string name="summary">A value that controls the height of fog in the atmosphere above the horizon (not volumetric...yet...).</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Color</string>
+						<string name="summary">A Color3 value that changes the hue of the atmosphere, mixed with the sky color.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Decay</string>
+						<string name="summary">A Color3 value for the the hue the atmosphere takes on away from the sun towards the horizon, mixed with the sky color (aka extinction).</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Haze</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">10</double>
+						<double name="UINumTicks">1000</double>
+						<string name="summary">A value that controls the haziness of the atmosphere between the camera and the sky (aka turbidity).</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Glare</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">10</double>
+						<double name="UINumTicks">1000</double>
+						<string name="summary">A value that increases the glow of the atmosphere around light the sun.</string>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Clouds</string>
+				<string name="ClassCategory">Environment</string>
+				<string name="ExplorerOrder">5</string>
+				<string name="ExplorerImageIndex">162</string>
+				<string name="PreferredParent">Workspace</string>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Cover</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+						<double name="UINumTicks">1000</double>
+						<string name="summary">A value that controls the cloud cover within the clouds volume, from 0 oktas to 8 oktas (full cloud cover).</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Density</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+						<double name="UINumTicks">1000</double>
+						<string name="summary">A value that controls the clouds particulates density. The proportion of airborne water vapour particles within a cubic stud at full cloud cover.</string>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">Sky</string>
 				<string name="ExplorerOrder">0</string>
 				<string name="ExplorerImageIndex">28</string>
 				<string name="PreferredParent">Lighting</string>
-				<string name="PreferredParents">Lighting</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -3787,7 +4262,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ClassCategory">Post Processing Effects</string>
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">83</string>
-				<string name="PreferredParents">Lighting</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3819,7 +4293,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ClassCategory">Post Processing Effects</string>
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">83</string>
-				<string name="PreferredParents">Lighting</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3853,7 +4326,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ClassCategory">Post Processing Effects</string>
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">83</string>
-				<string name="PreferredParents">Lighting</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3868,11 +4340,57 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">DepthOfFieldEffect</string>
+				<string name="ClassCategory">Post Processing Effects</string>
+				<string name="ExplorerOrder">2</string>
+				<string name="ExplorerImageIndex">83</string>
+				<string name="summary">Depth based blur (Depth of Field) effect.</string>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">FocusDistance</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">200</double>
+						<double name="UINumTicks">10000</double>
+						<string name="summary">Controls the distance in stud units away from the camera where are in focus.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">InFocusRadius</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">50</double>
+						<double name="UINumTicks">10000</double>
+						<string name="summary">Controls the distance in stud units away from the FocusDistance where both in front and behind objects can begin to blur.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">NearIntensity</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+						<double name="UINumTicks">10000</double>
+						<string name="summary">Maximum intensity of the near blur -the higher the Intensity, the stronger the blur is allowed to reach.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">FarIntensity</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+						<double name="UINumTicks">10000</double>
+						<string name="summary">Maximum intensity of the far blur -the higher the Intensity, the stronger the blur is allowed to reach.</string>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">SunRaysEffect</string>
 				<string name="ClassCategory">Post Processing Effects</string>
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">83</string>
-				<string name="PreferredParents">Lighting</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3898,8 +4416,8 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">Motor</string>
 				<string name="ExplorerOrder">2</string>
 				<string name="Insertable">false</string>
+				<string name="ExplorerImageIndex">155</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -3909,7 +4427,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">9</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">Model</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -4019,9 +4536,8 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">BodyColors</string>
 				<string name="ClassCategory">Avatar</string>
 				<string name="ExplorerOrder">2</string>
-				<string name="ExplorerImageIndex">108</string>
+				<string name="ExplorerImageIndex">147</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">Model</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -4031,7 +4547,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">43</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">Model</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -4041,7 +4556,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">44</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">Model</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -4051,7 +4565,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">2</string>
 				<string name="ExplorerImageIndex">40</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">Model</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -4059,40 +4572,49 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">Skin</string>
 				<bool name="Deprecated">true</bool>
 				<string name="ExplorerOrder">2</string>
-			</Properties>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">DebugSettings</string>
-				<bool name="Browsable">false</bool>
-				<string name="ExplorerOrder">2</string>
-			</Properties>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">FaceInstance</string>
-				<bool name="Browsable">false</bool>
-			</Properties>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">GameSettings</string>
-				<bool name="Browsable">false</bool>
-				<string name="ExplorerOrder">2</string>
+				<string name="ExplorerImageIndex">158</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">GlobalSettings</string>
-				<bool name="Browsable">false</bool>
-				<string name="ExplorerOrder">2</string>
+				<string name="ExplorerImageIndex">58</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
-				<string name="Name">Item</string>
-				<bool name="Browsable">false</bool>
-				<string name="ExplorerOrder">2</string>
+				<string name="Name">DebugSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">GameSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">NetworkSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">RenderSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Studio</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">TaskScheduler</string>
+				<string name="ExplorerImageIndex">58</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -4103,41 +4625,13 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
-				<string name="Name">NetworkSettings</string>
-				<bool name="Browsable">false</bool>
-				<string name="ExplorerOrder">2</string>
-			</Properties>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">PVInstance</string>
-				<bool name="Browsable">false</bool>
-			</Properties>
-			<Item class="ReflectionMetadataProperties">
-				<Item class="ReflectionMetadataMember">
-					<Properties>
-						<string name="Name">CoordinateFrame</string>
-						<bool name="Deprecated">true</bool>
-						<string name="summary">Deprecated. Use CFrame instead</string>
-					</Properties>
-				</Item>
-			</Item>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
 				<string name="Name">PackageLink</string>
 				<string name="ExplorerOrder">1</string>
-				<string name="ExplorerImageIndex">34</string>
+				<string name="ExplorerImageIndex">167</string>
 				<string name="Insertable">false</string>
 			</Properties>
 		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">RenderSettings</string>
-				<bool name="Browsable">false</bool>
-				<string name="ExplorerOrder">2</string>
-			</Properties>
-		</Item>
+
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">ServiceProvider</string>
@@ -4214,7 +4708,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<Item class="ReflectionMetadataMember">
 					<Properties>
 						<string name="Name">GetDebugId</string>
-						<bool name="Browsable">false</bool>
 						<string name="summary">This function is for internal testing. Don't use in production code</string>
 					</Properties>
 				</Item>
@@ -4386,7 +4879,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">14</string>
 				<string name="ExplorerImageIndex">14</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -4436,7 +4928,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">14</string>
 				<string name="ExplorerImageIndex">14</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -4487,7 +4978,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerImageIndex">14</string>
 				<string name="summary">A propulsion system that mimics a rocket</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -4497,7 +4987,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">14</string>
 				<string name="ExplorerImageIndex">14</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -4541,7 +5030,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">14</string>
 				<string name="ExplorerImageIndex">14</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -4576,7 +5064,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerImageIndex">14</string>
 				<string name="summary">When parented to a physical part, BodyForce will continually exert a force upon its parent object.</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -4597,7 +5084,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">14</string>
 				<string name="ExplorerImageIndex">14</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -4648,7 +5134,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">14</string>
 				<string name="ExplorerImageIndex">23</string>
 				<string name="PreferredParent">Teams</string>
-				<string name="PreferredParents">Teams</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -4667,7 +5152,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">1</string>
 				<string name="ExplorerImageIndex">24</string>
 				<string name="PreferredParent">Teams</string>
-				<string name="PreferredParents">Teams</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -4698,7 +5182,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">LuaSourceContainer</string>
 				<bool name="Browsable">false</bool>
-				<string name="PreferredParents">StarterPlayerScripts,StarterCharacterScripts,ServerScriptService</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -4716,7 +5199,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ClassCategory">Scripting</string>
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">6</string>
-				<string name="PreferredParents">ServerStorage,ServerScriptService</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -4733,14 +5215,13 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ClassCategory">Scripting</string>
 				<string name="ExplorerOrder">4</string>
 				<string name="ExplorerImageIndex">18</string>
-				<string name="PreferredParents">ReplicatedFirst,ReplicatedStorage,StarterCharacterScripts,StarterPlayerScripts</string>
 				<string name="summary">A script that runs on clients, NOT servers.  LocalScripts can only run when parented under one of the following:
 1) A player's Backpack.
 2) A player's Character model.
 3) A player's PlayerGui.
 4) A player's PlayerScripts.
 5) The ReplicatedFirst service.
-</string>
+				</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -4752,6 +5233,17 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerImageIndex">5</string>
 			</Properties>
 		</Item>
+		
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">MeshDeformer</string>
+				<string name="ClassCategory">Effects</string>
+				<string name="ExplorerOrder">32</string>
+				<string name="ExplorerImageIndex">108</string>
+				<string name="PreferredParent">PVInstance</string>
+			</Properties>
+		</Item>
+
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">NetworkReplicator</string>
@@ -4766,7 +5258,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerImageIndex">2</string>
 				<string name="summary">A construct used to group Parts and other objects together, also allows manipulation of multiple objects.</string>
 				<string name="PreferredParent">PVInstance</string>
-				<string name="PreferredParents">PVInstance</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -4849,6 +5340,12 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 					<Properties>
 						<string name="Name">PrimaryPart</string>
 						<string name="summary">A Part that serves as a reference for the Model's CFrame. Used in conjunction with GetModelPrimaryPartCFrame and SetModelPrimaryPartCFrame. Use this to rotate/translate all Parts relative to the PrimaryPart.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">LevelOfDetail</string>
+						<string name="summary">Automatically generate impostor meshes to be rendered outside of streaming radius.</string>
 					</Properties>
 				</Item>
 			</Item>
@@ -4986,7 +5483,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">GlobalDataStore</string>
 				<string name="summary">Exposes functions for saving and loading data for the DataStoreService</string>
 				<string name="ExplorerOrder">9999</string>
-				<string name="ExplorerImageIndex">69</string>
+				<string name="ExplorerImageIndex">124</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -5028,7 +5525,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">OrderedDataStore</string>
 				<string name="summary">A type of DataStore where values must be positive integers. This makes OrderedDataStore suitable for leaderboard related scripting where you are required to order large amounts of data efficiently.</string>
 				<string name="ExplorerOrder">9999</string>
-				<string name="ExplorerImageIndex">69</string>
+				<string name="ExplorerImageIndex">124</string>
 			</Properties>
 			<Item class="ReflectionMetadataYieldFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -5053,7 +5550,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">0</string>
 				<string name="ExplorerImageIndex">5</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">Model</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -5083,14 +5579,32 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				</Item>
 				<Item class="ReflectionMetadataMember">
 					<Properties>
+						<string name="Name">FieldOfViewMode</string>
+						<string name="summary">Determines how the field of view responds to changes of screen size and aspect ratio.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
 						<string name="Name">FieldOfView</string>
-						<string name="summary">The current angle, or width, of what the camera can see.  Current acceptable values are from 20 degrees to 80.</string>
+						<string name="summary">Describes the view angle along the vertical viewport axis.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">DiagnonalFieldOfView</string>
+						<string name="summary">Describes the view angle along the diagonal viewport axis.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">MaxAxisFieldOfView</string>
+						<string name="summary">Describes the view angle along the maximum-length viewport axis.</string>
 					</Properties>
 				</Item>
 				<Item class="ReflectionMetadataMember">
 					<Properties>
 						<string name="Name">Focus</string>
-						<string name="summary">The current CoordinateFrame that the camera is looking at.  Note: it is not always guaranteed that the camera is always looking here.</string>
+						<string name="summary">The current CFrame that the camera is looking at.  Note: it is not always guaranteed that the camera is always looking here.</string>
 					</Properties>
 				</Item>
 				<Item class="ReflectionMetadataMember">
@@ -5219,15 +5733,23 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">ReplicatedScriptService</string>
+				<string name="ExplorerOrder">3</string>
+				<string name="ExplorerImageIndex">113</string>
+				<string name="summary">A container whose contents should be scripts. Scripts that are added to the container are run on the server and the client.</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">StudioService</string>
-				<string name="ExplorerImageIndex">106</string>
+				<string name="ExplorerImageIndex">156</string>
 				<string name="summary">A service for interfacing with the current studio state from Lua.</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">StudioData</string>
-				<string name="ExplorerImageIndex">106</string>
+				<string name="ExplorerImageIndex">156</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -5378,6 +5900,24 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 						<double name="UINumTicks">240</double>
 					</Properties>
 				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">EnvironmentDiffuseScale</string>
+						<string name="summary">Sets scale [0-1] of Diffuse Environment Lighting to add to Ambient.</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+						<double name="UINumTicks">1000</double>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">EnvironmentSpecularScale</string>
+						<string name="summary">Sets scale [0-1] of Specular Environment Lighting to add to Ambient.</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+						<double name="UINumTicks">1000</double>
+					</Properties>
+				</Item>
 			</Item>
 			<Item class="ReflectionMetadataEvents">
 				<Item class="ReflectionMetadataMember">
@@ -5391,6 +5931,13 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">TestService</string>
+				<string name="ExplorerOrder">100</string>
+				<string name="ExplorerImageIndex">68</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">FunctionalTest</string>
 				<string name="ExplorerOrder">100</string>
 				<string name="ExplorerImageIndex">68</string>
 			</Properties>
@@ -5453,7 +6000,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">PhysicsService</string>
-				<string name="ExplorerImageIndex">30</string>
+				<string name="ExplorerImageIndex">105</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -5477,7 +6024,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 						<string name="Name">CharacterAppearance</string>
 						<bool name="Browsable">false</bool>
 						<string name="PreferredParent">Model</string>
-						<string name="PreferredParents">Model</string>
 					</Properties>
 				</Item>
 				<Item class="ReflectionMetadataMember">
@@ -5768,6 +6314,37 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<Item class="ReflectionMetadataMember">
 					<Properties>
 						<string name="Name">CenterOfMass</string>
+						<string name="summary">The position of the center of mass of this part.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">AssemblyMass</string>
+						<string name="summary">The total mass of this part's assembly - collection of parts connected by welds or animated joints.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">AssemblyCenterOfMass</string>
+						<string name="summary">The position of the center mass of this part's assembly - collection of parts connected by welds or animated joints.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">AssemblyLinearVelocity</string>
+						<string name="summary">The linear velocity of this part's assembly - collection of parts connected by welds or animated joints.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">AssemblyAngularVelocity</string>
+						<string name="summary">The angular velocity of this part's rigid body - collection of parts connected by welds or animated joints.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">AssemblyRootParty</string>
+						<string name="summary">The root part of this part's assembly - can be changed with RootPriority or Anchored property.</string>
 					</Properties>
 				</Item>
 			</Item>
@@ -5847,7 +6424,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">11</string>
 				<string name="ExplorerImageIndex">1</string>
 				<string name="PreferredParent">Workspace</string>
-				<string name="PreferredParents">Workspace</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -5858,7 +6434,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">12</string>
 				<string name="ExplorerImageIndex">135</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">Model</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -5869,7 +6444,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">12</string>
 				<string name="ExplorerImageIndex">136</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">Model</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -5880,7 +6454,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">12</string>
 				<string name="ExplorerImageIndex">137</string>
 				<string name="PreferredParent">Workspace</string>
-				<string name="PreferredParents">Workspace,Model</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -5902,7 +6475,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">PlayerScripts</string>
-				<string name="summary">A container instance that contains LocalScripts.  LocalScript objects that are placed in this container will be exectue only when a Player is the parent.</string>
+				<string name="summary">A container instance that contains LocalScripts.  LocalScript objects that are placed in this container will be execute only when a Player is the parent.</string>
 				<string name="ExplorerOrder">13</string>
 				<string name="ExplorerImageIndex">78</string>
 			</Properties>
@@ -5959,7 +6532,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">14</string>
 				<string name="ExplorerImageIndex">47</string>
 				<string name="PreferredParent">BasePlayerGui</string>
-				<string name="PreferredParents">BasePlayerGui</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -5987,7 +6559,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">14</string>
 				<string name="ExplorerImageIndex">64</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6072,9 +6643,8 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ClassCategory">GUI</string>
 				<string name="summary">Renders its contained GuiObjects flat against the face of a part.</string>
 				<string name="ExplorerOrder">14</string>
-				<string name="ExplorerImageIndex">109</string>
+				<string name="ExplorerImageIndex">146</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6109,7 +6679,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">GuiBase2d</string>
 				<bool name="Browsable">false</bool>
-				<string name="PreferredParents">LayerCollector,GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6131,7 +6700,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">InputObject</string>
 				<string name="summary">An object that describes a particular user input, such as mouse movement, touches, keyboard, and more.</string>
 				<string name="Insertable">false</string>
-				<string name="ExplorerImageIndex">114</string>
+				<string name="ExplorerImageIndex">164</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6373,7 +6942,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">15</string>
 				<string name="ExplorerImageIndex">48</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6392,7 +6960,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">15</string>
 				<string name="ExplorerImageIndex">48</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6453,7 +7020,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">18</string>
 				<string name="ExplorerImageIndex">49</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6484,13 +7050,23 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">VideoFrame</string>
+				<string name="ClassCategory">GUI</string>
+				<string name="summary">A GUI object containing a video image.</string>
+				<string name="ExplorerOrder">18</string>
+				<string name="ExplorerImageIndex">120</string>
+				<string name="PreferredParent">GuiBase2d</string>
+				<string name="PreferredParents">GuiBase2d</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">TextLabel</string>
 				<string name="ClassCategory">GUI</string>
 				<string name="summary">A GUI object containing text</string>
 				<string name="ExplorerOrder">19</string>
 				<string name="ExplorerImageIndex">50</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6510,7 +7086,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">17</string>
 				<string name="ExplorerImageIndex">51</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6530,7 +7105,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">17</string>
 				<string name="ExplorerImageIndex">51</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6618,7 +7192,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">16</string>
 				<string name="ExplorerImageIndex">52</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6655,7 +7228,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">30</string>
 				<string name="ExplorerImageIndex">142</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -6765,9 +7337,17 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 			<Properties>
 				<string name="Name">Folder</string>
 				<string name="summary">An object that can be created to hold and organize objects</string>
-				<string name="ExplorerOrder">1</string>
+				<string name="ExplorerOrder">-1</string>
 				<string name="ExplorerImageIndex">77</string>
-				<string name="PreferredParents">Instance</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">WorldModel</string>
+				<string name="ClassCategory">World</string>
+				<string name="summary">An object that contains a World. Supports rigid joints. Unlike the Workspace, WorldModels do not support dynamic simulation.</string>
+				<string name="ExplorerOrder">22</string>
+				<string name="ExplorerImageIndex">19</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -6798,10 +7378,26 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
-				<string name="Name">Pose</string>
-				<string name="summary">The pose of a joint relative to it's parent part in a keyframe</string>
+				<string name="Name">PoseBase</string>
+				<string name="summary">The base class to all Pose Objects.</string>
 				<string name="ExplorerOrder">22</string>
-				<string name="ExplorerImageIndex">60</string>
+				<string name="ExplorerImageIndex">114</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Pose</string>
+				<string name="summary">The pose of a joint relative to its parent part in a keyframe</string>
+				<string name="ExplorerOrder">22</string>
+				<string name="ExplorerImageIndex">114</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">NumberPose</string>
+				<string name="summary">The value of a float channel for a specific keyframe</string>
+				<string name="ExplorerOrder">22</string>
+				<string name="ExplorerImageIndex">114</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -6809,7 +7405,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">KeyframeMarker</string>
 				<string name="summary">Represents when an event should be fired in an animation</string>
 				<string name="ExplorerOrder">220</string>
-				<string name="ExplorerImageIndex">60</string>
+				<string name="ExplorerImageIndex">98</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -6862,7 +7458,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">22</string>
 				<string name="ExplorerImageIndex">60</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">Model</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -6987,7 +7582,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">105</string>
 				<string name="ExplorerImageIndex">73</string>
 				<string name="PreferredParent">Model</string>
-				<string name="PreferredParents">Model</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -7028,6 +7622,12 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 						<double name="UIMaximum">1</double>
 					</Properties>
 				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Decoration</string>
+						<string name="summary">Enables terrain materials decoration.</string>
+					</Properties>
+				</Item>
 			</Item>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -7057,7 +7657,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">13</string>
 				<string name="PreferredParent">PVInstance</string>
-				<string name="PreferredParents">Basepart,Attachment,PVInstance</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -7078,7 +7677,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">13</string>
 				<string name="PreferredParent">PVInstance</string>
-				<string name="PreferredParents">PVInstance</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -7098,7 +7696,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">13</string>
 				<string name="PreferredParent">PVInstance</string>
-				<string name="PreferredParents">PVInstance</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -7125,7 +7722,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">13</string>
 				<string name="PreferredParent">PVInstance</string>
-				<string name="PreferredParents">PVInstance</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -7248,7 +7844,13 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="summary">A script fragment. Only runs when another script uses require() on it.</string>
 				<string name="ExplorerOrder">5</string>
 				<string name="ExplorerImageIndex">76</string>
-				<string name="PreferredParents">Instance</string>
+				<Item class="ReflectionMetadataProperties">
+					<Item class="ReflectionMetadataMember">
+						<Properties>
+							<string name="Name">CoreScriptModified</string>
+						</Properties>
+					</Item>
+				</Item>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -7256,6 +7858,60 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">CoreScript</string>
 				<string name="ExplorerOrder">5</string>
 				<string name="ExplorerImageIndex">139</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ReflectionMetadata</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ReflectionMetadataCallbacks</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ReflectionMetadataClasses</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ReflectionMetadataEnums</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ReflectionMetadataEvents</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ReflectionMetadataFunctions</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ReflectionMetadataItem</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ReflectionMetadataProperties</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ReflectionMetadataYieldFunctions</string>
+				<string name="ExplorerImageIndex">154</string>
 			</Properties>
 		</Item>
 	</Item>
