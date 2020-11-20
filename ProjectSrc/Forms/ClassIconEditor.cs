@@ -407,14 +407,14 @@ namespace RobloxStudioModManager
         private void setSelectedIndex(int index)
         {
             bool enabled = hasIconOverride(index);
-            enableIconOverride.Checked = enabled;
-            restoreOriginal.Enabled = enabled;
             
             selectedIcon.BackgroundImage = getIconForIndex(index);
             selectedIcon.BackColor = darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL;
             selectedIndex = index;
 
             editIcon.Text = "Edit Icon " + index;
+            enableIconOverride.Checked = enabled;
+            restoreOriginal.Enabled = enabled;
         }
         
         private void enableIconOverride_CheckedChanged(object sender, EventArgs e)
