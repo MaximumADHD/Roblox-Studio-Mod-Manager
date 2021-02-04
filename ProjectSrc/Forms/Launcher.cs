@@ -10,8 +10,6 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 
 #pragma warning disable IDE1006 // Naming Styles
-#pragma warning disable CA1031  // Do not catch general exception types
-#pragma warning disable CA1303  // Do not pass literals as localized parameters
 
 namespace RobloxStudioModManager
 {
@@ -53,6 +51,7 @@ namespace RobloxStudioModManager
             if (!Directory.Exists(root))
             {
                 // Build a folder structure so the usage of my mod manager is more clear.
+                Directory.CreateDirectory(root);
 
                 string[] folderPaths = new string[]
                 {
@@ -82,7 +81,9 @@ namespace RobloxStudioModManager
         private void manageMods_Click(object sender, EventArgs e)
         {
             string modPath = getModPath();
-            Process.Start(modPath);
+            string cmd = $"explorer.exe \"{modPath}\"";
+
+            Process.Start(cmd);
         }
 
         private static Form createFlagWarningPrompt()
@@ -90,9 +91,11 @@ namespace RobloxStudioModManager
             var warningForm = new Form()
             {
                 Text = "WARNING: HERE BE DRAGONS",
-                
-                Width = 425, Height = 250,
-                MaximizeBox = false, MinimizeBox = false,
+
+                Width = 700,
+                Height = 400,
+                MaximizeBox = false,
+                MinimizeBox = false,
 
                 FormBorderStyle = FormBorderStyle.FixedDialog,
                 StartPosition = FormStartPosition.CenterScreen,
@@ -102,17 +105,18 @@ namespace RobloxStudioModManager
 
             var errorIcon = new PictureBox()
             {
-                Image = SystemIcons.Error.ToBitmap(),
+                BackgroundImage = SystemIcons.Error.ToBitmap(),
+                BackgroundImageLayout = ImageLayout.Zoom,
                 Location = new Point(12, 12),
-                Size = new Size(32, 32),
+                Size = new Size(48, 48),
             };
 
             var dontShowAgain = new CheckBox()
             {
                 AutoSize = true,
-                Location = new Point(54, 145),
+                Location = new Point(85, 235),
                 Text = "Do not show this warning again.",
-                Font = new Font("Microsoft Sans Serif", 9.75f),
+                Font = new Font("Segoe UI", 11f),
             };
 
             var buttonPanel = new FlowLayoutPanel()
@@ -121,32 +125,32 @@ namespace RobloxStudioModManager
                 BackColor = SystemColors.ControlLight,
                 Padding = new Padding(4),
                 Dock = DockStyle.Bottom,
-                Size = new Size(0, 40)
+                Size = new Size(0, 60)
             };
 
             var infoLabel = new Label()
             {
                 AutoSize = true,
 
-                Font = new Font("Microsoft Sans Serif", 9.75f),
+                Font = new Font("Segoe UI", 11f),
 
                 Text = "Editing flags can make Roblox Studio unstable, and could potentially corrupt your places and game data.\n\n" +
                        "You should not edit them unless you are just experimenting with new features locally, and you know what you're doing.\n\n" +
                        "Are you sure you would like to continue?",
 
-                Location = new Point(50, 14),
-                MaximumSize = new Size(350, 0),
+                Location = new Point(80, 14),
+                MaximumSize = new Size(600, 0),
             };
 
             var yes = new Button()
             {
-                Size = new Size(100, 23),
+                Size = new Size(150, 40),
                 Text = "Yes",
             };
 
             var no = new Button()
             {
-                Size = new Size(100, 23),
+                Size = new Size(150, 40),
                 Text = "No",
             };
 
@@ -187,15 +191,13 @@ namespace RobloxStudioModManager
                 SystemSounds.Hand.Play();
                 allow = false;
 
-                using (Form warningPrompt = createFlagWarningPrompt())
-                {
-                    warningPrompt.ShowDialog();
+                using Form warningPrompt = createFlagWarningPrompt();
+                warningPrompt.ShowDialog();
 
-                    if (warningPrompt.DialogResult == DialogResult.Yes)
-                    {
-                        Program.SetValue("Disable Flag Warning", warningPrompt.Enabled);
-                        allow = true;
-                    }
+                if (warningPrompt.DialogResult == DialogResult.Yes)
+                {
+                    Program.SetValue("Disable Flag Warning", warningPrompt.Enabled);
+                    allow = true;
                 }
             }
 
@@ -211,7 +213,7 @@ namespace RobloxStudioModManager
 
                 Hide();
 
-                var updateTask = StudioBootstrapper.BringUpToDate(branch, info.Guid, "Some newer flags might be missing.");
+                var updateTask = BootstrapperForm.BringUpToDate(branch, info.Guid, "Some newer flags might be missing.");
                 await updateTask.ConfigureAwait(true);
 
                 using (FlagEditor editor = new FlagEditor())
@@ -236,7 +238,7 @@ namespace RobloxStudioModManager
             var infoTask = StudioBootstrapper.GetCurrentVersionInfo(branch);
             var info = await infoTask.ConfigureAwait(true);
 
-            var updateTask = StudioBootstrapper.BringUpToDate(branch, info.Guid, "The class icons may have received an update.");
+            var updateTask = BootstrapperForm.BringUpToDate(branch, info.Guid, "The class icons may have received an update.");
             await updateTask.ConfigureAwait(true);
 
             using (var editor = new ClassIconEditor())
@@ -253,124 +255,132 @@ namespace RobloxStudioModManager
         {
             string branch = getSelectedBranch();
 
-            using (var installer = new StudioBootstrapper(forceRebuild.Checked))
+            var bootstrapper = new StudioBootstrapper
             {
-                Hide();
+                ForceInstall = forceRebuild.Checked,
+                ApplyModManagerPatches = true,
 
-                var install = installer.RunInstaller(branch, /* bool setStartEvent = */ true);
-                await install.ConfigureAwait(true);
+                SetStartEvent = true,
+                Branch = branch
+            };
 
-                string studioRoot = StudioBootstrapper.GetStudioDirectory();
-                string modPath = getModPath();
+            using var installer = new BootstrapperForm(bootstrapper);
+            Hide();
 
-                string[] modFiles = Directory.GetFiles(modPath, "*.*", SearchOption.AllDirectories);
+            var install = installer.Bootstrap();
+            await install.ConfigureAwait(true);
 
-                foreach (string modFile in modFiles)
+            string studioRoot = StudioBootstrapper.GetStudioDirectory();
+            string modPath = getModPath();
+
+            string[] modFiles = Directory.GetFiles(modPath, "*.*", SearchOption.AllDirectories);
+
+            foreach (string modFile in modFiles)
+            {
+                try
                 {
-                    try
+                    byte[] fileContents = File.ReadAllBytes(modFile);
+                    FileInfo modFileControl = new FileInfo(modFile);
+
+                    string relativeFile = modFile.Replace(modPath, studioRoot);
+
+                    string relativeDir = Directory
+                        .GetParent(relativeFile)
+                        .ToString();
+
+                    if (!Directory.Exists(relativeDir))
+                        Directory.CreateDirectory(relativeDir);
+
+                    if (File.Exists(relativeFile))
                     {
-                        byte[] fileContents = File.ReadAllBytes(modFile);
-                        FileInfo modFileControl = new FileInfo(modFile);
+                        byte[] relativeContents = File.ReadAllBytes(relativeFile);
 
-                        string relativeFile = modFile.Replace(modPath, studioRoot);
-                        string relativeDir = Directory
-                            .GetParent(relativeFile)
-                            .ToString();
-
-                        if (!Directory.Exists(relativeDir))
-                            Directory.CreateDirectory(relativeDir);
-
-                        if (File.Exists(relativeFile))
-                        {
-                            byte[] relativeContents = File.ReadAllBytes(relativeFile);
-
-                            if (fileContents.SequenceEqual(relativeContents))
-                                continue;
-
-                            modFileControl.CopyTo(relativeFile, true);
+                        if (fileContents.SequenceEqual(relativeContents))
                             continue;
-                        }
 
-                        File.WriteAllBytes(relativeFile, fileContents);
+                        modFileControl.CopyTo(relativeFile, true);
+                        continue;
                     }
-                    catch
-                    {
-                        Console.WriteLine("Failed to overwrite {0}!", modFile);
-                    }
+
+                    File.WriteAllBytes(relativeFile, fileContents);
                 }
-
-                var robloxStudioInfo = new ProcessStartInfo()
+                catch
                 {
-                    FileName = StudioBootstrapper.GetStudioPath(),
-                    Arguments = $"-startEvent {installer.StartEvent.Name}"
-                };
-
-                if (args != null)
-                {
-                    string firstArg = args[0];
-
-                    if (firstArg != null && firstArg.StartsWith("roblox-studio", Program.StringFormat))
-                    {
-                        // Arguments were passed by URI.
-                        var argMap = new Dictionary<string, string>();
-
-                        foreach (string commandPair in firstArg.Split('+'))
-                        {
-                            if (commandPair.Contains(':'))
-                            {
-                                string[] kvPair = commandPair.Split(':');
-
-                                string key = kvPair[0];
-                                string val = kvPair[1];
-
-                                if (key == "gameinfo")
-                                {
-                                    // The user is authenticating. This argument is a special case.
-                                    robloxStudioInfo.Arguments += " -url https://www.roblox.com/Login/Negotiate.ashx -ticket " + val;
-                                }
-                                else
-                                {
-                                    argMap.Add(key, val);
-                                    robloxStudioInfo.Arguments += " -" + key + ' ' + val;
-                                }
-                            }
-                        }
-
-                        if (argMap.ContainsKey("launchmode") && !argMap.ContainsKey("task"))
-                        {
-                            string launchMode = argMap["launchmode"];
-
-                            if (launchMode == "plugin")
-                            {
-                                string pluginId = argMap["pluginid"];
-                                robloxStudioInfo.Arguments += "-task InstallPlugin -pluginId " + pluginId;
-                            }
-                            else if (launchMode == "edit")
-                            {
-                                robloxStudioInfo.Arguments += "-task EditPlace";
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // Arguments were passed directly.
-                        string fullArg = string.Join(" ", args);
-                        robloxStudioInfo.Arguments += fullArg;
-                    }
+                    Console.WriteLine("Failed to overwrite {0}!", modFile);
                 }
+            }
 
-                if (openStudioDirectory.Checked)
+            var robloxStudioInfo = new ProcessStartInfo()
+            {
+                FileName = StudioBootstrapper.GetStudioPath(),
+                Arguments = $"-startEvent {StudioBootstrapper.StartEvent}"
+            };
+
+            if (args != null)
+            {
+                string firstArg = args[0];
+
+                if (firstArg != null && firstArg.StartsWith("roblox-studio", Program.StringFormat))
                 {
-                    Process.Start(studioRoot);
-                    Environment.Exit(0);
+                    // Arguments were passed by URI.
+                    var argMap = new Dictionary<string, string>();
+
+                    foreach (string commandPair in firstArg.Split('+'))
+                    {
+                        if (commandPair.Contains(':'))
+                        {
+                            string[] kvPair = commandPair.Split(':');
+
+                            string key = kvPair[0];
+                            string val = kvPair[1];
+
+                            if (key == "gameinfo")
+                            {
+                                // The user is authenticating. This argument is a special case.
+                                robloxStudioInfo.Arguments += " -url https://www.roblox.com/Login/Negotiate.ashx -ticket " + val;
+                            }
+                            else
+                            {
+                                argMap.Add(key, val);
+                                robloxStudioInfo.Arguments += " -" + key + ' ' + val;
+                            }
+                        }
+                    }
+
+                    if (argMap.ContainsKey("launchmode") && !argMap.ContainsKey("task"))
+                    {
+                        string launchMode = argMap["launchmode"];
+
+                        if (launchMode == "plugin")
+                        {
+                            string pluginId = argMap["pluginid"];
+                            robloxStudioInfo.Arguments += "-task InstallPlugin -pluginId " + pluginId;
+                        }
+                        else if (launchMode == "edit")
+                        {
+                            robloxStudioInfo.Arguments += "-task EditPlace";
+                        }
+                    }
                 }
                 else
                 {
-                    string currentVersion = versionRegistry.GetString("VersionGuid");
-                    versionRegistry.SetValue("LastExecutedVersion", currentVersion);
-
-                    Process.Start(robloxStudioInfo);
+                    // Arguments were passed directly.
+                    string fullArg = string.Join(" ", args);
+                    robloxStudioInfo.Arguments += fullArg;
                 }
+            }
+
+            if (openStudioDirectory.Checked)
+            {
+                Process.Start(studioRoot);
+                Environment.Exit(0);
+            }
+            else
+            {
+                string currentVersion = versionRegistry.GetString("VersionGuid");
+                versionRegistry.SetValue("LastExecutedVersion", currentVersion);
+
+                Process.Start(robloxStudioInfo);
             }
         }
 
@@ -379,7 +389,7 @@ namespace RobloxStudioModManager
             // Save the user's branch preference.
             string branch = getSelectedBranch();
             Program.SetValue("BuildBranch", branch);
-            
+
             // Grab the version currently being targetted.
             string targetId = Program.GetString("TargetVersion");
 
@@ -391,9 +401,9 @@ namespace RobloxStudioModManager
             Enabled = false;
             UseWaitCursor = true;
 
-            var GetDeployLogs = StudioDeployLogs.Get(branch);
-            var deployLogs = await GetDeployLogs.ConfigureAwait(true);
-            
+            var getDeployLogs = StudioDeployLogs.Get(branch);
+            var deployLogs = await getDeployLogs.ConfigureAwait(true);
+
             Enabled = true;
             UseWaitCursor = false;
 

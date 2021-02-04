@@ -9,8 +9,8 @@ namespace RobloxStudioModManager
     {
         private static readonly Regex flagTypes = new Regex("((F|DF|SF)(Flag|String|Int|Log))");
 
-        public string Name  { get; private set; }
-        public string Type  { get; private set; }
+        public string Name { get; private set; }
+        public string Type { get; private set; }
         public string Reset { get; private set; }
 
         public string Key => Type + Name;
@@ -25,7 +25,7 @@ namespace RobloxStudioModManager
             var match = flagTypes.Match(key);
 
             Type = match.Value;
-            Name = key.Substring(Type.Length);
+            Name = key[Type.Length..];
 
             Reset = value;
             Value = value;
@@ -37,14 +37,14 @@ namespace RobloxStudioModManager
         {
             if (Editor != null && Editor.GetString("Value") != value)
                 Editor.SetValue("Value", value);
-            
+
             if (Value != value)
             {
                 Value = value;
                 Dirty = true;
-            } 
+            }
         }
-        
+
         public void SetEditor(RegistryKey editor)
         {
             Editor = editor;

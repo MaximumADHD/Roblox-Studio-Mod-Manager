@@ -4,64 +4,66 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1710 // Identifiers should have correct suffix
-#pragma warning disable CA1031 // Do not catch general exception types
-
 namespace RobloxStudioModManager
 {
-    public class Package
-    {
-        public string Name      { get; set; }
-        public string Signature { get; set; }
-        public int PackedSize   { get; set; }
-        public int Size         { get; set; }
-    }
-
     public class PackageManifest : List<Package>
     {
+        public string RawData { get; private set; }
+
         private PackageManifest(string data)
         {
-            using (StringReader reader = new StringReader(data))
+            using StringReader reader = new StringReader(data);
+            string version = reader.ReadLine();
+
+            if (version != "v0")
             {
-                string version = reader.ReadLine();
+                string errorMsg = $"Unexpected package manifest version: {version} (expected v0!)\n" +
+                                   "Please contact CloneTrooper1019 if you see this error.";
 
-                if (version != "v0")
-                {
-                    string errorMsg = $"Unexpected package manifest version: {version} (expected v0!)\n" +
-                                       "Please contact CloneTrooper1019 if you see this error.";
-
-                    throw new NotSupportedException(errorMsg);
-                }
-
-                while (true)
-                {
-                    try
-                    {
-                        string fileName = reader.ReadLine();
-                        string signature = reader.ReadLine();
-
-                        int packedSize = int.Parse(reader.ReadLine(), Program.NumberFormat);
-                        int size = int.Parse(reader.ReadLine(), Program.NumberFormat);
-
-                        if (fileName.EndsWith(".zip", Program.StringFormat))
-                        {
-                            var package = new Package()
-                            {
-                                Name = fileName,
-                                Signature = signature,
-                                PackedSize = packedSize,
-                                Size = size
-                            };
-
-                            Add(package);
-                        }
-                    }
-                    catch
-                    {
-                        break;
-                    }
-                }
+                throw new NotSupportedException(errorMsg);
             }
+
+            bool eof = false;
+
+            var readLine = new Func<string>(() =>
+            {
+                string line = reader.ReadLine();
+
+                if (line == null)
+                    eof = true;
+
+                return line;
+            });
+
+            while (!eof)
+            {
+                string fileName = readLine();
+                string signature = readLine();
+
+                string rawPackedSize = readLine();
+                string rawSize = readLine();
+
+                if (eof)
+                    break;
+
+                if (!int.TryParse(rawPackedSize, out int packedSize))
+                    break;
+
+                if (!int.TryParse(rawSize, out int size))
+                    break;
+
+                var package = new Package()
+                {
+                    Name = fileName,
+                    Signature = signature,
+                    PackedSize = packedSize,
+                    Size = size
+                };
+
+                Add(package);
+            }
+
+            RawData = data;
         }
 
         public static async Task<PackageManifest> Get(string branch, string versionGuid)
@@ -74,7 +76,7 @@ namespace RobloxStudioModManager
                 var getData = http.DownloadStringTaskAsync(pkgManifestUrl);
                 pkgManifestData = await getData.ConfigureAwait(false);
             }
-            
+
             return new PackageManifest(pkgManifestData);
         }
     }

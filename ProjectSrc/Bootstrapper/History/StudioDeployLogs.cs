@@ -5,8 +5,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1707 // Identifiers should not contain underscores
-
 namespace RobloxStudioModManager
 {
     public class StudioDeployLogs
@@ -79,9 +77,9 @@ namespace RobloxStudioModManager
                     VersionGuid = data[2],
                     TimeStamp = DateTime.Parse(data[3], DateTimeFormatInfo.InvariantInfo),
 
-                    MajorRev   = int.Parse(data[4], Program.NumberFormat),
-                    Version    = int.Parse(data[5], Program.NumberFormat),
-                    Patch      = int.Parse(data[6], Program.NumberFormat),
+                    MajorRev = int.Parse(data[4], Program.NumberFormat),
+                    Version = int.Parse(data[5], Program.NumberFormat),
+                    Patch = int.Parse(data[6], Program.NumberFormat),
                     Changelist = int.Parse(data[7], Program.NumberFormat)
                 };
 
@@ -105,7 +103,7 @@ namespace RobloxStudioModManager
         public static async Task<StudioDeployLogs> Get(string branch)
         {
             StudioDeployLogs logs = null;
-            
+
             if (LogCache.ContainsKey(branch))
                 logs = LogCache[branch];
             else

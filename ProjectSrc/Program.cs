@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -8,8 +8,6 @@ using System.Windows.Forms;
 
 using Microsoft.Win32;
 using System.Globalization;
-
-#pragma warning disable CA2000 // Dispose objects before losing scope (Application.Run handles it?)
 
 namespace RobloxStudioModManager
 {
@@ -101,7 +99,7 @@ namespace RobloxStudioModManager
 
             return result;
         }
-        
+
         // This sets up the following:
         // 1: The File Protocol to open .rbxl/.rbxlx files using my mod manager.
         // 2: The URI Protcol to open places from the website through my mod manager.
@@ -121,7 +119,7 @@ namespace RobloxStudioModManager
             robloxPlaceCmd.SetValue(_, $"\"{modManagerPath}\"\" -task EditFile -localPlaceFile \"%1\"");
 
             // Pass the .rbxl and .rbxlx file formats to Roblox.Place
-            RegistryKey[] robloxLevelPass = 
+            RegistryKey[] robloxLevelPass =
             {
                 classes.GetSubKey(".rbxl"),
                 classes.GetSubKey(".rbxlx")
@@ -142,7 +140,7 @@ namespace RobloxStudioModManager
             studioUrlCmd.SetValue(_, modManagerPath + " %1");
 
             // Set the default icon for both protocols.
-            RegistryKey[] appReg = 
+            RegistryKey[] appReg =
             {
                 robloxPlace,
                 robloxStudioUrl
@@ -154,12 +152,15 @@ namespace RobloxStudioModManager
                 defaultIcon.SetValue(_, $"{modManagerPath},0");
             }
         }
-        
+
         [STAThread]
         static void Main(string[] args)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.SetCompatibleTextRenderingDefault(false);
+
             Application.EnableVisualStyles();
             Application.Run(new Launcher(args));
         }

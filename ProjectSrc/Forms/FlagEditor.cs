@@ -9,9 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
-
-#pragma warning disable CA1303  // Do not pass literals as localized parameters
-#pragma warning disable CA1031  // Do not catch general exception types
 #pragma warning disable IDE1006 // Naming Styles
 
 namespace RobloxStudioModManager
@@ -37,7 +34,7 @@ namespace RobloxStudioModManager
         public FlagEditor()
         {
             InitializeComponent();
-            
+
             overrideStatus.Text = OVERRIDE_STATUS_OFF;
             overrideStatus.Visible = false;
 
@@ -67,7 +64,7 @@ namespace RobloxStudioModManager
                 cell.Style.BackColor = color;
             }
         }
-        
+
         private static string getFlagKeyByRow(DataGridViewRow row)
         {
             var cells = row.Cells;
@@ -102,8 +99,8 @@ namespace RobloxStudioModManager
 
                 DataRow row = overrideTable.Rows.Add
                 (
-                    flag.Name, 
-                    flag.Type, 
+                    flag.Name,
+                    flag.Type,
                     flag.Value
                 );
 
@@ -126,7 +123,7 @@ namespace RobloxStudioModManager
                     var overrideRow = query.First();
                     overrideDataGridView.CurrentCell = overrideRow.Cells[0];
                 }
-                
+
                 // Switch to the overrides tab.
                 tabs.SelectedTab = overridesTab;
             }
@@ -171,36 +168,35 @@ namespace RobloxStudioModManager
                 File.WriteAllText(settingsPath, "");
 
                 // Create some system events for studio so we can hide the splash screen.
-                using (var start = new SystemEvent("FFlagExtract"))
-                using (var show = new SystemEvent("NoSplashScreen"))
+                using var start = new SystemEvent("FFlagExtract");
+                using var show = new SystemEvent("NoSplashScreen");
+                
+                // Run Roblox Studio briefly so we can update the settings file.
+                ProcessStartInfo studioStartInfo = new ProcessStartInfo()
                 {
-                    // Run Roblox Studio briefly so we can update the settings file.
-                    ProcessStartInfo studioStartInfo = new ProcessStartInfo()
-                    {
-                        FileName = StudioBootstrapper.GetStudioPath(),
-                        Arguments = $"-startEvent {start.Name} -showEvent {show.Name}"
-                    };
+                    FileName = StudioBootstrapper.GetStudioPath(),
+                    Arguments = $"-startEvent {start.Name} -showEvent {show.Name}"
+                };
 
-                    Process studio = Process.Start(studioStartInfo);
-                    
-                    var onStart = start.WaitForEvent();
-                    await onStart.ConfigureAwait(true);
+                Process studio = Process.Start(studioStartInfo);
 
-                    FileInfo info = new FileInfo(settingsPath);
+                var onStart = start.WaitForEvent();
+                await onStart.ConfigureAwait(true);
 
-                    // Wait for the settings path to be written.
-                    while (info.Length == 0)
-                    {
-                        var delay = Task.Delay(30);
-                        await delay.ConfigureAwait(true);
+                FileInfo info = new FileInfo(settingsPath);
 
-                        info.Refresh();
-                    }
+                // Wait for the settings path to be written.
+                while (info.Length == 0)
+                {
+                    var delay = Task.Delay(30);
+                    await delay.ConfigureAwait(true);
 
-                    // Nuke studio and flag the version we updated with.
-                    versionRegistry.SetValue("LastExecutedVersion", versionGuid);
-                    studio.Kill();
+                    info.Refresh();
                 }
+
+                // Nuke studio and flag the version we updated with.
+                versionRegistry.SetValue("LastExecutedVersion", versionGuid);
+                studio.Kill();
             }
 
             // Initialize flag browser
@@ -213,7 +209,7 @@ namespace RobloxStudioModManager
             var flagSetup = new List<FVariable>(numFlags);
 
             var autoComplete = new AutoCompleteStringCollection();
-            
+
             foreach (var pair in json)
             {
                 string key = pair.Key,
@@ -222,7 +218,7 @@ namespace RobloxStudioModManager
                 FVariable flag = new FVariable(key, value);
                 autoComplete.Add(flag.Name);
                 flagSetup.Add(flag);
-                
+
                 if (flagNames.Contains(flag.Name))
                 {
                     // Update what the flag should be reset to if removed?
@@ -249,7 +245,7 @@ namespace RobloxStudioModManager
                 overrideTable.Columns.Add(column.DataPropertyName);
 
             var overrideView = new DataView(overrideTable) { Sort = "Name" };
-            
+
             foreach (string flagName in flagNames)
             {
                 if (flagLookup.ContainsKey(flagName))
@@ -259,7 +255,7 @@ namespace RobloxStudioModManager
                     addFlagOverride(flag, true);
                 }
             }
-            
+
             overrideStatus.Visible = true;
             overrideDataGridView.DataSource = overrideView;
         }
@@ -348,7 +344,7 @@ namespace RobloxStudioModManager
             {
                 var selectedRow = flagDataGridView.SelectedRows[0];
                 FVariable selectedFlag = flags[selectedRow.Index];
-                
+
                 addFlagOverride(selectedFlag);
             }
         }
@@ -368,7 +364,7 @@ namespace RobloxStudioModManager
                     FVariable flag = flags[index];
                     flag.ClearEditor();
                 }
-                
+
                 if (overrideRowLookup.ContainsKey(flagKey))
                 {
                     DataRow rowToDelete = overrideRowLookup[flagKey];
@@ -516,7 +512,7 @@ namespace RobloxStudioModManager
         {
             int index = e.RowIndex;
             FVariable flag = flags[index];
-            
+
             if (flag.Dirty)
             {
                 var row = flagDataGridView.Rows[index];
@@ -548,7 +544,7 @@ namespace RobloxStudioModManager
 
                     string type = flagKey.GetString("Type"),
                            value = flagKey.GetString("Value");
-                    
+
                     if (type.EndsWith("String", Program.StringFormat))
                         value = $"\"{value.Replace("\"", "")}\"";
 

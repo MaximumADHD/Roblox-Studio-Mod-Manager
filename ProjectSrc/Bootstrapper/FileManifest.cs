@@ -4,34 +4,41 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
-#pragma warning disable CA1710 // Identifiers should have correct suffix
-#pragma warning disable CA2237 // Mark ISerializable types with serializable
-
 namespace RobloxStudioModManager
 {
     public class FileManifest : Dictionary<string, string>
     {
+        public string RawData { get; set; }
+
         private FileManifest(string data)
         {
-            using (StringReader reader = new StringReader(data))
+            using var reader = new StringReader(data);
+            bool eof = false;
+
+            var readLine = new Func<string>(() =>
             {
-                string path = "";
-                string signature = "";
+                string line = reader.ReadLine();
 
-                while (path != null && signature != null)
-                {
-                    path = reader.ReadLine();
-                    signature = reader.ReadLine();
+                if (line == null)
+                    eof = true;
 
-                    if (path == null || signature == null)
-                        break;
+                return line;
+            });
 
-                    if (path.StartsWith("ExtraContent", Program.StringFormat))
-                        path = path.Replace("ExtraContent", "content");
+            while (!eof)
+            {
+                string path = readLine();
+                string signature = readLine();
 
-                    Add(path, signature);
-                }
+                if (eof)
+                    break;
+                else if (path.StartsWith("ExtraContent", Program.StringFormat))
+                    path = path.Replace("ExtraContent", "content");
+
+                Add(path, signature);
             }
+
+            RawData = data;
         }
 
         public static async Task<FileManifest> Get(string branch, string versionGuid)
@@ -44,7 +51,7 @@ namespace RobloxStudioModManager
                 var download = http.DownloadStringTaskAsync(fileManifestUrl);
                 fileManifestData = await download.ConfigureAwait(false);
             }
-            
+
             return new FileManifest(fileManifestData);
         }
     }
