@@ -9,10 +9,6 @@
     <PackageProjectUrl></PackageProjectUrl>
     <NeutralLanguage>en-us</NeutralLanguage>
     <RepositoryType>GitHub</RepositoryType>
-    <PublishSingleFile>true</PublishSingleFile>
-    <PublishTrimmed>true</PublishTrimmed>
-    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
-    <TieredCompilationQuickJit>false</TieredCompilationQuickJit>
     <RepositoryUrl>https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager</RepositoryUrl>
     <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
     <Description>An unofficial, open-source, custom bootstrapper for Roblox Studio that provides more flexibility to power users looking to make experimental customizations to Roblox Studio, and test new features before they are available to the public.</Description>
@@ -42,10 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -59,12 +51,4 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy /y $(SolutionDir)$(OutDir)\publish\$(ProjectName).exe $(SolutionDir)\..\$(ProjectName).exe&#xD;&#xA;echo BEFORE COMMITTING TO GITHUB MAKE SURE YOU RUN IT THROUGH THE PUBLISH PROFILE!!" />
-  </Target>
-
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="echo BEFORE COMMITTING TO GITHUB MAKE SURE YOU RUN IT THROUGH THE PUBLISH PROFILE!!&#xD;&#xA;echo Todo: Make a batch script for that!&#xD;&#xA;&#xD;&#xA;:: hack to pause for 3 seconds&#xD;&#xA;ping -n 3 localhost &gt; nul" />
-  </Target>
 </Project>
