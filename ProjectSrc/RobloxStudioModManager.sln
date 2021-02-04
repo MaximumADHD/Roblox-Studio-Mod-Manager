@@ -13,11 +13,14 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Internal|Any CPU = Internal|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Internal|Any CPU.ActiveCfg = Internal|Any CPU
+		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Internal|Any CPU.Build.0 = Internal|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection

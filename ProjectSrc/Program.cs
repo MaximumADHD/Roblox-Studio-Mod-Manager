@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
+#pragma warning disable CA2000 // Dispose objects before losing scope
 
 namespace RobloxStudioModManager
 {
@@ -160,7 +161,7 @@ namespace RobloxStudioModManager
         static Program()
         {
             const int SYSTEM_AWARE = 1;
-            SetProcessDpiAwareness(SYSTEM_AWARE);
+            _ = SetProcessDpiAwareness(SYSTEM_AWARE);
         }
 
         [STAThread]

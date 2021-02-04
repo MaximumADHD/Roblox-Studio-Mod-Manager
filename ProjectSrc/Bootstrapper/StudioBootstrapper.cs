@@ -115,7 +115,7 @@ namespace RobloxStudioModManager
 
         public bool GenerateMetadata { get; set; } = false;
         public bool ApplyModManagerPatches { get; set; } = false;
-        
+
         static StudioBootstrapper()
         {
             http = new WebClient();
@@ -176,7 +176,7 @@ namespace RobloxStudioModManager
                     .ToLower(Program.Format);
 
                 return result;
-            } 
+            }
         }
 
         private static string computeSignature(ZipArchiveEntry entry)
@@ -221,7 +221,6 @@ namespace RobloxStudioModManager
             {
                 process.Kill();
             }
-
             catch
             {
                 Console.WriteLine($"Cannot terminate process {process.Id}!");
@@ -520,7 +519,7 @@ namespace RobloxStudioModManager
 
                 MaxProgress += fileCount;
                 Progress += fileCount;
-                
+
                 return;
             }
 
@@ -753,7 +752,7 @@ namespace RobloxStudioModManager
                     Progress = 0;
                     MaxProgress = retries * granularity;
                     ProgressBarStyle = ProgressBarStyle.Continuous;
-                    
+
                     for (int i = 0; i < retries; i++)
                     {
                         runningNow = GetRunningStudioProcesses();
@@ -767,7 +766,7 @@ namespace RobloxStudioModManager
                         {
                             var delay = Task.Delay(1000);
                             Progress += granularity;
-                            
+
                             await delay.ConfigureAwait(true);
                         }
                     }
@@ -789,7 +788,7 @@ namespace RobloxStudioModManager
                                 MessageBoxIcon.Warning
                             );
                         }
-                        
+
                         if (result == DialogResult.Cancel)
                         {
                             safeToContinue = true;
@@ -818,10 +817,10 @@ namespace RobloxStudioModManager
                 currentBranch = Branch;
             else
                 currentBranch = mainRegistry.GetString("BuildBranch", "roblox");
-            
+
             bool shouldInstall = (ForceInstall || currentBranch != Branch);
             ClientVersionInfo versionInfo = null;
-            
+
             var getFastVersion = GetFastVersionGuid(currentBranch);
             string fastVersion = await getFastVersion.ConfigureAwait(true);
 
@@ -941,18 +940,28 @@ namespace RobloxStudioModManager
                 Program.UpdateStudioRegistryProtocols();
 
             }
-            
+
             if (ApplyModManagerPatches && string.IsNullOrEmpty(OverrideStudioDirectory))
             {
                 echo("Applying flag configuration...");
+
                 FlagEditor.ApplyFlags();
 
                 echo("Patching explorer icons...");
-                var patch = ClassIconEditor.PatchExplorerIcons();
 
-                await patch.ConfigureAwait(true);
+                await ClassIconEditor
+                    .PatchExplorerIcons()
+                    .ConfigureAwait(true);
+
+                // Secret feature only for me :(
+                // Feel free to patch in your own thing if you want.
+
+                #if ROBLOX_INTERNAL
+                    var rbxInternal = Task.Run(() => RobloxInternal.Patch(this));
+                    await rbxInternal.ConfigureAwait(false);
+                #endif
             }
-            
+
             setStatus("Starting Roblox Studio...");
             echo("Roblox Studio is up to date!");
 
@@ -967,7 +976,7 @@ namespace RobloxStudioModManager
                         .ConfigureAwait(true);
 
                     start.Close();
-                    
+
                     if (started)
                     {
                         var delay = Task.Delay(3000);
