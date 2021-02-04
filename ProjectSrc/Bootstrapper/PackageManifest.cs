@@ -12,57 +12,59 @@ namespace RobloxStudioModManager
 
         private PackageManifest(string data)
         {
-            using StringReader reader = new StringReader(data);
-            string version = reader.ReadLine();
-
-            if (version != "v0")
+            using (var reader = new StringReader(data))
             {
-                string errorMsg = $"Unexpected package manifest version: {version} (expected v0!)\n" +
-                                   "Please contact CloneTrooper1019 if you see this error.";
+                string version = reader.ReadLine();
 
-                throw new NotSupportedException(errorMsg);
-            }
-
-            bool eof = false;
-
-            var readLine = new Func<string>(() =>
-            {
-                string line = reader.ReadLine();
-
-                if (line == null)
-                    eof = true;
-
-                return line;
-            });
-
-            while (!eof)
-            {
-                string fileName = readLine();
-                string signature = readLine();
-
-                string rawPackedSize = readLine();
-                string rawSize = readLine();
-
-                if (eof)
-                    break;
-
-                if (!int.TryParse(rawPackedSize, out int packedSize))
-                    break;
-
-                if (!int.TryParse(rawSize, out int size))
-                    break;
-
-                var package = new Package()
+                if (version != "v0")
                 {
-                    Name = fileName,
-                    Signature = signature,
-                    PackedSize = packedSize,
-                    Size = size
-                };
+                    string errorMsg = $"Unexpected package manifest version: {version} (expected v0!)\n" +
+                                       "Please contact CloneTrooper1019 if you see this error.";
 
-                Add(package);
+                    throw new NotSupportedException(errorMsg);
+                }
+
+                bool eof = false;
+
+                var readLine = new Func<string>(() =>
+                {
+                    string line = reader.ReadLine();
+
+                    if (line == null)
+                        eof = true;
+
+                    return line;
+                });
+
+                while (!eof)
+                {
+                    string fileName = readLine();
+                    string signature = readLine();
+
+                    string rawPackedSize = readLine();
+                    string rawSize = readLine();
+
+                    if (eof)
+                        break;
+
+                    if (!int.TryParse(rawPackedSize, out int packedSize))
+                        break;
+
+                    if (!int.TryParse(rawSize, out int size))
+                        break;
+
+                    var package = new Package()
+                    {
+                        Name = fileName,
+                        Signature = signature,
+                        PackedSize = packedSize,
+                        Size = size
+                    };
+
+                    Add(package);
+                }
             }
-
+            
             RawData = data;
         }
 

@@ -11,18 +11,20 @@ namespace RobloxStudioModManager
         public static async Task<ClientVersionInfo> Get(string buildType = "WindowsStudio", string branch = "roblox")
         {
             string jsonUrl = $"https://clientsettingscdn.{branch}.com/v1/client-version/{buildType}";
-            using WebClient http = new WebClient();
-            
-            var getJsonData = http.DownloadStringTaskAsync(jsonUrl);
-            string jsonData = await getJsonData.ConfigureAwait(false);
 
-            var json = Program.ReadJsonDictionary(jsonData);
-            var versionInfo = new ClientVersionInfo();
+            using (WebClient http = new WebClient())
+            {
+                var getJsonData = http.DownloadStringTaskAsync(jsonUrl);
+                string jsonData = await getJsonData.ConfigureAwait(false);
 
-            json.TryGetValue("version", out versionInfo.Version);
-            json.TryGetValue("clientVersionUpload", out versionInfo.Guid);
+                var json = Program.ReadJsonDictionary(jsonData);
+                var versionInfo = new ClientVersionInfo();
 
-            return versionInfo;
+                json.TryGetValue("version", out versionInfo.Version);
+                json.TryGetValue("clientVersionUpload", out versionInfo.Guid);
+
+                return versionInfo;
+            }
         }
     }
 }

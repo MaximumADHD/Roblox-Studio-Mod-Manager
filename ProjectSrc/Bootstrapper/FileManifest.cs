@@ -12,32 +12,34 @@ namespace RobloxStudioModManager
 
         private FileManifest(string data)
         {
-            using var reader = new StringReader(data);
-            bool eof = false;
-
-            var readLine = new Func<string>(() =>
+            using (var reader = new StringReader(data))
             {
-                string line = reader.ReadLine();
+                bool eof = false;
 
-                if (line == null)
-                    eof = true;
+                var readLine = new Func<string>(() =>
+                {
+                    string line = reader.ReadLine();
 
-                return line;
-            });
+                    if (line == null)
+                        eof = true;
 
-            while (!eof)
-            {
-                string path = readLine();
-                string signature = readLine();
+                    return line;
+                });
 
-                if (eof)
-                    break;
-                else if (path.StartsWith("ExtraContent", Program.StringFormat))
-                    path = path.Replace("ExtraContent", "content");
+                while (!eof)
+                {
+                    string path = readLine();
+                    string signature = readLine();
 
-                Add(path, signature);
+                    if (eof)
+                        break;
+                    else if (path.StartsWith("ExtraContent", Program.StringFormat))
+                        path = path.Replace("ExtraContent", "content");
+
+                    Add(path, signature);
+                }
             }
-
+            
             RawData = data;
         }
 

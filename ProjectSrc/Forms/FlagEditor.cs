@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
-#pragma warning disable IDE1006 // Naming Styles
 
 namespace RobloxStudioModManager
 {
@@ -168,35 +167,36 @@ namespace RobloxStudioModManager
                 File.WriteAllText(settingsPath, "");
 
                 // Create some system events for studio so we can hide the splash screen.
-                using var start = new SystemEvent("FFlagExtract");
-                using var show = new SystemEvent("NoSplashScreen");
-                
-                // Run Roblox Studio briefly so we can update the settings file.
-                ProcessStartInfo studioStartInfo = new ProcessStartInfo()
+                using (var start = new SystemEvent("FFlagExtract"))
+                using (var show = new SystemEvent("NoSplashScreen"))
                 {
-                    FileName = StudioBootstrapper.GetStudioPath(),
-                    Arguments = $"-startEvent {start.Name} -showEvent {show.Name}"
-                };
+                    // Run Roblox Studio briefly so we can update the settings file.
+                    ProcessStartInfo studioStartInfo = new ProcessStartInfo()
+                    {
+                        FileName = StudioBootstrapper.GetGlobalStudioPath(),
+                        Arguments = $"-startEvent {start.Name} -showEvent {show.Name}"
+                    };
 
-                Process studio = Process.Start(studioStartInfo);
+                    Process studio = Process.Start(studioStartInfo);
 
-                var onStart = start.WaitForEvent();
-                await onStart.ConfigureAwait(true);
+                    var onStart = start.WaitForEvent();
+                    await onStart.ConfigureAwait(true);
 
-                FileInfo info = new FileInfo(settingsPath);
+                    FileInfo info = new FileInfo(settingsPath);
 
-                // Wait for the settings path to be written.
-                while (info.Length == 0)
-                {
-                    var delay = Task.Delay(30);
-                    await delay.ConfigureAwait(true);
+                    // Wait for the settings path to be written.
+                    while (info.Length == 0)
+                    {
+                        var delay = Task.Delay(30);
+                        await delay.ConfigureAwait(true);
 
-                    info.Refresh();
+                        info.Refresh();
+                    }
+
+                    // Nuke studio and flag the version we updated with.
+                    versionRegistry.SetValue("LastExecutedVersion", versionGuid);
+                    studio.Kill();
                 }
-
-                // Nuke studio and flag the version we updated with.
-                versionRegistry.SetValue("LastExecutedVersion", versionGuid);
-                studio.Kill();
             }
 
             // Initialize flag browser
@@ -552,7 +552,7 @@ namespace RobloxStudioModManager
                 };
 
                 string json = "{\r\n" + string.Join(",\r\n", configs) + "\r\n}";
-                string studioDir = StudioBootstrapper.GetStudioDirectory();
+                string studioDir = StudioBootstrapper.GetGlobalStudioDirectory();
 
                 string clientSettings = Path.Combine(studioDir, "ClientSettings");
                 Directory.CreateDirectory(clientSettings);

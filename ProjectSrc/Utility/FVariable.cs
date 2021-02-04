@@ -25,7 +25,7 @@ namespace RobloxStudioModManager
             var match = flagTypes.Match(key);
 
             Type = match.Value;
-            Name = key[Type.Length..];
+            Name = key.Substring(Type.Length);
 
             Reset = value;
             Value = value;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -11,11 +12,12 @@ namespace RobloxStudioModManager
 
         public BootstrapperForm(StudioBootstrapper bootstrapper, bool exitWhenClosed = false)
         {
+            Contract.Requires(bootstrapper != null);
             InitializeComponent();
 
             Bootstrapper = bootstrapper;
             exitOnClose = exitWhenClosed;
-            
+
             bootstrapper.EchoFeed += new MessageEventHandler(Bootstrapper_EchoFeed);
             bootstrapper.StatusChanged += new MessageEventHandler(Bootstrapper_StatusChanged);
 
@@ -52,10 +54,12 @@ namespace RobloxStudioModManager
                 if (check == DialogResult.Yes)
                 {
                     var bootstrapper = new StudioBootstrapper() { Branch = branch };
-                    using var installer = new BootstrapperForm(bootstrapper);
 
-                    var bootstrap = installer.Bootstrap();
-                    await bootstrap.ConfigureAwait(true);
+                    using (var installer = new BootstrapperForm(bootstrapper))
+                    {
+                        var bootstrap = installer.Bootstrap();
+                        await bootstrap.ConfigureAwait(true);
+                    }
                 }
             }
         }

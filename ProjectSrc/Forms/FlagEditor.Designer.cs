@@ -280,7 +280,7 @@
             this.ClientSize = new System.Drawing.Size(770, 844);
             this.Controls.Add(this.tabs);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Icon = RobloxStudioModManager.Properties.Resources.Icon;
             this.Margin = new System.Windows.Forms.Padding(5, 6, 5, 6);
             this.MaximizeBox = false;
             this.Name = "FlagEditor";

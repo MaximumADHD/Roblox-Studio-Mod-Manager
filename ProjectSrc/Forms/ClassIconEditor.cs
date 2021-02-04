@@ -8,8 +8,6 @@ using System.Windows.Forms;
 
 using Microsoft.Win32;
 
-#pragma warning disable IDE1006 // Naming Styles
-
 namespace RobloxStudioModManager
 {
     public partial class ClassIconEditor : Form
@@ -64,7 +62,7 @@ namespace RobloxStudioModManager
 
         private static string getExplorerIconDir()
         {
-            string studioBin = StudioBootstrapper.GetStudioDirectory();
+            string studioBin = StudioBootstrapper.GetGlobalStudioDirectory();
             string explorerBin = Path.Combine(studioBin, "ExplorerIcons");
 
             if (!Directory.Exists(explorerBin))
@@ -113,7 +111,7 @@ namespace RobloxStudioModManager
 
             if (currentHash != manifestHash)
             {
-                string studioDir = StudioBootstrapper.GetStudioDirectory();
+                string studioDir = StudioBootstrapper.GetGlobalStudioDirectory();
                 UpdateExplorerIcons(studioDir);
 
                 infoRegistry.SetValue("LastClassIconHash", manifestHash);
@@ -159,13 +157,14 @@ namespace RobloxStudioModManager
                     {
                         try
                         {
-                            using var icon = Image.FromFile(filePath);
-                            
-                            Rectangle srcRect = new Rectangle(0, 0, icon.Width, icon.Height);
-                            Rectangle destRect = new Rectangle(i * iconSize, 0, iconSize, iconSize);
-                            
-                            explorerGraphics.DrawImage(icon, destRect, srcRect, GraphicsUnit.Pixel);
-                            patchedAny = true;
+                            using (var icon = Image.FromFile(filePath))
+                            {
+                                Rectangle srcRect = new Rectangle(0, 0, icon.Width, icon.Height);
+                                Rectangle destRect = new Rectangle(i * iconSize, 0, iconSize, iconSize);
+
+                                explorerGraphics.DrawImage(icon, destRect, srcRect, GraphicsUnit.Pixel);
+                                patchedAny = true;
+                            }
                         }
                         catch
                         {
@@ -505,7 +504,7 @@ namespace RobloxStudioModManager
             UseWaitCursor = true;
 
             EventHandler iconBtnClicked = new EventHandler(onIconBtnClicked);
-            string studioPath = StudioBootstrapper.GetStudioPath();
+            string studioPath = StudioBootstrapper.GetGlobalStudioPath();
 
             showModifiedIcons = explorerRegistry.GetBool("ShowModifiedIcons");
             darkTheme = explorerRegistry.GetBool("DarkTheme");
@@ -614,7 +613,7 @@ namespace RobloxStudioModManager
 
             try
             {
-                string studioDir = StudioBootstrapper.GetStudioDirectory();
+                string studioDir = StudioBootstrapper.GetGlobalStudioDirectory();
                 string iconPath = Path.Combine(studioDir, iconManifest);
 
                 var getPatched = Task.Run(() => getPatchedExplorerIcons());

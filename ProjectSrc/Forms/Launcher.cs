@@ -9,8 +9,6 @@ using System.Windows.Forms;
 
 using Microsoft.Win32;
 
-#pragma warning disable IDE1006 // Naming Styles
-
 namespace RobloxStudioModManager
 {
     public partial class Launcher : Form
@@ -191,13 +189,15 @@ namespace RobloxStudioModManager
                 SystemSounds.Hand.Play();
                 allow = false;
 
-                using Form warningPrompt = createFlagWarningPrompt();
-                warningPrompt.ShowDialog();
-
-                if (warningPrompt.DialogResult == DialogResult.Yes)
+                using (Form warningPrompt = createFlagWarningPrompt())
                 {
-                    Program.SetValue("Disable Flag Warning", warningPrompt.Enabled);
-                    allow = true;
+                    warningPrompt.ShowDialog();
+
+                    if (warningPrompt.DialogResult == DialogResult.Yes)
+                    {
+                        Program.SetValue("Disable Flag Warning", warningPrompt.Enabled);
+                        allow = true;
+                    }
                 }
             }
 
@@ -264,13 +264,15 @@ namespace RobloxStudioModManager
                 Branch = branch
             };
 
-            using var installer = new BootstrapperForm(bootstrapper);
             Hide();
 
-            var install = installer.Bootstrap();
-            await install.ConfigureAwait(true);
-
-            string studioRoot = StudioBootstrapper.GetStudioDirectory();
+            using (var installer = new BootstrapperForm(bootstrapper))
+            {
+                var install = installer.Bootstrap();
+                await install.ConfigureAwait(true);
+            }
+            
+            string studioRoot = StudioBootstrapper.GetGlobalStudioDirectory();
             string modPath = getModPath();
 
             string[] modFiles = Directory.GetFiles(modPath, "*.*", SearchOption.AllDirectories);
@@ -312,7 +314,7 @@ namespace RobloxStudioModManager
 
             var robloxStudioInfo = new ProcessStartInfo()
             {
-                FileName = StudioBootstrapper.GetStudioPath(),
+                FileName = StudioBootstrapper.GetGlobalStudioPath(),
                 Arguments = $"-startEvent {StudioBootstrapper.StartEvent}"
             };
 

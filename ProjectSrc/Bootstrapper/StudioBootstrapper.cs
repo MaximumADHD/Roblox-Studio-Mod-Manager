@@ -13,9 +13,6 @@ using System.Windows.Forms;
 
 using Microsoft.Win32;
 
-#pragma warning disable IDE1006 // Naming Styles
-
-
 namespace RobloxStudioModManager
 {
     public class StudioBootstrapper
@@ -108,6 +105,7 @@ namespace RobloxStudioModManager
         }
 
         public string Branch { get; set; } = "roblox";
+        public string OverrideStudioDirectory { get; set; } = "";
 
         public bool CanShutdownStudio { get; set; } = true;
         public bool CanForceStudioShutdown { get; set; } = false;
@@ -131,11 +129,13 @@ namespace RobloxStudioModManager
             else
                 mainRegistry = workRegistry;
 
+            Contract.Requires(mainRegistry != null);
+
             versionRegistry = mainRegistry.GetSubKey("VersionData");
             pkgRegistry = mainRegistry.GetSubKey("PackageManifest");
 
             fileRegistry = mainRegistry.GetSubKey("FileManifest");
-            fileRepairs = mainRegistry.GetSubKey("Repairs");
+            fileRepairs = fileRegistry.GetSubKey("Repairs");
         }
 
         private void echo(string message)
@@ -166,30 +166,50 @@ namespace RobloxStudioModManager
 
         private static string computeSignature(Stream source)
         {
-            using MD5 md5 = MD5.Create();
-            byte[] hash = md5.ComputeHash(source);
+            using (MD5 md5 = MD5.Create())
+            {
+                byte[] hash = md5.ComputeHash(source);
 
-            string result = BitConverter
-                .ToString(hash)
-                .Replace("-", "")
-                .ToLower(Program.Format);
-            
-            return result;
+                string result = BitConverter
+                    .ToString(hash)
+                    .Replace("-", "")
+                    .ToLower(Program.Format);
+
+                return result;
+            } 
         }
 
         private static string computeSignature(ZipArchiveEntry entry)
         {
-            using Stream stream = entry.Open();
-            return computeSignature(stream);
+            string signature;
+
+            using (Stream stream = entry.Open())
+                signature = computeSignature(stream);
+
+            return signature;
         }
 
-        public static string GetStudioDirectory()
+        public static string GetGlobalStudioDirectory()
         {
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             return getDirectory(localAppData, "Roblox Studio");
         }
 
-        public static string GetStudioPath()
+        public static string GetGlobalStudioPath()
+        {
+            string studioDir = GetGlobalStudioDirectory();
+            return Path.Combine(studioDir, "RobloxStudioBeta.exe");
+        }
+
+        public string GetStudioDirectory()
+        {
+            if (!string.IsNullOrEmpty(OverrideStudioDirectory))
+                return OverrideStudioDirectory;
+
+            return GetGlobalStudioDirectory();
+        }
+
+        public string GetStudioPath()
         {
             string studioDir = GetStudioDirectory();
             return Path.Combine(studioDir, "RobloxStudioBeta.exe");
@@ -527,126 +547,130 @@ namespace RobloxStudioModManager
                 // Compute the MD5 signature of this zip file, and make sure it 
                 // matches with thesignature specified in the package manifest.
 
-                using var fileBuffer = new MemoryStream(fileContents);
-                string checkSig = computeSignature(fileBuffer);
+                using (var fileBuffer = new MemoryStream(fileContents))
+                {
+                    string checkSig = computeSignature(fileBuffer);
 
-                if (checkSig != newSig)
-                    throw new InvalidDataException($"{package.Name} expected signature: {newSig} but got: {checkSig}");
+                    if (checkSig != newSig)
+                        throw new InvalidDataException($"{package.Name} expected signature: {newSig} but got: {checkSig}");
 
-                // Write the zip file.
-                File.WriteAllBytes(zipExtractPath, fileContents);
+                    // Write the zip file.
+                    File.WriteAllBytes(zipExtractPath, fileContents);
+                }
             }
 
-            using var archive = ZipFile.OpenRead(zipExtractPath);
-            var deferred = new Dictionary<ZipArchiveEntry, string>();
-
-            int numFiles = archive.Entries
-                .Select(entry => entry.FullName)
-                .Where(name => !name.EndsWith("/", Program.StringFormat))
-                .Count();
-
-            string localRootDir = null;
-            MaxProgress += numFiles;
-                
-            foreach (ZipArchiveEntry entry in archive.Entries)
+            using (var archive = ZipFile.OpenRead(zipExtractPath))
             {
-                if (entry.Length == 0)
-                    continue;
+                var deferred = new Dictionary<ZipArchiveEntry, string>();
 
-                string newFileSig = null;
+                int numFiles = archive.Entries
+                    .Select(entry => entry.FullName)
+                    .Where(name => !name.EndsWith("/", Program.StringFormat))
+                    .Count();
 
-                // If we have figured out what our root directory is, try to resolve
-                // what the signature of this file is.
+                string localRootDir = null;
+                MaxProgress += numFiles;
 
-                if (localRootDir != null)
+                foreach (ZipArchiveEntry entry in archive.Entries)
                 {
-                    string filePath = entry.FullName.Replace('/', '\\');
-                    bool hasFilePath = fileManifest.ContainsKey(filePath);
+                    if (entry.Length == 0)
+                        continue;
 
-                    // If we can't find this file in the signature lookup table,
-                    // try appending the local directory to it. This resolves some
-                    // edge cases relating to the fixFilePath function above.
+                    string newFileSig = null;
 
-                    if (!hasFilePath)
+                    // If we have figured out what our root directory is, try to resolve
+                    // what the signature of this file is.
+
+                    if (localRootDir != null)
                     {
-                        filePath = localRootDir + filePath;
-                        hasFilePath = fileManifest.ContainsKey(filePath);
+                        string filePath = entry.FullName.Replace('/', '\\');
+                        bool hasFilePath = fileManifest.ContainsKey(filePath);
+
+                        // If we can't find this file in the signature lookup table,
+                        // try appending the local directory to it. This resolves some
+                        // edge cases relating to the fixFilePath function above.
+
+                        if (!hasFilePath)
+                        {
+                            filePath = localRootDir + filePath;
+                            hasFilePath = fileManifest.ContainsKey(filePath);
+                        }
+
+                        // If we can find this file path in the file manifest, then we will
+                        // use its pre-computed signature to check if the file has changed.
+
+                        newFileSig = hasFilePath ? fileManifest[filePath] : null;
                     }
 
-                    // If we can find this file path in the file manifest, then we will
-                    // use its pre-computed signature to check if the file has changed.
+                    // If we couldn't pre-determine the file signature from the manifest,
+                    // then we have to compute it manually. This is slower.
 
-                    newFileSig = hasFilePath ? fileManifest[filePath] : null;
-                }
+                    if (newFileSig == null)
+                        newFileSig = computeSignature(entry);
 
-                // If we couldn't pre-determine the file signature from the manifest,
-                // then we have to compute it manually. This is slower.
+                    // Now check what files this signature corresponds with.
+                    var files = fileManifest
+                        .Where(pair => pair.Value == newFileSig)
+                        .Select(pair => pair.Key);
 
-                if (newFileSig == null)
-                    newFileSig = computeSignature(entry);
-
-                // Now check what files this signature corresponds with.
-                var files = fileManifest
-                    .Where(pair => pair.Value == newFileSig)
-                    .Select(pair => pair.Key);
-
-                if (files.Any())
-                {
-                    foreach (string file in files)
+                    if (files.Any())
                     {
-                        // Write the file from this signature.
-                        WritePackageFile(studioDir, pkgName, file, newFileSig, entry, writtenFiles);
-
-                        if (localRootDir == null)
+                        foreach (string file in files)
                         {
-                            string filePath = fixFilePath(pkgName, file);
-                            string entryPath = entry.FullName.Replace('/', '\\');
+                            // Write the file from this signature.
+                            WritePackageFile(studioDir, pkgName, file, newFileSig, entry, writtenFiles);
 
-                            if (filePath.EndsWith(entryPath, Program.StringFormat))
+                            if (localRootDir == null)
                             {
-                                // We can infer what the root extraction  
-                                // directory is for the files in this package!                                 
-                                localRootDir = filePath.Replace(entryPath, "");
+                                string filePath = fixFilePath(pkgName, file);
+                                string entryPath = entry.FullName.Replace('/', '\\');
+
+                                if (filePath.EndsWith(entryPath, Program.StringFormat))
+                                {
+                                    // We can infer what the root extraction  
+                                    // directory is for the files in this package!                                 
+                                    localRootDir = filePath.Replace(entryPath, "");
+                                }
                             }
                         }
                     }
-                }
-                else
-                {
-                    string file = entry.FullName;
-
-                    if (string.IsNullOrEmpty(localRootDir))
-                    {
-                        // Check back on this file after we extract the regular files,
-                        // so we can make sure this is extracted to the correct directory.
-                        deferred.Add(entry, newFileSig);
-                    }
                     else
                     {
-                        // Append the local root directory.
-                        file = localRootDir + file;
-                        WritePackageFile(studioDir, pkgName, file, newFileSig, entry, writtenFiles);
+                        string file = entry.FullName;
+
+                        if (string.IsNullOrEmpty(localRootDir))
+                        {
+                            // Check back on this file after we extract the regular files,
+                            // so we can make sure this is extracted to the correct directory.
+                            deferred.Add(entry, newFileSig);
+                        }
+                        else
+                        {
+                            // Append the local root directory.
+                            file = localRootDir + file;
+                            WritePackageFile(studioDir, pkgName, file, newFileSig, entry, writtenFiles);
+                        }
                     }
                 }
+
+                // Process any files that we deferred from writing immediately.
+                foreach (ZipArchiveEntry entry in deferred.Keys)
+                {
+                    string file = entry.FullName;
+                    string newFileSig = deferred[entry];
+
+                    if (localRootDir != null)
+                        file = localRootDir + file;
+
+                    WritePackageFile(studioDir, pkgName, file, newFileSig, entry, writtenFiles);
+                }
+
+                // Update the signature in the package registry so we can check
+                // if this zip file needs to be updated in future versions.
+
+                pkgInfo.SetValue("Signature", package.Signature);
+                pkgInfo.SetValue("NumFiles", numFiles);
             }
-
-            // Process any files that we deferred from writing immediately.
-            foreach (ZipArchiveEntry entry in deferred.Keys)
-            {
-                string file = entry.FullName;
-                string newFileSig = deferred[entry];
-
-                if (localRootDir != null)
-                    file = localRootDir + file;
-
-                WritePackageFile(studioDir, pkgName, file, newFileSig, entry, writtenFiles);
-            }
-
-            // Update the signature in the package registry so we can check
-            // if this zip file needs to be updated in future versions.
-
-            pkgInfo.SetValue("Signature", package.Signature);
-            pkgInfo.SetValue("NumFiles", numFiles);
         }
 
         private void WritePackageFile(string studioDir, string pkgName, string file, string newFileSig, ZipArchiveEntry entry, HashSet<string> writtenFiles)
@@ -918,7 +942,7 @@ namespace RobloxStudioModManager
 
             }
             
-            if (ApplyModManagerPatches)
+            if (ApplyModManagerPatches && string.IsNullOrEmpty(OverrideStudioDirectory))
             {
                 echo("Applying flag configuration...");
                 FlagEditor.ApplyFlags();
@@ -934,16 +958,16 @@ namespace RobloxStudioModManager
 
             if (SetStartEvent)
             {
-                var start = new SystemEvent(StartEvent);
-
                 _ = Task.Run(async () =>
                 {
+                    var start = new SystemEvent(StartEvent);
+
                     bool started = await start
                         .WaitForEvent()
                         .ConfigureAwait(true);
 
                     start.Close();
-
+                    
                     if (started)
                     {
                         var delay = Task.Delay(3000);
@@ -951,6 +975,8 @@ namespace RobloxStudioModManager
 
                         Application.Exit();
                     }
+
+                    start.Dispose();
                 });
             }
         }

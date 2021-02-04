@@ -1,18 +1,22 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
-using System.Globalization;
 
 namespace RobloxStudioModManager
 {
     static class Program
     {
+        [DllImport("Shcore.dll")]
+        static extern int SetProcessDpiAwareness(int PROCESS_DPI_AWARENESS);
+        
         public static readonly RegistryKey MainRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
         public static readonly RegistryKey VersionRegistry = MainRegistry.GetSubKey("VersionData");
 
@@ -153,15 +157,20 @@ namespace RobloxStudioModManager
             }
         }
 
+        static Program()
+        {
+            const int SYSTEM_AWARE = 1;
+            SetProcessDpiAwareness(SYSTEM_AWARE);
+        }
+
         [STAThread]
         static void Main(string[] args)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            
+            Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Application.EnableVisualStyles();
             Application.Run(new Launcher(args));
         }
     }
