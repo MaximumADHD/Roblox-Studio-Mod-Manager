@@ -9,21 +9,28 @@
 
 # What is this?
 
-The _Roblox Studio Mod Manager_ is an unofficial, open-source, custom bootstrapper for Roblox Studio that aims to provide more flexibility for power users who want to make experimental customizations to Roblox Studio, and test new features before they are available to the public.
+The _Roblox Studio Mod Manager_ is an open-source alternative bootstrapper for Roblox Studio. It is intended for power users who want to make experimental changes/tweaks to Roblox Studio without those changes being overwritten, and experiment with development builds/features of Roblox Studio before the general public.
 
 # Features
-* Runs and installs in a separate directory, 100% independent of Roblox Studio's bootstrapper.
 * File overrides are sustained between updates.
 * Updates are applied incrementally to a single directory.
-* Provides a flexible flag editor, allowing you to toggle engine features.
-* Provides a tool for integrating custom class icons into Roblox Studio's explorer.
 * Smooth transitions between development builds of Roblox Studio.
+* A fast flag editor, allowing you to toggle new unstable features.
 * Support for launching from the website, and from saved _RBXL_ files.
 * File updates from Roblox's deployment servers are only applied where needed.
+* Runs and installs in a separate directory, 100% independent of Roblox Studio's bootstrapper.
+* An editor for adding and editing individual class icons of Roblox Studio's class-icon sprite sheet.
 
 # ANTI-VIRUS DISCLAIMER
 
-If you have an anti-virus program installed, it may flag this program as malicious due to this application being misdiagnosed as a trojan horse. It was flagged as such due to the fact that it installs Roblox Studio's files from Amazon S3 and executes them from the mod manager itself. I've attempted to get this cleared several times, but haven't had any luck so far. I may need to get the application signed by a proper certificate authority, which will cost me some money to do.
+If you have an anti-virus program installed, there's a non-zero chance it may flag this program as malicious, due to this application being misdiagnosed as a trojan horse.<br/>
+
+It was flagged as such because it downloads builds of Roblox Studio from a remote location and executes them on your PC. Since anti-virus programs can't distinguish whether this is malicious or not, it chooses to take no chances and assume it is malicious.<br/>
+
+I've attempted to get this cleared several times, but haven't had any luck so far. I may need to get the application signed by a proper certificate authority, which will cost me some money to do.<br/>
+
+In the meantime, you can try this workaround from boatbomber if you'd still like to use the mod manager:<br/>
+https://twitter.com/BoatbomberRBLX/status/1347262909915738113
 
 # Downloads
 
