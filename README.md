@@ -9,7 +9,7 @@
 
 # What is this?
 
-The _Roblox Studio Mod Manager_ is an open-source alternative bootstrapper for Roblox Studio. It is intended for power users who want to make experimental changes/tweaks to Roblox Studio without those changes being overwritten, and experiment with development builds/features of Roblox Studio before the general public.
+The **Roblox Studio Mod Manager** is an open-source alternative bootstrapper for Roblox Studio. It is intended for power users who want to make experimental changes/tweaks to Roblox Studio without those changes being overwritten, and experiment with development builds/features of Roblox Studio before the general public.
 
 # Features
 * File overrides are sustained between updates.
@@ -29,7 +29,7 @@ It was flagged as such because it downloads builds of Roblox Studio from a remot
 
 I've attempted to get this cleared several times, but haven't had any luck so far. I may need to get the application signed by a proper certificate authority, which will cost me some money to do.<br/>
 
-In the meantime, you can try this workaround from boatbomber if you'd still like to use the mod manager:<br/>
+In the meantime, you can try this workaround from boatbomber if you'd still like to use it:
 https://twitter.com/BoatbomberRBLX/status/1347262909915738113
 
 # Downloads
