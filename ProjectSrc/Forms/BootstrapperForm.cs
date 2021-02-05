@@ -30,7 +30,9 @@ namespace RobloxStudioModManager
 
         public async Task Bootstrap()
         {
-            var bootstrap = Bootstrapper.Bootstrap();
+            string targetVersion = Program.GetString("TargetVersion");
+            var bootstrap = Bootstrapper.Bootstrap(targetVersion);
+
             await bootstrap.ConfigureAwait(true);
         }
 
@@ -159,7 +161,8 @@ namespace RobloxStudioModManager
                 this,
 
                 "The installation has not finished yet!\n" +
-                "Are you sure you want to close this window?",
+                "Closing this window will exit the mod manager.\n" +
+                "Are you sure you want to continue?",
 
                 "Warning",
 
@@ -168,8 +171,11 @@ namespace RobloxStudioModManager
             );
 
             if (result != DialogResult.No)
+            {
+                Environment.Exit(0);
                 return;
-
+            }
+            
             e.Cancel = true;
         }
     }

@@ -202,6 +202,12 @@ copy /y "$(TargetDir)$(TargetFileName)" "$(ProjectDir)..\$(TargetFileName)"
 echo Done!
 :end</PostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>if not $(ConfigurationName) == Release goto :end
+echo Clearing instances of $(TargetFileName)
+taskkill /f /im $(TargetFileName) /fi "memusage gt 2"
+:end</PreBuildEvent>
+  </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>

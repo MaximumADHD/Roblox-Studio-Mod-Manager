@@ -806,7 +806,7 @@ namespace RobloxStudioModManager
             return !cancelled;
         }
 
-        public async Task Bootstrap()
+        public async Task Bootstrap(string targetVersion = "")
         {
             setStatus("Checking for updates");
             echo("Checking build installation...");
@@ -825,12 +825,21 @@ namespace RobloxStudioModManager
             var getFastVersion = GetFastVersionGuid(currentBranch);
             string fastVersion = await getFastVersion.ConfigureAwait(true);
 
-            if (shouldInstall || fastVersion != currentVersion)
+            if (!shouldInstall)
+                shouldInstall = (fastVersion != currentVersion);
+
+            if (!shouldInstall && !string.IsNullOrEmpty(targetVersion))
+            {
+                string versionOverload = versionRegistry.GetString("VersionOverload");
+                shouldInstall = (targetVersion != versionOverload);
+            }
+
+            if (shouldInstall)
             {
                 if (currentBranch != "roblox")
                     echo("Possible update detected, verifying...");
 
-                var getVersionInfo = GetCurrentVersionInfo(Branch, versionRegistry, fastVersion);
+                var getVersionInfo = GetCurrentVersionInfo(Branch, versionRegistry, fastVersion, targetVersion);
                 versionInfo = await getVersionInfo.ConfigureAwait(true);
 
                 buildVersion = versionInfo.Guid;
@@ -921,6 +930,7 @@ namespace RobloxStudioModManager
 
                     versionRegistry.SetValue("Version", versionId);
                     versionRegistry.SetValue("VersionGuid", buildVersion);
+                    versionRegistry.SetValue("VersionOverload", targetVersion);
                 }
                 else
                 {

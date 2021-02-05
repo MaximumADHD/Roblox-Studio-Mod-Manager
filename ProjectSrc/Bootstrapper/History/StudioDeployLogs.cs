@@ -57,7 +57,9 @@ namespace RobloxStudioModManager
 
         private void UpdateLogs(string deployHistory, int maxVersion)
         {
-            MatchCollection matches = Regex.Matches(deployHistory, LogPattern);
+            var now = DateTime.Now;
+            var matches = Regex.Matches(deployHistory, LogPattern);
+
             CurrentLogs_x86.Clear();
             CurrentLogs_x64.Clear();
 
@@ -86,6 +88,15 @@ namespace RobloxStudioModManager
                 if (deployLog.Changelist < EarliestChangelist || deployLog.Version > maxVersion)
                     continue;
 
+                // olive71 (Ganesh) said we should expect builds older than ~3 months to be deleted.
+                // Although in practice this isn't consistently done, it's better to be safe than sorry.
+                // https://devforum.roblox.com/t/previous-roblox-builds-missing-from-deployment-server/469698/3
+
+                var timespan = now - deployLog.TimeStamp;
+
+                if (timespan.TotalDays > 90)
+                    continue;
+                
                 HashSet<DeployLog> targetList;
 
                 if (deployLog.Is64Bit)
