@@ -79,9 +79,15 @@ namespace RobloxStudioModManager
         private void manageMods_Click(object sender, EventArgs e)
         {
             string modPath = getModPath();
-            string cmd = $"explorer.exe \"{modPath}\"";
 
-            Process.Start(cmd);
+            var open = new ProcessStartInfo()
+            {
+                FileName = modPath,
+                UseShellExecute = true,
+                Verb = "open"
+            };
+
+            Process.Start(open);
         }
 
         private static Form createFlagWarningPrompt()
