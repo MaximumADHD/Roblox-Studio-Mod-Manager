@@ -62,7 +62,7 @@ namespace RobloxStudioModManager
 
         private static string getExplorerIconDir()
         {
-            string studioBin = StudioBootstrapper.GetGlobalStudioDirectory();
+            string studioBin = StudioBootstrapper.GetStudioDirectory();
             string explorerBin = Path.Combine(studioBin, "ExplorerIcons");
 
             if (!Directory.Exists(explorerBin))
@@ -111,7 +111,7 @@ namespace RobloxStudioModManager
 
             if (currentHash != manifestHash)
             {
-                string studioDir = StudioBootstrapper.GetGlobalStudioDirectory();
+                string studioDir = StudioBootstrapper.GetStudioDirectory();
                 UpdateExplorerIcons(studioDir);
 
                 infoRegistry.SetValue("LastClassIconHash", manifestHash);
@@ -504,7 +504,7 @@ namespace RobloxStudioModManager
             UseWaitCursor = true;
 
             EventHandler iconBtnClicked = new EventHandler(onIconBtnClicked);
-            string studioPath = StudioBootstrapper.GetGlobalStudioPath();
+            string studioPath = StudioBootstrapper.GetStudioPath();
 
             showModifiedIcons = explorerRegistry.GetBool("ShowModifiedIcons");
             darkTheme = explorerRegistry.GetBool("DarkTheme");
@@ -613,7 +613,7 @@ namespace RobloxStudioModManager
 
             try
             {
-                string studioDir = StudioBootstrapper.GetGlobalStudioDirectory();
+                string studioDir = StudioBootstrapper.GetStudioDirectory();
                 string iconPath = Path.Combine(studioDir, iconManifest);
 
                 var getPatched = Task.Run(() => getPatchedExplorerIcons());

@@ -30,6 +30,7 @@ namespace RobloxStudioModManager
             "</Settings>";
 
         private static readonly WebClient http;
+        private const string UserAgent = "RobloxStudioModManager";
         public const string StartEvent = "RobloxStudioModManagerStart";
 
         public event MessageEventHandler EchoFeed;
@@ -119,7 +120,7 @@ namespace RobloxStudioModManager
         static StudioBootstrapper()
         {
             http = new WebClient();
-            http.Headers.Set(HttpRequestHeader.UserAgent, "Roblox/WinInet");
+            http.Headers.Set(HttpRequestHeader.UserAgent, UserAgent);
         }
 
         public StudioBootstrapper(RegistryKey workRegistry = null)
@@ -189,29 +190,29 @@ namespace RobloxStudioModManager
             return signature;
         }
 
-        public static string GetGlobalStudioDirectory()
+        public static string GetStudioDirectory()
         {
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
             return getDirectory(localAppData, "Roblox Studio");
         }
 
-        public static string GetGlobalStudioPath()
+        public static string GetStudioPath()
         {
-            string studioDir = GetGlobalStudioDirectory();
+            string studioDir = GetStudioDirectory();
             return Path.Combine(studioDir, "RobloxStudioBeta.exe");
         }
 
-        public string GetStudioDirectory()
+        public string GetLocalStudioDirectory()
         {
             if (!string.IsNullOrEmpty(OverrideStudioDirectory))
                 return OverrideStudioDirectory;
 
-            return GetGlobalStudioDirectory();
+            return GetStudioDirectory();
         }
 
-        public string GetStudioPath()
+        public string GetLocalStudioPath()
         {
-            string studioDir = GetStudioDirectory();
+            string studioDir = GetLocalStudioDirectory();
             return Path.Combine(studioDir, "RobloxStudioBeta.exe");
         }
 
@@ -530,7 +531,7 @@ namespace RobloxStudioModManager
 
             using (var localHttp = new WebClient())
             {
-                localHttp.Headers.Set("UserAgent", "Roblox/WinInet");
+                localHttp.Headers.Set("UserAgent", UserAgent);
 
                 // Download the zip file package.
                 byte[] fileContents = await localHttp
@@ -544,7 +545,7 @@ namespace RobloxStudioModManager
                     throw new InvalidDataException($"{package.Name} expected packed size: {package.PackedSize} but got: {fileContents.Length}");
 
                 // Compute the MD5 signature of this zip file, and make sure it 
-                // matches with thesignature specified in the package manifest.
+                // matches with the signature specified in the package manifest.
 
                 using (var fileBuffer = new MemoryStream(fileContents))
                 {
@@ -932,19 +933,20 @@ namespace RobloxStudioModManager
                 echo("This version of Roblox Studio has been installed!");
             }
 
+            // Only update the registry protocols if the main registry
+            // is the global one assigned to the program itself.
+
             if (mainRegistry == Program.MainRegistry)
             {
                 setStatus("Configuring Roblox Studio...");
                 echo("Updating registry protocols...");
 
                 Program.UpdateStudioRegistryProtocols();
-
             }
 
             if (ApplyModManagerPatches && string.IsNullOrEmpty(OverrideStudioDirectory))
             {
                 echo("Applying flag configuration...");
-
                 FlagEditor.ApplyFlags();
 
                 echo("Patching explorer icons...");

@@ -272,7 +272,7 @@ namespace RobloxStudioModManager
                 await install.ConfigureAwait(true);
             }
             
-            string studioRoot = StudioBootstrapper.GetGlobalStudioDirectory();
+            string studioRoot = StudioBootstrapper.GetStudioDirectory();
             string modPath = getModPath();
 
             string[] modFiles = Directory.GetFiles(modPath, "*.*", SearchOption.AllDirectories);
@@ -314,7 +314,7 @@ namespace RobloxStudioModManager
 
             var robloxStudioInfo = new ProcessStartInfo()
             {
-                FileName = StudioBootstrapper.GetGlobalStudioPath(),
+                FileName = StudioBootstrapper.GetStudioPath(),
                 Arguments = $"-startEvent {StudioBootstrapper.StartEvent}"
             };
 
@@ -367,8 +367,15 @@ namespace RobloxStudioModManager
                 else
                 {
                     // Arguments were passed directly.
-                    string fullArg = string.Join(" ", args);
-                    robloxStudioInfo.Arguments += fullArg;
+                    for (int i = 0; i < args.Length; i++)
+                    {
+                        string arg = args[i];
+
+                        if (arg.Contains(' '))
+                            arg = $"\"{arg}\"";
+
+                        robloxStudioInfo.Arguments += ' ' + arg;
+                    }
                 }
             }
 

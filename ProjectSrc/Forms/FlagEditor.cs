@@ -173,7 +173,7 @@ namespace RobloxStudioModManager
                     // Run Roblox Studio briefly so we can update the settings file.
                     ProcessStartInfo studioStartInfo = new ProcessStartInfo()
                     {
-                        FileName = StudioBootstrapper.GetGlobalStudioPath(),
+                        FileName = StudioBootstrapper.GetStudioPath(),
                         Arguments = $"-startEvent {start.Name} -showEvent {show.Name}"
                     };
 
@@ -552,7 +552,7 @@ namespace RobloxStudioModManager
                 };
 
                 string json = "{\r\n" + string.Join(",\r\n", configs) + "\r\n}";
-                string studioDir = StudioBootstrapper.GetGlobalStudioDirectory();
+                string studioDir = StudioBootstrapper.GetStudioDirectory();
 
                 string clientSettings = Path.Combine(studioDir, "ClientSettings");
                 Directory.CreateDirectory(clientSettings);

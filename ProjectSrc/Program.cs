@@ -112,7 +112,10 @@ namespace RobloxStudioModManager
         public static void UpdateStudioRegistryProtocols()
         {
             const string _ = ""; // Default empty key/value.
-            string modManagerPath = Application.ExecutablePath;
+
+            string modManagerPath = Application.ExecutablePath
+                .Replace('"', ' ')
+                .Trim();
 
             // Register the base "Roblox.Place" open protocol.
             RegistryKey classes = Registry.CurrentUser.GetSubKey("SOFTWARE", "Classes");
@@ -121,7 +124,7 @@ namespace RobloxStudioModManager
             robloxPlace.SetValue(_, "Roblox Place");
 
             RegistryKey robloxPlaceCmd = robloxPlace.GetSubKey("shell", "open", "command");
-            robloxPlaceCmd.SetValue(_, $"\"{modManagerPath}\"\" -task EditFile -localPlaceFile \"%1\"");
+            robloxPlaceCmd.SetValue(_, $"\"{modManagerPath}\" -task EditFile -localPlaceFile \"%1\"");
 
             // Pass the .rbxl and .rbxlx file formats to Roblox.Place
             RegistryKey[] robloxLevelPass =
