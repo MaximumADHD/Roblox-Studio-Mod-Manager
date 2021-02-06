@@ -852,10 +852,14 @@ namespace RobloxStudioModManager
             if (currentVersion != buildVersion || shouldInstall)
             {
                 echo("This build needs to be installed!");
+                bool studioClosed = true;
 
-                var closeStudio = shutdownStudioProcesses();
-                bool studioClosed = await closeStudio.ConfigureAwait(true);
-
+                if (CanShutdownStudio)
+                {
+                    var closeStudio = shutdownStudioProcesses();
+                    studioClosed = await closeStudio.ConfigureAwait(true);
+                }
+                
                 if (studioClosed)
                 {
                     string binaryType = GetStudioBinaryType();
