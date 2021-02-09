@@ -287,7 +287,7 @@ namespace RobloxStudioModManager
         private Task deleteUnusedFiles()
         {
             var taskQueue = new List<Task>();
-            string studioDir = GetStudioDirectory();
+            string studioDir = GetLocalStudioDirectory();
 
             var fileNames = fileRegistry
                 .GetValueNames()
@@ -507,7 +507,7 @@ namespace RobloxStudioModManager
             string pkgName = package.Name;
             var pkgInfo = pkgRegistry.GetSubKey(pkgName);
 
-            string studioDir = GetStudioDirectory();
+            string studioDir = GetLocalStudioDirectory();
             string downloads = getDirectory(studioDir, "downloads");
 
             string oldSig = pkgInfo.GetString("Signature");
@@ -863,7 +863,7 @@ namespace RobloxStudioModManager
                 if (studioClosed)
                 {
                     string binaryType = GetStudioBinaryType();
-                    string studioDir = GetStudioDirectory();
+                    string studioDir = GetLocalStudioDirectory();
                     string versionId = versionInfo.Version;
 
                     setStatus($"Installing Version {versionId} of Roblox Studio...");
@@ -920,7 +920,7 @@ namespace RobloxStudioModManager
                     {
                         echo("Dumping API...");
 
-                        string studioPath = GetStudioPath();
+                        string studioPath = GetLocalStudioPath();
                         string apiPath = Path.Combine(studioDir, "API-Dump.json");
 
                         Process dumpApi = Process.Start(studioPath, $"-API \"{apiPath}\"");
