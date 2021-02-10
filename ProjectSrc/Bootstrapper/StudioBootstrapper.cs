@@ -528,6 +528,7 @@ namespace RobloxStudioModManager
             string zipExtractPath = Path.Combine(downloads, package.Name);
 
             echo($"Installing package {zipFileUrl}");
+            MaxProgress += 1;
 
             using (var localHttp = new WebClient())
             {
@@ -557,6 +558,8 @@ namespace RobloxStudioModManager
                     // Write the zip file.
                     File.WriteAllBytes(zipExtractPath, fileContents);
                 }
+
+                Progress += 1;
             }
 
             using (var archive = ZipFile.OpenRead(zipExtractPath))
@@ -574,8 +577,11 @@ namespace RobloxStudioModManager
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
                     if (entry.Length == 0)
+                    {
+                        Progress++;
                         continue;
-
+                    }
+                    
                     string newFileSig = null;
 
                     // If we have figured out what our root directory is, try to resolve
@@ -893,7 +899,7 @@ namespace RobloxStudioModManager
                     }
 
                     Progress = 0;
-                    MaxProgress = 5000;
+                    MaxProgress = 0;
                     ProgressBarStyle = ProgressBarStyle.Continuous;
 
                     foreach (var package in pkgManifest)

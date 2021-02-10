@@ -66,6 +66,25 @@ namespace RobloxStudioModManager
             }
         }
 
+        private void UpdateStatusMetric()
+        {
+            string text = "";
+
+            if (progressBar.Style == ProgressBarStyle.Continuous)
+            {
+                int progress = progressBar.Value;
+                int progressMax = progressBar.Maximum;
+
+                text = $"(Progress Metric: {progress}/{progressMax})";
+            }
+
+            if (progressMetric.Text == text)
+                return;
+
+            progressMetric.Text = text;
+            progressMetric.Refresh();
+        }
+
         private void Bootstrapper_StatusChanged(object sender, MessageEventArgs e)
         {
             if (statusLbl.InvokeRequired)
@@ -79,6 +98,7 @@ namespace RobloxStudioModManager
                 statusLbl.Refresh();
 
                 BringToFront();
+                UpdateStatusMetric();
             }
         }
 
@@ -126,6 +146,8 @@ namespace RobloxStudioModManager
                         break;
                     }
                 }
+
+                UpdateStatusMetric();
             }
         }
 
@@ -140,6 +162,8 @@ namespace RobloxStudioModManager
             {
                 var style = e.Value;
                 progressBar.Style = style;
+
+                UpdateStatusMetric();
             }
         }
 
