@@ -595,8 +595,7 @@ namespace RobloxStudioModManager
                         // If we can find this file path in the file manifest, then we will
                         // use its pre-computed signature to check if the file has changed.
 
-                        string signature = hasEntryPath ? fileManifest[entryPath] : null;
-                        newFileSig = signature;
+                        newFileSig = hasEntryPath ? fileManifest[entryPath] : null;
                     }
                     else
                     {
