@@ -13,7 +13,7 @@ namespace RobloxStudioModManager
 {
     public partial class Launcher : Form
     {
-        private static readonly RegistryKey versionRegistry = Program.GetSubKey("VersionData");
+        private static RegistryKey versionRegistry => Program.GetSubKey("VersionData");
         private readonly string[] args = null;
 
         public Launcher(params string[] mainArgs)

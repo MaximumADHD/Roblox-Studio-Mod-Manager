@@ -29,9 +29,10 @@ namespace RobloxStudioModManager
             "   <BaseUrl>http://www.roblox.com</BaseUrl>\n" +
             "</Settings>";
 
-        private static readonly WebClient http;
         private const string UserAgent = "RobloxStudioModManager";
         public const string StartEvent = "RobloxStudioModManagerStart";
+
+        private static readonly WebClient http;
 
         public event MessageEventHandler EchoFeed;
         public event MessageEventHandler StatusChanged;
@@ -42,10 +43,9 @@ namespace RobloxStudioModManager
         private readonly RegistryKey mainRegistry;
         private readonly RegistryKey versionRegistry;
         private readonly RegistryKey pkgRegistry;
-
         private readonly RegistryKey fileRegistry;
-        private readonly RegistryKey fileRepairs;
-
+        
+        private Dictionary<string, string> newManifestEntries;
         private FileManifest fileManifest;
         private string buildVersion;
         private string status;
@@ -53,6 +53,12 @@ namespace RobloxStudioModManager
         private int _progress = -1;
         private int _maxProgress = -1;
         private ProgressBarStyle _progressBarStyle;
+
+        private static readonly IReadOnlyDictionary<string, string> knownRoots = new Dictionary<string, string>()
+        {
+            { "content-terrain.zip",   @"PlatformContent\pc\terrain\"  },
+            { "content-textures3.zip", @"PlatformContent\pc\textures\" },
+        };
 
         public int Progress
         {
@@ -113,8 +119,8 @@ namespace RobloxStudioModManager
 
         public bool ForceInstall { get; set; } = false;
         public bool SetStartEvent { get; set; } = false;
-
         public bool GenerateMetadata { get; set; } = false;
+        public bool RemapExtraContent { get; set; } = false;
         public bool ApplyModManagerPatches { get; set; } = false;
 
         static StudioBootstrapper()
@@ -131,12 +137,19 @@ namespace RobloxStudioModManager
                 mainRegistry = workRegistry;
 
             Contract.Requires(mainRegistry != null);
+            
+            if (!mainRegistry.GetBool("Deprecate MD5"))
+            {
+                // The manifest registry needs to be reset.
+                mainRegistry.SetValue("Deprecate MD5", true);
+                mainRegistry.DeleteSubKeyTree("VersionData", false);
+                mainRegistry.DeleteSubKeyTree("FileManifest", false);
+                mainRegistry.DeleteSubKeyTree("PackageManifest", false);
+            }
 
             versionRegistry = mainRegistry.GetSubKey("VersionData");
             pkgRegistry = mainRegistry.GetSubKey("PackageManifest");
-
             fileRegistry = mainRegistry.GetSubKey("FileManifest");
-            fileRepairs = fileRegistry.GetSubKey("Repairs");
         }
 
         private void echo(string message)
@@ -167,9 +180,9 @@ namespace RobloxStudioModManager
 
         private static string computeSignature(Stream source)
         {
-            using (MD5 md5 = MD5.Create())
+            using (SHA256 sha256 = SHA256.Create())
             {
-                byte[] hash = md5.ComputeHash(source);
+                byte[] hash = sha256.ComputeHash(source);
 
                 string result = BitConverter
                     .ToString(hash)
@@ -188,6 +201,14 @@ namespace RobloxStudioModManager
                 signature = computeSignature(stream);
 
             return signature;
+        }
+        
+        private void appendNewManifestEntry(string key, string value)
+        {
+            if (newManifestEntries == null)
+                newManifestEntries = new Dictionary<string, string>();
+
+            newManifestEntries[key] = value;
         }
 
         public static string GetStudioDirectory()
@@ -284,89 +305,71 @@ namespace RobloxStudioModManager
             return studioProcs;
         }
 
-        private Task deleteUnusedFiles()
+        private void deleteUnusedFiles()
         {
             var taskQueue = new List<Task>();
             string studioDir = GetLocalStudioDirectory();
+
+            setStatus("Deleting unused files...");
+
+            if (newManifestEntries != null)
+            {
+                foreach (var pair in newManifestEntries)
+                {
+                    string key = pair.Key,
+                           value = pair.Value;
+
+                    fileRegistry.SetValue(key, value);
+                    fileManifest[key] = value;
+                }
+            }
 
             var fileNames = fileRegistry
                 .GetValueNames()
                 .ToList();
 
-            setStatus("Deleting unused files...");
-
-            foreach (string rawFileName in fileNames)
+            foreach (string fileName in fileNames)
             {
-                // Temporary variable so we can change what file we are testing,
-                // without breaking the foreach loop.
-                string fileName = rawFileName;
-
-                // A few hacky exemptions to the rules, but necessary because older versions of the
-                // mod manager do not record which files are outside of the manifest, but valid otherwise.
-                // TODO: Need a more proper way of handling this
-
-                if (fileName.Contains("/") || !fileName.Contains("\\"))
-                    continue;
-
-                if (fileName.EndsWith(".dll", Program.StringFormat))
-                    continue;
-
                 string filePath = Path.Combine(studioDir, fileName);
+                string lookupKey = fileName;
 
-                if (!File.Exists(filePath))
-                {
-                    // Check if we recorded this file as an error in the manifest.
-                    string fixedFile = fileRepairs.GetString(fileName);
+                if (fileName.StartsWith("Plugins\\", Program.StringFormat))
+                    lookupKey = fileName.Substring(8);
+                else if (fileName.StartsWith("Qml\\", Program.StringFormat))
+                    lookupKey = fileName.Substring(4);
 
-                    if (fixedFile.Length > 0)
-                    {
-                        // Use this path instead.
-                        filePath = Path.Combine(studioDir, fixedFile);
-                        fileName = fixedFile;
-                    }
-                }
-
-                if (!fileManifest.ContainsKey(fileName))
+                if (!fileManifest.ContainsKey(lookupKey))
                 {
                     if (File.Exists(filePath))
                     {
-                        Task verify = Task.Run(() =>
+                        var info = new FileInfo(filePath);
+                        string name = info.Name;
+
+                        if (name != ".luacheckrc" && name != ".robloxrc")
+                            if (fileRegistry.GetString(fileName).Length > 32)
+                                // Ignore SHA256 hashes for now.
+                                continue;
+
+                        string oldHash = fileRegistry.GetString(fileName);
+                        string newHash;
+
+                        using (var stream = File.OpenRead(filePath))
+                            newHash = computeSignature(stream);
+
+                        if (!fileManifest.ContainsValue(newHash) && oldHash != newHash)
                         {
+                            echo($"Deleting unused file {fileName}");
+
                             try
                             {
-                                // Confirm that this file no longer exists in the manifest.
-                                string sig;
-
-                                using (FileStream file = File.OpenRead(filePath))
-                                    sig = computeSignature(file);
-
-                                if (!fileManifest.ContainsValue(sig))
-                                {
-                                    echo($"Deleting unused file {fileName}");
-                                    fileRegistry.DeleteValue(fileName);
-                                    File.Delete(filePath);
-                                }
-                                else if (!fileName.StartsWith("content", Program.StringFormat))
-                                {
-                                    // The path may have been labeled incorrectly in the manifest.
-                                    // Record it for future reference so we don't have to
-                                    // waste time computing the signature later on.
-
-                                    string fixedName = fileManifest
-                                        .Where(pair => pair.Value == sig)
-                                        .Select(pair => pair.Key)
-                                        .First();
-
-                                    fileRepairs.SetValue(fileName, fixedName);
-                                }
+                                fileRegistry.DeleteValue(fileName);
+                                File.Delete(filePath);
                             }
                             catch
                             {
-                                echo($"FAILED TO VERIFY OR DELETE {fileName}");
+                                Console.WriteLine($"FAILED TO DELETE {fileName}");
                             }
-                        });
-
-                        taskQueue.Add(verify);
+                        }
                     }
                     else if (fileNames.Contains(fileName))
                     {
@@ -374,8 +377,6 @@ namespace RobloxStudioModManager
                     }
                 }
             }
-
-            return Task.WhenAll(taskQueue);
         }
 
         public static async Task<ClientVersionInfo> GetTargetVersionInfo(string branch, string targetVersion, RegistryKey versionRegistry = null)
@@ -499,7 +500,7 @@ namespace RobloxStudioModManager
             if ((pkgDir == "Plugins" || pkgDir == "Qml") && !filePath.StartsWith(pkgDir, Program.StringFormat))
                 filePath = pkgDir + '\\' + filePath;
 
-            return filePath;
+            return filePath.Replace('/', '\\');
         }
 
         private async Task installPackage(HashSet<string> writtenFiles, Package package)
@@ -528,7 +529,7 @@ namespace RobloxStudioModManager
             string zipExtractPath = Path.Combine(downloads, package.Name);
 
             echo($"Installing package {zipFileUrl}");
-            MaxProgress += 1;
+            MaxProgress++;
 
             using (var localHttp = new WebClient())
             {
@@ -540,26 +541,12 @@ namespace RobloxStudioModManager
                     .ConfigureAwait(false);
 
                 // If the size of the file we downloaded does not match the packed size specified
-                // in the manifest, then this file has been tampered with.
+                // in the manifest, then this file isn't valid.
 
                 if (fileContents.Length != package.PackedSize)
                     throw new InvalidDataException($"{package.Name} expected packed size: {package.PackedSize} but got: {fileContents.Length}");
 
-                // Compute the MD5 signature of this zip file, and make sure it 
-                // matches with the signature specified in the package manifest.
-
-                using (var fileBuffer = new MemoryStream(fileContents))
-                {
-                    string checkSig = computeSignature(fileBuffer);
-
-                    if (checkSig != newSig)
-                        throw new InvalidDataException($"{package.Name} expected signature: {newSig} but got: {checkSig}");
-
-                    // Write the zip file.
-                    File.WriteAllBytes(zipExtractPath, fileContents);
-                }
-
-                Progress += 1;
+                Progress++;
             }
 
             using (var archive = ZipFile.OpenRead(zipExtractPath))
@@ -574,6 +561,9 @@ namespace RobloxStudioModManager
                 string localRootDir = null;
                 MaxProgress += numFiles;
 
+                if (knownRoots.ContainsKey(package.Name))
+                    localRootDir = knownRoots[package.Name];
+
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
                     if (entry.Length == 0)
@@ -583,29 +573,35 @@ namespace RobloxStudioModManager
                     }
                     
                     string newFileSig = null;
+                    string entryPath = entry.FullName.Replace('/', '\\');
 
                     // If we have figured out what our root directory is, try to resolve
                     // what the signature of this file is.
 
                     if (localRootDir != null)
                     {
-                        string filePath = entry.FullName.Replace('/', '\\');
-                        bool hasFilePath = fileManifest.ContainsKey(filePath);
-
+                        bool hasEntryPath = fileManifest.ContainsKey(entryPath);
+                        
                         // If we can't find this file in the signature lookup table,
                         // try appending the local directory to it. This resolves some
                         // edge cases relating to the fixFilePath function above.
 
-                        if (!hasFilePath)
+                        if (!hasEntryPath)
                         {
-                            filePath = localRootDir + filePath;
-                            hasFilePath = fileManifest.ContainsKey(filePath);
+                            entryPath = localRootDir + entryPath;
+                            hasEntryPath = fileManifest.ContainsKey(entryPath);
                         }
 
                         // If we can find this file path in the file manifest, then we will
                         // use its pre-computed signature to check if the file has changed.
 
-                        newFileSig = hasFilePath ? fileManifest[filePath] : null;
+                        string signature = hasEntryPath ? fileManifest[entryPath] : null;
+                        newFileSig = signature;
+                    }
+                    else
+                    {
+                        var query = fileManifest.Where(pair => pair.Key.EndsWith(entryPath, Program.StringFormat));
+                        newFileSig = query.Any() ? query.First().Value : null;
                     }
 
                     // If we couldn't pre-determine the file signature from the manifest,
@@ -629,8 +625,10 @@ namespace RobloxStudioModManager
                             if (localRootDir == null)
                             {
                                 string filePath = fixFilePath(pkgName, file);
-                                string entryPath = entry.FullName.Replace('/', '\\');
 
+                                if (filePath != file)
+                                    appendNewManifestEntry(filePath, newFileSig);
+                                
                                 if (filePath.EndsWith(entryPath, Program.StringFormat))
                                 {
                                     // We can infer what the root extraction  
@@ -668,6 +666,9 @@ namespace RobloxStudioModManager
                     if (localRootDir != null)
                         file = localRootDir + file;
 
+                    if (!fileManifest.ContainsKey(file))
+                        appendNewManifestEntry(file, newFileSig);
+                    
                     WritePackageFile(studioDir, pkgName, file, newFileSig, entry, writtenFiles);
                 }
 
@@ -685,6 +686,9 @@ namespace RobloxStudioModManager
 
             if (writtenFiles.Contains(filePath))
                 return;
+
+            if (filePath != file)
+                appendNewManifestEntry(filePath, newFileSig);
 
             if (!ForceInstall)
             {
@@ -886,7 +890,7 @@ namespace RobloxStudioModManager
                     echo("Grabbing file manifest...");
 
                     fileManifest = await FileManifest
-                        .Get(Branch, buildVersion)
+                        .Get(Branch, buildVersion, RemapExtraContent)
                         .ConfigureAwait(true);
 
                     if (GenerateMetadata)
@@ -918,10 +922,8 @@ namespace RobloxStudioModManager
                     File.WriteAllText(appSettings, appSettingsXml);
 
                     setStatus("Deleting unused files...");
-
-                    var delete = deleteUnusedFiles();
-                    await delete.ConfigureAwait(true);
-
+                    deleteUnusedFiles();
+                    
                     if (GenerateMetadata)
                     {
                         echo("Dumping API...");
@@ -978,10 +980,10 @@ namespace RobloxStudioModManager
                 // Secret feature only for me :(
                 // Feel free to patch in your own thing if you want.
 
-                #if ROBLOX_INTERNAL
-                    var rbxInternal = Task.Run(() => RobloxInternal.Patch(this));
-                    await rbxInternal.ConfigureAwait(false);
-                #endif
+#               if ROBLOX_INTERNAL
+                var rbxInternal = Task.Run(() => RobloxInternal.Patch(this));
+                await rbxInternal.ConfigureAwait(false);
+#               endif
             }
 
             setStatus("Starting Roblox Studio...");

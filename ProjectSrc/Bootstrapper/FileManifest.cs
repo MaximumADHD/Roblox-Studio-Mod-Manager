@@ -10,7 +10,7 @@ namespace RobloxStudioModManager
     {
         public string RawData { get; set; }
 
-        private FileManifest(string data)
+        private FileManifest(string data, bool remapExtraContent = false)
         {
             using (var reader = new StringReader(data))
             {
@@ -33,7 +33,7 @@ namespace RobloxStudioModManager
 
                     if (eof)
                         break;
-                    else if (path.StartsWith("ExtraContent", Program.StringFormat))
+                    else if (remapExtraContent && path.StartsWith("ExtraContent", Program.StringFormat))
                         path = path.Replace("ExtraContent", "content");
 
                     Add(path, signature);
@@ -43,7 +43,7 @@ namespace RobloxStudioModManager
             RawData = data;
         }
 
-        public static async Task<FileManifest> Get(string branch, string versionGuid)
+        public static async Task<FileManifest> Get(string branch, string versionGuid, bool remapExtraContent = false)
         {
             string fileManifestUrl = $"https://s3.amazonaws.com/setup.{branch}.com/{versionGuid}-rbxManifest.txt";
             string fileManifestData;
@@ -54,7 +54,7 @@ namespace RobloxStudioModManager
                 fileManifestData = await download.ConfigureAwait(false);
             }
 
-            return new FileManifest(fileManifestData);
+            return new FileManifest(fileManifestData, remapExtraContent);
         }
     }
 }
