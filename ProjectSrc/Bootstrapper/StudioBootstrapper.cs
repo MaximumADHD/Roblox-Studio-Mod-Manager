@@ -600,6 +600,8 @@ namespace RobloxStudioModManager
             string downloads = getDirectory(studioDir, "downloads");
             string zipExtractPath = Path.Combine(downloads, pkgName);
 
+            File.WriteAllBytes(zipExtractPath, package.Data);
+
             using (var archive = ZipFile.OpenRead(zipExtractPath))
             {
                 var deferred = new Dictionary<ZipArchiveEntry, string>();
@@ -874,7 +876,7 @@ namespace RobloxStudioModManager
             string currentVersion = versionRegistry.GetString("VersionGuid");
             string currentBranch;
 
-            if (mainRegistry.Name == Branch)
+            if (mainRegistry.Name.EndsWith(Branch))
                 currentBranch = Branch;
             else
                 currentBranch = mainRegistry.GetString("BuildBranch", "roblox");
@@ -1014,8 +1016,9 @@ namespace RobloxStudioModManager
                                 package.Data = await install.ConfigureAwait(false);
                                 extractPackage(writtenFiles, package);
                             }
-                            catch
+                            catch (Exception e)
                             {
+                                echo($"ERROR: {e.Message}");
                                 success = false;
                             }
 
