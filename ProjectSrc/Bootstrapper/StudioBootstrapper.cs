@@ -948,15 +948,6 @@ namespace RobloxStudioModManager
                         .Get(Branch, buildVersion, RemapExtraContent)
                         .ConfigureAwait(true);
 
-                    if (GenerateMetadata)
-                    {
-                        string pkgManifestPath = Path.Combine(studioDir, "rbxPkgManifest.txt");
-                        File.WriteAllText(pkgManifestPath, pkgManifest.RawData);
-
-                        string fileManifestPath = Path.Combine(studioDir, "rbxManifest.txt");
-                        File.WriteAllText(fileManifestPath, fileManifest.RawData);
-                    }
-
                     Progress = 0;
                     MaxProgress = 0;
                     ProgressBarStyle = ProgressBarStyle.Continuous;
@@ -1060,6 +1051,9 @@ namespace RobloxStudioModManager
 
                     foreach (Package package in pkgManifest)
                     {
+                        if (!package.ShouldInstall)
+                            continue;
+
                         var extract = Task.Run(() => extractPackage(writtenFiles, package));
                         taskQueue.Add(extract);
                     }
@@ -1078,6 +1072,20 @@ namespace RobloxStudioModManager
                     
                     if (GenerateMetadata)
                     {
+                        echo("Writing metadata...");
+
+                        string pkgManifestPath = Path.Combine(studioDir, "rbxPkgManifest.txt");
+                        File.WriteAllText(pkgManifestPath, pkgManifest.RawData);
+
+                        string fileManifestPath = Path.Combine(studioDir, "rbxManifest.txt");
+                        File.WriteAllText(fileManifestPath, fileManifest.RawData);
+
+                        string versionPath = Path.Combine(studioDir, "version.txt");
+                        File.WriteAllText(versionPath, versionId);
+
+                        string versionGuidPath = Path.Combine(studioDir, "version-guid.txt");
+                        File.WriteAllText(versionGuidPath, buildVersion);
+
                         echo("Dumping API...");
 
                         string studioPath = GetLocalStudioPath();
