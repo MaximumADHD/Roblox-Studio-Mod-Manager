@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
+using System.Threading;
 
 namespace RobloxStudioModManager
 {
@@ -307,9 +308,7 @@ namespace RobloxStudioModManager
 
         private void deleteUnusedFiles()
         {
-            var taskQueue = new List<Task>();
             string studioDir = GetLocalStudioDirectory();
-
             setStatus("Deleting unused files...");
 
             if (newManifestEntries != null)
@@ -503,13 +502,10 @@ namespace RobloxStudioModManager
             return filePath.Replace('/', '\\');
         }
 
-        private async Task installPackage(HashSet<string> writtenFiles, Package package)
+        private bool shouldFetchPackage(Package package)
         {
             string pkgName = package.Name;
             var pkgInfo = pkgRegistry.GetSubKey(pkgName);
-
-            string studioDir = GetLocalStudioDirectory();
-            string downloads = getDirectory(studioDir, "downloads");
 
             string oldSig = pkgInfo.GetString("Signature");
             string newSig = package.Signature;
@@ -522,32 +518,87 @@ namespace RobloxStudioModManager
                 MaxProgress += fileCount;
                 Progress += fileCount;
 
-                return;
+                return false;
             }
 
-            string zipFileUrl = $"https://s3.amazonaws.com/setup.{Branch}.com/{buildVersion}-{pkgName}";
-            string zipExtractPath = Path.Combine(downloads, package.Name);
+            return true;
+        }
 
-            echo($"Installing package {zipFileUrl}");
-            MaxProgress++;
+        private async Task<bool> packageExists(Package package)
+        {
+            try
+            {
+                echo($"Verifying availability of: {package.Name}");
+
+                string pkgName = package.Name;
+                var zipFileUrl = new Uri($"https://s3.amazonaws.com/setup.{Branch}.com/{buildVersion}-{pkgName}");
+
+                var request = WebRequest.Create(zipFileUrl) as HttpWebRequest;
+                request.Headers.Set("UserAgent", UserAgent);
+                request.Method = "HEAD";
+
+                var response = await request
+                    .GetResponseAsync() 
+                    .ConfigureAwait(false)
+                    as HttpWebResponse;
+
+                var statusCode = response.StatusCode;
+                response.Close();
+
+                return (statusCode == HttpStatusCode.OK);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private async Task<byte[]> installPackage(Package package)
+        {
+            byte[] result = null;
+            string pkgName = package.Name;
+            string zipFileUrl = $"https://s3.amazonaws.com/setup.{Branch}.com/{buildVersion}-{pkgName}";
 
             using (var localHttp = new WebClient())
             {
                 localHttp.Headers.Set("UserAgent", UserAgent);
+                echo($"Installing package {zipFileUrl}");
+                MaxProgress++;
+                
+                try
+                {
+                    var getFile = localHttp.DownloadDataTaskAsync(zipFileUrl);
+                    byte[] fileContents = await getFile.ConfigureAwait(false);
+                    
+                    // If the size of the file we downloaded does not match the packed 
+                    // size specified in the manifest, then this file isn't valid.
 
-                // Download the zip file package.
-                byte[] fileContents = await localHttp
-                    .DownloadDataTaskAsync(zipFileUrl)
-                    .ConfigureAwait(false);
+                    if (fileContents.Length != package.PackedSize)
+                        throw new InvalidDataException($"{pkgName} expected packed size: {package.PackedSize} but got: {fileContents.Length}");
 
-                // If the size of the file we downloaded does not match the packed size specified
-                // in the manifest, then this file isn't valid.
-
-                if (fileContents.Length != package.PackedSize)
-                    throw new InvalidDataException($"{package.Name} expected packed size: {package.PackedSize} but got: {fileContents.Length}");
-
-                Progress++;
+                    Progress++;
+                    result = fileContents;
+                }
+                catch (Exception e)
+                {
+                    echo($"Error while fetching package {pkgName}:");
+                    echo(e.Message);
+                }
             }
+
+            return result;
+        }
+
+        private void extractPackage(HashSet<string> writtenFiles, Package package)
+        {
+            Contract.Requires(package.Data != null);
+            string pkgName = package.Name;
+
+            var pkgInfo = pkgRegistry.GetSubKey(pkgName);
+            string studioDir = GetLocalStudioDirectory();
+
+            string downloads = getDirectory(studioDir, "downloads");
+            string zipExtractPath = Path.Combine(downloads, pkgName);
 
             using (var archive = ZipFile.OpenRead(zipExtractPath))
             {
@@ -561,8 +612,8 @@ namespace RobloxStudioModManager
                 string localRootDir = null;
                 MaxProgress += numFiles;
 
-                if (knownRoots.ContainsKey(package.Name))
-                    localRootDir = knownRoots[package.Name];
+                if (knownRoots.ContainsKey(pkgName))
+                    localRootDir = knownRoots[pkgName];
 
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
@@ -815,7 +866,7 @@ namespace RobloxStudioModManager
             return !cancelled;
         }
 
-        public async Task Bootstrap(string targetVersion = "")
+        public async Task<bool> Bootstrap(string targetVersion = "")
         {
             setStatus("Checking for updates");
             echo("Checking build installation...");
@@ -837,19 +888,22 @@ namespace RobloxStudioModManager
             if (!shouldInstall)
                 shouldInstall = (fastVersion != currentVersion);
 
-            if (!shouldInstall && !string.IsNullOrEmpty(targetVersion))
-            {
-                string versionOverload = versionRegistry.GetString("VersionOverload");
-                shouldInstall = (targetVersion != versionOverload);
-            }
+            string versionOverload = versionRegistry.GetString("VersionOverload");
+
+            if (targetVersion != versionOverload)
+                shouldInstall = true;
 
             if (shouldInstall)
             {
                 if (currentBranch != "roblox")
                     echo("Possible update detected, verifying...");
 
-                var getVersionInfo = GetCurrentVersionInfo(Branch, versionRegistry, fastVersion, targetVersion);
+                var getVersionInfo = GetCurrentVersionInfo(currentBranch, versionRegistry, fastVersion, targetVersion);
                 versionInfo = await getVersionInfo.ConfigureAwait(true);
+
+                if (targetVersion == versionOverload)
+                    if (fastVersion != versionInfo.Guid)
+                        shouldInstall = false;
 
                 buildVersion = versionInfo.Guid;
             }
@@ -877,8 +931,8 @@ namespace RobloxStudioModManager
 
                     setStatus($"Installing Version {versionId} of Roblox Studio...");
 
-                    var taskQueue = new List<Task>();
                     var writtenFiles = new HashSet<string>();
+                    var taskQueue = new List<Task>();
 
                     echo("Grabbing package manifest...");
 
@@ -905,10 +959,106 @@ namespace RobloxStudioModManager
                     MaxProgress = 0;
                     ProgressBarStyle = ProgressBarStyle.Continuous;
 
-                    foreach (var package in pkgManifest)
+                    foreach (Package package in pkgManifest)
                     {
-                        Task installer = Task.Run(() => installPackage(writtenFiles, package));
+                        package.ShouldInstall = shouldFetchPackage(package);
+
+                        if (!package.ShouldInstall)
+                        {
+                            package.Exists = true;
+                            continue;
+                        }
+
+                        Task verify = Task.Run(async () =>
+                        {
+                            var doesExist = packageExists(package);
+                            package.Exists = await doesExist.ConfigureAwait(false);
+                        });
+
+                        taskQueue.Add(verify);
+                    }
+
+                    await Task
+                       .WhenAll(taskQueue)
+                       .ConfigureAwait(true);
+
+                    taskQueue.Clear();
+
+                    foreach (Package package in pkgManifest)
+                    {
+                        if (!package.Exists)
+                        {
+                            setStatus("Installation Failed!");
+                            echo($"ERROR WHILE INSTALLING: Package {package.Name} could not be fetched! Skipping installation for now.");
+
+                            Progress = 1;
+                            MaxProgress = 1;
+                            ProgressBarStyle = ProgressBarStyle.Marquee;
+
+                            var timeout = Task.Delay(2000);
+                            await timeout.ConfigureAwait(false);
+
+                            return false;
+                        }
+
+                        if (!package.ShouldInstall)
+                            continue;
+
+                        var installer = Task.Run(async () =>
+                        {
+                            bool success = true;
+
+                            try
+                            {
+                                var install = installPackage(package);
+                                package.Data = await install.ConfigureAwait(false);
+                                extractPackage(writtenFiles, package);
+                            }
+                            catch
+                            {
+                                success = false;
+                            }
+
+                            return success;
+                        });
+
                         taskQueue.Add(installer);
+                    }
+
+                    await Task
+                        .WhenAll(taskQueue)
+                        .ConfigureAwait(true);
+
+                    foreach (var task in taskQueue)
+                    {
+                        bool passed = true;
+
+                        if (task is Task<bool> boolTask)
+                            if (!boolTask.Result)
+                                passed = false;
+
+                        if (task.IsFaulted)
+                            passed = false;
+
+                        if (!passed)
+                        {
+                            setStatus("Installation Failed!");
+                            echo("One or more packages failed to install correctly! Skipping update for now...");
+
+                            await Task
+                                .Delay(500)
+                                .ConfigureAwait(false);
+
+                            return false;
+                        }
+                    }
+                    
+                    taskQueue.Clear();
+
+                    foreach (Package package in pkgManifest)
+                    {
+                        var extract = Task.Run(() => extractPackage(writtenFiles, package));
+                        taskQueue.Add(extract);
                     }
 
                     await Task
@@ -930,7 +1080,7 @@ namespace RobloxStudioModManager
                         string studioPath = GetLocalStudioPath();
                         string apiPath = Path.Combine(studioDir, "API-Dump.json");
 
-                        Process dumpApi = Process.Start(studioPath, $"-API \"{apiPath}\"");
+                        var dumpApi = Process.Start(studioPath, $"-API \"{apiPath}\"");
                         dumpApi.WaitForExit();
                     }
 
@@ -1011,6 +1161,8 @@ namespace RobloxStudioModManager
                     start.Dispose();
                 });
             }
+
+            return true;
         }
     }
 }
