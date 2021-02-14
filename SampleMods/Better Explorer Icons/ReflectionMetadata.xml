@@ -381,7 +381,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">TimerService</string>
-				<string name="ExplorerImageIndex">122</string>
+				<string name="ExplorerImageIndex">172</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -417,19 +417,45 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">KeyboardService</string>
-				<string name="ExplorerImageIndex">169</string>
+				<string name="ExplorerImageIndex">158</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">AssetCounterService</string>
+				<string name="ExplorerImageIndex">3</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">LegacyStudioBridge</string>
+				<string name="ExplorerImageIndex">173</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">LanguageService</string>
+				<string name="ExplorerImageIndex">50</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">InternalSyncService</string>
+				<string name="ExplorerImageIndex">113</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">MouseService</string>
-				<string name="ExplorerImageIndex">121</string>
+				<string name="ExplorerImageIndex">171</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Animator</string>
 				<string name="ExplorerImageIndex">127</string>
+				<string name="ClassCategory">Animations</string>
+				<string name="PreferredParent">Humanoid</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -489,7 +515,13 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">MemStorageConnection</string>
-				<string name="ExplorerImageIndex">48</string>
+				<string name="ExplorerImageIndex">75</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">HeightmapImporterService</string>
+				<string name="ExplorerImageIndex">65</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -573,7 +605,55 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">EventIngestService</string>
-				<string name="ExplorerImageIndex">45</string>
+				<string name="ExplorerImageIndex">75</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">AvatarEditorService</string>
+				<string name="ExplorerImageIndex">104</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ProximityPromptService</string>
+				<string name="ExplorerImageIndex">124</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">SessionService</string>
+				<string name="ExplorerImageIndex">166</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">TracerService</string>
+				<string name="ExplorerImageIndex">129</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">UnvalidatedAssetService</string>
+				<string name="ExplorerImageIndex">5</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">UserService</string>
+				<string name="ExplorerImageIndex">21</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">AppUpdateService</string>
+				<string name="ExplorerImageIndex">134</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">AppStorageService</string>
+				<string name="ExplorerImageIndex">69</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -829,7 +909,7 @@
 				<string name="ClassCategory">Constraints</string>
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">81</string>
-				<string name="PreferredParent">PVInstance</string>
+				<string name="PreferredParent">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -885,13 +965,59 @@
 		
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">WrapTarget</string>
+				<string name="ClassCategory">Effects</string>
+				<string name="ExplorerOrder">32</string>
+				<string name="ExplorerImageIndex">122</string>
+				<string name="PreferredParent">MeshPart</string>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Stiffness</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+						<double name="UINumTicks">50</double>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">WrapLayer</string>
+				<string name="ClassCategory">Effects</string>
+				<string name="ExplorerOrder">32</string>
+				<string name="ExplorerImageIndex">121</string>
+				<string name="PreferredParent">MeshPart</string>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Puffiness</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+						<double name="UINumTicks">50</double>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">ShrinkFactor</string>
+						<double name="UIMinimum">-1</double>
+						<double name="UIMaximum">1</double>
+						<double name="UINumTicks">80</double>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+		
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">Bone</string>
 				<string name="ClassCategory">Animations</string>
 				<string name="ExplorerOrder">30</string>
 				<string name="ExplorerImageIndex">114</string>
 				<string name="PreferredParent">PVInstance</string>
-				<string name="PreferredParents">PVInstance</string>
-				<string name="PreferredParents">Bone</string>
 			</Properties>
 		</Item>
 
@@ -902,7 +1028,6 @@
 				<string name="ExplorerOrder">30</string>
 				<string name="ExplorerImageIndex">86</string>
 				<string name="PreferredParent">BasePart</string>
-				<string name="PreferredParents">BasePart</string>
 			</Properties>
 
 			<Item class="ReflectionMetadataProperties">
@@ -1274,6 +1399,47 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">UniversalConstraint</string>
+				<string name="ClassCategory">Constraints</string>
+				<string name="ExplorerOrder">30</string>
+				<string name="ExplorerImageIndex">123</string>
+				<string name="PreferredParent">BasePart</string>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">LimitsEnabled</string>
+						<string name="summary">Enables the angular limits on rotations around the main axis of Attachment0.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">MaxAngle</string>
+						<string name="summary"> Maximum angle between main axes of Attchement0 and Attachment1.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Restitution</string>
+						<string name="summary">Restitution of the two limits, or how elastic they are. Value in [0, 1].</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">CurrentAngle</string>
+						<string name="summary">Current angle between the main axes of Attchement0 and Attachment1.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Radius</string>
+						<string name="summary">Radius of the in-game visual. Value in [0, inf).</string>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">SlidingBallConstraint</string>
 				<string name="ClassCategory">Constraints</string>
 				<string name="ExplorerOrder">3</string>
@@ -1529,7 +1695,7 @@
 			<Properties>
 				<string name="Name">Mouse</string>
 				<string name="summary">Used to receive input from the user. Actually tracks mouse events and keyboard events.</string>
-				<string name="ExplorerImageIndex">121</string>
+				<string name="ExplorerImageIndex">171</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -1814,7 +1980,7 @@
 				<string name="ClassCategory">3D Interfaces</string>
 				<string name="summary">Provides a UI for the player to interact with an object when near.</string>
 				<string name="ExplorerOrder">30</string>
-				<string name="ExplorerImageIndex">41</string>
+				<string name="ExplorerImageIndex">124</string>
 				<string name="PreferredParent">BasePart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
@@ -2134,9 +2300,10 @@
 			<Properties>
 				<string name="Name">SurfaceAppearance</string>
 				<string name="ClassCategory">3D Interfaces</string>
-				<string name="summary">Overrides the visual appearance of a parent BasePart</string>
+				<string name="summary">Overrides the visual appearance of a parent MeshPart</string>
 				<string name="ExplorerOrder">40</string>
 				<string name="ExplorerImageIndex">10</string>
+				<string name="PreferredParent">MeshPart</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3464,7 +3631,7 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">26</string>
 				<string name="ClassCategory">GUI</string>
-				<string name="summary">Ensures a GuiObject does not become smaller or larger than the min and max size. If an element with a constraint is under the control of a layout, the constraint takes precedence in determining the element’s size, but not position. You can use a Constraint by parenting it to the element you wish to constrain.</string>
+				<string name="summary">Ensures a GuiObject does not become smaller or larger than the min and max size. If an element with a constraint is under the control of a layout, the constraint takes precedence in determining the elementÂ’s size, but not position. You can use a Constraint by parenting it to the element you wish to constrain.</string>
 				<string name="PreferredParent">GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
@@ -3488,7 +3655,7 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">26</string>
 				<string name="ClassCategory">GUI</string>
-				<string name="summary">Ensures a GuiObject with text does not allow the font size to become larger or smaller than min and max text sizes. If an element with a constraint is under the control of a layout, the constraint takes precedence in determining the element’s size, but not position. You can use a Constraint by parenting it to the element you wish to constrain.</string>
+				<string name="summary">Ensures a GuiObject with text does not allow the font size to become larger or smaller than min and max text sizes. If an element with a constraint is under the control of a layout, the constraint takes precedence in determining the elementÂ’s size, but not position. You can use a Constraint by parenting it to the element you wish to constrain.</string>
 				<string name="PreferredParent">GuiBase2d</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
@@ -3512,7 +3679,7 @@
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">26</string>
 				<string name="ClassCategory">GUI</string>
-				<string name="summary">Ensures a GuiObject will always have a particular aspect ratio. If an element with a constraint is under the control of a layout, the constraint takes precedence in determining the element’s size, but not position. You can use a Constraint by parenting it to the element you wish to constrain.</string>
+				<string name="summary">Ensures a GuiObject will always have a particular aspect ratio. If an element with a constraint is under the control of a layout, the constraint takes precedence in determining the elementÂ’s size, but not position. You can use a Constraint by parenting it to the element you wish to constrain.</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
 				<Item class="ReflectionMetadataMember">
@@ -3524,7 +3691,7 @@
 				<Item class="ReflectionMetadataMember">
 					<Properties>
 						<string name="Name">AspectType</string>
-						<string name="summary">Describes how the aspect ratio will determine its size. Options are FitWithinMaxSize, ScaleWithParentSize. FitWithinMaxSize will make the element the maximum size it can be within the current possible AbsoluteSize of the element while maintaining the AspectRatio. ScaleWithParentSize will make the element the closest to the parent element’s maximum size while maintaining aspect ratio.</string>
+						<string name="summary">Describes how the aspect ratio will determine its size. Options are FitWithinMaxSize, ScaleWithParentSize. FitWithinMaxSize will make the element the maximum size it can be within the current possible AbsoluteSize of the element while maintaining the AspectRatio. ScaleWithParentSize will make the element the closest to the parent elementÂ’s maximum size while maintaining aspect ratio.</string>
 					</Properties>
 				</Item>
 				<Item class="ReflectionMetadataMember">
@@ -3641,6 +3808,59 @@
 					<Properties>
 						<string name="Name">CornerRadius</string>
 						<string name="summary">Round corner with specified radius.</string>
+					</Properties>
+				</Item>
+			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">UIStroke</string>
+				<string name="ExplorerOrder">30</string>
+				<string name="ExplorerImageIndex">26</string>
+				<string name="ClassCategory">GUI</string>
+				<string name="summary">Applies an outline around a UI object. This can be used on both borders and text.</string>
+				<string name="PreferredParent">GuiBase2d</string>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Color</string>
+						<string name="summary">The color used for the outline.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Transparency</string>
+						<string name="summary">The transparency of the outline from 0 to 1.</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">1</double>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Thickness</string>
+						<string name="summary">The thickness of the outline in pixels.</string>
+						<double name="UIMinimum">0</double>
+						<double name="UIMaximum">25</double>
+						<double name="UINumTicks">250</double>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Enabled</string>
+						<string name="summary">Allows disabling the object's effect temporarily.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">LineJoinMode</string>
+						<string name="summary">Controls how sharp corners are connected together for the outline.</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">ApplyStrokeMode</string>
+						<string name="summary">Allows controlling whether this object should be applied to borders or to text. This allows for two stroke objects to be used for different tasks on the same text object.</string>
 					</Properties>
 				</Item>
 			</Item>
@@ -5455,7 +5675,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">DataStoreService</string>
 				<string name="summary">Responsible for storing data across multiple user created places</string>
 				<string name="ExplorerOrder">99</string>
-				<string name="ExplorerImageIndex">123</string>
+				<string name="ExplorerImageIndex">174</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -5483,7 +5703,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">GlobalDataStore</string>
 				<string name="summary">Exposes functions for saving and loading data for the DataStoreService</string>
 				<string name="ExplorerOrder">9999</string>
-				<string name="ExplorerImageIndex">124</string>
+				<string name="ExplorerImageIndex">175</string>
 			</Properties>
 			<Item class="ReflectionMetadataFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -5525,7 +5745,7 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="Name">OrderedDataStore</string>
 				<string name="summary">A type of DataStore where values must be positive integers. This makes OrderedDataStore suitable for leaderboard related scripting where you are required to order large amounts of data efficiently.</string>
 				<string name="ExplorerOrder">9999</string>
-				<string name="ExplorerImageIndex">124</string>
+				<string name="ExplorerImageIndex">175</string>
 			</Properties>
 			<Item class="ReflectionMetadataYieldFunctions">
 				<Item class="ReflectionMetadataMember">
@@ -7056,7 +7276,6 @@ CurrencySpent - the amount of currency spent on the product for this purchase.
 				<string name="ExplorerOrder">18</string>
 				<string name="ExplorerImageIndex">120</string>
 				<string name="PreferredParent">GuiBase2d</string>
-				<string name="PreferredParents">GuiBase2d</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">

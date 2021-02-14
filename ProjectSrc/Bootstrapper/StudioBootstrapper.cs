@@ -47,6 +47,7 @@ namespace RobloxStudioModManager
         private readonly RegistryKey fileRegistry;
         
         private Dictionary<string, string> newManifestEntries;
+        private HashSet<string> writtenFiles;
         private FileManifest fileManifest;
         private string buildVersion;
         private string status;
@@ -318,6 +319,9 @@ namespace RobloxStudioModManager
                     string key = pair.Key,
                            value = pair.Value;
 
+                    if (fileManifest.ContainsKey(key))
+                        continue;
+
                     fileRegistry.SetValue(key, value);
                     fileManifest[key] = value;
                 }
@@ -342,32 +346,22 @@ namespace RobloxStudioModManager
                     if (File.Exists(filePath))
                     {
                         var info = new FileInfo(filePath);
-                        string name = info.Name;
-
-                        if (name != ".luacheckrc" && name != ".robloxrc")
-                            if (fileRegistry.GetString(fileName).Length > 32)
-                                // Ignore SHA256 hashes for now.
+                        string oldHash = fileRegistry.GetString(fileName);
+                        
+                        if (oldHash?.Length > 32)
+                            if (info.Extension == ".dll" || info.Name == "qmldir")
                                 continue;
 
-                        string oldHash = fileRegistry.GetString(fileName);
-                        string newHash;
+                        echo($"Deleting unused file {fileName}");
 
-                        using (var stream = File.OpenRead(filePath))
-                            newHash = computeSignature(stream);
-
-                        if (!fileManifest.ContainsValue(newHash) && oldHash != newHash)
+                        try
                         {
-                            echo($"Deleting unused file {fileName}");
-
-                            try
-                            {
-                                fileRegistry.DeleteValue(fileName);
-                                File.Delete(filePath);
-                            }
-                            catch
-                            {
-                                Console.WriteLine($"FAILED TO DELETE {fileName}");
-                            }
+                            fileRegistry.DeleteValue(fileName);
+                            File.Delete(filePath);
+                        }
+                        catch
+                        {
+                            Console.WriteLine($"FAILED TO DELETE {fileName}");
                         }
                     }
                     else if (fileNames.Contains(fileName))
@@ -589,7 +583,7 @@ namespace RobloxStudioModManager
             return result;
         }
 
-        private void extractPackage(HashSet<string> writtenFiles, Package package)
+        private void extractPackage(Package package)
         {
             Contract.Requires(package.Data != null);
             string pkgName = package.Name;
@@ -672,7 +666,7 @@ namespace RobloxStudioModManager
                         foreach (string file in files)
                         {
                             // Write the file from this signature.
-                            WritePackageFile(studioDir, pkgName, file, newFileSig, entry, writtenFiles);
+                            WritePackageFile(studioDir, pkgName, file, newFileSig, entry);
 
                             if (localRootDir == null)
                             {
@@ -704,7 +698,7 @@ namespace RobloxStudioModManager
                         {
                             // Append the local root directory.
                             file = localRootDir + file;
-                            WritePackageFile(studioDir, pkgName, file, newFileSig, entry, writtenFiles);
+                            WritePackageFile(studioDir, pkgName, file, newFileSig, entry);
                         }
                     }
                 }
@@ -721,7 +715,7 @@ namespace RobloxStudioModManager
                     if (!fileManifest.ContainsKey(file))
                         appendNewManifestEntry(file, newFileSig);
                     
-                    WritePackageFile(studioDir, pkgName, file, newFileSig, entry, writtenFiles);
+                    WritePackageFile(studioDir, pkgName, file, newFileSig, entry);
                 }
 
                 // Update the signature in the package registry so we can check
@@ -732,7 +726,7 @@ namespace RobloxStudioModManager
             }
         }
 
-        private void WritePackageFile(string studioDir, string pkgName, string file, string newFileSig, ZipArchiveEntry entry, HashSet<string> writtenFiles)
+        private void WritePackageFile(string studioDir, string pkgName, string file, string newFileSig, ZipArchiveEntry entry)
         {
             string filePath = fixFilePath(pkgName, file);
 
@@ -876,7 +870,7 @@ namespace RobloxStudioModManager
             string currentVersion = versionRegistry.GetString("VersionGuid");
             string currentBranch;
 
-            if (mainRegistry.Name.EndsWith(Branch))
+            if (mainRegistry.Name.EndsWith(Branch, Program.StringFormat))
                 currentBranch = Branch;
             else
                 currentBranch = mainRegistry.GetString("BuildBranch", "roblox");
@@ -932,10 +926,6 @@ namespace RobloxStudioModManager
                     string versionId = versionInfo.Version;
 
                     setStatus($"Installing Version {versionId} of Roblox Studio...");
-
-                    var writtenFiles = new HashSet<string>();
-                    var taskQueue = new List<Task>();
-
                     echo("Grabbing package manifest...");
 
                     var pkgManifest = await PackageManifest
@@ -947,6 +937,9 @@ namespace RobloxStudioModManager
                     fileManifest = await FileManifest
                         .Get(Branch, buildVersion, RemapExtraContent)
                         .ConfigureAwait(true);
+
+                    var taskQueue = new List<Task>();
+                    writtenFiles = new HashSet<string>();
 
                     Progress = 0;
                     MaxProgress = 0;
@@ -1005,7 +998,7 @@ namespace RobloxStudioModManager
                             {
                                 var install = installPackage(package);
                                 package.Data = await install.ConfigureAwait(false);
-                                extractPackage(writtenFiles, package);
+                                extractPackage(package);
                             }
                             catch (Exception e)
                             {
@@ -1054,7 +1047,7 @@ namespace RobloxStudioModManager
                         if (!package.ShouldInstall)
                             continue;
 
-                        var extract = Task.Run(() => extractPackage(writtenFiles, package));
+                        var extract = Task.Run(() => extractPackage(package));
                         taskQueue.Add(extract);
                     }
 
