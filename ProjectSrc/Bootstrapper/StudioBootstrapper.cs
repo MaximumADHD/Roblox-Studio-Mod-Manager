@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
-using System.Threading;
 
 namespace RobloxStudioModManager
 {
