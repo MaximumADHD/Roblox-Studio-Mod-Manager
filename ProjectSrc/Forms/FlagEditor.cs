@@ -96,11 +96,23 @@ namespace RobloxStudioModManager
                 RegistryKey editor = flagRegistry.GetSubKey(key);
                 flag.SetEditor(editor);
 
+                if (!init && flag.Type.EndsWith("Flag", Program.StringFormat))
+                {
+                    if (bool.TryParse(flag.Value, out bool value))
+                    {
+                        string str = (!value)
+                            .ToString(Program.Format)
+                            .ToLower(Program.Format);
+
+                        flag.SetValue(str);
+                    }
+                }
+                
                 DataRow row = overrideTable.Rows.Add
                 (
                     flag.Name,
                     flag.Type,
-                    flag.Value
+                    flag.Value.ToLower(Program.Format)
                 );
 
                 overrideRowLookup.Add(key, row);
