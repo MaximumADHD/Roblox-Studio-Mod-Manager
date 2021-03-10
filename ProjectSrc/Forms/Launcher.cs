@@ -30,15 +30,39 @@ namespace RobloxStudioModManager
             return result.ToString();
         }
 
-        private void Launcher_Load(object sender, EventArgs e)
+        private void setBuildDir(string buildDir)
+        {
+            if (installPath.Text == buildDir)
+                return;
+
+            installPath.Text = buildDir;
+            Program.SetValue("BuildDirectory", buildDir);
+
+            Launcher_Load();
+        }
+
+        private void Launcher_Load(object sender = null, EventArgs e = null)
         {
             if (args != null)
                 openStudioDirectory.Enabled = false;
 
-            string build = Program.GetString("BuildBranch");
-            int buildIndex = branchSelect.Items.IndexOf(build);
+            var profile = Program.GetProfileRegistry();
+            string buildBranch = profile.GetString("BuildBranch");
+            string buildDir = Program.GetString("BuildDirectory");
 
+            int buildIndex = branchSelect.Items.IndexOf(buildBranch);
             branchSelect.SelectedIndex = Math.Max(buildIndex, 0);
+
+            if (string.IsNullOrEmpty(buildDir))
+            {
+                string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
+                string studioDir = Path.Combine(localAppData, "Roblox Studio");
+
+                Directory.CreateDirectory(studioDir);
+                buildDir = studioDir;
+            }
+
+            setBuildDir(buildDir);
         }
 
         public static string getModPath()
@@ -462,6 +486,16 @@ namespace RobloxStudioModManager
 
             var target = targetVersion.SelectedItem as DeployLog;
             Program.SetValue("TargetVersion", target.VersionId);
+        }
+
+        private void changeInstallPath_Click(object sender, EventArgs e)
+        {
+            DialogResult result = folderBrowser.ShowDialog();
+
+            if (result != DialogResult.OK)
+                return;
+
+            setBuildDir(folderBrowser.SelectedPath);
         }
     }
 }

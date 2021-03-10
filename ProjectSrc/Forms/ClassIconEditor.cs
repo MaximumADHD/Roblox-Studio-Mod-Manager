@@ -18,8 +18,8 @@ namespace RobloxStudioModManager
         private const string iconPrefix = "explorer-icon-";
         private const string iconManifest = @"content\textures\ClassImages.PNG";
 
-        private static readonly RegistryKey explorerRegistry = Program.GetSubKey("ExplorerIcons");
-        private static readonly RegistryKey manifestRegistry = Program.GetSubKey("FileManifest");
+        private static readonly RegistryKey explorerRegistry = Program.GetProfileRegistry("ExplorerIcons");
+        private static readonly RegistryKey manifestRegistry = Program.GetProfileRegistry("FileManifest");
 
         private static readonly RegistryKey iconRegistry = explorerRegistry.GetSubKey("EnabledIcons");
         private static readonly RegistryKey infoRegistry = explorerRegistry.GetSubKey("ClassImagesInfo");

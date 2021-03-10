@@ -133,7 +133,7 @@ namespace RobloxStudioModManager
         public StudioBootstrapper(RegistryKey workRegistry = null)
         {
             if (workRegistry == null)
-                mainRegistry = Program.MainRegistry;
+                mainRegistry = Program.GetProfileRegistry();
             else
                 mainRegistry = workRegistry;
 

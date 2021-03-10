@@ -19,7 +19,10 @@ namespace RobloxStudioModManager
         static extern int SetProcessDpiAwareness(int PROCESS_DPI_AWARENESS);
         
         public static readonly RegistryKey MainRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
-        public static readonly RegistryKey VersionRegistry = MainRegistry.GetSubKey("VersionData");
+        public static RegistryKey VersionRegistry => GetProfileRegistry("VersionData");
+
+        private static readonly string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
+        private static readonly string rootStudioDir = Path.Combine(localAppData, "Roblox Studio");
 
         public static readonly CultureInfo Format = CultureInfo.InvariantCulture;
         public const StringComparison StringFormat = StringComparison.InvariantCulture;
@@ -82,6 +85,28 @@ namespace RobloxStudioModManager
         public static void SetValue(string name, object value)
         {
             MainRegistry.SetValue(name, value);
+        }
+
+        public static RegistryKey GetProfileRegistry(params string[] path)
+        {
+            string studioDir = MainRegistry.GetString("BuildDirectory");
+
+            if (string.IsNullOrEmpty(studioDir))
+                studioDir = rootStudioDir;
+            
+            if (!Directory.Exists(studioDir))
+                Directory.CreateDirectory(studioDir);
+
+            RegistryKey result = MainRegistry;
+
+            if (studioDir != rootStudioDir)
+            {
+                var profiles = result.GetSubKey("Profiles");
+                string key = studioDir.Replace('\\', '/');
+                result = profiles.GetSubKey(key);
+            }
+
+            return result.GetSubKey(path);
         }
 
         public static Dictionary<string, string> ReadJsonDictionary(string json)

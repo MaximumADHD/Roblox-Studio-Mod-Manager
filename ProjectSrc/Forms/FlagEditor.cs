@@ -15,7 +15,7 @@ namespace RobloxStudioModManager
     public partial class FlagEditor : Form
     {
         private static readonly RegistryKey versionRegistry = Program.VersionRegistry;
-        private static readonly RegistryKey flagRegistry = Program.GetSubKey("FlagEditor");
+        private static readonly RegistryKey flagRegistry = Program.GetProfileRegistry("FlagEditor");
 
         private DataTable overrideTable;
         private readonly Dictionary<string, DataRow> overrideRowLookup = new Dictionary<string, DataRow>();

@@ -40,6 +40,10 @@
             this.title = new System.Windows.Forms.Label();
             this.targetVersion = new System.Windows.Forms.ComboBox();
             this.logo = new System.Windows.Forms.PictureBox();
+            this.installPath = new System.Windows.Forms.TextBox();
+            this.folderBrowser = new System.Windows.Forms.FolderBrowserDialog();
+            this.label1 = new System.Windows.Forms.Label();
+            this.changeInstallPath = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.logo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -47,13 +51,12 @@
             // 
             this.launchStudio.AccessibleName = "Launch Roblox Studio";
             this.launchStudio.AccessibleRole = System.Windows.Forms.AccessibleRole.None;
-            this.launchStudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.launchStudio.Cursor = System.Windows.Forms.Cursors.Default;
             this.launchStudio.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.launchStudio.Location = new System.Drawing.Point(17, 195);
             this.launchStudio.Margin = new System.Windows.Forms.Padding(9, 5, 4, 5);
             this.launchStudio.Name = "launchStudio";
-            this.launchStudio.Size = new System.Drawing.Size(213, 35);
+            this.launchStudio.Size = new System.Drawing.Size(226, 35);
             this.launchStudio.TabIndex = 6;
             this.launchStudio.Text = "Launch Studio";
             this.launchStudio.UseVisualStyleBackColor = true;
@@ -62,13 +65,12 @@
             // manageMods
             // 
             this.manageMods.AccessibleName = "Open Mod Folder";
-            this.manageMods.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.manageMods.Cursor = System.Windows.Forms.Cursors.Default;
             this.manageMods.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.manageMods.Location = new System.Drawing.Point(17, 239);
             this.manageMods.Margin = new System.Windows.Forms.Padding(9, 5, 4, 5);
             this.manageMods.Name = "manageMods";
-            this.manageMods.Size = new System.Drawing.Size(213, 35);
+            this.manageMods.Size = new System.Drawing.Size(226, 35);
             this.manageMods.TabIndex = 9;
             this.manageMods.Text = "Open Mod Folder";
             this.manageMods.UseVisualStyleBackColor = true;
@@ -77,7 +79,6 @@
             // branchSelect
             // 
             this.branchSelect.AccessibleName = "Branch Selector";
-            this.branchSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.branchSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.branchSelect.FormattingEnabled = true;
             this.branchSelect.Items.AddRange(new object[] {
@@ -85,7 +86,7 @@
             "sitetest1.robloxlabs",
             "sitetest2.robloxlabs",
             "sitetest3.robloxlabs"});
-            this.branchSelect.Location = new System.Drawing.Point(262, 215);
+            this.branchSelect.Location = new System.Drawing.Point(259, 224);
             this.branchSelect.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.branchSelect.Name = "branchSelect";
             this.branchSelect.Size = new System.Drawing.Size(226, 28);
@@ -94,13 +95,12 @@
             // 
             // branchLabel
             // 
-            this.branchLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.branchLabel.AutoSize = true;
             this.branchLabel.BackColor = System.Drawing.Color.Transparent;
             this.branchLabel.CausesValidation = false;
             this.branchLabel.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.branchLabel.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.branchLabel.Location = new System.Drawing.Point(257, 185);
+            this.branchLabel.Location = new System.Drawing.Point(254, 194);
             this.branchLabel.Margin = new System.Windows.Forms.Padding(0);
             this.branchLabel.Name = "branchLabel";
             this.branchLabel.Size = new System.Drawing.Size(130, 25);
@@ -111,9 +111,8 @@
             // forceRebuild
             // 
             this.forceRebuild.AccessibleName = "Force Client Rebuild";
-            this.forceRebuild.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.forceRebuild.AutoSize = true;
-            this.forceRebuild.Location = new System.Drawing.Point(262, 311);
+            this.forceRebuild.Location = new System.Drawing.Point(259, 326);
             this.forceRebuild.Name = "forceRebuild";
             this.forceRebuild.Size = new System.Drawing.Size(176, 24);
             this.forceRebuild.TabIndex = 12;
@@ -123,12 +122,11 @@
             // openFlagEditor
             // 
             this.openFlagEditor.AccessibleName = "Open Flag Editor";
-            this.openFlagEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.openFlagEditor.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.openFlagEditor.Location = new System.Drawing.Point(17, 284);
+            this.openFlagEditor.Location = new System.Drawing.Point(17, 282);
             this.openFlagEditor.Margin = new System.Windows.Forms.Padding(9, 5, 4, 5);
             this.openFlagEditor.Name = "openFlagEditor";
-            this.openFlagEditor.Size = new System.Drawing.Size(213, 35);
+            this.openFlagEditor.Size = new System.Drawing.Size(226, 35);
             this.openFlagEditor.TabIndex = 15;
             this.openFlagEditor.Text = "Edit Fast Flags";
             this.openFlagEditor.UseVisualStyleBackColor = true;
@@ -137,12 +135,11 @@
             // editExplorerIcons
             // 
             this.editExplorerIcons.AccessibleName = "Open Flag Editor";
-            this.editExplorerIcons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.editExplorerIcons.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.editExplorerIcons.Location = new System.Drawing.Point(17, 329);
+            this.editExplorerIcons.Location = new System.Drawing.Point(17, 327);
             this.editExplorerIcons.Margin = new System.Windows.Forms.Padding(9, 5, 4, 5);
             this.editExplorerIcons.Name = "editExplorerIcons";
-            this.editExplorerIcons.Size = new System.Drawing.Size(213, 35);
+            this.editExplorerIcons.Size = new System.Drawing.Size(226, 35);
             this.editExplorerIcons.TabIndex = 16;
             this.editExplorerIcons.Text = "Edit Class Icons";
             this.editExplorerIcons.UseVisualStyleBackColor = true;
@@ -151,9 +148,8 @@
             // openStudioDirectory
             // 
             this.openStudioDirectory.AccessibleName = "Just Open Studio Path";
-            this.openStudioDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.openStudioDirectory.AutoSize = true;
-            this.openStudioDirectory.Location = new System.Drawing.Point(262, 341);
+            this.openStudioDirectory.Location = new System.Drawing.Point(259, 356);
             this.openStudioDirectory.Name = "openStudioDirectory";
             this.openStudioDirectory.Size = new System.Drawing.Size(225, 24);
             this.openStudioDirectory.TabIndex = 14;
@@ -162,13 +158,12 @@
             // 
             // targetVersionLabel
             // 
-            this.targetVersionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.targetVersionLabel.AutoSize = true;
             this.targetVersionLabel.BackColor = System.Drawing.Color.Transparent;
             this.targetVersionLabel.CausesValidation = false;
             this.targetVersionLabel.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.targetVersionLabel.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.targetVersionLabel.Location = new System.Drawing.Point(257, 249);
+            this.targetVersionLabel.Location = new System.Drawing.Point(254, 257);
             this.targetVersionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.targetVersionLabel.Name = "targetVersionLabel";
             this.targetVersionLabel.Size = new System.Drawing.Size(127, 25);
@@ -179,7 +174,7 @@
             // 
             this.title.AutoSize = true;
             this.title.Font = new System.Drawing.Font("Segoe UI Light", 20F);
-            this.title.Location = new System.Drawing.Point(204, 41);
+            this.title.Location = new System.Drawing.Point(198, 42);
             this.title.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.title.Name = "title";
             this.title.Size = new System.Drawing.Size(260, 108);
@@ -190,12 +185,11 @@
             // targetVersion
             // 
             this.targetVersion.AccessibleName = "Target Version";
-            this.targetVersion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.targetVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.targetVersion.FormattingEnabled = true;
             this.targetVersion.Items.AddRange(new object[] {
             "(Use Latest)"});
-            this.targetVersion.Location = new System.Drawing.Point(261, 275);
+            this.targetVersion.Location = new System.Drawing.Point(259, 287);
             this.targetVersion.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.targetVersion.Name = "targetVersion";
             this.targetVersion.Size = new System.Drawing.Size(226, 28);
@@ -206,18 +200,59 @@
             // 
             this.logo.BackgroundImage = global::RobloxStudioModManager.Properties.Resources.Logo;
             this.logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.logo.Location = new System.Drawing.Point(56, 28);
+            this.logo.Location = new System.Drawing.Point(50, 29);
             this.logo.Name = "logo";
             this.logo.Size = new System.Drawing.Size(135, 135);
             this.logo.TabIndex = 22;
             this.logo.TabStop = false;
+            // 
+            // installPath
+            // 
+            this.installPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.installPath.Location = new System.Drawing.Point(17, 398);
+            this.installPath.Name = "installPath";
+            this.installPath.ReadOnly = true;
+            this.installPath.Size = new System.Drawing.Size(396, 26);
+            this.installPath.TabIndex = 23;
+            this.installPath.Text = "%localappdata%\\Roblox Studio";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.BackColor = System.Drawing.Color.Transparent;
+            this.label1.CausesValidation = false;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.label1.Location = new System.Drawing.Point(12, 370);
+            this.label1.Margin = new System.Windows.Forms.Padding(0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(179, 25);
+            this.label1.TabIndex = 26;
+            this.label1.Text = "Installation Directory:";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // changeInstallPath
+            // 
+            this.changeInstallPath.AccessibleName = "Open Flag Editor";
+            this.changeInstallPath.Font = new System.Drawing.Font("Segoe UI Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.changeInstallPath.Location = new System.Drawing.Point(425, 398);
+            this.changeInstallPath.Margin = new System.Windows.Forms.Padding(9, 5, 4, 5);
+            this.changeInstallPath.Name = "changeInstallPath";
+            this.changeInstallPath.Size = new System.Drawing.Size(60, 26);
+            this.changeInstallPath.TabIndex = 25;
+            this.changeInstallPath.Text = "⋯";
+            this.changeInstallPath.UseVisualStyleBackColor = true;
+            this.changeInstallPath.Click += new System.EventHandler(this.changeInstallPath_Click);
             // 
             // Launcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(502, 384);
+            this.ClientSize = new System.Drawing.Size(506, 446);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.changeInstallPath);
+            this.Controls.Add(this.installPath);
             this.Controls.Add(this.logo);
             this.Controls.Add(this.title);
             this.Controls.Add(this.targetVersion);
@@ -259,6 +294,10 @@
         private System.Windows.Forms.Label title;
         private System.Windows.Forms.ComboBox targetVersion;
         private System.Windows.Forms.PictureBox logo;
+        private System.Windows.Forms.TextBox installPath;
+        private System.Windows.Forms.FolderBrowserDialog folderBrowser;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button changeInstallPath;
     }
 }
 
