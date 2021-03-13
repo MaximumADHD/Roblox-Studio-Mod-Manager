@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
+
 
 namespace RobloxStudioModManager
 {
@@ -32,7 +34,13 @@ namespace RobloxStudioModManager
         private const string UserAgent = "RobloxStudioModManager";
         public const string StartEvent = "RobloxStudioModManagerStart";
 
-        private static readonly WebClient http;
+        private static readonly WebClient http = new WebClient()
+        {
+            Headers = new WebHeaderCollection
+            {
+                { HttpRequestHeader.UserAgent, UserAgent }
+            }
+        };
 
         public event MessageEventHandler EchoFeed;
         public event MessageEventHandler StatusChanged;
@@ -123,12 +131,6 @@ namespace RobloxStudioModManager
         public bool GenerateMetadata { get; set; } = false;
         public bool RemapExtraContent { get; set; } = false;
         public bool ApplyModManagerPatches { get; set; } = false;
-
-        static StudioBootstrapper()
-        {
-            http = new WebClient();
-            http.Headers.Set(HttpRequestHeader.UserAgent, UserAgent);
-        }
 
         public StudioBootstrapper(RegistryKey workRegistry = null)
         {
@@ -244,7 +246,7 @@ namespace RobloxStudioModManager
             {
                 process.Kill();
             }
-            catch
+            catch (Win32Exception)
             {
                 Console.WriteLine($"Cannot terminate process {process.Id}!");
             }
@@ -273,7 +275,7 @@ namespace RobloxStudioModManager
                     .Get(binaryType)
                     .ConfigureAwait(false);
 
-                return info.Guid;
+                return info.VersionGuid;
             }
             else
             {
@@ -358,9 +360,13 @@ namespace RobloxStudioModManager
                             fileRegistry.DeleteValue(fileName);
                             File.Delete(filePath);
                         }
-                        catch
+                        catch (IOException)
                         {
-                            Console.WriteLine($"FAILED TO DELETE {fileName}");
+                            Console.WriteLine($"IOException thrown while trying to delete {fileName}");
+                        }
+                        catch (UnauthorizedAccessException)
+                        {
+                            Console.WriteLine($"UnauthorizedAccessException thrown while trying to delete {fileName}");
                         }
                     }
                     else if (fileNames.Contains(fileName))
@@ -399,7 +405,7 @@ namespace RobloxStudioModManager
 
             return new ClientVersionInfo()
             {
-                Guid = target.VersionGuid,
+                VersionGuid = target.VersionGuid,
                 Version = target.VersionId
             };
         }
@@ -445,13 +451,13 @@ namespace RobloxStudioModManager
 
                 if (latestFastGuid == latest_x64 && is64Bit)
                 {
-                    info.Guid = latest_x64;
+                    info.VersionGuid = latest_x64;
                     return info;
                 }
 
                 if (latestFastGuid == latest_x86 && !is64Bit)
                 {
-                    info.Guid = latest_x86;
+                    info.VersionGuid = latest_x86;
                     return info;
                 }
             }
@@ -470,12 +476,12 @@ namespace RobloxStudioModManager
             if (is64Bit)
             {
                 info.Version = build_x64.VersionId;
-                info.Guid = build_x64.VersionGuid;
+                info.VersionGuid = build_x64.VersionGuid;
             }
             else
             {
                 info.Version = build_x86.VersionId;
-                info.Guid = build_x86.VersionGuid;
+                info.VersionGuid = build_x86.VersionGuid;
             }
 
             versionRegistry.SetValue("LatestFastGuid", fastGuid);
@@ -519,31 +525,24 @@ namespace RobloxStudioModManager
 
         private async Task<bool> packageExists(Package package)
         {
-            try
-            {
-                echo($"Verifying availability of: {package.Name}");
+            echo($"Verifying availability of: {package.Name}");
 
-                string pkgName = package.Name;
-                var zipFileUrl = new Uri($"https://s3.amazonaws.com/setup.{Branch}.com/{buildVersion}-{pkgName}");
+            string pkgName = package.Name;
+            var zipFileUrl = new Uri($"https://s3.amazonaws.com/setup.{Branch}.com/{buildVersion}-{pkgName}");
 
-                var request = WebRequest.Create(zipFileUrl) as HttpWebRequest;
-                request.Headers.Set("UserAgent", UserAgent);
-                request.Method = "HEAD";
+            var request = WebRequest.Create(zipFileUrl) as HttpWebRequest;
+            request.Headers.Set("UserAgent", UserAgent);
+            request.Method = "HEAD";
 
-                var response = await request
-                    .GetResponseAsync() 
-                    .ConfigureAwait(false)
-                    as HttpWebResponse;
+            var response = await request
+                .GetResponseAsync() 
+                .ConfigureAwait(false)
+                as HttpWebResponse;
 
-                var statusCode = response.StatusCode;
-                response.Close();
+            var statusCode = response.StatusCode;
+            response.Close();
 
-                return (statusCode == HttpStatusCode.OK);
-            }
-            catch
-            {
-                return false;
-            }
+            return (statusCode == HttpStatusCode.OK);
         }
 
         private async Task<byte[]> installPackage(Package package)
@@ -558,25 +557,17 @@ namespace RobloxStudioModManager
                 echo($"Installing package {zipFileUrl}");
                 MaxProgress++;
                 
-                try
-                {
-                    var getFile = localHttp.DownloadDataTaskAsync(zipFileUrl);
-                    byte[] fileContents = await getFile.ConfigureAwait(false);
+                var getFile = localHttp.DownloadDataTaskAsync(zipFileUrl);
+                byte[] fileContents = await getFile.ConfigureAwait(false);
                     
-                    // If the size of the file we downloaded does not match the packed 
-                    // size specified in the manifest, then this file isn't valid.
+                // If the size of the file we downloaded does not match the packed 
+                // size specified in the manifest, then this file isn't valid.
 
-                    if (fileContents.Length != package.PackedSize)
-                        throw new InvalidDataException($"{pkgName} expected packed size: {package.PackedSize} but got: {fileContents.Length}");
+                if (fileContents.Length != package.PackedSize)
+                    throw new InvalidDataException($"{pkgName} expected packed size: {package.PackedSize} but got: {fileContents.Length}");
 
-                    Progress++;
-                    result = fileContents;
-                }
-                catch (Exception e)
-                {
-                    echo($"Error while fetching package {pkgName}:");
-                    echo(e.Message);
-                }
+                Progress++;
+                result = fileContents;
             }
 
             return result;
@@ -584,7 +575,7 @@ namespace RobloxStudioModManager
 
         private void extractPackage(Package package)
         {
-            Contract.Requires(package.Data != null);
+            var data = package.Data;
             string pkgName = package.Name;
 
             var pkgInfo = pkgRegistry.GetSubKey(pkgName);
@@ -593,7 +584,7 @@ namespace RobloxStudioModManager
             string downloads = getDirectory(studioDir, "downloads");
             string zipExtractPath = Path.Combine(downloads, pkgName);
 
-            File.WriteAllBytes(zipExtractPath, package.Data);
+            File.WriteAllBytes(zipExtractPath, data);
 
             using (var archive = ZipFile.OpenRead(zipExtractPath))
             {
@@ -761,7 +752,7 @@ namespace RobloxStudioModManager
 
                 fileRegistry.SetValue(filePath, newFileSig);
             }
-            catch
+            catch (UnauthorizedAccessException)
             {
                 echo($"FILE WRITE FAILED: {filePath} (This build may not run as expected!)");
             }
@@ -897,10 +888,10 @@ namespace RobloxStudioModManager
                 versionInfo = await getVersionInfo.ConfigureAwait(true);
 
                 if (targetVersion == versionOverload)
-                    if (fastVersion != versionInfo.Guid)
+                    if (fastVersion != versionInfo.VersionGuid)
                         shouldInstall = false;
 
-                buildVersion = versionInfo.Guid;
+                buildVersion = versionInfo.VersionGuid;
             }
             else
             {
@@ -991,21 +982,11 @@ namespace RobloxStudioModManager
 
                         var installer = Task.Run(async () =>
                         {
-                            bool success = true;
+                            var install = installPackage(package);
+                            package.Data = await install.ConfigureAwait(false);
 
-                            try
-                            {
-                                var install = installPackage(package);
-                                package.Data = await install.ConfigureAwait(false);
-                                extractPackage(package);
-                            }
-                            catch (Exception e)
-                            {
-                                echo($"ERROR: {e.Message}");
-                                success = false;
-                            }
-
-                            return success;
+                            extractPackage(package);
+                            return true;
                         });
 
                         taskQueue.Add(installer);

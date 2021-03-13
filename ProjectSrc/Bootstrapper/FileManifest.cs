@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
 namespace RobloxStudioModManager
 {
-    public class FileManifest : Dictionary<string, string>
+    [Serializable]
+    internal class FileManifest : Dictionary<string, string>
     {
         public string RawData { get; set; }
 
+        protected FileManifest(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
+        
         private FileManifest(string data, bool remapExtraContent = false)
         {
             using (var reader = new StringReader(data))
@@ -56,5 +61,7 @@ namespace RobloxStudioModManager
 
             return new FileManifest(fileManifestData, remapExtraContent);
         }
+
+        
     }
 }

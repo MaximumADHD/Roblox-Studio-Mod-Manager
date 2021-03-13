@@ -219,7 +219,7 @@ namespace RobloxStudioModManager
 
                 Hide();
 
-                var updateTask = BootstrapperForm.BringUpToDate(branch, info.Guid, "Some newer flags might be missing.");
+                var updateTask = BootstrapperForm.BringUpToDate(branch, info.VersionGuid, "Some newer flags might be missing.");
                 await updateTask.ConfigureAwait(true);
 
                 using (FlagEditor editor = new FlagEditor())
@@ -244,7 +244,7 @@ namespace RobloxStudioModManager
             var infoTask = StudioBootstrapper.GetCurrentVersionInfo(branch);
             var info = await infoTask.ConfigureAwait(true);
 
-            var updateTask = BootstrapperForm.BringUpToDate(branch, info.Guid, "The class icons may have received an update.");
+            var updateTask = BootstrapperForm.BringUpToDate(branch, info.VersionGuid, "The class icons may have received an update.");
             await updateTask.ConfigureAwait(true);
 
             using (var editor = new ClassIconEditor())
@@ -312,7 +312,7 @@ namespace RobloxStudioModManager
 
                     File.WriteAllBytes(relativeFile, fileContents);
                 }
-                catch
+                catch (IOException)
                 {
                     Console.WriteLine("Failed to overwrite {0}!", modFile);
                 }

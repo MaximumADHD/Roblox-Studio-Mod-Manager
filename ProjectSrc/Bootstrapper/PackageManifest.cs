@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RobloxStudioModManager
 {
-    public class PackageManifest : List<Package>
+    internal class PackageManifest : List<Package>
     {
         public string RawData { get; private set; }
 

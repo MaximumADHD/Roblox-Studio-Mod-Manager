@@ -9,7 +9,7 @@ namespace RobloxStudioModManager
 {
     public class StudioDeployLogs
     {
-        private const string LogPattern = "New (Studio6?4?) (version-[a-f\\d]+) at (\\d+/\\d+/\\d+ \\d+:\\d+:\\d+ [A,P]M), file version: (\\d+), (\\d+), (\\d+), (\\d+)...";
+        private const string LogPattern = "New (Studio6?4?) (version-[a-f\\d]+) at (\\d+/\\d+/\\d+ \\d+:\\d+:\\d+ [A,P]M), file version: (\\d+), (\\d+), (\\d+), (\\d+)";
         private const int EarliestChangelist = 338804; // The earliest acceptable changelist of Roblox Studio, with explicit 64-bit versions declared via DeployHistory.txt
 
         public string Branch { get; private set; }

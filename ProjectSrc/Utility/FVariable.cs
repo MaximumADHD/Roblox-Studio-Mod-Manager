@@ -5,7 +5,7 @@ using Microsoft.Win32;
 
 namespace RobloxStudioModManager
 {
-    public class FVariable
+    internal class FVariable
     {
         private static readonly Regex flagTypes = new Regex("((F|DF|SF)(Flag|String|Int|Log))");
 

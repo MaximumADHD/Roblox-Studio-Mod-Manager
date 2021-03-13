@@ -511,10 +511,10 @@ namespace RobloxStudioModManager
 
                 if (flagType.EndsWith("Flag", Program.StringFormat) && cellType != typeof(DataGridViewTextBoxCell))
                 {
-                    var newValueCell = new DataGridViewTextBoxCell();
-                    newValueCell.Value = valueCell.Value.ToString();
-                    row.Cells[2] = newValueCell;
+                    string value = valueCell.Value.ToString();
+                    var newValueCell = new DataGridViewTextBoxCell() { Value = value };
 
+                    row.Cells[2] = newValueCell;
                     newValueCell.ReadOnly = true;
                 }
             }
@@ -544,41 +544,31 @@ namespace RobloxStudioModManager
             }
         }
 
-        public static bool ApplyFlags()
+        public static void ApplyFlags()
         {
-            try
+            var configs = new List<string>();
+
+            foreach (string flagName in flagRegistry.GetSubKeyNames())
             {
-                List<string> configs = new List<string>();
+                RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
 
-                foreach (string flagName in flagRegistry.GetSubKeyNames())
-                {
-                    RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
+                string type = flagKey.GetString("Type"),
+                        value = flagKey.GetString("Value");
 
-                    string type = flagKey.GetString("Type"),
-                           value = flagKey.GetString("Value");
+                if (type.EndsWith("String", Program.StringFormat))
+                    value = $"\"{value.Replace("\"", "")}\"";
 
-                    if (type.EndsWith("String", Program.StringFormat))
-                        value = $"\"{value.Replace("\"", "")}\"";
+                configs.Add($"\t\"{flagName}\": {value}");
+            };
 
-                    configs.Add($"\t\"{flagName}\": {value}");
-                };
+            string json = "{\r\n" + string.Join(",\r\n", configs) + "\r\n}";
+            string studioDir = StudioBootstrapper.GetStudioDirectory();
 
-                string json = "{\r\n" + string.Join(",\r\n", configs) + "\r\n}";
-                string studioDir = StudioBootstrapper.GetStudioDirectory();
+            string clientSettings = Path.Combine(studioDir, "ClientSettings");
+            Directory.CreateDirectory(clientSettings);
 
-                string clientSettings = Path.Combine(studioDir, "ClientSettings");
-                Directory.CreateDirectory(clientSettings);
-
-                string filePath = Path.Combine(clientSettings, "ClientAppSettings.json");
-                File.WriteAllText(filePath, json);
-
-                return true;
-            }
-            catch
-            {
-                Console.WriteLine("Failed to apply flag editor configuration!");
-                return false;
-            }
+            string filePath = Path.Combine(clientSettings, "ClientAppSettings.json");
+            File.WriteAllText(filePath, json);
         }
     }
 }

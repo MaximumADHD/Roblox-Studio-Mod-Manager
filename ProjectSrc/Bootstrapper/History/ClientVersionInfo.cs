@@ -5,8 +5,8 @@ namespace RobloxStudioModManager
 {
     public class ClientVersionInfo
     {
-        public string Version;
-        public string Guid;
+        public string Version { get; set; }
+        public string VersionGuid { get; set; }
 
         public static async Task<ClientVersionInfo> Get(string buildType = "WindowsStudio", string branch = "roblox")
         {
@@ -20,8 +20,11 @@ namespace RobloxStudioModManager
                 var json = Program.ReadJsonDictionary(jsonData);
                 var versionInfo = new ClientVersionInfo();
 
-                json.TryGetValue("version", out versionInfo.Version);
-                json.TryGetValue("clientVersionUpload", out versionInfo.Guid);
+                if (json.TryGetValue("version", out string version))
+                    versionInfo.Version = version;
+
+                if (json.TryGetValue("clientVersionUpload", out string versionGuid))
+                    versionInfo.VersionGuid = versionGuid;
 
                 return versionInfo;
             }

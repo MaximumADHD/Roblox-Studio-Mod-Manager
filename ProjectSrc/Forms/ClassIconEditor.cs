@@ -166,7 +166,7 @@ namespace RobloxStudioModManager
                                 patchedAny = true;
                             }
                         }
-                        catch
+                        catch (FileNotFoundException)
                         {
                             Console.WriteLine($"Error while trying to load {filePath}");
                         }
@@ -310,7 +310,7 @@ namespace RobloxStudioModManager
 
                 return true;
             }
-            catch
+            catch (UnauthorizedAccessException)
             {
                 return false;
             }
@@ -375,7 +375,7 @@ namespace RobloxStudioModManager
             {
                 Image result;
 
-                using (MemoryStream stream = new MemoryStream())
+                using (var stream = new MemoryStream())
                 {
                     try
                     {
@@ -386,8 +386,7 @@ namespace RobloxStudioModManager
 
                         result = Image.FromStream(stream);
                     }
-
-                    catch
+                    catch (UnauthorizedAccessException)
                     {
                         result = iconLookup[index];
                     }
@@ -564,15 +563,8 @@ namespace RobloxStudioModManager
 
                     if (i < extraSlots && File.Exists(fileName))
                     {
-                        try
-                        {
-                            Image icon = getIconForIndex(slot);
-                            iconBtn.BackgroundImage = icon;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine("Couldn't load extra slot {0} - {1}", i, ex.Message);
-                        }
+                        Image icon = getIconForIndex(slot);
+                        iconBtn.BackgroundImage = icon;
                     }
 
                     iconLookup.Add(defaultIcon);
@@ -607,26 +599,15 @@ namespace RobloxStudioModManager
             UseWaitCursor = false;
         }
 
-        public static async Task<bool> PatchExplorerIcons()
+        public static async Task PatchExplorerIcons()
         {
-            bool success = false;
+            string studioDir = StudioBootstrapper.GetStudioDirectory();
+            string iconPath = Path.Combine(studioDir, iconManifest);
 
-            try
-            {
-                string studioDir = StudioBootstrapper.GetStudioDirectory();
-                string iconPath = Path.Combine(studioDir, iconManifest);
+            var getPatched = Task.Run(() => getPatchedExplorerIcons());
+            Image patched = await getPatched.ConfigureAwait(true);
 
-                var getPatched = Task.Run(() => getPatchedExplorerIcons());
-                Image patched = await getPatched.ConfigureAwait(true);
-
-                patched.Save(iconPath);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("An error occurred while trying to patch the explorer icons: {0}", e.Message);
-            }
-
-            return success;
+            patched.Save(iconPath);
         }
 
         private void itemSlots_ValueChanged(object sender, EventArgs e)
@@ -744,7 +725,7 @@ namespace RobloxStudioModManager
                         File.Delete(explorerIconPath);
                         setIconOverridden(selectedIndex, true);
                     }
-                    catch
+                    catch (IOException)
                     {
                         MessageBox.Show
                         (

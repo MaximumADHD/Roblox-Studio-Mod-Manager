@@ -10,10 +10,5 @@
         {
             Message = message;
         }
-
-        public static implicit operator MessageEventArgs(string message)
-        {
-            return new MessageEventArgs(message);
-        }
     }
 }

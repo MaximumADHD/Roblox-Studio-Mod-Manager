@@ -1,6 +1,6 @@
 ﻿namespace RobloxStudioModManager
 {
-    public class Package
+    internal class Package
     {
         public string Name { get; set; }
         public string Signature { get; set; }
@@ -10,7 +10,7 @@
         public bool Exists { get; set; }
         public bool ShouldInstall { get; set; }
 
-        public byte[] Data;
+        internal byte[] Data { get; set; }
 
         public override string ToString()
         {
