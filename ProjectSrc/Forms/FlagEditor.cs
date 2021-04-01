@@ -10,6 +10,8 @@ using System.Windows.Forms;
 
 using Microsoft.Win32;
 
+
+
 namespace RobloxStudioModManager
 {
     public partial class FlagEditor : Form
@@ -20,11 +22,22 @@ namespace RobloxStudioModManager
         private DataTable overrideTable;
         private readonly Dictionary<string, DataRow> overrideRowLookup = new Dictionary<string, DataRow>();
 
+        private readonly Dictionary<string, string> FVariableTypes = new Dictionary<string, string>()
+        {
+            {"DFFlag", "false"},
+            {"DFInt", "0"},
+            {"DFString", "Value"}, // for some reason it errors if you set an empty string,
+            {"FFlag", "false" },
+            {"FInt", "0"},
+            {"FString", "Value"}
+        };
+
+
         private const string OVERRIDE_STATUS_OFF = "No local overrides were found on load.";
         private const string OVERRIDE_STATUS_ON = "Values highlighted in red were overridden locally.";
 
         private List<FVariable> flags;
-        private List<FVariable> allFlags;
+        private List<FVariable> allFlags;                 
         private readonly Dictionary<string, int> flagLookup = new Dictionary<string, int>();
 
         private string currentSearch = "";
@@ -50,6 +63,7 @@ namespace RobloxStudioModManager
 
             base.Dispose(disposing);
         }
+
         private bool confirm(string header, string message)
         {
             DialogResult result = MessageBox.Show(message, header, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -87,7 +101,7 @@ namespace RobloxStudioModManager
             return false;
         }
 
-        private void addFlagOverride(FVariable flag, bool init = false)
+        private void addFlagOverride(FVariable flag, bool init = false, bool isCustom = false)
         {
             string key = flag.Key;
 
@@ -118,6 +132,8 @@ namespace RobloxStudioModManager
                 overrideRowLookup.Add(key, row);
             }
 
+            
+
             overrideStatus.Text = OVERRIDE_STATUS_ON;
             overrideStatus.ForeColor = Color.Red;
 
@@ -138,6 +154,103 @@ namespace RobloxStudioModManager
                 // Switch to the overrides tab.
                 tabs.SelectedTab = overridesTab;
             }
+        }
+
+        private static Form createCustomFlagEditor()
+        {
+            var FFlagList = new List<string>
+            {
+                "DFFlag", "DFInt", "DFString",
+                "FFlag", "FInt", "FString"
+            };
+
+            var customFlagCreator = new Form()
+            {
+                Text = "Add Custom Flag",
+
+                Width = 384,
+                Height = 139,
+                MaximizeBox = false,
+                MinimizeBox = false,
+
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                StartPosition = FormStartPosition.CenterScreen,
+
+                ShowInTaskbar = false,
+                TopMost = true,
+
+                DialogResult = DialogResult.Cancel
+            };
+
+            var nameLabel = new Label()
+            {
+                AutoSize = true,
+                Text = "Name:",
+
+                Location = new Point(12, 15),
+            };
+
+            var typeLabel = new Label()
+            {
+                AutoSize = true,
+                Text = "Type:",
+
+                Location = new Point(12, 41),
+            };
+
+            var flagName = new TextBox()
+            {
+                Location = new Point(56, 12),
+                Size = new Size(300, 20)
+            };
+
+            var typeDropDown = new ComboBox()
+            {
+                Location = new Point(56, 38),
+                Size = new Size(300, 20),
+            };
+
+            var closeEditorButton = new Button()
+            {
+                Location = new Point(200, 65),
+                Size = new Size(75, 23),
+                Text = "Cancel"
+            };
+
+            var addFlagButton = new Button()
+            {
+                Location = new Point(281, 65),
+                Size = new Size(75, 23),
+                Text = "Add Flag"
+            };
+
+            foreach(string entry in FFlagList)
+            {
+                typeDropDown.Items.Add(entry);
+            }
+
+            closeEditorButton.Click += (sender, e) =>
+            {
+                customFlagCreator.Close();
+            };
+
+            addFlagButton.Click += (sender, e) =>
+            {
+                customFlagCreator.Tag = typeDropDown.SelectedItem.ToString() + " " + flagName.Text;
+                customFlagCreator.DialogResult = DialogResult.OK;
+                customFlagCreator.Close();
+            };
+
+            customFlagCreator.Controls.Add(nameLabel);
+            customFlagCreator.Controls.Add(typeLabel);
+            customFlagCreator.Controls.Add(flagName);
+            customFlagCreator.Controls.Add(typeDropDown);
+
+            customFlagCreator.Controls.Add(closeEditorButton);
+            customFlagCreator.Controls.Add(addFlagButton);
+
+            typeDropDown.SelectedIndex = 3;
+            return customFlagCreator;
         }
 
         private void refreshFlags()
@@ -213,6 +326,7 @@ namespace RobloxStudioModManager
 
             // Initialize flag browser
             string[] flagNames = flagRegistry.GetSubKeyNames();
+            string[] flagNameStrings = Array.Empty<string>();
 
             string settings = File.ReadAllText(settingsPath);
             var json = Program.ReadJsonDictionary(settings);
@@ -221,6 +335,23 @@ namespace RobloxStudioModManager
             var flagSetup = new List<FVariable>(numFlags);
 
             var autoComplete = new AutoCompleteStringCollection();
+
+            foreach (string CustomFlag in flagNames)
+            {
+                if (!json.ContainsValue(CustomFlag)) { // skip custom flags that were recently added, this is unhandled in the prompt still
+                    RegistryKey flagKey = flagRegistry.GetSubKey(CustomFlag);
+                    bool isCustom = flagKey.GetBool("Custom");
+
+                    if (isCustom == true)
+                    {
+                        string value = flagKey.GetString("Value");
+                        FVariable flag = new FVariable(CustomFlag, value);
+                        flagSetup.Add(flag);
+
+                        flag.SetEditor(flagKey);
+                    };
+                }
+            }
 
             foreach (var pair in json)
             {
@@ -242,6 +373,9 @@ namespace RobloxStudioModManager
                 }
             }
 
+            
+
+
             flagSearchFilter.AutoCompleteCustomSource = autoComplete;
 
             allFlags = flagSetup
@@ -260,13 +394,23 @@ namespace RobloxStudioModManager
 
             foreach (string flagName in flagNames)
             {
+                // fetch the flag so we can check if it 1. has the Custom flag key, 2. if that key is set to True
+                RegistryKey flagKey = flagRegistry.GetSubKey(flagName);
+                bool isCustomFlag = flagKey.GetBool("Custom");
+
                 if (flagLookup.ContainsKey(flagName))
                 {
                     int index = flagLookup[flagName];
                     FVariable flag = flags[index];
                     addFlagOverride(flag, true);
+                } else if (isCustomFlag == true) {
+                    //we need to make a new flag here unfortunately
+                    string flagValue = flagKey.GetString("Value");
+                    FVariable flag = new FVariable(flagName, flagValue);
+                    addFlagOverride(flag, true);
                 }
             }
+
 
             overrideStatus.Visible = true;
             overrideDataGridView.DataSource = overrideView;
@@ -360,6 +504,8 @@ namespace RobloxStudioModManager
                 addFlagOverride(selectedFlag);
             }
         }
+
+        
 
         private void removeSelected_Click(object sender, EventArgs e)
         {
@@ -569,6 +715,25 @@ namespace RobloxStudioModManager
 
             string filePath = Path.Combine(clientSettings, "ClientAppSettings.json");
             File.WriteAllText(filePath, json);
+        }
+
+        private void addCustom_Click(object sender, EventArgs e)
+        {
+            using (Form CustomFlagCreator = createCustomFlagEditor())
+            {
+                CustomFlagCreator.ShowDialog();
+                CustomFlagCreator.BringToFront();
+                CustomFlagCreator.Refresh();
+
+                if (CustomFlagCreator.DialogResult == DialogResult.OK)
+                {
+                    string FlagValue = FVariableTypes[CustomFlagCreator.Tag.ToString().Split(' ')[0]];
+                    string TagNoSpace = CustomFlagCreator.Tag.ToString().Replace(" ", "");
+
+                    FVariable newFlag = new FVariable(TagNoSpace, FlagValue, true);
+                    addFlagOverride(newFlag);
+                }
+            }
         }
     }
 }

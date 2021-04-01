@@ -15,11 +15,12 @@ namespace RobloxStudioModManager
 
         public string Key => Type + Name;
         public string Value { get; private set; }
+        public bool Custom { get; private set; }
 
         public RegistryKey Editor { get; private set; }
         public bool Dirty { get; set; } = false;
 
-        public FVariable(string key, string value)
+        public FVariable(string key, string value, bool custom = false)
         {
             Contract.Requires(key != null && value != null);
             var match = flagTypes.Match(key);
@@ -29,6 +30,8 @@ namespace RobloxStudioModManager
 
             Reset = value;
             Value = value;
+
+            Custom = custom;
 
             Dirty = true;
         }
@@ -57,6 +60,7 @@ namespace RobloxStudioModManager
                 editor.SetValue("Name", Name);
                 editor.SetValue("Type", Type);
                 editor.SetValue("Reset", Reset);
+                editor.SetValue("Custom", Custom);
             }
 
             Dirty = true;
