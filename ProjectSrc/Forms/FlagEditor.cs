@@ -250,7 +250,7 @@ namespace RobloxStudioModManager
                     if (isCustom)
                     {
                         string value = flagKey.GetString("Value");
-                        FVariable flag = new FVariable(customFlag, value);
+                        FVariable flag = new FVariable(customFlag, value, true);
 
                         flagSetup.Add(flag);
                         flag.SetEditor(flagKey);
