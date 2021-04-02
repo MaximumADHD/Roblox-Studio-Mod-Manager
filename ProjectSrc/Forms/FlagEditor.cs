@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -20,11 +22,22 @@ namespace RobloxStudioModManager
         private DataTable overrideTable;
         private readonly Dictionary<string, DataRow> overrideRowLookup = new Dictionary<string, DataRow>();
 
+        private static readonly IReadOnlyDictionary<string, string> flagTypes = new Dictionary<string, string>()
+        {
+            {"Flag",   "false"},
+            {"Int",    "0"},
+            {"String", " "},
+            {"Log",    "0"},
+        };
+
+
         private const string OVERRIDE_STATUS_OFF = "No local overrides were found on load.";
         private const string OVERRIDE_STATUS_ON = "Values highlighted in red were overridden locally.";
 
         private List<FVariable> flags;
         private List<FVariable> allFlags;
+
+        private static FVariable lastCustomFlag;
         private readonly Dictionary<string, int> flagLookup = new Dictionary<string, int>();
 
         private string currentSearch = "";
@@ -50,6 +63,7 @@ namespace RobloxStudioModManager
 
             base.Dispose(disposing);
         }
+
         private bool confirm(string header, string message)
         {
             DialogResult result = MessageBox.Show(message, header, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
@@ -76,15 +90,15 @@ namespace RobloxStudioModManager
 
         private bool rowMatchesSelectedRow(DataGridViewRow row)
         {
-            if (flagDataGridView.SelectedRows.Count == 1)
+            FVariable selectedFlag = lastCustomFlag;
+
+            if (selectedFlag == null && flagDataGridView.SelectedRows.Count == 1)
             {
                 DataGridViewRow selectedRow = flagDataGridView.SelectedRows[0];
-                FVariable selectedFlag = flags[selectedRow.Index];
-
-                return selectedFlag.Key == getFlagKeyByRow(row);
+                selectedFlag = flags[selectedRow.Index];
             }
-
-            return false;
+            
+            return selectedFlag?.Key == getFlagKeyByRow(row);
         }
 
         private void addFlagOverride(FVariable flag, bool init = false)
@@ -96,7 +110,7 @@ namespace RobloxStudioModManager
                 RegistryKey editor = flagRegistry.GetSubKey(key);
                 flag.SetEditor(editor);
 
-                if (!init && flag.Type.EndsWith("Flag", Program.StringFormat))
+                if (!init && flag.Type.EndsWith("Flag", Program.StringFormat) && !flag.Custom)
                 {
                     if (bool.TryParse(flag.Value, out bool value))
                     {
@@ -107,7 +121,7 @@ namespace RobloxStudioModManager
                         flag.SetValue(str);
                     }
                 }
-                
+
                 DataRow row = overrideTable.Rows.Add
                 (
                     flag.Name,
@@ -134,6 +148,9 @@ namespace RobloxStudioModManager
                     var overrideRow = query.First();
                     overrideDataGridView.CurrentCell = overrideRow.Cells[0];
                 }
+
+                // Clear last custom flag.
+                lastCustomFlag = null;
 
                 // Switch to the overrides tab.
                 tabs.SelectedTab = overridesTab;
@@ -213,14 +230,33 @@ namespace RobloxStudioModManager
 
             // Initialize flag browser
             string[] flagNames = flagRegistry.GetSubKeyNames();
+            string[] flagNameStrings = Array.Empty<string>();
 
             string settings = File.ReadAllText(settingsPath);
             var json = Program.ReadJsonDictionary(settings);
 
             int numFlags = json.Count;
             var flagSetup = new List<FVariable>(numFlags);
-
             var autoComplete = new AutoCompleteStringCollection();
+
+            foreach (string customFlag in flagNames)
+            {
+                if (!json.ContainsValue(customFlag))
+                {
+                    // skip custom flags that were recently added, this is unhandled in the prompt still
+                    RegistryKey flagKey = flagRegistry.GetSubKey(customFlag);
+                    bool isCustom = flagKey.GetBool("Custom");
+
+                    if (isCustom)
+                    {
+                        string value = flagKey.GetString("Value");
+                        FVariable flag = new FVariable(customFlag, value);
+
+                        flagSetup.Add(flag);
+                        flag.SetEditor(flagKey);
+                    };
+                }
+            }
 
             foreach (var pair in json)
             {
@@ -260,10 +296,24 @@ namespace RobloxStudioModManager
 
             foreach (string flagName in flagNames)
             {
+                // fetch the flag so we can check if it
+                // 1. Has the Custom flag key,
+                // 2. If that key is set to True
+
+                RegistryKey flagKey = flagRegistry.GetSubKey(flagName);
+                bool isCustomFlag = flagKey.GetBool("Custom");
+
                 if (flagLookup.ContainsKey(flagName))
                 {
                     int index = flagLookup[flagName];
                     FVariable flag = flags[index];
+                    addFlagOverride(flag, true);
+                }
+                else if (isCustomFlag)
+                {
+                    // we need to make a new flag here unfortunately
+                    string flagValue = flagKey.GetString("Value");
+                    var flag = new FVariable(flagName, flagValue);
                     addFlagOverride(flag, true);
                 }
             }
@@ -356,7 +406,6 @@ namespace RobloxStudioModManager
             {
                 var selectedRow = flagDataGridView.SelectedRows[0];
                 FVariable selectedFlag = flags[selectedRow.Index];
-
                 addFlagOverride(selectedFlag);
             }
         }
@@ -399,7 +448,7 @@ namespace RobloxStudioModManager
 
         private void removeAll_Click(object sender, EventArgs e)
         {
-            bool doRemove = confirm("Confirmation", "Are you sure you would like to remove all flag overrides?");
+            bool doRemove = confirm("Confirmation", "Are you sure you would like to remove all flag overrides?\nThis will also delete any custom flags!");
 
             if (doRemove)
             {
@@ -446,9 +495,13 @@ namespace RobloxStudioModManager
 
                 badInput = (test != "FALSE" && test != "TRUE");
             }
-            else if (flagType.EndsWith("Int", format) || flagType.EndsWith("Log", format))
+            else if (flagType.EndsWith("Int", format))
             {
                 badInput = !int.TryParse(value, out int _);
+            }
+            else if (flagType.EndsWith("Log", format))
+            {
+                badInput = !byte.TryParse(value, out byte _);
             }
 
             if (flagLookup.ContainsKey(flagKey))
@@ -569,6 +622,39 @@ namespace RobloxStudioModManager
 
             string filePath = Path.Combine(clientSettings, "ClientAppSettings.json");
             File.WriteAllText(filePath, json);
+        }
+
+        private void addCustom_Click(object sender, EventArgs e)
+        {
+            using (FlagCreator flagCreator = new FlagCreator())
+            {
+                Enabled = false;
+                UseWaitCursor = true;
+
+                flagCreator.BringToFront();
+                flagCreator.ShowDialog();
+               
+                Enabled = true;
+                UseWaitCursor = false;
+
+                if (flagCreator.DialogResult == DialogResult.OK)
+                {
+                    var customFlag = flagCreator.Result;
+                    string flagType = customFlag.Type;
+
+                    string flagValue = flagTypes
+                        .Select(pair => pair.Key)
+                        .Where(key => flagType.EndsWith(key, Program.StringFormat))
+                        .Select(key => flagTypes[key])
+                        .FirstOrDefault();
+
+                    string flagName = flagType + customFlag.Name;
+                    var newFlag = new FVariable(flagName, flagValue, true);
+
+                    lastCustomFlag = newFlag;
+                    addFlagOverride(newFlag);
+                }
+            }
         }
     }
 }

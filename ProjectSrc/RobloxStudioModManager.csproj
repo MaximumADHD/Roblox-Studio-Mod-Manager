@@ -114,6 +114,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\*.cs" />
+    <Compile Include="Forms\FlagCreator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FlagCreator.Designer.cs">
+      <DependentUpon>FlagCreator.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utility\*.cs" />
     <Compile Include="Bootstrapper\*.cs" />
     <Compile Include="Bootstrapper\History\*.cs" />
