@@ -30,7 +30,6 @@ namespace RobloxStudioModManager
 
             Reset = value;
             Value = value;
-
             Custom = custom;
 
             Dirty = true;

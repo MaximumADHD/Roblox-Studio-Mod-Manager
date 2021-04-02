@@ -114,6 +114,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Events\*.cs" />
+    <Compile Include="Forms\FlagCreator.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FlagCreator.Designer.cs">
+      <DependentUpon>FlagCreator.cs</DependentUpon>
+    </Compile>
     <Compile Include="Utility\*.cs" />
     <Compile Include="Bootstrapper\*.cs" />
     <Compile Include="Bootstrapper\History\*.cs" />
@@ -148,9 +154,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Forms\FlagEditor.resx">
-      <DependentUpon>FlagEditor.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
