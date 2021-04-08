@@ -718,6 +718,12 @@ namespace RobloxStudioModManager
 
         private void WritePackageFile(string studioDir, string pkgName, string file, string newFileSig, ZipArchiveEntry entry)
         {
+            if (file.EndsWith("/.robloxrc", Program.StringFormat))
+                return;
+
+            if (file.EndsWith("/.luarc", Program.StringFormat))
+                return;
+
             string filePath = fixFilePath(pkgName, file);
 
             if (writtenFiles.Contains(filePath))
