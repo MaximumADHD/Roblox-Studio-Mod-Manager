@@ -38,5 +38,5 @@ The latest version can be found on the ***Releases*** page of this repository:<b
 https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/releases
 
 You can also download the latest committed versions here:
-* <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/raw/master/RobloxStudioModManager.exe">Download (.exe)</a></h1>
-* <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/archive/master.zip">Download (.zip)</a>
+* <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/raw/main/RobloxStudioModManager.exe">Download (.exe)</a></h1>
+* <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/archive/main.zip">Download (.zip)</a>
