@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,6 +18,7 @@ namespace RobloxStudioModManager
 
         private const string iconPrefix = "explorer-icon-";
         private const string iconManifest = @"content\textures\ClassImages.PNG";
+        private const string clientTracker = "https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Client-Tracker";
 
         private static readonly RegistryKey explorerRegistry = Program.GetSubKey("ExplorerIcons");
         private static readonly RegistryKey manifestRegistry = Program.GetSubKey("FileManifest");
@@ -118,9 +120,29 @@ namespace RobloxStudioModManager
             }
 
             string imagePath = infoRegistry.GetString("SourceLocation");
-            Image explorerIcons = Image.FromFile(imagePath);
 
+            if (!File.Exists(imagePath))
+            {
+                // I tried to hide this file to prevent it from being deleted, but
+                // several users still somehow kept doing it by accident.
+
+                // As a result, I've added the textures folder to my client tracker
+                // so this texture can be pulled remotely as a failsafe ¯\_(ツ)_/¯
+
+                string branch = Program
+                    .GetString("BuildBranch")
+                    .Replace("sitetest3", "sitetest2");
+
+                using (var http = new WebClient())
+                {
+                    byte[] restore = http.DownloadData($"{clientTracker}/{branch}/textures/ClassImages.PNG");
+                    File.WriteAllBytes(imagePath, restore);
+                }
+            }
+
+            Image explorerIcons = Image.FromFile(imagePath);
             numIcons = explorerIcons.Width / iconSize;
+
             return explorerIcons;
         }
 

@@ -52,7 +52,7 @@ namespace RobloxStudioModManager
         private readonly RegistryKey versionRegistry;
         private readonly RegistryKey pkgRegistry;
         private readonly RegistryKey fileRegistry;
-        
+
         private Dictionary<string, string> newManifestEntries;
         private HashSet<string> writtenFiles;
         private FileManifest fileManifest;
@@ -63,10 +63,46 @@ namespace RobloxStudioModManager
         private int _maxProgress = -1;
         private ProgressBarStyle _progressBarStyle;
 
-        private static readonly IReadOnlyDictionary<string, string> knownRoots = new Dictionary<string, string>()
+        public static readonly IReadOnlyDictionary<string, string> KnownRoots = new Dictionary<string, string>()
         {
-            { "content-terrain.zip",   @"PlatformContent\pc\terrain\"  },
-            { "content-textures3.zip", @"PlatformContent\pc\textures\" },
+            { "BuiltInPlugins.zip",            @"BuiltInPlugins\"              },
+            { "BuiltInStandalonePlugins.zip",  @"BuiltInStandalonePlugins\"    },
+
+            { "content-qt_translations.zip",   @"content\qt_translations\"     },
+            { "content-platform-fonts.zip",    @"PlatformContent\pc\fonts\"    },
+            { "content-terrain.zip",           @"PlatformContent\pc\terrain\"  },
+            { "content-textures3.zip",         @"PlatformContent\pc\textures\" },
+
+            { "extracontent-translations.zip", @"ExtraContent\translations\" },
+            { "extracontent-luapackages.zip",  @"ExtraContent\LuaPackages\"  },
+            { "extracontent-textures.zip",     @"ExtraContent\textures\"     },
+            { "extracontent-scripts.zip",      @"ExtraContent\scripts\"      },
+
+            { "content-sky.zip",       @"content\sky\"      },
+            { "content-fonts.zip",     @"content\fonts\"    },
+            { "content-avatar.zip",    @"content\avatar\"   },
+            { "content-models.zip",    @"content\models\"   },
+            { "content-sounds.zip",    @"content\sounds\"   },
+            { "content-configs.zip",   @"content\configs\"  },
+            { "content-textures2.zip", @"content\textures\" },
+
+            { "Qml.zip",          @"Qml\"         },
+            { "ssl.zip",          @"ssl\"         },
+            { "Plugins.zip",      @"Plugins\"     },
+            { "shaders.zip",      @"shaders\"     },
+            { "StudioFonts.zip",  @"StudioFonts\" },
+
+            { "redist.zip",       @"" },
+            { "Libraries.zip",    @"" },
+            { "LibrariesQt5.zip", @"" },
+            { "RobloxStudio.zip", @"" },
+        };
+
+        public static readonly IReadOnlyList<string> BadManifests = new List<string>()
+        {
+            "Qml",
+            "Plugins",
+            "StudioFonts"
         };
 
         public int Progress
@@ -337,10 +373,9 @@ namespace RobloxStudioModManager
                 string filePath = Path.Combine(studioDir, fileName);
                 string lookupKey = fileName;
 
-                if (fileName.StartsWith("Plugins\\", Program.StringFormat))
-                    lookupKey = fileName.Substring(8);
-                else if (fileName.StartsWith("Qml\\", Program.StringFormat))
-                    lookupKey = fileName.Substring(4);
+                foreach (string pkgName in BadManifests)
+                    if (fileName.StartsWith(pkgName, Program.StringFormat))
+                        lookupKey = fileName.Substring(pkgName.Length + 1);
 
                 if (!fileManifest.ContainsKey(lookupKey))
                 {
@@ -410,10 +445,8 @@ namespace RobloxStudioModManager
             };
         }
 
-        public static async Task<ClientVersionInfo> GetCurrentVersionInfo(string branch, RegistryKey versionRegistry = null, string fastGuid = "", string targetVersion = "")
+        public static async Task<ClientVersionInfo> GetCurrentVersionInfo(string branch, RegistryKey versionRegistry = null, string targetVersion = "")
         {
-            Contract.Requires(fastGuid != null);
-
             if (versionRegistry == null)
                 versionRegistry = Program.VersionRegistry;
 
@@ -423,25 +456,22 @@ namespace RobloxStudioModManager
                 return await result.ConfigureAwait(false);
             }
 
-            string binaryType = GetStudioBinaryType();
-            bool is64Bit = Environment.Is64BitOperatingSystem;
-
             try
             {
+                string binaryType = GetStudioBinaryType();
                 var result = ClientVersionInfo.Get(binaryType, branch);
+
                 return await result.ConfigureAwait(false);
             }
             catch (WebException)
             {
                 // Fall back to the DeployHistory strategy.
 
-                if (string.IsNullOrEmpty(fastGuid))
-                {
-                    var getFastGuid = GetFastVersionGuid(branch);
-                    fastGuid = await getFastGuid.ConfigureAwait(false);
-                }
-
+                var getFastGuid = GetFastVersionGuid(branch);
+                string fastGuid = await getFastGuid.ConfigureAwait(false);
+                
                 string latestFastGuid = versionRegistry.GetString("LatestFastGuid");
+                bool is64Bit = Environment.Is64BitOperatingSystem;
                 var info = new ClientVersionInfo();
 
                 if (latestFastGuid == fastGuid)
@@ -495,8 +525,9 @@ namespace RobloxStudioModManager
         {
             string pkgDir = pkgName.Replace(".zip", "");
 
-            if ((pkgDir == "Plugins" || pkgDir == "Qml") && !filePath.StartsWith(pkgDir, Program.StringFormat))
-                filePath = pkgDir + '\\' + filePath;
+            if (BadManifests.Contains(pkgDir))
+                if (!filePath.StartsWith(pkgDir, Program.StringFormat))
+                    filePath = pkgDir + '\\' + filePath;
 
             return filePath.Replace('/', '\\');
         }
@@ -598,8 +629,8 @@ namespace RobloxStudioModManager
                 string localRootDir = null;
                 MaxProgress += numFiles;
 
-                if (knownRoots.ContainsKey(pkgName))
-                    localRootDir = knownRoots[pkgName];
+                if (KnownRoots.ContainsKey(pkgName))
+                    localRootDir = KnownRoots[pkgName];
 
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
@@ -718,10 +749,10 @@ namespace RobloxStudioModManager
 
         private void WritePackageFile(string studioDir, string pkgName, string file, string newFileSig, ZipArchiveEntry entry)
         {
-            if (file.EndsWith("/.robloxrc", Program.StringFormat))
+            if (file.EndsWith(".robloxrc", Program.StringFormat))
                 return;
 
-            if (file.EndsWith("/.luarc", Program.StringFormat))
+            if (file.EndsWith(".luarc", Program.StringFormat))
                 return;
 
             string filePath = fixFilePath(pkgName, file);
@@ -871,40 +902,12 @@ namespace RobloxStudioModManager
             else
                 currentBranch = mainRegistry.GetString("BuildBranch", "roblox");
 
-            bool shouldInstall = (ForceInstall || currentBranch != Branch);
-            ClientVersionInfo versionInfo = null;
-
-            var getFastVersion = GetFastVersionGuid(currentBranch);
-            string fastVersion = await getFastVersion.ConfigureAwait(true);
-
-            if (!shouldInstall)
-                shouldInstall = (fastVersion != currentVersion);
-
-            string versionOverload = versionRegistry.GetString("VersionOverload");
-
-            if (targetVersion != versionOverload)
-                shouldInstall = true;
-
-            if (shouldInstall)
-            {
-                if (currentBranch != "roblox")
-                    echo("Possible update detected, verifying...");
-
-                var getVersionInfo = GetCurrentVersionInfo(currentBranch, versionRegistry, fastVersion, targetVersion);
-                versionInfo = await getVersionInfo.ConfigureAwait(true);
-
-                if (targetVersion == versionOverload)
-                    if (fastVersion != versionInfo.VersionGuid)
-                        shouldInstall = false;
-
-                buildVersion = versionInfo.VersionGuid;
-            }
-            else
-            {
-                buildVersion = fastVersion;
-            }
-
-            if (currentVersion != buildVersion || shouldInstall)
+            var getVersionInfo = GetCurrentVersionInfo(currentBranch, versionRegistry, targetVersion);
+            ClientVersionInfo versionInfo = await getVersionInfo.ConfigureAwait(true);
+            
+            buildVersion = versionInfo.VersionGuid;
+            
+            if (currentVersion != buildVersion || ForceInstall)
             {
                 echo("This build needs to be installed!");
                 bool studioClosed = true;
