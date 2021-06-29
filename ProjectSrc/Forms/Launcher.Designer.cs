@@ -40,6 +40,7 @@
             this.title = new System.Windows.Forms.Label();
             this.targetVersion = new System.Windows.Forms.ComboBox();
             this.logo = new System.Windows.Forms.PictureBox();
+            this.openLayoutManager = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.logo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -50,10 +51,10 @@
             this.launchStudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.launchStudio.Cursor = System.Windows.Forms.Cursors.Default;
             this.launchStudio.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.launchStudio.Location = new System.Drawing.Point(17, 195);
-            this.launchStudio.Margin = new System.Windows.Forms.Padding(9, 5, 4, 5);
+            this.launchStudio.Location = new System.Drawing.Point(11, 125);
+            this.launchStudio.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
             this.launchStudio.Name = "launchStudio";
-            this.launchStudio.Size = new System.Drawing.Size(213, 35);
+            this.launchStudio.Size = new System.Drawing.Size(142, 23);
             this.launchStudio.TabIndex = 6;
             this.launchStudio.Text = "Launch Studio";
             this.launchStudio.UseVisualStyleBackColor = true;
@@ -65,10 +66,10 @@
             this.manageMods.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.manageMods.Cursor = System.Windows.Forms.Cursors.Default;
             this.manageMods.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.manageMods.Location = new System.Drawing.Point(17, 239);
-            this.manageMods.Margin = new System.Windows.Forms.Padding(9, 5, 4, 5);
+            this.manageMods.Location = new System.Drawing.Point(11, 153);
+            this.manageMods.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
             this.manageMods.Name = "manageMods";
-            this.manageMods.Size = new System.Drawing.Size(213, 35);
+            this.manageMods.Size = new System.Drawing.Size(142, 23);
             this.manageMods.TabIndex = 9;
             this.manageMods.Text = "Open Mod Folder";
             this.manageMods.UseVisualStyleBackColor = true;
@@ -85,10 +86,9 @@
             "sitetest1.robloxlabs",
             "sitetest2.robloxlabs",
             "sitetest3.robloxlabs"});
-            this.branchSelect.Location = new System.Drawing.Point(262, 215);
-            this.branchSelect.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.branchSelect.Location = new System.Drawing.Point(175, 138);
             this.branchSelect.Name = "branchSelect";
-            this.branchSelect.Size = new System.Drawing.Size(226, 28);
+            this.branchSelect.Size = new System.Drawing.Size(152, 21);
             this.branchSelect.TabIndex = 10;
             this.branchSelect.SelectedIndexChanged += new System.EventHandler(this.branchSelect_SelectedIndexChanged);
             // 
@@ -100,10 +100,10 @@
             this.branchLabel.CausesValidation = false;
             this.branchLabel.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.branchLabel.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.branchLabel.Location = new System.Drawing.Point(257, 185);
+            this.branchLabel.Location = new System.Drawing.Point(171, 118);
             this.branchLabel.Margin = new System.Windows.Forms.Padding(0);
             this.branchLabel.Name = "branchLabel";
-            this.branchLabel.Size = new System.Drawing.Size(130, 25);
+            this.branchLabel.Size = new System.Drawing.Size(87, 15);
             this.branchLabel.TabIndex = 11;
             this.branchLabel.Text = "Studio Branch: ";
             this.branchLabel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -113,9 +113,10 @@
             this.forceRebuild.AccessibleName = "Force Client Rebuild";
             this.forceRebuild.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.forceRebuild.AutoSize = true;
-            this.forceRebuild.Location = new System.Drawing.Point(262, 311);
+            this.forceRebuild.Location = new System.Drawing.Point(173, 199);
+            this.forceRebuild.Margin = new System.Windows.Forms.Padding(2);
             this.forceRebuild.Name = "forceRebuild";
-            this.forceRebuild.Size = new System.Drawing.Size(176, 24);
+            this.forceRebuild.Size = new System.Drawing.Size(119, 17);
             this.forceRebuild.TabIndex = 12;
             this.forceRebuild.Text = "Force Reinstallation";
             this.forceRebuild.UseVisualStyleBackColor = true;
@@ -125,10 +126,10 @@
             this.openFlagEditor.AccessibleName = "Open Flag Editor";
             this.openFlagEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.openFlagEditor.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.openFlagEditor.Location = new System.Drawing.Point(17, 284);
-            this.openFlagEditor.Margin = new System.Windows.Forms.Padding(9, 5, 4, 5);
+            this.openFlagEditor.Location = new System.Drawing.Point(11, 183);
+            this.openFlagEditor.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
             this.openFlagEditor.Name = "openFlagEditor";
-            this.openFlagEditor.Size = new System.Drawing.Size(213, 35);
+            this.openFlagEditor.Size = new System.Drawing.Size(142, 23);
             this.openFlagEditor.TabIndex = 15;
             this.openFlagEditor.Text = "Edit Fast Flags";
             this.openFlagEditor.UseVisualStyleBackColor = true;
@@ -139,10 +140,10 @@
             this.editExplorerIcons.AccessibleName = "Open Flag Editor";
             this.editExplorerIcons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.editExplorerIcons.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.editExplorerIcons.Location = new System.Drawing.Point(17, 329);
-            this.editExplorerIcons.Margin = new System.Windows.Forms.Padding(9, 5, 4, 5);
+            this.editExplorerIcons.Location = new System.Drawing.Point(11, 212);
+            this.editExplorerIcons.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
             this.editExplorerIcons.Name = "editExplorerIcons";
-            this.editExplorerIcons.Size = new System.Drawing.Size(213, 35);
+            this.editExplorerIcons.Size = new System.Drawing.Size(142, 23);
             this.editExplorerIcons.TabIndex = 16;
             this.editExplorerIcons.Text = "Edit Class Icons";
             this.editExplorerIcons.UseVisualStyleBackColor = true;
@@ -153,9 +154,10 @@
             this.openStudioDirectory.AccessibleName = "Just Open Studio Path";
             this.openStudioDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.openStudioDirectory.AutoSize = true;
-            this.openStudioDirectory.Location = new System.Drawing.Point(262, 341);
+            this.openStudioDirectory.Location = new System.Drawing.Point(173, 219);
+            this.openStudioDirectory.Margin = new System.Windows.Forms.Padding(2);
             this.openStudioDirectory.Name = "openStudioDirectory";
-            this.openStudioDirectory.Size = new System.Drawing.Size(225, 24);
+            this.openStudioDirectory.Size = new System.Drawing.Size(152, 17);
             this.openStudioDirectory.TabIndex = 14;
             this.openStudioDirectory.Text = "Just Open Studio Directory";
             this.openStudioDirectory.UseVisualStyleBackColor = true;
@@ -168,10 +170,9 @@
             this.targetVersionLabel.CausesValidation = false;
             this.targetVersionLabel.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.targetVersionLabel.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.targetVersionLabel.Location = new System.Drawing.Point(257, 249);
-            this.targetVersionLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.targetVersionLabel.Location = new System.Drawing.Point(171, 160);
             this.targetVersionLabel.Name = "targetVersionLabel";
-            this.targetVersionLabel.Size = new System.Drawing.Size(127, 25);
+            this.targetVersionLabel.Size = new System.Drawing.Size(83, 15);
             this.targetVersionLabel.TabIndex = 17;
             this.targetVersionLabel.Text = "Target Version:";
             // 
@@ -179,10 +180,9 @@
             // 
             this.title.AutoSize = true;
             this.title.Font = new System.Drawing.Font("Segoe UI Light", 20F);
-            this.title.Location = new System.Drawing.Point(204, 41);
-            this.title.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.title.Location = new System.Drawing.Point(136, 27);
             this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(260, 108);
+            this.title.Size = new System.Drawing.Size(176, 74);
             this.title.TabIndex = 20;
             this.title.Text = "Roblox Studio\r\nMod Manager";
             this.title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -195,10 +195,9 @@
             this.targetVersion.FormattingEnabled = true;
             this.targetVersion.Items.AddRange(new object[] {
             "(Use Latest)"});
-            this.targetVersion.Location = new System.Drawing.Point(261, 275);
-            this.targetVersion.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.targetVersion.Location = new System.Drawing.Point(174, 177);
             this.targetVersion.Name = "targetVersion";
-            this.targetVersion.Size = new System.Drawing.Size(226, 28);
+            this.targetVersion.Size = new System.Drawing.Size(152, 21);
             this.targetVersion.TabIndex = 18;
             this.targetVersion.SelectedIndexChanged += new System.EventHandler(this.targetVersion_SelectedIndexChanged);
             // 
@@ -206,18 +205,31 @@
             // 
             this.logo.BackgroundImage = global::RobloxStudioModManager.Properties.Resources.Logo;
             this.logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.logo.Location = new System.Drawing.Point(56, 28);
+            this.logo.Location = new System.Drawing.Point(37, 18);
+            this.logo.Margin = new System.Windows.Forms.Padding(2);
             this.logo.Name = "logo";
-            this.logo.Size = new System.Drawing.Size(135, 135);
+            this.logo.Size = new System.Drawing.Size(90, 88);
             this.logo.TabIndex = 22;
             this.logo.TabStop = false;
             // 
+            // openLayoutManager
+            // 
+            this.openLayoutManager.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.openLayoutManager.Location = new System.Drawing.Point(13, 242);
+            this.openLayoutManager.Name = "openLayoutManager";
+            this.openLayoutManager.Size = new System.Drawing.Size(140, 23);
+            this.openLayoutManager.TabIndex = 23;
+            this.openLayoutManager.Text = "Layout Manager";
+            this.openLayoutManager.UseVisualStyleBackColor = true;
+            this.openLayoutManager.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Launcher
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(502, 384);
+            this.ClientSize = new System.Drawing.Size(335, 278);
+            this.Controls.Add(this.openLayoutManager);
             this.Controls.Add(this.logo);
             this.Controls.Add(this.title);
             this.Controls.Add(this.targetVersion);
@@ -233,7 +245,6 @@
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::RobloxStudioModManager.Properties.Resources.Icon;
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MaximizeBox = false;
             this.Name = "Launcher";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -259,6 +270,7 @@
         private System.Windows.Forms.Label title;
         private System.Windows.Forms.ComboBox targetVersion;
         private System.Windows.Forms.PictureBox logo;
+        private System.Windows.Forms.Button openLayoutManager;
     }
 }
 

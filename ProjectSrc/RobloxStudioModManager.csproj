@@ -101,8 +101,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Messaging" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -119,6 +121,12 @@
     </Compile>
     <Compile Include="Forms\FlagCreator.Designer.cs">
       <DependentUpon>FlagCreator.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LayoutManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LayoutManager.Designer.cs">
+      <DependentUpon>LayoutManager.cs</DependentUpon>
     </Compile>
     <Compile Include="Utility\*.cs" />
     <Compile Include="Bootstrapper\*.cs" />
@@ -154,6 +162,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\Launcher.resx">
+      <DependentUpon>Launcher.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LayoutManager.resx">
+      <DependentUpon>LayoutManager.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>

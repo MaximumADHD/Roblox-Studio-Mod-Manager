@@ -463,5 +463,29 @@ namespace RobloxStudioModManager
             var target = targetVersion.SelectedItem as DeployLog;
             Program.SetValue("TargetVersion", target.VersionId);
         }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            Enabled = false;
+            UseWaitCursor = true;
+
+            string branch = (string)branchSelect.SelectedItem;
+            Hide();
+
+            var infoTask = StudioBootstrapper.GetCurrentVersionInfo(branch);
+            var info = await infoTask.ConfigureAwait(true);
+
+            var updateTask = BootstrapperForm.BringUpToDate(branch, info.VersionGuid, "The class icons may have received an update.");
+            await updateTask.ConfigureAwait(true);
+
+            using (var editor = new LayoutManager())
+                editor.ShowDialog();
+
+            Show();
+            BringToFront();
+
+            Enabled = true;
+            UseWaitCursor = false;
+        }
     }
 }
