@@ -418,6 +418,9 @@ namespace RobloxStudioModManager
             }
             else
             {
+                if (index >= iconLookup.Count)
+                    index = 0;
+
                 return iconLookup[index];
             }
         }
