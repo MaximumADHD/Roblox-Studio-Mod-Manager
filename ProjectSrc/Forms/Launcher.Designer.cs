@@ -83,7 +83,7 @@
             this.branchSelect.FormattingEnabled = true;
             this.branchSelect.Items.AddRange(new object[] {
             "roblox"});
-            this.branchSelect.Location = new System.Drawing.Point(175, 140);
+            this.branchSelect.Location = new System.Drawing.Point(174, 138);
             this.branchSelect.Name = "branchSelect";
             this.branchSelect.Size = new System.Drawing.Size(152, 21);
             this.branchSelect.TabIndex = 10;
