@@ -79,6 +79,7 @@
             this.branchSelect.AccessibleName = "Branch Selector";
             this.branchSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.branchSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.branchSelect.Enabled = false;
             this.branchSelect.FormattingEnabled = true;
             this.branchSelect.Items.AddRange(new object[] {
             "roblox",
@@ -98,6 +99,7 @@
             this.branchLabel.AutoSize = true;
             this.branchLabel.BackColor = System.Drawing.Color.Transparent;
             this.branchLabel.CausesValidation = false;
+            this.branchLabel.Enabled = false;
             this.branchLabel.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.branchLabel.ForeColor = System.Drawing.SystemColors.ControlText;
             this.branchLabel.Location = new System.Drawing.Point(257, 185);

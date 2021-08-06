@@ -129,9 +129,11 @@ namespace RobloxStudioModManager
                 // As a result, I've added the textures folder to my client tracker
                 // so this texture can be pulled remotely as a failsafe ¯\_(ツ)_/¯
 
-                string branch = Program
-                    .GetString("BuildBranch")
-                    .Replace("sitetest3", "sitetest2");
+                const string branch = "roblox";
+
+                // string branch = Program
+                //    .GetString("BuildBranch")
+                //    .Replace("sitetest3", "sitetest2");
 
                 using (var http = new WebClient())
                 {

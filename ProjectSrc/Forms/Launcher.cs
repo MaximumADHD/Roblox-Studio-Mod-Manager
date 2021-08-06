@@ -26,8 +26,10 @@ namespace RobloxStudioModManager
 
         private string getSelectedBranch()
         {
-            var result = branchSelect.SelectedItem;
-            return result.ToString();
+            // var result = branchSelect.SelectedItem;
+            // return result.ToString();
+
+            return "roblox";
         }
 
         private void Launcher_Load(object sender, EventArgs e)
@@ -35,10 +37,12 @@ namespace RobloxStudioModManager
             if (args != null)
                 openStudioDirectory.Enabled = false;
 
-            string build = Program.GetString("BuildBranch");
-            int buildIndex = branchSelect.Items.IndexOf(build);
+            // string build = Program.GetString("BuildBranch");
+            // int buildIndex = branchSelect.Items.IndexOf(build);
+            // branchSelect.SelectedIndex = Math.Max(buildIndex, 0);
 
-            branchSelect.SelectedIndex = Math.Max(buildIndex, 0);
+            branchSelect.SelectedIndex = 0;
+            Program.SetValue("BuildBranch", "roblox");
         }
 
         public static string getModPath()
