@@ -303,26 +303,13 @@ namespace RobloxStudioModManager
         // make sitetest update checks faster... at least for 64-bit users.
         public static async Task<string> GetFastVersionGuid(string branch)
         {
-            if (branch == "roblox")
-            {
-                string binaryType = GetStudioBinaryType();
+            string fastUrl = $"https://s3.amazonaws.com/setup.{branch}.com/versionQTStudio";
 
-                var info = await ClientVersionInfo
-                    .Get(binaryType)
-                    .ConfigureAwait(false);
+            var result = await http
+                .DownloadStringTaskAsync(fastUrl)
+                .ConfigureAwait(false);
 
-                return info.VersionGuid;
-            }
-            else
-            {
-                string fastUrl = $"https://s3.amazonaws.com/setup.{branch}.com/versionQTStudio";
-
-                var result = await http
-                    .DownloadStringTaskAsync(fastUrl)
-                    .ConfigureAwait(false);
-
-                return result;
-            }
+            return result;
         }
 
         public static List<Process> GetRunningStudioProcesses()
@@ -456,69 +443,57 @@ namespace RobloxStudioModManager
                 return await result.ConfigureAwait(false);
             }
 
-            try
+            var getFastGuid = GetFastVersionGuid(branch);
+            string fastGuid = await getFastGuid.ConfigureAwait(false);
+            
+            string latestFastGuid = versionRegistry.GetString("LatestFastGuid");
+            bool is64Bit = Environment.Is64BitOperatingSystem;
+            var info = new ClientVersionInfo();
+
+            if (latestFastGuid == fastGuid)
             {
-                string binaryType = GetStudioBinaryType();
-                var result = ClientVersionInfo.Get(binaryType, branch);
+                string version = versionRegistry.GetString("Version");
+                info.Version = version;
 
-                return await result.ConfigureAwait(false);
+                string latest_x86 = versionRegistry.GetString("LatestGuid_x86");
+                string latest_x64 = versionRegistry.GetString("LatestGuid_x64");
+
+                if (latestFastGuid == latest_x64 && is64Bit)
+                {
+                    info.VersionGuid = latest_x64;
+                    return info;
+                }
+
+                if (latestFastGuid == latest_x86 && !is64Bit)
+                {
+                    info.VersionGuid = latest_x86;
+                    return info;
+                }
             }
-            catch (WebException)
+
+            var logData = await StudioDeployLogs
+                .Get(branch)
+                .ConfigureAwait(false);
+
+            DeployLog build_x86 = logData.CurrentLogs_x86.Last();
+            DeployLog build_x64 = logData.CurrentLogs_x64.Last();
+
+            if (is64Bit)
             {
-                // Fall back to the DeployHistory strategy.
-
-                var getFastGuid = GetFastVersionGuid(branch);
-                string fastGuid = await getFastGuid.ConfigureAwait(false);
-                
-                string latestFastGuid = versionRegistry.GetString("LatestFastGuid");
-                bool is64Bit = Environment.Is64BitOperatingSystem;
-                var info = new ClientVersionInfo();
-
-                if (latestFastGuid == fastGuid)
-                {
-                    string version = versionRegistry.GetString("Version");
-                    info.Version = version;
-
-                    string latest_x86 = versionRegistry.GetString("LatestGuid_x86");
-                    string latest_x64 = versionRegistry.GetString("LatestGuid_x64");
-
-                    if (latestFastGuid == latest_x64 && is64Bit)
-                    {
-                        info.VersionGuid = latest_x64;
-                        return info;
-                    }
-
-                    if (latestFastGuid == latest_x86 && !is64Bit)
-                    {
-                        info.VersionGuid = latest_x86;
-                        return info;
-                    }
-                }
-
-                var logData = await StudioDeployLogs
-                    .Get(branch)
-                    .ConfigureAwait(false);
-
-                DeployLog build_x86 = logData.CurrentLogs_x86.Last();
-                DeployLog build_x64 = logData.CurrentLogs_x64.Last();
-
-                if (is64Bit)
-                {
-                    info.Version = build_x64.VersionId;
-                    info.VersionGuid = build_x64.VersionGuid;
-                }
-                else
-                {
-                    info.Version = build_x86.VersionId;
-                    info.VersionGuid = build_x86.VersionGuid;
-                }
-
-                versionRegistry.SetValue("LatestFastGuid", fastGuid);
-                versionRegistry.SetValue("LatestGuid_x86", build_x86.VersionGuid);
-                versionRegistry.SetValue("LatestGuid_x64", build_x64.VersionGuid);
-
-                return info;
+                info.Version = build_x64.VersionId;
+                info.VersionGuid = build_x64.VersionGuid;
             }
+            else
+            {
+                info.Version = build_x86.VersionId;
+                info.VersionGuid = build_x86.VersionGuid;
+            }
+
+            versionRegistry.SetValue("LatestFastGuid", fastGuid);
+            versionRegistry.SetValue("LatestGuid_x86", build_x86.VersionGuid);
+            versionRegistry.SetValue("LatestGuid_x64", build_x64.VersionGuid);
+
+            return info;
         }
 
         private static string fixFilePath(string pkgName, string filePath)
