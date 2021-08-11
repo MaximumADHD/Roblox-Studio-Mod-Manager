@@ -55,7 +55,7 @@ namespace RobloxStudioModManager
             rejected.ForEach(log => targetSet.Remove(log));
         }
 
-        private void UpdateLogs(string deployHistory, int maxVersion)
+        private void UpdateLogs(string deployHistory)
         {
             var now = DateTime.Now;
             var matches = Regex.Matches(deployHistory, LogPattern);
@@ -85,7 +85,7 @@ namespace RobloxStudioModManager
                     Changelist = int.Parse(data[7], Program.NumberFormat)
                 };
 
-                if (deployLog.Changelist < EarliestChangelist || deployLog.Version > maxVersion)
+                if (deployLog.Changelist < EarliestChangelist)
                     continue;
 
                 // olive71 (Ganesh) said we should expect builds older than ~3 months to be deleted.
@@ -130,26 +130,8 @@ namespace RobloxStudioModManager
 
             if (logs.LastDeployHistory != deployHistory)
             {
-                int maxVersion = int.MaxValue;
-
-                if (branch == "roblox")
-                {
-                    string binaryType = StudioBootstrapper.GetStudioBinaryType();
-
-                    var getInfo = ClientVersionInfo.Get(binaryType);
-                    var info = await getInfo.ConfigureAwait(false);
-
-                    int version = info.Version
-                        .Split('.')
-                        .Select(int.Parse)
-                        .Skip(1)
-                        .First();
-
-                    maxVersion = version;
-                }
-
                 logs.LastDeployHistory = deployHistory;
-                logs.UpdateLogs(deployHistory, maxVersion);
+                logs.UpdateLogs(deployHistory);
             }
 
             return logs;
