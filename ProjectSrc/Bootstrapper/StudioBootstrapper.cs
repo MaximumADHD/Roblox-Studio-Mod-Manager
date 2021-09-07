@@ -443,33 +443,8 @@ namespace RobloxStudioModManager
                 return await result.ConfigureAwait(false);
             }
 
-            var getFastGuid = GetFastVersionGuid(branch);
-            string fastGuid = await getFastGuid.ConfigureAwait(false);
-            
-            string latestFastGuid = versionRegistry.GetString("LatestFastGuid");
             bool is64Bit = Environment.Is64BitOperatingSystem;
             var info = new ClientVersionInfo();
-
-            if (latestFastGuid == fastGuid)
-            {
-                string version = versionRegistry.GetString("Version");
-                info.Version = version;
-
-                string latest_x86 = versionRegistry.GetString("LatestGuid_x86");
-                string latest_x64 = versionRegistry.GetString("LatestGuid_x64");
-
-                if (latestFastGuid == latest_x64 && is64Bit)
-                {
-                    info.VersionGuid = latest_x64;
-                    return info;
-                }
-
-                if (latestFastGuid == latest_x86 && !is64Bit)
-                {
-                    info.VersionGuid = latest_x86;
-                    return info;
-                }
-            }
 
             var logData = await StudioDeployLogs
                 .Get(branch)
@@ -489,7 +464,6 @@ namespace RobloxStudioModManager
                 info.VersionGuid = build_x86.VersionGuid;
             }
 
-            versionRegistry.SetValue("LatestFastGuid", fastGuid);
             versionRegistry.SetValue("LatestGuid_x86", build_x86.VersionGuid);
             versionRegistry.SetValue("LatestGuid_x64", build_x64.VersionGuid);
 
