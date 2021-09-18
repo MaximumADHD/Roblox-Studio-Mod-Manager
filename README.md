@@ -1,7 +1,7 @@
 <hr/>
 
 <p align="center">
-  <img width="256" height="256" src="https://raw.githubusercontent.com/MaximumADHD/Roblox-Studio-Mod-Manager/master/ProjectSrc/Resources/Logo.png"><h1 align=center>Roblox Studio Mod Manager<br/>(By: CloneTrooper1019)</h1>
+  <img width="256" height="256" src="https://raw.githubusercontent.com/MaximumADHD/Roblox-Studio-Mod-Manager/master/ProjectSrc/Resources/Logo.png"><h1 align=center>Roblox Studio Mod Manager<br/>(By: MaximumADHD)</h1>
   
 </p>
 
