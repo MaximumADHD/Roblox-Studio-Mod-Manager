@@ -18,7 +18,7 @@ namespace RobloxStudioModManager
 
         private const string iconPrefix = "explorer-icon-";
         private const string iconManifest = @"content\textures\ClassImages.PNG";
-        private const string clientTracker = "https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Client-Tracker";
+        private const string clientTracker = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker";
 
         private static readonly RegistryKey explorerRegistry = Program.GetSubKey("ExplorerIcons");
         private static readonly RegistryKey manifestRegistry = Program.GetSubKey("FileManifest");

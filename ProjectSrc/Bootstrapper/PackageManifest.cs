@@ -19,7 +19,7 @@ namespace RobloxStudioModManager
                 if (version != "v0")
                 {
                     string errorMsg = $"Unexpected package manifest version: {version} (expected v0!)\n" +
-                                       "Please contact CloneTrooper1019 if you see this error.";
+                                       "Please contact MaximumADHD if you see this error.";
 
                     throw new NotSupportedException(errorMsg);
                 }

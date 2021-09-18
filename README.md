@@ -1,7 +1,7 @@
 <hr/>
 
 <p align="center">
-  <img width="256" height="256" src="https://raw.githubusercontent.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/master/ProjectSrc/Resources/Logo.png"><h1 align=center>Roblox Studio Mod Manager<br/>(By: CloneTrooper1019)</h1>
+  <img width="256" height="256" src="https://raw.githubusercontent.com/MaximumADHD/Roblox-Studio-Mod-Manager/master/ProjectSrc/Resources/Logo.png"><h1 align=center>Roblox Studio Mod Manager<br/>(By: CloneTrooper1019)</h1>
   
 </p>
 
@@ -35,8 +35,8 @@ https://twitter.com/BoatbomberRBLX/status/1347262909915738113
 # Downloads
 
 The latest version can be found on the ***Releases*** page of this repository:<br/>
-https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/releases
+https://github.com/MaximumADHD/Roblox-Studio-Mod-Manager/releases
 
 You can also download the latest committed versions here:
-* <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/raw/main/RobloxStudioModManager.exe">Download (.exe)</a></h1>
-* <a href="https://github.com/CloneTrooper1019/Roblox-Studio-Mod-Manager/archive/main.zip">Download (.zip)</a>
+* <a href="https://github.com/MaximumADHD/Roblox-Studio-Mod-Manager/raw/main/RobloxStudioModManager.exe">Download (.exe)</a></h1>
+* <a href="https://github.com/MaximumADHD/Roblox-Studio-Mod-Manager/archive/main.zip">Download (.zip)</a>
