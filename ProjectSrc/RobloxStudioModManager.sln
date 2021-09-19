@@ -5,10 +5,9 @@ VisualStudioVersion = 16.0.30914.41
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobloxStudioModManager", "RobloxStudioModManager.csproj", "{FAD2621F-B280-4D6D-A260-F410C5B06E0C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C25B2A17-4ACB-484B-81D8-EFF11D6EE141}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-	EndProjectSection
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Include", "Include", "{1C4AD8C6-F62A-4C24-9FF1-35D393E565C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobloxDeployHistory", "..\..\Roblox-Deploy-History\RobloxDeployHistory.csproj", "{83C4E02A-CA74-470C-8ABA-FF49B9DD7C59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,9 +22,18 @@ Global
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Internal|Any CPU.Build.0 = Internal|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83C4E02A-CA74-470C-8ABA-FF49B9DD7C59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83C4E02A-CA74-470C-8ABA-FF49B9DD7C59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83C4E02A-CA74-470C-8ABA-FF49B9DD7C59}.Internal|Any CPU.ActiveCfg = Debug|Any CPU
+		{83C4E02A-CA74-470C-8ABA-FF49B9DD7C59}.Internal|Any CPU.Build.0 = Debug|Any CPU
+		{83C4E02A-CA74-470C-8ABA-FF49B9DD7C59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83C4E02A-CA74-470C-8ABA-FF49B9DD7C59}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{83C4E02A-CA74-470C-8ABA-FF49B9DD7C59} = {1C4AD8C6-F62A-4C24-9FF1-35D393E565C9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C54D42A8-8071-46D8-8581-22530C90CE09}

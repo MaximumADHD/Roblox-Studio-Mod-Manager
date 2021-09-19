@@ -8,6 +8,7 @@ using System.Media;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
+using RobloxDeployHistory;
 
 namespace RobloxStudioModManager
 {
