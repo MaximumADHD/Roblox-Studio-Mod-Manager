@@ -10,8 +10,7 @@ namespace RobloxStudioModManager
     public class StudioDeployLogs
     {
         private const string LogPattern = "New (Studio6?4?) (version-[a-f\\d]+) at (\\d+/\\d+/\\d+ \\d+:\\d+:\\d+ [A,P]M), file version: (\\d+), (\\d+), (\\d+), (\\d+)";
-        private const int EarliestChangelist = 338804; // The earliest acceptable changelist of Roblox Studio, with explicit 64-bit versions declared via DeployHistory.txt
-
+        
         public string Branch { get; private set; }
 
         private string LastDeployHistory = "";
@@ -73,7 +72,7 @@ namespace RobloxStudioModManager
                 string buildType = data[1];
                 bool is64Bit = buildType.EndsWith("64", Program.StringFormat);
 
-                DeployLog deployLog = new DeployLog()
+                var deployLog = new DeployLog()
                 {
                     Is64Bit = is64Bit,
                     VersionGuid = data[2],
@@ -84,9 +83,6 @@ namespace RobloxStudioModManager
                     Patch = int.Parse(data[6], Program.NumberFormat),
                     Changelist = int.Parse(data[7], Program.NumberFormat)
                 };
-
-                if (deployLog.Changelist < EarliestChangelist)
-                    continue;
 
                 // olive71 (Ganesh) said we should expect builds older than ~3 months to be deleted.
                 // Although in practice this isn't consistently done, it's better to be safe than sorry.
@@ -118,7 +114,7 @@ namespace RobloxStudioModManager
 
         public static async Task<StudioDeployLogs> Get(string branch)
         {
-            StudioDeployLogs logs = null;
+            StudioDeployLogs logs;
 
             if (LogCache.ContainsKey(branch))
                 logs = LogCache[branch];

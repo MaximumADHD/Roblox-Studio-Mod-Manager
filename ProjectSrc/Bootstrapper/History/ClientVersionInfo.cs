@@ -1,33 +1,23 @@
-﻿using System.Net;
-using System.Threading.Tasks;
+﻿using System.Diagnostics.Contracts;
 
 namespace RobloxStudioModManager
 {
     public class ClientVersionInfo
     {
-        public string Version { get; set; }
-        public string VersionGuid { get; set; }
+        public string Version { get; private set; }
+        public string VersionGuid { get; private set; }
 
-        public static async Task<ClientVersionInfo> Get(string buildType = "WindowsStudio", string branch = "roblox")
+        public ClientVersionInfo(string version, string versionGuid)
         {
-            string jsonUrl = $"https://clientsettingscdn.{branch}.com/v2/client-version/{buildType}";
+            Version = version;
+            VersionGuid = versionGuid;
+        }
 
-            using (WebClient http = new WebClient())
-            {
-                var getJsonData = http.DownloadStringTaskAsync(jsonUrl);
-                string jsonData = await getJsonData.ConfigureAwait(false);
-
-                var json = Program.ReadJsonDictionary(jsonData);
-                var versionInfo = new ClientVersionInfo();
-
-                if (json.TryGetValue("version", out string version))
-                    versionInfo.Version = version;
-
-                if (json.TryGetValue("clientVersionUpload", out string versionGuid))
-                    versionInfo.VersionGuid = versionGuid;
-
-                return versionInfo;
-            }
+        public ClientVersionInfo(DeployLog log)
+        {
+            Contract.Requires(log != null);
+            VersionGuid = log.VersionGuid;
+            Version = log.VersionId;
         }
     }
 }

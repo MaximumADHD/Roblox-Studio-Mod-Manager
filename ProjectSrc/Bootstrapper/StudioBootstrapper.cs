@@ -425,11 +425,7 @@ namespace RobloxStudioModManager
                 return await result.ConfigureAwait(false);
             }
 
-            return new ClientVersionInfo()
-            {
-                VersionGuid = target.VersionGuid,
-                Version = target.VersionId
-            };
+            return new ClientVersionInfo(target);
         }
 
         public static async Task<ClientVersionInfo> GetCurrentVersionInfo(string branch, RegistryKey versionRegistry = null, string targetVersion = "")
@@ -444,7 +440,7 @@ namespace RobloxStudioModManager
             }
 
             bool is64Bit = Environment.Is64BitOperatingSystem;
-            var info = new ClientVersionInfo();
+            ClientVersionInfo info;
 
             var logData = await StudioDeployLogs
                 .Get(branch)
@@ -454,15 +450,9 @@ namespace RobloxStudioModManager
             DeployLog build_x64 = logData.CurrentLogs_x64.Last();
 
             if (is64Bit)
-            {
-                info.Version = build_x64.VersionId;
-                info.VersionGuid = build_x64.VersionGuid;
-            }
+                info = new ClientVersionInfo(build_x64);
             else
-            {
-                info.Version = build_x86.VersionId;
-                info.VersionGuid = build_x86.VersionGuid;
-            }
+                info = new ClientVersionInfo(build_x86);
 
             versionRegistry.SetValue("LatestGuid_x86", build_x86.VersionGuid);
             versionRegistry.SetValue("LatestGuid_x64", build_x64.VersionGuid);
