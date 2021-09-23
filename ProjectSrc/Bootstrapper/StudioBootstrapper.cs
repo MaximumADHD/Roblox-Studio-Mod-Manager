@@ -839,7 +839,7 @@ namespace RobloxStudioModManager
             if (mainRegistry.Name.EndsWith(Branch, Program.StringFormat))
                 currentBranch = Branch;
             else
-                currentBranch = "roblox"; // mainRegistry.GetString("BuildBranch", "roblox");
+                currentBranch = mainRegistry.GetString("BuildBranch", "roblox");
 
             var getVersionInfo = GetCurrentVersionInfo(currentBranch, versionRegistry, targetVersion);
             ClientVersionInfo versionInfo = await getVersionInfo.ConfigureAwait(true);
