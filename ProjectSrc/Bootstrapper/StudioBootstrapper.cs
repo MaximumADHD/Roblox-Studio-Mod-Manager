@@ -298,20 +298,6 @@ namespace RobloxStudioModManager
             return binaryType;
         }
 
-        // This does a quick check of /versionQTStudio without resolving
-        // if its the proper version-guid for gametest builds. This should
-        // make sitetest update checks faster... at least for 64-bit users.
-        public static async Task<string> GetFastVersionGuid(string branch)
-        {
-            string fastUrl = $"https://s3.amazonaws.com/setup.{branch}.com/versionQTStudio";
-
-            var result = await http
-                .DownloadStringTaskAsync(fastUrl)
-                .ConfigureAwait(false);
-
-            return result;
-        }
-
         public static List<Process> GetRunningStudioProcesses()
         {
             var studioProcs = new List<Process>();
