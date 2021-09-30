@@ -120,6 +120,7 @@
     <Compile Include="Forms\FlagCreator.Designer.cs">
       <DependentUpon>FlagCreator.cs</DependentUpon>
     </Compile>
+    <Compile Include="History\*.cs" />
     <Compile Include="Utility\*.cs" />
     <Compile Include="Bootstrapper\*.cs" />
     <Compile Include="Forms\BootstrapperForm.cs">
@@ -197,12 +198,6 @@
     <Analyzer Include="packages\Microsoft.NetCore.Analyzers.2.9.6\analyzers\dotnet\cs\Microsoft.NetCore.CSharp.Analyzers.dll" />
     <Analyzer Include="packages\Microsoft.NetFramework.Analyzers.2.9.6\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
     <Analyzer Include="packages\Microsoft.NetFramework.Analyzers.2.9.6\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Roblox-Deploy-History\RobloxDeployHistory.csproj">
-      <Project>{83c4e02a-ca74-470c-8aba-ff49b9dd7c59}</Project>
-      <Name>RobloxDeployHistory</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
