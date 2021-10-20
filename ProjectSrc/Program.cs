@@ -99,7 +99,7 @@ namespace RobloxStudioModManager
                 string key = data[1],
                        val = data[2];
 
-                result.Add(key, val);
+                result[key] = val;
             }
 
             return result;
