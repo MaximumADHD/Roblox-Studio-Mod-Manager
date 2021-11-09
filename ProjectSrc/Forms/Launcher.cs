@@ -368,6 +368,11 @@ namespace RobloxStudioModManager
                         {
                             robloxStudioInfo.Arguments += "-task EditPlace";
                         }
+                        else if (launchMode == "asset")
+                        {
+                            string assetId = argMap["assetid"];
+                            robloxStudioInfo.Arguments += "-task TryAsset -assetId " + assetId;
+                        }
                     }
                 }
                 else
