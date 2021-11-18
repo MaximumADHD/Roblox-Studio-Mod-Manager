@@ -9,7 +9,6 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
-#pragma warning disable CA2000 // Dispose objects before losing scope
 
 namespace RobloxStudioModManager
 {

@@ -34,14 +34,6 @@ namespace RobloxStudioModManager
         private const string UserAgent = "RobloxStudioModManager";
         public const string StartEvent = "RobloxStudioModManagerStart";
 
-        private static readonly WebClient http = new WebClient()
-        {
-            Headers = new WebHeaderCollection
-            {
-                { HttpRequestHeader.UserAgent, UserAgent }
-            }
-        };
-
         public event MessageEventHandler EchoFeed;
         public event MessageEventHandler StatusChanged;
 
@@ -84,6 +76,7 @@ namespace RobloxStudioModManager
             { "content-models.zip",    @"content\models\"   },
             { "content-sounds.zip",    @"content\sounds\"   },
             { "content-configs.zip",   @"content\configs\"  },
+            { "content-api_docs.zip",  @"content\api_docs\" },
             { "content-textures2.zip", @"content\textures\" },
 
             { "Qml.zip",          @"Qml\"         },

@@ -61,7 +61,5 @@ namespace RobloxStudioModManager
 
             return new FileManifest(fileManifestData, remapExtraContent);
         }
-
-        
     }
 }
