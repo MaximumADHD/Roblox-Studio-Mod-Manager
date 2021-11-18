@@ -76,7 +76,7 @@ namespace RobloxStudioModManager
             { "content-models.zip",    @"content\models\"   },
             { "content-sounds.zip",    @"content\sounds\"   },
             { "content-configs.zip",   @"content\configs\"  },
-            { "content-api_docs.zip",  @"content\api_docs\" },
+            { "content-api-docs.zip",  @"content\api-docs\" },
             { "content-textures2.zip", @"content\textures\" },
 
             { "Qml.zip",          @"Qml\"         },
