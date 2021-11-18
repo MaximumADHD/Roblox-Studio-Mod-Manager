@@ -351,7 +351,7 @@ namespace RobloxStudioModManager
                         string oldHash = fileRegistry.GetString(fileName);
                         
                         if (oldHash?.Length > 32)
-                            if (info.Extension == ".dll" || info.Name == "qmldir")
+                            if (info.Extension == ".dll" || info.Name == "qmldir" || filePath.Contains("api-docs"))
                                 continue;
 
                         echo($"Deleting unused file {fileName}");
