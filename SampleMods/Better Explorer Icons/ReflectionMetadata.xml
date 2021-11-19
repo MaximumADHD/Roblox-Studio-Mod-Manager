@@ -61,6 +61,18 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">PluginDragEvent</string>
+				<string name="ExplorerImageIndex">169</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PluginAction</string>
+				<string name="ExplorerImageIndex">169</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">PluginPolicyService</string>
 				<string name="ExplorerImageIndex">169</string>
 			</Properties>
@@ -97,8 +109,26 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">TeleportAsyncResult</string>
+				<string name="ExplorerImageIndex">70</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">TeleportOptions</string>
+				<string name="ExplorerImageIndex">70</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">Plugin</string>
 				<string name="ExplorerImageIndex">169</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PlayerMouse</string>
+				<string name="ExplorerImageIndex">171</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -110,6 +140,23 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Glue</string>
+				<string name="ExplorerImageIndex">34</string>
+				<string name="PreferredParent">BasePart</string>
+				<string name="Deprecated">true</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ManualGlue</string>
+				<string name="ExplorerImageIndex">34</string>
+				<string name="PreferredParent">BasePart</string>
+				<string name="Deprecated">true</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ManualWeld</string>
+				<string name="ExplorerImageIndex">34</string>
 				<string name="PreferredParent">BasePart</string>
 				<string name="Deprecated">true</string>
 			</Properties>
@@ -175,6 +222,18 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">CommandInstance</string>
+				<string name="ExplorerImageIndex">189</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">CommandService</string>
+				<string name="ExplorerImageIndex">189</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">HapticService</string>
 				<string name="ExplorerImageIndex">157</string>
 			</Properties>
@@ -188,6 +247,24 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">Controller</string>
+				<string name="ExplorerImageIndex">184</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">HumanoidController</string>
+				<string name="ExplorerImageIndex">184</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">SkateboardController</string>
+				<string name="ExplorerImageIndex">184</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">VehicleController</string>
 				<string name="ExplorerImageIndex">184</string>
 			</Properties>
 		</Item>
@@ -217,6 +294,30 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">TextFilterResult</string>
+				<string name="ExplorerImageIndex">50</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">TextChannel</string>
+				<string name="ExplorerImageIndex">50</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">TextChatService</string>
+				<string name="ExplorerImageIndex">50</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">TextSource</string>
+				<string name="ExplorerImageIndex">50</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">Geometry</string>
 				<string name="ExplorerImageIndex">2</string>
 			</Properties>
@@ -225,6 +326,12 @@
 			<Properties>
 				<string name="Name">FriendService</string>
 				<string name="ExplorerImageIndex">21</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">FlyweightService</string>
+				<string name="ExplorerImageIndex">73</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -248,6 +355,30 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">HttpRbxApiService</string>
+				<string name="ExplorerImageIndex">191</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ThirdPartyUserService</string>
+				<string name="ExplorerImageIndex">191</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">HttpRequest</string>
+				<string name="ExplorerImageIndex">191</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">IXPService</string>
+				<string name="ExplorerImageIndex">191</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">LoginService</string>
 				<string name="ExplorerImageIndex">191</string>
 			</Properties>
 		</Item>
@@ -283,6 +414,12 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">CSGCacheService</string>
+				<string name="ExplorerImageIndex">73</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">AdService</string>
 				<string name="ExplorerImageIndex">165</string>
 			</Properties>
@@ -301,7 +438,19 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">AnimationClipProvider</string>
+				<string name="ExplorerImageIndex">60</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">TimerService</string>
+				<string name="ExplorerImageIndex">172</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">StopWatchReporter</string>
 				<string name="ExplorerImageIndex">172</string>
 			</Properties>
 		</Item>
@@ -333,6 +482,36 @@
 			<Properties>
 				<string name="Name">RuntimeScriptService</string>
 				<string name="ExplorerImageIndex">78</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">TemporaryScriptService</string>
+				<string name="ExplorerImageIndex">78</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ScriptChangeService</string>
+				<string name="ExplorerImageIndex">78</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ScriptRegistrationService</string>
+				<string name="ExplorerImageIndex">78</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">StandalonePluginScripts</string>
+				<string name="ExplorerImageIndex">78</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">TemporaryCageMeshProvider</string>
+				<string name="ExplorerImageIndex">121</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -399,6 +578,12 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">PackageUIService</string>
+				<string name="ExplorerImageIndex">167</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">CoreScriptSyncService</string>
 				<string name="ExplorerImageIndex">139</string>
 			</Properties>
@@ -447,6 +632,24 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">MemoryStoreService</string>
+				<string name="ExplorerImageIndex">138</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">MemoryStoreQueue</string>
+				<string name="ExplorerImageIndex">138</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">MemoryStoreSortedMap</string>
+				<string name="ExplorerImageIndex">138</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">MemStorageConnection</string>
 				<string name="ExplorerImageIndex">75</string>
 			</Properties>
@@ -466,7 +669,7 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">ClusterPacketCache</string>
-				<string name="ExplorerImageIndex">48</string>
+				<string name="ExplorerImageIndex">65</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -485,6 +688,18 @@
 			<Properties>
 				<string name="Name">BulkImportService</string>
 				<string name="ExplorerImageIndex">161</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">MessageBusService</string>
+				<string name="ExplorerImageIndex">161</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">MessageBusConnection</string>
+				<string name="ExplorerImageIndex">75</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -549,6 +764,18 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">Dragger</string>
+				<string name="ExplorerImageIndex">187</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">AdvancedDragger</string>
+				<string name="ExplorerImageIndex">187</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">StudioDeviceEmulatorService</string>
 				<string name="ExplorerImageIndex">193</string>
 			</Properties>
@@ -585,6 +812,24 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">VoiceChannel</string>
+				<string name="ExplorerImageIndex">188</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">VoiceSource</string>
+				<string name="ExplorerImageIndex">136</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Speaker</string>
+				<string name="ExplorerImageIndex">136</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">ProximityPromptService</string>
 				<string name="ExplorerImageIndex">124</string>
 			</Properties>
@@ -599,6 +844,12 @@
 			<Properties>
 				<string name="Name">TracerService</string>
 				<string name="ExplorerImageIndex">186</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ToolboxService</string>
+				<string name="ExplorerImageIndex">196</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -622,6 +873,12 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">AppStorageService</string>
+				<string name="ExplorerImageIndex">69</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">UserStorageService</string>
 				<string name="ExplorerImageIndex">69</string>
 			</Properties>
 		</Item>
@@ -669,6 +926,24 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">AssetDeliveryProxy</string>
+				<string name="ExplorerImageIndex">138</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">StudioAssetService</string>
+				<string name="ExplorerImageIndex">138</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PublishService</string>
+				<string name="ExplorerImageIndex">138</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">HttpService</string>
 				<string name="ExplorerImageIndex">186</string>
 			</Properties>
@@ -706,6 +981,12 @@
 					</Properties>
 				</Item>
 			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">GoogleAnalyticsConfiguration</string>
+				<string name="ExplorerImageIndex">190</string>
+			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
@@ -893,6 +1174,15 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">TorsionSpringConstraint</string>
+				<string name="ClassCategory">Constraints</string>
+				<string name="ExplorerOrder">3</string>
+				<string name="ExplorerImageIndex">91</string>
+				<string name="PreferredParent">BasePart</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">WeldConstraint</string>
 				<string name="ClassCategory">Constraints</string>
 				<string name="ExplorerOrder">3</string>
@@ -908,6 +1198,47 @@
 				<string name="ExplorerImageIndex">105</string>
 				<string name="PreferredParent">PVInstance</string>
 			</Properties>
+		</Item>
+		
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">RigidConstraint</string>
+				<string name="FFlag">SimRigidConstraint</string>
+				<string name="ClassCategory">Constraints</string>
+				<string name="ExplorerOrder">30</string>
+				<string name="ExplorerImageIndex">135</string>
+				<string name="PreferredParent">PVInstance</string>
+			</Properties>
+			<Item class="ReflectionMetadataProperties">
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">DestructionEnabled</string>
+						<string name="PropertyOrder">0</string>
+						<string name="FFlag">SimSolverEnableDestruction</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">Broken</string>
+						<string name="PropertyOrder">1</string>
+						<string name="FFlag">SimSolverEnableDestruction</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">DestructionForce</string>
+						<string name="PropertyOrder">2</string>
+						<string name="FFlag">SimSolverEnableDestruction</string>
+					</Properties>
+				</Item>
+				<Item class="ReflectionMetadataMember">
+					<Properties>
+						<string name="Name">DestructionTorque</string>
+						<string name="PropertyOrder">3</string>
+						<string name="FFlag">SimSolverEnableDestruction</string>
+					</Properties>
+				</Item>
+			</Item>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
@@ -1056,6 +1387,14 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">Rotate</string>
+				<string name="PreferredParent">BasePart</string>
+				<string name="Deprecated">true</string>
+				<string name="ExplorerImageIndex">155</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">ScriptContext</string>
 				<string name="ExplorerOrder">99</string>
 				<string name="ExplorerImageIndex">78</string>
@@ -1101,6 +1440,30 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">RunningAverageItemDouble</string>
+				<string name="ExplorerImageIndex">159</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">RunningAverageItemInt</string>
+				<string name="ExplorerImageIndex">159</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">RunningAverageTimeIntervalItem</string>
+				<string name="ExplorerImageIndex">159</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">TotalCountTimeIntervalItem</string>
+				<string name="ExplorerImageIndex">159</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">CorePackages</string>
 				<string name="ExplorerOrder">30</string>
 				<string name="ExplorerImageIndex">167</string>
@@ -1112,13 +1475,6 @@
 				<string name="ExplorerOrder">20</string>
 				<string name="ExplorerImageIndex">34</string>
 				<string name="PreferredParent">BasePart</string>
-			</Properties>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">FileMesh</string>
-				<string name="PreferredParent">BasePart</string>
-				<string name="Browsable">false</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -1566,6 +1922,14 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">BinaryStringValue</string>
+				<string name="ClassCategory">Values</string>
+				<string name="ExplorerOrder">3</string>
+				<string name="ExplorerImageIndex">4</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">CustomEvent</string>
 				<string name="ExplorerOrder">3</string>
 				<bool name="Deprecated">true</bool>
@@ -1663,6 +2027,15 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">FileMesh</string>
+				<string name="ClassCategory">Meshes</string>
+				<string name="ExplorerOrder">3</string>
+				<string name="ExplorerImageIndex">8</string>
+				<string name="PreferredParent">BasePart</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">BlockMesh</string>
 				<string name="ClassCategory">Meshes</string>
 				<string name="ExplorerOrder">3</string>
@@ -1691,6 +2064,18 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">DataModelMesh</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">LodDataEntity</string>
+				<string name="ExplorerImageIndex">8</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">LodDataService</string>
+				<string name="ExplorerImageIndex">8</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -2085,6 +2470,12 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">Hopper</string>
+				<string name="ExplorerImageIndex">20</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">StarterPlayer</string>
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">79</string>
@@ -2278,6 +2669,42 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">TweenService</string>
+				<string name="ExplorerImageIndex">143</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">RotationCurve</string>
+				<string name="ExplorerImageIndex">143</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">EulerRotationCurve</string>
+				<string name="ExplorerImageIndex">143</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Vector3Curve</string>
+				<string name="ExplorerImageIndex">143</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">FloatCurve</string>
+				<string name="ExplorerImageIndex">143</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">MarkerCurve</string>
+				<string name="ExplorerImageIndex">143</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">CurveAnimation</string>
 				<string name="ExplorerImageIndex">143</string>
 			</Properties>
 		</Item>
@@ -2724,12 +3151,30 @@
 				<string name="Name">Skin</string>
 				<bool name="Deprecated">true</bool>
 				<string name="ExplorerOrder">2</string>
-				<string name="ExplorerImageIndex">158</string>
+				<string name="ExplorerImageIndex">147</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">GenericSettings</string>
+				<string name="ExplorerImageIndex">58</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">GlobalSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">AnalysticsSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">UserSettings</string>
 				<string name="ExplorerImageIndex">58</string>
 			</Properties>
 		</Item>
@@ -2747,7 +3192,19 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">LuaSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">NetworkSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PhysicsSettings</string>
 				<string name="ExplorerImageIndex">58</string>
 			</Properties>
 		</Item>
@@ -2766,6 +3223,48 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">TaskScheduler</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">UserGameSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ImporterBaseSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ImporterGroupSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ImporterJointSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ImporterMeshSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ImporterRootSettings</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ImporterTextureSettings</string>
 				<string name="ExplorerImageIndex">58</string>
 			</Properties>
 		</Item>
@@ -2802,11 +3301,6 @@
 					</Properties>
 				</Item>
 			</Item>
-		</Item>
-		<Item class="ReflectionMetadataClass">
-			<Properties>
-				<string name="Name">NetworkMarker</string>
-			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
@@ -3093,6 +3587,12 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">RemoteDebuggerServer</string>
+				<string name="ExplorerImageIndex">15</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">LuaSourceContainer</string>
 			</Properties>
 			<Item class="ReflectionMetadataProperties">
@@ -3132,7 +3632,24 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">NetworkReplicator</string>
-				<string name="ExplorerOrder">3</string>
+				<string name="ExplorerImageIndex">29</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ClientReplicator</string>
+				<string name="ExplorerImageIndex">29</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ServerReplicator</string>
+				<string name="ExplorerImageIndex">29</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">NetworkMarker</string>
 				<string name="ExplorerImageIndex">29</string>
 			</Properties>
 		</Item>
@@ -3162,20 +3679,25 @@
 			<Properties>
 				<string name="Name">Status</string>
 				<bool name="Deprecated">true</bool>
-				<string name="ExplorerOrder">10</string>
+				<string name="ExplorerImageIndex">3</string>
 			</Properties>
-			<Item class="ReflectionMetadataFunctions">
-				<Item class="ReflectionMetadataMember">
-					<Properties>
-						<string name="Name">move</string>
-						<bool name="Deprecated">true</bool>
-					</Properties>
-				</Item>
-			</Item>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataModelPatchService</string>
+				<string name="ExplorerImageIndex">156</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataModelSession</string>
+				<string name="ExplorerImageIndex">156</string>
+			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">DataModel</string>
+				<string name="ExplorerImageIndex">156</string>
 			</Properties>
 			<Item class="ReflectionMetadataCallbacks">
 				<Item class="ReflectionMetadataMember">
@@ -3229,14 +3751,60 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">GlobalDataStore</string>
-				<string name="ExplorerOrder">9999</string>
-				<string name="ExplorerImageIndex">175</string>
+				<string name="ExplorerImageIndex">174</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataStore</string>
+				<string name="ExplorerImageIndex">174</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">OrderedDataStore</string>
-				<string name="ExplorerOrder">9999</string>
+				<string name="ExplorerImageIndex">174</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataStoreIncrementOptions</string>
+				<string name="ExplorerImageIndex">175</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataStoreInfo</string>
+				<string name="ExplorerImageIndex">175</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataStoreKey</string>
+				<string name="ExplorerImageIndex">175</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataStoreKeyInfo</string>
+				<string name="ExplorerImageIndex">175</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataStoreObjectVersionInfo</string>
+				<string name="ExplorerImageIndex">175</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataStoreOptions</string>
+				<string name="ExplorerImageIndex">175</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataStoreSetOptions</string>
 				<string name="ExplorerImageIndex">175</string>
 			</Properties>
 		</Item>
@@ -3295,6 +3863,12 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">InternalContainer</string>
+				<string name="ExplorerImageIndex">192</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">ReplicatedFirst</string>
 				<string name="ExplorerOrder">3</string>
 				<string name="ExplorerImageIndex">70</string>
@@ -3329,6 +3903,18 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">StudioTheme</string>
+				<string name="ExplorerImageIndex">156</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">StudioScriptDebugEventListener</string>
+				<string name="ExplorerImageIndex">156</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">StudioData</string>
 				<string name="ExplorerImageIndex">156</string>
 			</Properties>
@@ -3337,6 +3923,12 @@
 			<Properties>
 				<string name="Name">ServerStorage</string>
 				<string name="ExplorerOrder">3</string>
+				<string name="ExplorerImageIndex">69</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ServiceProvider</string>
 				<string name="ExplorerImageIndex">69</string>
 			</Properties>
 		</Item>
@@ -3418,6 +4010,66 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">DebuggerConnection</string>
+				<string name="ExplorerImageIndex">29</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DebuggerConnectionManager</string>
+				<string name="ExplorerImageIndex">177</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DebuggerLuaResponse</string>
+				<string name="ExplorerImageIndex">177</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DebuggerUIService</string>
+				<string name="ExplorerImageIndex">177</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DebuggerVariable</string>
+				<string name="ExplorerImageIndex">177</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DebuggerManager</string>
+				<string name="ExplorerImageIndex">177</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PausedState</string>
+				<string name="ExplorerImageIndex">177</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PausedStateBreakpoint</string>
+				<string name="ExplorerImageIndex">177</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PausedStateException</string>
+				<string name="ExplorerImageIndex">177</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ThreadState</string>
+				<string name="ExplorerImageIndex">177</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">ScriptDebugger</string>
 				<string name="ExplorerImageIndex">178</string>
 				<bool name="Insertable">false</bool>
@@ -3432,9 +4084,52 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">Breakpoint</string>
+				<string name="ExplorerImageIndex">182</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">BreakpointManager</string>
+				<string name="ExplorerImageIndex">182</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">MetaBreakpoint</string>
+				<string name="ExplorerImageIndex">182</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">MetaBreakpointContext</string>
+				<string name="ExplorerImageIndex">182</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">DebuggerWatch</string>
 				<string name="ExplorerImageIndex">181</string>
 				<string name="PreferredParent">ScriptDebugger</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DebuggerWatch</string>
+				<string name="ExplorerImageIndex">181</string>
+				<string name="PreferredParent">ScriptDebugger</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">StackFrame</string>
+				<string name="ExplorerImageIndex">177</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">LuauScriptAnalyzerService</string>
+				<string name="ExplorerImageIndex">178</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -3463,6 +4158,12 @@
 			<Properties>
 				<string name="Name">PhysicsService</string>
 				<string name="ExplorerImageIndex">105</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ProcessInstancePhysicsService</string>
+				<string name="ExplorerImageIndex">30</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -3665,7 +4366,7 @@
 				<string name="Name">TrussPart</string>
 				<string name="ClassCategory">Parts</string>
 				<string name="ExplorerOrder">12</string>
-				<string name="ExplorerImageIndex">135</string>
+				<string name="ExplorerImageIndex">194</string>
 				<string name="PreferredParent">Model</string>
 			</Properties>
 		</Item>
@@ -3674,7 +4375,7 @@
 				<string name="Name">WedgePart</string>
 				<string name="ClassCategory">Parts</string>
 				<string name="ExplorerOrder">12</string>
-				<string name="ExplorerImageIndex">136</string>
+				<string name="ExplorerImageIndex">195</string>
 				<string name="PreferredParent">Model</string>
 			</Properties>
 		</Item>
@@ -3748,6 +4449,18 @@
 				<string name="ClassCategory">GUI</string>
 				<string name="Insertable">false</string>
 				<string name="ExplorerOrder">14</string>
+				<string name="ExplorerImageIndex">151</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DockWidgetPluginGui</string>
+				<string name="ExplorerImageIndex">151</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">QWidgetPluginGui</string>
 				<string name="ExplorerImageIndex">151</string>
 			</Properties>
 		</Item>
@@ -3853,6 +4566,15 @@
 				<string name="ClassCategory">GUI</string>
 				<string name="ExplorerOrder">15</string>
 				<string name="ExplorerImageIndex">48</string>
+				<string name="PreferredParent">GuiBase2d</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">CanvasGroup</string>
+				<string name="ClassCategory">GUI</string>
+				<string name="ExplorerOrder">15</string>
+				<string name="ExplorerImageIndex">163</string>
 				<string name="PreferredParent">GuiBase2d</string>
 			</Properties>
 		</Item>
@@ -4034,9 +4756,29 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">ConfigureServerService</string>
+				<string name="ExplorerOrder">22</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">IncrementalPatchBuilder</string>
+				<string name="ExplorerOrder">22</string>
+				<string name="ExplorerImageIndex">58</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">PathfindingModifier</string>
 				<string name="ClassCategory">Adornments</string>
 				<string name="ExplorerOrder">210</string>
+				<string name="ExplorerImageIndex">128</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PathfindingLink</string>
 				<string name="ExplorerImageIndex">128</string>
 			</Properties>
 		</Item>
@@ -4075,6 +4817,13 @@
 				<string name="Name">SelectionPointLasso</string>
 				<bool name="Deprecated">true</bool>
 				<string name="ExplorerOrder">22</string>
+				<string name="ExplorerImageIndex">57</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ParabolaAdornment</string>
+				<bool name="Deprecated">true</bool>
 				<string name="ExplorerImageIndex">57</string>
 			</Properties>
 		</Item>
@@ -4152,6 +4901,14 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">AnimationRigData</string>
+				<string name="ClassCategory">Animations</string>
+				<string name="ExplorerOrder">22</string>
+				<string name="ExplorerImageIndex">60</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">CharacterMesh</string>
 				<string name="ClassCategory">Meshes</string>
 				<string name="ExplorerOrder">22</string>
@@ -4173,6 +4930,26 @@
 				<string name="ClassCategory">3D Interfaces</string>
 				<string name="ExplorerOrder">22</string>
 				<string name="ExplorerImageIndex">63</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Translator</string>
+				<string name="ExplorerImageIndex">63</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PartOperation</string>
+				<bool name="Insertable">false</bool>
+				<string name="ExplorerImageIndex">73</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">PartOperationAsset</string>
+				<bool name="Insertable">false</bool>
+				<string name="ExplorerImageIndex">73</string>
 			</Properties>
 		</Item>
 		<Item class="ReflectionMetadataClass">
@@ -4842,6 +5619,30 @@
 		</Item>
 		<Item class="ReflectionMetadataClass">
 			<Properties>
+				<string name="Name">ReflectionMetadataClass</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ReflectionMetadataEnum</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ReflectionMetadataEnumItem</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">ReflectionMetadataMember</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
 				<string name="Name">ReflectionMetadataProperties</string>
 				<string name="ExplorerImageIndex">154</string>
 			</Properties>
@@ -4849,6 +5650,84 @@
 		<Item class="ReflectionMetadataClass">
 			<Properties>
 				<string name="Name">ReflectionMetadataYieldFunctions</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">Pages</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">CatalogPages</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataStoreKeyPages</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataStoreListingPages</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataStorePages</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">DataStoreVersionPages</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">FriendPages</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">InventoryPages</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">EmotesPages</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">OutfitPages</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">StandardPages</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">File</string>
+				<string name="ExplorerImageIndex">154</string>
+			</Properties>
+		</Item>
+		<Item class="ReflectionMetadataClass">
+			<Properties>
+				<string name="Name">MultipleDocumentInterfaceInstance</string>
 				<string name="ExplorerImageIndex">154</string>
 			</Properties>
 		</Item>
