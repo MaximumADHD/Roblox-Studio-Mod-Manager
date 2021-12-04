@@ -1,30 +1,26 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace RobloxStudioModManager
 {
     static class Program
     {
-        [DllImport("Shcore.dll")]
-        static extern int SetProcessDpiAwareness(int PROCESS_DPI_AWARENESS);
-        
-        public static readonly RegistryKey MainRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
-        public static readonly RegistryKey VersionRegistry = MainRegistry.GetSubKey("VersionData");
-
+        public static readonly RegistryKey LegacyRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
         public static readonly CultureInfo Format = CultureInfo.InvariantCulture;
+
         public const StringComparison StringFormat = StringComparison.InvariantCulture;
         public static readonly NumberFormatInfo NumberFormat = NumberFormatInfo.InvariantInfo;
 
-        private static readonly Regex jsonPattern = new Regex("\"([^\"]*)\":\"?([^\"]*)\"?[,|}]");
+        public static string RootDir { get; private set; }
+        public static ModManagerState State { get; private set; }
 
         public static RegistryKey GetSubKey(this RegistryKey key, params string[] path)
         {
@@ -32,81 +28,9 @@ namespace RobloxStudioModManager
             return key.CreateSubKey(constructedPath, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryOptions.None);
         }
 
-        public static string GetString(this RegistryKey key, string name, string fallback = "")
-        {
-            var result = key.GetValue(name, fallback);
-            return result.ToString();
-        }
-
-        public static bool GetBool(this RegistryKey key, string name)
-        {
-            string value = key.GetString(name);
-
-            if (!bool.TryParse(value, out bool result))
-                return false;
-
-            return result;
-        }
-
-        public static int GetInt(this RegistryKey key, string name)
-        {
-            string value = key.GetString(name);
-
-            if (!int.TryParse(value, out int result))
-                return 0;
-
-            return result;
-        }
-
-        public static RegistryKey GetSubKey(params string[] path)
-        {
-            return MainRegistry.GetSubKey(path);
-        }
-
-        public static string GetString(string name, string fallback = "")
-        {
-            return MainRegistry.GetString(name, fallback);
-        }
-
-        public static bool GetBool(string name)
-        {
-            return MainRegistry.GetBool(name);
-        }
-
-        public static int GetInt(string name)
-        {
-            return MainRegistry.GetInt(name);
-        }
-
-        public static void SetValue(string name, object value)
-        {
-            MainRegistry.SetValue(name, value);
-        }
-
-        public static Dictionary<string, string> ReadJsonDictionary(string json)
-        {
-            var matches = jsonPattern.Matches(json);
-            var result = new Dictionary<string, string>();
-
-            foreach (Match match in matches)
-            {
-                var data = match.Groups
-                    .Cast<Group>()
-                    .Select(g => g.Value)
-                    .ToArray();
-
-                string key = data[1],
-                       val = data[2];
-
-                result[key] = val;
-            }
-
-            return result;
-        }
-
         // This sets up the following:
-        // 1: The File Protocol to open .rbxl/.rbxlx files using my mod manager.
-        // 2: The URI Protcol to open places from the website through my mod manager.
+        // 1: The File Protocol to open .rbxl/.rbxlx files through the mod manager.
+        // 2: The URI Protcol to open places from the website through the mod manager.
 
         public static void UpdateStudioRegistryProtocols()
         {
@@ -160,20 +84,76 @@ namespace RobloxStudioModManager
             }
         }
 
-        static Program()
+        static void ConvertLegacy(RegistryKey regKey, JObject node)
         {
-            const int SYSTEM_AWARE = 1;
-            _ = SetProcessDpiAwareness(SYSTEM_AWARE);
+            foreach (var name in regKey.GetValueNames())
+            {
+                string key = name.Replace(" ", "");
+                object value = regKey.GetValue(name);
+
+                var token = JToken.FromObject(value);
+                node.Add(key, token);
+            }
+
+            foreach (var subKeyName in regKey.GetSubKeyNames())
+            {
+                var subKey = regKey.OpenSubKey(subKeyName);
+                var child = new JObject();
+
+                ConvertLegacy(subKey, child);
+                node.Add(subKeyName, child);
+            }
+        }
+
+        static void OnExiting(object sender, EventArgs e)
+        {
+            var stateFile = Path.Combine(RootDir, "state.json");
+            string json = JsonConvert.SerializeObject(State);
+            File.WriteAllText(stateFile, json);
         }
 
         [STAThread]
         static void Main(string[] args)
         {
+            // Initialize application state.
+            var localAppData = Environment.GetEnvironmentVariable("localappdata");
+            RootDir = Path.Combine(localAppData, "Roblox Studio Mod Manager");
+
+            if (!Directory.Exists(RootDir))
+                Directory.CreateDirectory(RootDir);
+
+            var stateFile = Path.Combine(RootDir, "state.json");
+            string json = "";
+
+            if (File.Exists(stateFile))
+                json = File.ReadAllText(stateFile);
+
+            if (string.IsNullOrEmpty(json))
+            {
+                var root = new JObject();
+                ConvertLegacy(LegacyRegistry, root);
+
+                json = root.ToString();
+                File.WriteAllText(stateFile, json);
+            }
+
+            try
+            {
+                State = JsonConvert.DeserializeObject<ModManagerState>(json);
+            }
+            catch
+            {
+                State = new ModManagerState();
+            }
+
+            // Make sure HTTPS uses TLS 1.2
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            
+
+            // Standard windows form jank
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            Application.ApplicationExit += new EventHandler(OnExiting);
             Application.Run(new Launcher(args));
         }
     }

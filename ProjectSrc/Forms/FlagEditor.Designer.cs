@@ -16,7 +16,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabs = new System.Windows.Forms.TabControl();
             this.viewFlagsTab = new System.Windows.Forms.TabPage();
             this.addCustom = new System.Windows.Forms.Button();
@@ -48,10 +48,10 @@
             this.tabs.Controls.Add(this.overridesTab);
             this.tabs.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabs.Location = new System.Drawing.Point(0, 0);
-            this.tabs.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.tabs.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.tabs.Name = "tabs";
             this.tabs.SelectedIndex = 0;
-            this.tabs.Size = new System.Drawing.Size(513, 563);
+            this.tabs.Size = new System.Drawing.Size(770, 844);
             this.tabs.TabIndex = 0;
             // 
             // viewFlagsTab
@@ -62,21 +62,21 @@
             this.viewFlagsTab.Controls.Add(this.flagSearchFilter);
             this.viewFlagsTab.Controls.Add(this.searchTitle);
             this.viewFlagsTab.Controls.Add(this.flagDataGridView);
-            this.viewFlagsTab.Location = new System.Drawing.Point(4, 22);
-            this.viewFlagsTab.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.viewFlagsTab.Location = new System.Drawing.Point(4, 29);
+            this.viewFlagsTab.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.viewFlagsTab.Name = "viewFlagsTab";
-            this.viewFlagsTab.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.viewFlagsTab.Size = new System.Drawing.Size(505, 537);
+            this.viewFlagsTab.Padding = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            this.viewFlagsTab.Size = new System.Drawing.Size(762, 811);
             this.viewFlagsTab.TabIndex = 0;
             this.viewFlagsTab.Text = "View Flags";
             this.viewFlagsTab.UseVisualStyleBackColor = true;
             // 
             // addCustom
             // 
-            this.addCustom.Location = new System.Drawing.Point(201, 37);
-            this.addCustom.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.addCustom.Location = new System.Drawing.Point(302, 56);
+            this.addCustom.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.addCustom.Name = "addCustom";
-            this.addCustom.Size = new System.Drawing.Size(130, 25);
+            this.addCustom.Size = new System.Drawing.Size(195, 30);
             this.addCustom.TabIndex = 5;
             this.addCustom.Text = "Add Custom";
             this.addCustom.UseVisualStyleBackColor = true;
@@ -85,17 +85,18 @@
             // overrideStatus
             // 
             this.overrideStatus.AutoSize = true;
-            this.overrideStatus.Location = new System.Drawing.Point(62, 66);
+            this.overrideStatus.Location = new System.Drawing.Point(93, 99);
+            this.overrideStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.overrideStatus.Name = "overrideStatus";
-            this.overrideStatus.Size = new System.Drawing.Size(0, 13);
+            this.overrideStatus.Size = new System.Drawing.Size(0, 20);
             this.overrideStatus.TabIndex = 4;
             // 
             // overrideSelected
             // 
-            this.overrideSelected.Location = new System.Drawing.Point(65, 37);
-            this.overrideSelected.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.overrideSelected.Location = new System.Drawing.Point(97, 56);
+            this.overrideSelected.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.overrideSelected.Name = "overrideSelected";
-            this.overrideSelected.Size = new System.Drawing.Size(130, 25);
+            this.overrideSelected.Size = new System.Drawing.Size(195, 30);
             this.overrideSelected.TabIndex = 3;
             this.overrideSelected.Text = "Override Selected";
             this.overrideSelected.UseVisualStyleBackColor = true;
@@ -105,10 +106,10 @@
             // 
             this.flagSearchFilter.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.flagSearchFilter.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
-            this.flagSearchFilter.Location = new System.Drawing.Point(65, 13);
-            this.flagSearchFilter.Margin = new System.Windows.Forms.Padding(1, 4, 3, 4);
+            this.flagSearchFilter.Location = new System.Drawing.Point(98, 20);
+            this.flagSearchFilter.Margin = new System.Windows.Forms.Padding(2, 6, 4, 6);
             this.flagSearchFilter.Name = "flagSearchFilter";
-            this.flagSearchFilter.Size = new System.Drawing.Size(429, 20);
+            this.flagSearchFilter.Size = new System.Drawing.Size(642, 26);
             this.flagSearchFilter.TabIndex = 2;
             this.flagSearchFilter.KeyDown += new System.Windows.Forms.KeyEventHandler(this.flagSearchFilter_KeyDown);
             this.flagSearchFilter.Leave += new System.EventHandler(this.flagSearchFilter_Leave);
@@ -116,11 +117,11 @@
             // searchTitle
             // 
             this.searchTitle.AutoSize = true;
-            this.searchTitle.Font = new System.Drawing.Font("Segoe UI", 11F);
-            this.searchTitle.Location = new System.Drawing.Point(7, 12);
-            this.searchTitle.Margin = new System.Windows.Forms.Padding(1, 0, 1, 0);
+            this.searchTitle.Font = new System.Drawing.Font("Segoe UI Semilight", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.searchTitle.Location = new System.Drawing.Point(10, 15);
+            this.searchTitle.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.searchTitle.Name = "searchTitle";
-            this.searchTitle.Size = new System.Drawing.Size(56, 20);
+            this.searchTitle.Size = new System.Drawing.Size(80, 30);
             this.searchTitle.TabIndex = 1;
             this.searchTitle.Text = "Search:";
             // 
@@ -139,15 +140,15 @@
             this.valueColumn});
             this.flagDataGridView.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.flagDataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.flagDataGridView.Location = new System.Drawing.Point(3, 83);
-            this.flagDataGridView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.flagDataGridView.Location = new System.Drawing.Point(4, 130);
+            this.flagDataGridView.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.flagDataGridView.MultiSelect = false;
             this.flagDataGridView.Name = "flagDataGridView";
             this.flagDataGridView.RowHeadersVisible = false;
             this.flagDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             this.flagDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.flagDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.flagDataGridView.Size = new System.Drawing.Size(499, 450);
+            this.flagDataGridView.Size = new System.Drawing.Size(754, 675);
             this.flagDataGridView.TabIndex = 0;
             this.flagDataGridView.VirtualMode = true;
             this.flagDataGridView.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.flagDataGridView_CellFormatting);
@@ -190,21 +191,21 @@
             this.overridesTab.Controls.Add(this.removeAll);
             this.overridesTab.Controls.Add(this.removeSelected);
             this.overridesTab.Controls.Add(this.overrideDataGridView);
-            this.overridesTab.Location = new System.Drawing.Point(4, 22);
-            this.overridesTab.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.overridesTab.Location = new System.Drawing.Point(4, 29);
+            this.overridesTab.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.overridesTab.Name = "overridesTab";
-            this.overridesTab.Padding = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.overridesTab.Size = new System.Drawing.Size(505, 537);
+            this.overridesTab.Padding = new System.Windows.Forms.Padding(4, 6, 4, 6);
+            this.overridesTab.Size = new System.Drawing.Size(762, 811);
             this.overridesTab.TabIndex = 1;
             this.overridesTab.Text = "Overrides";
             this.overridesTab.UseVisualStyleBackColor = true;
             // 
             // removeAll
             // 
-            this.removeAll.Location = new System.Drawing.Point(255, 8);
-            this.removeAll.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.removeAll.Location = new System.Drawing.Point(382, 12);
+            this.removeAll.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.removeAll.Name = "removeAll";
-            this.removeAll.Size = new System.Drawing.Size(241, 29);
+            this.removeAll.Size = new System.Drawing.Size(362, 44);
             this.removeAll.TabIndex = 3;
             this.removeAll.Text = "Remove All";
             this.removeAll.UseVisualStyleBackColor = true;
@@ -212,10 +213,10 @@
             // 
             // removeSelected
             // 
-            this.removeSelected.Location = new System.Drawing.Point(7, 8);
-            this.removeSelected.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.removeSelected.Location = new System.Drawing.Point(10, 12);
+            this.removeSelected.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.removeSelected.Name = "removeSelected";
-            this.removeSelected.Size = new System.Drawing.Size(241, 29);
+            this.removeSelected.Size = new System.Drawing.Size(362, 44);
             this.removeSelected.TabIndex = 2;
             this.removeSelected.Text = "Remove Selected";
             this.removeSelected.UseVisualStyleBackColor = true;
@@ -236,18 +237,18 @@
             this.initialOverrideValueColumn});
             this.overrideDataGridView.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.overrideDataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.overrideDataGridView.Location = new System.Drawing.Point(3, 52);
-            this.overrideDataGridView.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.overrideDataGridView.Location = new System.Drawing.Point(4, 68);
+            this.overrideDataGridView.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.overrideDataGridView.MultiSelect = false;
             this.overrideDataGridView.Name = "overrideDataGridView";
             this.overrideDataGridView.RowHeadersVisible = false;
             this.overrideDataGridView.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Silver;
-            this.overrideDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.Silver;
+            this.overrideDataGridView.RowsDefaultCellStyle = dataGridViewCellStyle5;
             this.overrideDataGridView.RowTemplate.DefaultCellStyle.BackColor = System.Drawing.Color.White;
             this.overrideDataGridView.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.overrideDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.overrideDataGridView.Size = new System.Drawing.Size(499, 481);
+            this.overrideDataGridView.Size = new System.Drawing.Size(754, 737);
             this.overrideDataGridView.TabIndex = 1;
             this.overrideDataGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.overrideDataGridView_CellEndEdit);
             this.overrideDataGridView.CellMouseEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.overrideDataGridView_CellMouseEnter);
@@ -286,13 +287,13 @@
             // 
             // FlagEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(513, 563);
+            this.ClientSize = new System.Drawing.Size(770, 844);
             this.Controls.Add(this.tabs);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = global::RobloxStudioModManager.Properties.Resources.Icon;
-            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.Margin = new System.Windows.Forms.Padding(4, 6, 4, 6);
             this.MaximizeBox = false;
             this.Name = "FlagEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

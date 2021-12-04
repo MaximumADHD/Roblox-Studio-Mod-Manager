@@ -9,13 +9,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace RobloxStudioModManager
 {
     public partial class FlagEditor : Form
     {
-        private static readonly RegistryKey versionRegistry = Program.VersionRegistry;
-        private static readonly RegistryKey flagRegistry = Program.GetSubKey("FlagEditor");
+        private static VersionManifest versionRegistry => Program.State.VersionData;
+        private static Dictionary<string, FVariable> flagRegistry => Program.State.FlagEditor;
 
         private DataTable overrideTable;
         private readonly Dictionary<string, DataRow> overrideRowLookup = new Dictionary<string, DataRow>();
@@ -104,10 +106,7 @@ namespace RobloxStudioModManager
 
             if (!overrideRowLookup.ContainsKey(key))
             {
-                RegistryKey editor = flagRegistry.GetSubKey(key);
-                flag.SetEditor(editor);
-
-                if (!init && flag.Type.EndsWith("Flag", Program.StringFormat) && !flag.Custom)
+                if (!init && flag.Type.EndsWith("Flag", Program.StringFormat))
                 {
                     if (bool.TryParse(flag.Value, out bool value))
                     {
@@ -183,8 +182,8 @@ namespace RobloxStudioModManager
             string settingsDir = Path.Combine(localAppData, "Roblox", "ClientSettings");
             string settingsPath = Path.Combine(settingsDir, "StudioAppSettings.json");
 
-            string lastExecVersion = versionRegistry.GetString("LastExecutedVersion");
-            string versionGuid = versionRegistry.GetString("VersionGuid");
+            string lastExecVersion = versionRegistry.LastExecutedVersion;
+            string versionGuid = versionRegistry.VersionGuid;
 
             if (lastExecVersion != versionGuid)
             {
@@ -220,17 +219,24 @@ namespace RobloxStudioModManager
                     }
 
                     // Nuke studio and flag the version we updated with.
-                    versionRegistry.SetValue("LastExecutedVersion", versionGuid);
+                    versionRegistry.LastExecutedVersion = versionGuid;
                     studio.Kill();
                 }
             }
 
             // Initialize flag browser
-            string[] flagNames = flagRegistry.GetSubKeyNames();
+            string[] flagNames = flagRegistry.Keys.ToArray();
             string[] flagNameStrings = Array.Empty<string>();
 
             string settings = File.ReadAllText(settingsPath);
-            var json = Program.ReadJsonDictionary(settings);
+            Dictionary<string, string> json;
+            
+            using (var reader = new StringReader(settings))
+            using (var jsonReader = new JsonTextReader(reader))
+            {
+                var data = JObject.Load(jsonReader);
+                json = data.ToObject<Dictionary<string, string>>();
+            }
 
             int numFlags = json.Count;
             var flagSetup = new List<FVariable>(numFlags);
@@ -238,20 +244,15 @@ namespace RobloxStudioModManager
 
             foreach (string customFlag in flagNames)
             {
-                if (!json.ContainsValue(customFlag))
+                if (!json.ContainsKey(customFlag))
                 {
-                    // skip custom flags that were recently added, this is unhandled in the prompt still
-                    RegistryKey flagKey = flagRegistry.GetSubKey(customFlag);
-                    bool isCustom = flagKey.GetBool("Custom");
+                    if (!flagRegistry.TryGetValue(customFlag, out var flag))
+                        continue;
 
-                    if (isCustom)
-                    {
-                        string value = flagKey.GetString("Value");
-                        FVariable flag = new FVariable(customFlag, value, true);
+                    if (!flag.Custom)
+                        continue;
 
-                        flagSetup.Add(flag);
-                        flag.SetEditor(flagKey);
-                    };
+                    flagSetup.Add(flag);
                 }
             }
 
@@ -260,19 +261,11 @@ namespace RobloxStudioModManager
                 string key = pair.Key,
                        value = pair.Value;
 
-                FVariable flag = new FVariable(key, value);
+                if (!flagRegistry.TryGetValue(key, out var flag))
+                    flag = new FVariable(key, value);
+
                 autoComplete.Add(flag.Name);
                 flagSetup.Add(flag);
-
-                if (flagNames.Contains(flag.Name))
-                {
-                    // Update what the flag should be reset to if removed?
-                    RegistryKey flagKey = flagRegistry.GetSubKey(flag.Name);
-                    flagKey.SetValue("Reset", value);
-
-                    // Set the flag's editor.
-                    flag.SetEditor(flagKey);
-                }
             }
 
             flagSearchFilter.AutoCompleteCustomSource = autoComplete;
@@ -291,28 +284,10 @@ namespace RobloxStudioModManager
 
             var overrideView = new DataView(overrideTable) { Sort = "Name" };
 
-            foreach (string flagName in flagNames)
+            foreach (var flagName in flagRegistry.Keys)
             {
-                // fetch the flag so we can check if it
-                // 1. Has the Custom flag key,
-                // 2. If that key is set to True
-
-                RegistryKey flagKey = flagRegistry.GetSubKey(flagName);
-                bool isCustomFlag = flagKey.GetBool("Custom");
-
-                if (flagLookup.ContainsKey(flagName))
-                {
-                    int index = flagLookup[flagName];
-                    FVariable flag = flags[index];
-                    addFlagOverride(flag, true);
-                }
-                else if (isCustomFlag)
-                {
-                    // we need to make a new flag here unfortunately
-                    string flagValue = flagKey.GetString("Value");
-                    var flag = new FVariable(flagName, flagValue);
-                    addFlagOverride(flag, true);
-                }
+                var flag = flagRegistry[flagName];
+                addFlagOverride(flag, true);
             }
 
             overrideStatus.Visible = true;
@@ -416,12 +391,8 @@ namespace RobloxStudioModManager
                 var selectedRow = selectedRows[0];
                 string flagKey = getFlagKeyByRow(selectedRow);
 
-                if (flagLookup.ContainsKey(flagKey))
-                {
-                    int index = flagLookup[flagKey];
-                    FVariable flag = flags[index];
-                    flag.ClearEditor();
-                }
+                FVariable flag = flagRegistry[flagKey];
+                flag.Clear();
 
                 if (overrideRowLookup.ContainsKey(flagKey))
                 {
@@ -433,7 +404,7 @@ namespace RobloxStudioModManager
                 selectedRow.Visible = false;
                 selectedRow.Dispose();
 
-                flagRegistry.DeleteSubKey(flagKey);
+                flagRegistry.Remove(flagKey);
             }
 
             if (overrideDataGridView.Rows.Count == 0)
@@ -449,16 +420,14 @@ namespace RobloxStudioModManager
 
             if (doRemove)
             {
-                foreach (string flagName in flagRegistry.GetSubKeyNames())
-                {
-                    if (flagLookup.ContainsKey(flagName))
-                    {
-                        int index = flagLookup[flagName];
-                        FVariable flag = flags[index];
-                        flag.ClearEditor();
-                    }
+                var flagNames = flagRegistry.Keys.ToList();
 
-                    flagRegistry.DeleteSubKey(flagName);
+                foreach (string flagName in flagNames)
+                {
+                    var flag = flagRegistry[flagName];
+                    flag.Clear();
+
+                    flagRegistry.Remove(flagName);
                 }
 
                 overrideStatus.Text = OVERRIDE_STATUS_OFF;
@@ -579,7 +548,7 @@ namespace RobloxStudioModManager
             {
                 var row = flagDataGridView.Rows[index];
 
-                if (flag.Editor != null)
+                if (flagRegistry.ContainsKey(flag.Key))
                 {
                     var valueCell = row.Cells[2];
                     valueCell.Value = flag.Value;
@@ -596,29 +565,25 @@ namespace RobloxStudioModManager
 
         public static void ApplyFlags()
         {
-            var configs = new List<string>();
+            var json = new JObject();
 
-            foreach (string flagName in flagRegistry.GetSubKeyNames())
+            foreach (string flagName in flagRegistry.Keys)
             {
-                RegistryKey flagKey = flagRegistry.OpenSubKey(flagName);
+                var flag = flagRegistry[flagName];
+                string value = flag.Value;
 
-                string type = flagKey.GetString("Type"),
-                        value = flagKey.GetString("Value");
-
-                if (type.EndsWith("String", Program.StringFormat))
-                    value = $"\"{value.Replace("\"", "")}\"";
-
-                configs.Add($"\t\"{flagName}\": {value}");
+                var token = JToken.FromObject(value);
+                json.Add(flagName, token);
             };
 
-            string json = "{\r\n" + string.Join(",\r\n", configs) + "\r\n}";
+            string file = json.ToString();
             string studioDir = StudioBootstrapper.GetStudioDirectory();
 
             string clientSettings = Path.Combine(studioDir, "ClientSettings");
             Directory.CreateDirectory(clientSettings);
 
             string filePath = Path.Combine(clientSettings, "ClientAppSettings.json");
-            File.WriteAllText(filePath, json);
+            File.WriteAllText(filePath, file);
         }
 
         private void addCustom_Click(object sender, EventArgs e)
@@ -648,7 +613,9 @@ namespace RobloxStudioModManager
                     string flagName = flagType + customFlag.Name;
                     var newFlag = new FVariable(flagName, flagValue, true);
 
+                    flagRegistry[flagName] = newFlag;
                     lastCustomFlag = newFlag;
+
                     addFlagOverride(newFlag);
                 }
             }

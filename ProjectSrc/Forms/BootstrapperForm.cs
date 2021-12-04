@@ -30,15 +30,17 @@ namespace RobloxStudioModManager
 
         public async Task Bootstrap()
         {
-            string targetVersion = Program.GetString("TargetVersion");
-            var bootstrap = Bootstrapper.Bootstrap(targetVersion);
+            var state = Program.State;
+            var targetVersion = state.TargetVersion;
 
+            var bootstrap = Bootstrapper.Bootstrap(targetVersion);
             await bootstrap.ConfigureAwait(true);
         }
 
         public static async Task BringUpToDate(string branch, string expectedVersion, string updateReason)
         {
-            string currentVersion = Program.VersionRegistry.GetString("VersionGuid");
+            var versionData = Program.State.VersionData;
+            string currentVersion = versionData.VersionGuid;
 
             if (currentVersion != expectedVersion)
             {

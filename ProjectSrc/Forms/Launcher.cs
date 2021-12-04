@@ -14,7 +14,7 @@ namespace RobloxStudioModManager
 {
     public partial class Launcher : Form
     {
-        private static RegistryKey versionRegistry => Program.GetSubKey("VersionData");
+        private static VersionManifest versionRegistry => Program.State.VersionData;
         private readonly string[] args = null;
 
         public Launcher(params string[] mainArgs)
@@ -36,19 +36,18 @@ namespace RobloxStudioModManager
             if (args != null)
                 openStudioDirectory.Enabled = false;
 
-            string build = Program.GetString("BuildBranch");
+            string build = Program.State.BuildBranch;
             int buildIndex = branchSelect.Items.IndexOf(build);
             branchSelect.SelectedIndex = Math.Max(buildIndex, 0);
         }
 
         public static string getModPath()
         {
-            string appData = Environment.GetEnvironmentVariable("AppData");
-            string root = Path.Combine(appData, "RbxModManager", "ModFiles");
+            string root = Path.Combine(Program.RootDir, "ModFiles");
 
             if (!Directory.Exists(root))
             {
-                // Build a folder structure so the usage of my mod manager is more clear.
+                // Build a folder structure so the usage is more clear.
                 Directory.CreateDirectory(root);
 
                 string[] folderPaths = new string[]
@@ -68,7 +67,7 @@ namespace RobloxStudioModManager
 
                 foreach (string f in folderPaths)
                 {
-                    string path = Path.Combine(root, f.Replace("/", "\\"));
+                    string path = Path.Combine(root, f);
                     Directory.CreateDirectory(path);
                 }
             }
@@ -188,7 +187,7 @@ namespace RobloxStudioModManager
             bool allow = true;
 
             // Create a warning prompt if the user hasn't disabled this warning.
-            var warningDisabled = Program.GetBool("Disable Flag Warning");
+            var warningDisabled = Program.State.DisableFlagWarning;
 
             if (!warningDisabled)
             {
@@ -201,7 +200,7 @@ namespace RobloxStudioModManager
 
                     if (warningPrompt.DialogResult == DialogResult.Yes)
                     {
-                        Program.SetValue("Disable Flag Warning", warningPrompt.Enabled);
+                        Program.State.DisableFlagWarning = warningPrompt.Enabled;
                         allow = true;
                     }
                 }
@@ -397,8 +396,8 @@ namespace RobloxStudioModManager
             }
             else
             {
-                string currentVersion = versionRegistry.GetString("VersionGuid");
-                versionRegistry.SetValue("LastExecutedVersion", currentVersion);
+                string currentVersion = versionRegistry.VersionGuid;
+                versionRegistry.LastExecutedVersion = currentVersion;
 
                 Process.Start(robloxStudioInfo);
             }
@@ -408,10 +407,10 @@ namespace RobloxStudioModManager
         {
             // Save the user's branch preference.
             string branch = getSelectedBranch();
-            Program.SetValue("BuildBranch", branch);
+            Program.State.BuildBranch = branch;
 
             // Grab the version currently being targetted.
-            string targetId = Program.GetString("TargetVersion");
+            string targetId = Program.State.TargetVersion;
 
             // Clear the current list of target items.
             targetVersion.Items.Clear();
@@ -461,12 +460,12 @@ namespace RobloxStudioModManager
         {
             if (targetVersion.SelectedIndex == 0)
             {
-                Program.SetValue("TargetVersion", "");
+                Program.State.TargetVersion = "";
                 return;
             }
 
             var target = targetVersion.SelectedItem as DeployLog;
-            Program.SetValue("TargetVersion", target.VersionId);
+            Program.State.TargetVersion = target.VersionId;
         }
     }
 }

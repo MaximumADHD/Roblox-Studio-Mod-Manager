@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.IO;
 using System.IO.Compression;
@@ -12,8 +11,8 @@ using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using Microsoft.Win32;
 using RobloxDeployHistory;
+using Konscious.Security.Cryptography;
 
 namespace RobloxStudioModManager
 {
@@ -40,10 +39,10 @@ namespace RobloxStudioModManager
         public event ChangeEventHandler<int> ProgressChanged;
         public event ChangeEventHandler<ProgressBarStyle> ProgressBarStyleChanged;
 
-        private readonly RegistryKey mainRegistry;
-        private readonly RegistryKey versionRegistry;
-        private readonly RegistryKey pkgRegistry;
-        private readonly RegistryKey fileRegistry;
+        private readonly IBootstrapperState mainState;
+        private readonly VersionManifest versionRegistry;
+        private readonly Dictionary<string, string> fileRegistry;
+        private readonly Dictionary<string, PackageState> pkgRegistry;
 
         private Dictionary<string, string> newManifestEntries;
         private HashSet<string> writtenFiles;
@@ -54,6 +53,7 @@ namespace RobloxStudioModManager
         private int _progress = -1;
         private int _maxProgress = -1;
         private ProgressBarStyle _progressBarStyle;
+        private object ProgressLock = new object();
 
         public static readonly IReadOnlyDictionary<string, string> KnownRoots = new Dictionary<string, string>()
         {
@@ -161,27 +161,26 @@ namespace RobloxStudioModManager
         public bool RemapExtraContent { get; set; } = false;
         public bool ApplyModManagerPatches { get; set; } = false;
 
-        public StudioBootstrapper(RegistryKey workRegistry = null)
+        public StudioBootstrapper(IBootstrapperState state = null)
         {
-            if (workRegistry == null)
-                mainRegistry = Program.MainRegistry;
+            if (state == null)
+                mainState = Program.State;
             else
-                mainRegistry = workRegistry;
+                mainState = state;
 
-            Contract.Requires(mainRegistry != null);
             
-            if (!mainRegistry.GetBool("Deprecate MD5"))
+            if (!mainState.DeprecateMD5)
             {
                 // The manifest registry needs to be reset.
-                mainRegistry.SetValue("Deprecate MD5", true);
-                mainRegistry.DeleteSubKeyTree("VersionData", false);
-                mainRegistry.DeleteSubKeyTree("FileManifest", false);
-                mainRegistry.DeleteSubKeyTree("PackageManifest", false);
+                mainState.VersionData = new VersionManifest();
+                mainState.PackageManifest.Clear();
+                mainState.FileManifest.Clear();
+                mainState.DeprecateMD5 = true;
             }
 
-            versionRegistry = mainRegistry.GetSubKey("VersionData");
-            pkgRegistry = mainRegistry.GetSubKey("PackageManifest");
-            fileRegistry = mainRegistry.GetSubKey("FileManifest");
+            versionRegistry = mainState.VersionData;
+            pkgRegistry = mainState.PackageManifest;
+            fileRegistry = mainState.FileManifest;
         }
 
         private void echo(string message)
@@ -212,9 +211,9 @@ namespace RobloxStudioModManager
 
         private static string computeSignature(Stream source)
         {
-            using (SHA256 sha256 = SHA256.Create())
+            using (var blake2b = new HMACBlake2B(16 * 8))
             {
-                byte[] hash = sha256.ComputeHash(source);
+                byte[] hash = blake2b.ComputeHash(source);
 
                 string result = BitConverter
                     .ToString(hash)
@@ -229,7 +228,7 @@ namespace RobloxStudioModManager
         {
             string signature;
 
-            using (Stream stream = entry.Open())
+            using (var stream = entry.Open())
                 signature = computeSignature(stream);
 
             return signature;
@@ -325,14 +324,12 @@ namespace RobloxStudioModManager
                     if (fileManifest.ContainsKey(key))
                         continue;
 
-                    fileRegistry.SetValue(key, value);
+                    fileRegistry[key] = value;
                     fileManifest[key] = value;
                 }
             }
 
-            var fileNames = fileRegistry
-                .GetValueNames()
-                .ToList();
+            var fileNames = fileRegistry.Keys.ToList();
 
             foreach (string fileName in fileNames)
             {
@@ -348,7 +345,7 @@ namespace RobloxStudioModManager
                     if (File.Exists(filePath))
                     {
                         var info = new FileInfo(filePath);
-                        string oldHash = fileRegistry.GetString(fileName);
+                        string oldHash = fileRegistry[fileName];
                         
                         if (oldHash?.Length > 32)
                             if (info.Extension == ".dll" || info.Name == "qmldir" || filePath.Contains("api-docs"))
@@ -358,7 +355,7 @@ namespace RobloxStudioModManager
 
                         try
                         {
-                            fileRegistry.DeleteValue(fileName);
+                            fileRegistry.Remove(fileName);
                             File.Delete(filePath);
                         }
                         catch (IOException)
@@ -370,18 +367,18 @@ namespace RobloxStudioModManager
                             Console.WriteLine($"UnauthorizedAccessException thrown while trying to delete {fileName}");
                         }
                     }
-                    else if (fileNames.Contains(fileName))
+                    else if (fileRegistry.ContainsKey(fileName))
                     {
-                        fileRegistry.DeleteValue(fileName);
+                        fileRegistry.Remove(fileName);
                     }
                 }
             }
         }
 
-        public static async Task<ClientVersionInfo> GetTargetVersionInfo(string branch, string targetVersion, RegistryKey versionRegistry = null)
+        public static async Task<ClientVersionInfo> GetTargetVersionInfo(string branch, string targetVersion, VersionManifest versionRegistry = null)
         {
             if (versionRegistry == null)
-                versionRegistry = Program.VersionRegistry;
+                versionRegistry = Program.State.VersionData;
 
             var logData = await StudioDeployLogs
                 .Get(branch)
@@ -407,10 +404,10 @@ namespace RobloxStudioModManager
             return new ClientVersionInfo(target);
         }
 
-        public static async Task<ClientVersionInfo> GetCurrentVersionInfo(string branch, RegistryKey versionRegistry = null, string targetVersion = "")
+        public static async Task<ClientVersionInfo> GetCurrentVersionInfo(string branch, VersionManifest versionRegistry = null, string targetVersion = "")
         {
             if (versionRegistry == null)
-                versionRegistry = Program.VersionRegistry;
+                versionRegistry = Program.State.VersionData;
 
             if (!string.IsNullOrEmpty(targetVersion))
             {
@@ -433,9 +430,9 @@ namespace RobloxStudioModManager
             else
                 info = new ClientVersionInfo(build_x86);
 
-            versionRegistry.SetValue("LatestGuid_x86", build_x86.VersionGuid);
-            versionRegistry.SetValue("LatestGuid_x64", build_x64.VersionGuid);
-
+            versionRegistry.LatestGuid_x64 = build_x64.VersionGuid;
+            versionRegistry.LatestGuid_x86 = build_x86.VersionGuid;
+            
             return info;
         }
 
@@ -453,18 +450,20 @@ namespace RobloxStudioModManager
         private bool shouldFetchPackage(Package package)
         {
             string pkgName = package.Name;
-            var pkgInfo = pkgRegistry.GetSubKey(pkgName);
 
-            string oldSig = pkgInfo.GetString("Signature");
+            if (!pkgRegistry.TryGetValue(pkgName, out var pkgInfo))
+            {
+                pkgInfo = new PackageState();
+                pkgRegistry[pkgName] = pkgInfo;
+            }
+
+            string oldSig = pkgInfo.Signature;
             string newSig = package.Signature;
 
             if (oldSig == newSig && !ForceInstall)
             {
-                int fileCount = pkgInfo.GetInt("NumFiles");
+                int fileCount = pkgInfo.NumFiles;
                 echo($"Package '{pkgName}' hasn't changed between builds, skipping.");
-
-                MaxProgress += fileCount;
-                Progress += fileCount;
 
                 return false;
             }
@@ -502,9 +501,32 @@ namespace RobloxStudioModManager
 
             using (var localHttp = new WebClient())
             {
+                int lastProgress = 0;
+                bool setMaxProgress = false;
                 localHttp.Headers.Set("UserAgent", UserAgent);
+
+                localHttp.DownloadProgressChanged += new DownloadProgressChangedEventHandler((sender, e) =>
+                {
+                    lock (ProgressLock)
+                    {
+                        if (!setMaxProgress)
+                        {
+                            MaxProgress += (int)e.TotalBytesToReceive;
+                            setMaxProgress = true;
+                        }
+
+                        int progress = (int)e.BytesReceived;
+
+                        if (progress > lastProgress)
+                        {
+                            int diff = progress - lastProgress;
+                            lastProgress = progress;
+                            Progress += diff;
+                        }
+                    }
+                });
+
                 echo($"Installing package {zipFileUrl}");
-                MaxProgress++;
                 
                 var getFile = localHttp.DownloadDataTaskAsync(zipFileUrl);
                 byte[] fileContents = await getFile.ConfigureAwait(false);
@@ -515,7 +537,6 @@ namespace RobloxStudioModManager
                 if (fileContents.Length != package.PackedSize)
                     throw new InvalidDataException($"{pkgName} expected packed size: {package.PackedSize} but got: {fileContents.Length}");
 
-                Progress++;
                 result = fileContents;
             }
 
@@ -526,10 +547,14 @@ namespace RobloxStudioModManager
         {
             var data = package.Data;
             string pkgName = package.Name;
-
-            var pkgInfo = pkgRegistry.GetSubKey(pkgName);
             string studioDir = GetLocalStudioDirectory();
 
+            if (!pkgRegistry.TryGetValue(pkgName, out var pkgInfo))
+            {
+                pkgInfo = new PackageState();
+                pkgRegistry[pkgName] = pkgInfo;
+            }
+            
             string downloads = getDirectory(studioDir, "downloads");
             string zipExtractPath = Path.Combine(downloads, pkgName);
 
@@ -544,17 +569,32 @@ namespace RobloxStudioModManager
                     .Where(name => !name.EndsWith("/", Program.StringFormat))
                     .Count();
 
+                lock (ProgressLock)
+                    MaxProgress += numFiles;
+                
                 string localRootDir = null;
-                MaxProgress += numFiles;
 
                 if (KnownRoots.ContainsKey(pkgName))
                     localRootDir = KnownRoots[pkgName];
 
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
+                    bool skip = false;
+
                     if (entry.Length == 0)
+                        skip = true;
+
+                    if (entry.Name.EndsWith(".robloxrc", Program.StringFormat))
+                        skip = true;
+
+                    if (entry.Name.EndsWith(".luarc", Program.StringFormat))
+                        skip = true;
+
+                    if (skip)
                     {
-                        Progress++;
+                        lock (ProgressLock)
+                            Progress++;
+
                         continue;
                     }
                     
@@ -660,19 +700,13 @@ namespace RobloxStudioModManager
                 // Update the signature in the package registry so we can check
                 // if this zip file needs to be updated in future versions.
 
-                pkgInfo.SetValue("Signature", package.Signature);
-                pkgInfo.SetValue("NumFiles", numFiles);
+                pkgInfo.Signature = package.Signature;
+                pkgInfo.NumFiles = numFiles;
             }
         }
 
         private void WritePackageFile(string studioDir, string pkgName, string file, string newFileSig, ZipArchiveEntry entry)
         {
-            if (file.EndsWith(".robloxrc", Program.StringFormat))
-                return;
-
-            if (file.EndsWith(".luarc", Program.StringFormat))
-                return;
-
             string filePath = fixFilePath(pkgName, file);
 
             if (writtenFiles.Contains(filePath))
@@ -683,11 +717,14 @@ namespace RobloxStudioModManager
 
             if (!ForceInstall)
             {
-                string oldFileSig = fileRegistry.GetString(filePath);
+                if (!fileRegistry.TryGetValue(filePath, out string oldFileSig))
+                    oldFileSig = "";
 
                 if (oldFileSig == newFileSig)
                 {
-                    Progress++;
+                    lock (ProgressLock)
+                        Progress++;
+
                     return;
                 }
             }
@@ -705,14 +742,16 @@ namespace RobloxStudioModManager
                 echo($"Writing {filePath}...");
                 entry.ExtractToFile(extractPath);
 
-                fileRegistry.SetValue(filePath, newFileSig);
+                fileRegistry[filePath] = newFileSig;
             }
             catch (UnauthorizedAccessException)
             {
                 echo($"FILE WRITE FAILED: {filePath} (This build may not run as expected!)");
             }
 
-            Progress++;
+            lock (ProgressLock)
+                Progress++;
+
             writtenFiles.Add(filePath);
         }
 
@@ -777,7 +816,7 @@ namespace RobloxStudioModManager
                     {
                         DialogResult result = DialogResult.OK;
 
-                        if (mainRegistry == Program.MainRegistry)
+                        if (mainState == Program.State)
                         {
                             result = MessageBox.Show
                             (
@@ -812,13 +851,13 @@ namespace RobloxStudioModManager
             setStatus("Checking for updates");
             echo("Checking build installation...");
 
-            string currentVersion = versionRegistry.GetString("VersionGuid");
+            string currentVersion = versionRegistry.VersionGuid;
             string currentBranch;
 
-            if (mainRegistry.Name.EndsWith(Branch, Program.StringFormat))
-                currentBranch = Branch;
+            if (mainState == Program.State)
+                currentBranch = mainState.BuildBranch;
             else
-                currentBranch = mainRegistry.GetString("BuildBranch", "roblox");
+                currentBranch = Branch;
 
             var getVersionInfo = GetCurrentVersionInfo(currentBranch, versionRegistry, targetVersion);
             ClientVersionInfo versionInfo = await getVersionInfo.ConfigureAwait(true);
@@ -997,12 +1036,12 @@ namespace RobloxStudioModManager
 
                     ProgressBarStyle = ProgressBarStyle.Marquee;
 
-                    if (mainRegistry.Name != Branch)
-                        mainRegistry.SetValue("BuildBranch", Branch);
+                    if (mainState == Program.State)
+                        mainState.BuildBranch = Branch;
 
-                    versionRegistry.SetValue("Version", versionId);
-                    versionRegistry.SetValue("VersionGuid", buildVersion);
-                    versionRegistry.SetValue("VersionOverload", targetVersion);
+                    versionRegistry.Version = versionId;
+                    versionRegistry.VersionGuid = buildVersion;
+                    versionRegistry.VersionOverload = targetVersion;
                 }
                 else
                 {
@@ -1018,7 +1057,7 @@ namespace RobloxStudioModManager
             // Only update the registry protocols if the main registry
             // is the global one assigned to the program itself.
 
-            if (mainRegistry == Program.MainRegistry)
+            if (mainState == Program.State)
             {
                 setStatus("Configuring Roblox Studio...");
                 echo("Updating registry protocols...");

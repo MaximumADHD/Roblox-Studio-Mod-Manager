@@ -20,11 +20,11 @@ namespace RobloxStudioModManager
         private const string iconManifest = @"content\textures\ClassImages.PNG";
         private const string clientTracker = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker";
 
-        private static readonly RegistryKey explorerRegistry = Program.GetSubKey("ExplorerIcons");
-        private static readonly RegistryKey manifestRegistry = Program.GetSubKey("FileManifest");
+        private static ExplorerIconManifest explorerRegistry => Program.State.ExplorerIcons;
+        private static Dictionary<string, string> manifestRegistry => Program.State.FileManifest;
 
-        private static readonly RegistryKey iconRegistry = explorerRegistry.GetSubKey("EnabledIcons");
-        private static readonly RegistryKey infoRegistry = explorerRegistry.GetSubKey("ClassImagesInfo");
+        private static Dictionary<string, bool> iconRegistry => explorerRegistry.EnabledIcons;
+        private static ClassImageManifest infoRegistry => explorerRegistry.ClassImagesInfo;
 
         private static readonly Color THEME_LIGHT_NORMAL = Color.White;
         private static readonly Color THEME_LIGHT_FLASH = Color.FromArgb(220, 255, 220);
@@ -103,23 +103,25 @@ namespace RobloxStudioModManager
             fileInfo.Attributes = FileAttributes.Hidden | FileAttributes.ReadOnly;
 
             // Update the registry with some information about the sprite sheet.
-            infoRegistry.SetValue("SourceLocation", classImages);
+            infoRegistry.SourceLocation = classImages;
         }
 
         private static Image getExplorerIcons()
         {
-            string manifestHash = manifestRegistry.GetString(iconManifest);
-            string currentHash = infoRegistry.GetString("LastClassIconhash");
+            if (!manifestRegistry.TryGetValue(iconManifest, out string manifestHash))
+                manifestHash = "";
+
+            string currentHash = infoRegistry.LastClassIconHash;
 
             if (currentHash != manifestHash)
             {
                 string studioDir = StudioBootstrapper.GetStudioDirectory();
                 UpdateExplorerIcons(studioDir);
 
-                infoRegistry.SetValue("LastClassIconHash", manifestHash);
+                infoRegistry.LastClassIconHash = manifestHash;
             }
 
-            string imagePath = infoRegistry.GetString("SourceLocation");
+            string imagePath = infoRegistry.SourceLocation;
 
             if (!File.Exists(imagePath))
             {
@@ -150,12 +152,10 @@ namespace RobloxStudioModManager
 
         private static int getExtraItemSlots()
         {
-            string slots = explorerRegistry.GetValue("ExtraItemSlots") as string;
+            int slots = explorerRegistry.ExtraItemSlots;
+            slots = Math.Max(0, Math.Min(99, slots));
 
-            if (int.TryParse(slots, out int value))
-                value = Math.Max(0, Math.Min(99, value));
-
-            return value;
+            return slots;
         }
 
         private static Image getPatchedExplorerIcons()
@@ -301,9 +301,11 @@ namespace RobloxStudioModManager
         private static bool hasIconOverride(int index)
         {
             string key = iconPrefix + index;
-            string value = iconRegistry.GetString(key);
 
-            if (bool.TryParse(value, out bool result) && result)
+            if (!iconRegistry.TryGetValue(key, out bool result))
+                result = false;
+
+            if (result)
             {
                 // Double check that the file still exists.
                 string fileName = getExplorerIconPath(index);
@@ -311,7 +313,7 @@ namespace RobloxStudioModManager
                 if (!File.Exists(fileName))
                 {
                     result = false;
-                    iconRegistry.DeleteValue(key, false);
+                    iconRegistry[key] = false;
                 }
             }
 
@@ -364,7 +366,7 @@ namespace RobloxStudioModManager
             }
 
             string key = iconPrefix + index;
-            iconRegistry.SetValue(key, enabled);
+            iconRegistry[key] = enabled;
 
             if (enabled)
             {
@@ -532,8 +534,8 @@ namespace RobloxStudioModManager
             EventHandler iconBtnClicked = new EventHandler(onIconBtnClicked);
             string studioPath = StudioBootstrapper.GetStudioPath();
 
-            showModifiedIcons = explorerRegistry.GetBool("ShowModifiedIcons");
-            darkTheme = explorerRegistry.GetBool("DarkTheme");
+            showModifiedIcons = explorerRegistry.ShowModifiedIcons;
+            darkTheme = explorerRegistry.DarkTheme;
 
             showModified.Checked = showModifiedIcons;
             themeSwitcher.Text = "Theme: " + (darkTheme ? "Dark" : "Light");
@@ -669,7 +671,7 @@ namespace RobloxStudioModManager
             if (selectedIndex >= (numIcons + extraSlots))
                 setSelectedIndex(scrollToIndex);
 
-            explorerRegistry.SetValue("ExtraItemSlots", extraSlots.ToString(Program.NumberFormat));
+            explorerRegistry.ExtraItemSlots = extraSlots;
             initializedExtraSlots = true;
         }
 
@@ -678,7 +680,7 @@ namespace RobloxStudioModManager
             if (showModifiedIcons != showModified.Checked)
             {
                 showModifiedIcons = showModified.Checked;
-                explorerRegistry.SetValue("ShowModifiedIcons", showModifiedIcons);
+                explorerRegistry.ShowModifiedIcons = showModifiedIcons;
             }
 
             foreach (Button button in iconBtnIndex.Keys)
@@ -714,7 +716,7 @@ namespace RobloxStudioModManager
         private void themeSwitcher_Click(object sender, EventArgs e)
         {
             darkTheme = !darkTheme;
-            explorerRegistry.SetValue("DarkTheme", darkTheme);
+            explorerRegistry.DarkTheme = darkTheme;
             themeSwitcher.Text = "Theme: " + (darkTheme ? "Dark" : "Light");
 
             Color color = darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL;
