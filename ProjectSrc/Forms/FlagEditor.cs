@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-using Microsoft.Win32;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -54,12 +53,13 @@ namespace RobloxStudioModManager
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && components != null)
-                components.Dispose();
-
-            if (disposing && overrideTable != null)
-                overrideTable.Dispose();
-
+            if (disposing)
+            {
+                components?.Dispose();
+                overrideTable?.Dispose();
+                Program.SaveState();
+            }
+            
             base.Dispose(disposing);
         }
 
@@ -150,6 +150,9 @@ namespace RobloxStudioModManager
 
                 // Switch to the overrides tab.
                 tabs.SelectedTab = overridesTab;
+
+                // Record this flag in the registry.
+                flagRegistry[key] = flag;
             }
         }
 

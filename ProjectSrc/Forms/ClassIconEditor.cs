@@ -53,12 +53,13 @@ namespace RobloxStudioModManager
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && components != null)
-                components.Dispose();
-
-            if (disposing && iconWatcher != null)
-                iconWatcher.Dispose();
-
+            if (disposing)
+            {
+                components?.Dispose();
+                iconWatcher?.Dispose();
+                Program.SaveState();
+            }
+            
             base.Dispose(disposing);
         }
 
@@ -505,7 +506,7 @@ namespace RobloxStudioModManager
             {
                 BackColor = darkTheme ? THEME_DARK_NORMAL : THEME_LIGHT_NORMAL,
                 BackgroundImageLayout = ImageLayout.Zoom,
-                Size = new Size(48, 48)
+                Size = new Size(36, 36)
             };
 
             iconBtn.Click += clickEvent;

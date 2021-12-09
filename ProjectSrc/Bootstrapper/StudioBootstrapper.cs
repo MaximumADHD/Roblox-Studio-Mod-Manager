@@ -53,7 +53,7 @@ namespace RobloxStudioModManager
         private int _progress = -1;
         private int _maxProgress = -1;
         private ProgressBarStyle _progressBarStyle;
-        private object ProgressLock = new object();
+        private readonly object ProgressLock = new object();
 
         public static readonly IReadOnlyDictionary<string, string> KnownRoots = new Dictionary<string, string>()
         {
@@ -462,9 +462,7 @@ namespace RobloxStudioModManager
 
             if (oldSig == newSig && !ForceInstall)
             {
-                int fileCount = pkgInfo.NumFiles;
                 echo($"Package '{pkgName}' hasn't changed between builds, skipping.");
-
                 return false;
             }
 

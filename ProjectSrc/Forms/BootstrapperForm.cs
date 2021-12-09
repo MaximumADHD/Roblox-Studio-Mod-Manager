@@ -171,6 +171,8 @@ namespace RobloxStudioModManager
 
         private void BootstrapperForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            Program.SaveState();
+
             if (exitOnClose && e.CloseReason == CloseReason.UserClosing)
             {
                 Application.Exit();

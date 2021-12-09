@@ -95,8 +95,8 @@ namespace RobloxStudioModManager
             {
                 Text = "WARNING: HERE BE DRAGONS",
 
-                Width = 700,
-                Height = 400,
+                Width = 425,
+                Height = 250,
                 MaximizeBox = false,
                 MinimizeBox = false,
 
@@ -108,18 +108,17 @@ namespace RobloxStudioModManager
 
             var errorIcon = new PictureBox()
             {
-                BackgroundImage = SystemIcons.Error.ToBitmap(),
-                BackgroundImageLayout = ImageLayout.Zoom,
+                Image = SystemIcons.Error.ToBitmap(),
                 Location = new Point(12, 12),
-                Size = new Size(48, 48),
+                Size = new Size(32, 32),
             };
 
             var dontShowAgain = new CheckBox()
             {
                 AutoSize = true,
-                Location = new Point(85, 235),
+                Location = new Point(54, 145),
                 Text = "Do not show this warning again.",
-                Font = new Font("Segoe UI", 11f),
+                Font = new Font("Microsoft Sans Serif", 9.75f),
             };
 
             var buttonPanel = new FlowLayoutPanel()
@@ -128,32 +127,31 @@ namespace RobloxStudioModManager
                 BackColor = SystemColors.ControlLight,
                 Padding = new Padding(4),
                 Dock = DockStyle.Bottom,
-                Size = new Size(0, 60)
+                Size = new Size(0, 40)
             };
 
             var infoLabel = new Label()
             {
                 AutoSize = true,
 
-                Font = new Font("Segoe UI", 11f),
-
+                Font = new Font("Microsoft Sans Serif", 9.75f),
                 Text = "Editing flags can make Roblox Studio unstable, and could potentially corrupt your places and game data.\n\n" +
                        "You should not edit them unless you are just experimenting with new features locally, and you know what you're doing.\n\n" +
                        "Are you sure you would like to continue?",
 
-                Location = new Point(80, 14),
-                MaximumSize = new Size(600, 0),
+                Location = new Point(50, 14),
+                MaximumSize = new Size(350, 0),
             };
 
             var yes = new Button()
             {
-                Size = new Size(150, 40),
+                Size = new Size(100, 23),
                 Text = "Yes",
             };
 
             var no = new Button()
             {
-                Size = new Size(150, 40),
+                Size = new Size(100, 23),
                 Text = "No",
             };
 

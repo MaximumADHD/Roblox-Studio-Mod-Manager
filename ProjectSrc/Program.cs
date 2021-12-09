@@ -105,11 +105,16 @@ namespace RobloxStudioModManager
             }
         }
 
-        static void OnExiting(object sender, EventArgs e)
+        public static void SaveState()
         {
             var stateFile = Path.Combine(RootDir, "state.json");
-            string json = JsonConvert.SerializeObject(State);
+            string json = JsonConvert.SerializeObject(State, Formatting.Indented);
             File.WriteAllText(stateFile, json);
+        }
+
+        static void OnExiting(object sender, EventArgs e)
+        {
+            SaveState();
         }
 
         [STAThread]
@@ -145,6 +150,8 @@ namespace RobloxStudioModManager
             {
                 State = new ModManagerState();
             }
+
+            State.DisableFlagWarning = false;
 
             // Make sure HTTPS uses TLS 1.2
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
