@@ -76,7 +76,7 @@ namespace RobloxStudioModManager
             { "content-models.zip",    @"content\models\"   },
             { "content-sounds.zip",    @"content\sounds\"   },
             { "content-configs.zip",   @"content\configs\"  },
-            { "content-api-docs.zip",  @"content\api-docs\" },
+            { "content-api-docs.zip",  @"content\api_docs\" },
             { "content-textures2.zip", @"content\textures\" },
 
             { "Qml.zip",          @"Qml\"         },
@@ -86,6 +86,7 @@ namespace RobloxStudioModManager
             { "StudioFonts.zip",  @"StudioFonts\" },
 
             { "redist.zip",       @"" },
+            { "WebView2.zip",     @"" },
             { "Libraries.zip",    @"" },
             { "LibrariesQt5.zip", @"" },
             { "RobloxStudio.zip", @"" },
