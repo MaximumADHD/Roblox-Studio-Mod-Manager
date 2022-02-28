@@ -151,8 +151,6 @@ namespace RobloxStudioModManager
                 State = new ModManagerState();
             }
 
-            State.DisableFlagWarning = false;
-
             // Make sure HTTPS uses TLS 1.2
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
