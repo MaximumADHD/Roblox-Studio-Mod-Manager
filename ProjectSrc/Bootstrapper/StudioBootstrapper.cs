@@ -169,7 +169,6 @@ namespace RobloxStudioModManager
             else
                 mainState = state;
 
-            
             if (!mainState.DeprecateMD5)
             {
                 // The manifest registry needs to be reset.
@@ -437,13 +436,16 @@ namespace RobloxStudioModManager
             return info;
         }
 
-        private static string fixFilePath(string pkgName, string filePath)
+        private string fixFilePath(string pkgName, string filePath)
         {
             string pkgDir = pkgName.Replace(".zip", "");
 
             if (BadManifests.Contains(pkgDir))
                 if (!filePath.StartsWith(pkgDir, Program.StringFormat))
                     filePath = pkgDir + '\\' + filePath;
+
+            if (RemapExtraContent)
+                filePath = filePath.Replace("ExtraContent", "content");
 
             return filePath.Replace('/', '\\');
         }
