@@ -607,22 +607,23 @@ namespace RobloxStudioModManager
 
                     if (localRootDir != null)
                     {
-                        bool hasEntryPath = fileManifest.ContainsKey(entryPath);
+                        // Append local directory to our path.
+                        var manifestKey = localRootDir + entryPath;
+                        bool hasEntryPath = fileManifest.ContainsKey(manifestKey);
                         
-                        // If we can't find this file in the signature lookup table,
-                        // try appending the local directory to it. This resolves some
-                        // edge cases relating to the fixFilePath function above.
-
                         if (!hasEntryPath)
                         {
-                            entryPath = localRootDir + entryPath;
-                            hasEntryPath = fileManifest.ContainsKey(entryPath);
+                            // If we can't find this file in the signature lookup table,
+                            // try falling back to the entryPath.
+
+                            manifestKey = entryPath;
+                            hasEntryPath = fileManifest.ContainsKey(manifestKey);
                         }
 
                         // If we can find this file path in the file manifest, then we will
                         // use its pre-computed signature to check if the file has changed.
 
-                        newFileSig = hasEntryPath ? fileManifest[entryPath] : null;
+                        newFileSig = hasEntryPath ? fileManifest[manifestKey] : null;
                     }
                     else
                     {
