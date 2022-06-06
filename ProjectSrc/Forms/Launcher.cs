@@ -278,16 +278,29 @@ namespace RobloxStudioModManager
             string studioRoot = StudioBootstrapper.GetStudioDirectory();
             string modPath = getModPath();
 
-            string[] modFiles = Directory.GetFiles(modPath, "*.*", SearchOption.AllDirectories);
+            var modFiles = Directory.GetFiles(modPath, "*.*", SearchOption.AllDirectories);
 
-            foreach (string modFile in modFiles)
+            foreach (string file in modFiles)
             {
                 try
                 {
-                    byte[] fileContents = File.ReadAllBytes(modFile);
-                    FileInfo modFileControl = new FileInfo(modFile);
+                    var info = new FileInfo(file);
+                    var filePath = file;
+                    var delete = false;
 
-                    string relativeFile = modFile.Replace(modPath, studioRoot);
+                    if (info.Length == 0 && info.Name.StartsWith("DELETE"))
+                    {
+                        var dir = info.DirectoryName;
+
+                        var realName = info.Name
+                            .Substring(6)
+                            .TrimStart();
+
+                        filePath = Path.Combine(dir, realName);
+                        delete = true;
+                    }
+
+                    string relativeFile = filePath.Replace(modPath, studioRoot);
 
                     string relativeDir = Directory
                         .GetParent(relativeFile)
@@ -296,22 +309,37 @@ namespace RobloxStudioModManager
                     if (!Directory.Exists(relativeDir))
                         Directory.CreateDirectory(relativeDir);
 
+                    byte[] contents = info.Length > 0
+                        ? File.ReadAllBytes(file)
+                        : Array.Empty<byte>();
+
                     if (File.Exists(relativeFile))
                     {
-                        byte[] relativeContents = File.ReadAllBytes(relativeFile);
+                        byte[] relative = File.ReadAllBytes(relativeFile);
 
-                        if (fileContents.SequenceEqual(relativeContents))
+                        if (relative.Length == contents.Length)
+                            if (relative.SequenceEqual(contents))
+                                continue;
+                        
+                        if (delete)
+                        {
+                            File.Delete(relativeFile);
+                            continue;
+                        }
+
+                        info.CopyTo(relativeFile, true);
+                    }
+                    else
+                    {
+                        if (delete)
                             continue;
 
-                        modFileControl.CopyTo(relativeFile, true);
-                        continue;
+                        File.WriteAllBytes(relativeFile, contents);
                     }
-
-                    File.WriteAllBytes(relativeFile, fileContents);
                 }
-                catch (IOException)
+                catch
                 {
-                    Console.WriteLine("Failed to overwrite {0}!", modFile);
+                    Console.WriteLine("Failed to overwrite {0}!", file);
                 }
             }
 
