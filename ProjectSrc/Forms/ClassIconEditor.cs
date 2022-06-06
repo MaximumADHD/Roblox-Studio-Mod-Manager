@@ -17,14 +17,13 @@ namespace RobloxStudioModManager
         private const int maxExtraIcons = 99;
 
         private const string iconPrefix = "explorer-icon-";
+        private const string refImageName = "__classImageRef.png";
         private const string iconManifest = @"content\textures\ClassImages.PNG";
         private const string clientTracker = "https://raw.githubusercontent.com/MaximumADHD/Roblox-Client-Tracker";
 
         private static ExplorerIconManifest explorerRegistry => Program.State.ExplorerIcons;
         private static Dictionary<string, string> manifestRegistry => Program.State.FileManifest;
-
         private static Dictionary<string, bool> iconRegistry => explorerRegistry.EnabledIcons;
-        private static ClassImageManifest infoRegistry => explorerRegistry.ClassImagesInfo;
 
         private static readonly Color THEME_LIGHT_NORMAL = Color.White;
         private static readonly Color THEME_LIGHT_FLASH = Color.FromArgb(220, 255, 220);
@@ -88,11 +87,11 @@ namespace RobloxStudioModManager
                 throw new Exception("Could not find " + iconManifest + "!");
 
             string explorerDir = getExplorerIconDir();
-            string classImages = Path.Combine(explorerDir, "__classImageRef.png");
-
-            FileInfo fileInfo = new FileInfo(classImages);
+            string classImages = Path.Combine(explorerDir, refImageName);
 
             // If the file exists already, unlock it.
+            var fileInfo = new FileInfo(classImages);
+
             if (fileInfo.Exists)
                 fileInfo.Attributes = FileAttributes.Normal;
 
@@ -102,9 +101,6 @@ namespace RobloxStudioModManager
             // Lock the file so it isn't tampered with. This file is used as a
             // reference for the original icons in the sprite sheet.
             fileInfo.Attributes = FileAttributes.Hidden | FileAttributes.ReadOnly;
-
-            // Update the registry with some information about the sprite sheet.
-            infoRegistry.SourceLocation = classImages;
         }
 
         private static Image getExplorerIcons()
@@ -112,18 +108,19 @@ namespace RobloxStudioModManager
             if (!manifestRegistry.TryGetValue(iconManifest, out string manifestHash))
                 manifestHash = "";
 
-            string currentHash = infoRegistry.LastClassIconHash;
+            string currentHash = explorerRegistry.LastClassIconHash;
 
             if (currentHash != manifestHash)
             {
                 string studioDir = StudioBootstrapper.GetStudioDirectory();
                 UpdateExplorerIcons(studioDir);
 
-                infoRegistry.LastClassIconHash = manifestHash;
+                explorerRegistry.LastClassIconHash = manifestHash;
             }
 
-            string imagePath = infoRegistry.SourceLocation;
-
+            string explorerDir = getExplorerIconDir();
+            string imagePath = Path.Combine(explorerDir, refImageName);
+            
             if (!File.Exists(imagePath))
             {
                 // I tried to hide this file to prevent it from being deleted, but

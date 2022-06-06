@@ -2,19 +2,12 @@
 
 namespace RobloxStudioModManager
 {
-    public class ClassImageManifest
-    {
-        public string LastClassIconHash = "";
-        public string SourceLocation = "";
-    }
-
     public class ExplorerIconManifest
     {
         public bool DarkTheme = false;
         public int ExtraItemSlots = 0;
         public bool ShowModifiedIcons = true;
-
-        public ClassImageManifest ClassImagesInfo = new ClassImageManifest();
+        public string LastClassIconHash = "";
         public Dictionary<string, bool> EnabledIcons = new Dictionary<string, bool>();
     }
 

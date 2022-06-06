@@ -44,17 +44,22 @@ namespace RobloxStudioModManager
 
             if (currentVersion != expectedVersion)
             {
-                DialogResult check = MessageBox.Show
-                (
-                    "Roblox Studio is out of date!\n"
-                    + updateReason +
-                    "\nWould you like to update now?",
+                DialogResult check = DialogResult.Yes;
 
-                    "Out of date!",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Warning
-                );
+                if (!string.IsNullOrEmpty(currentVersion))
+                {
+                    check = MessageBox.Show
+                    (
+                        "Roblox Studio is out of date!\n"
+                        + updateReason +
+                        "\nWould you like to update now?",
 
+                        "Out of date!",
+                        MessageBoxButtons.YesNo,
+                        MessageBoxIcon.Warning
+                    );
+                }
+                
                 if (check == DialogResult.Yes)
                 {
                     var bootstrapper = new StudioBootstrapper() { Branch = branch };
