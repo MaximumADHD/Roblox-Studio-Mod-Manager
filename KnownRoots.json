@@ -1,0 +1,36 @@
+{
+    "BuiltInPlugins.zip":            "BuiltInPlugins/",
+    "ApplicationConfig.zip":         "ApplicationConfig/",
+    "BuiltInStandalonePlugins.zip":  "BuiltInStandalonePlugins/",
+    
+    "content-qt_translations.zip":   "content/qt_translations/",
+    "content-platform-fonts.zip":    "PlatformContent/pc/fonts/",
+    "content-terrain.zip":           "PlatformContent/pc/terrain/",
+    "content-textures3.zip":         "PlatformContent/pc/textures/",
+
+    "extracontent-translations.zip": "ExtraContent/translations/",
+    "extracontent-luapackages.zip":  "ExtraContent/LuaPackages/",
+    "extracontent-textures.zip":     "ExtraContent/textures/",
+    "extracontent-scripts.zip":      "ExtraContent/scripts/",
+
+    "content-sky.zip":       "content/sky/",
+    "content-fonts.zip":     "content/fonts/",
+    "content-avatar.zip":    "content/avatar/",
+    "content-models.zip":    "content/models/",
+    "content-sounds.zip":    "content/sounds/",
+    "content-configs.zip":   "content/configs/",
+    "content-api-docs.zip":  "content/api_docs/",
+    "content-textures2.zip": "content/textures/",
+
+    "Qml.zip":         "Qml/",
+    "ssl.zip":         "ssl/",
+    "Plugins.zip":     "Plugins/",
+    "shaders.zip":     "shaders/",
+    "StudioFonts.zip": "StudioFonts/",
+
+    "redist.zip":       "",
+    "WebView2.zip":     "",
+    "Libraries.zip":    "",
+    "LibrariesQt5.zip": "",
+    "RobloxStudio.zip": ""
+}
