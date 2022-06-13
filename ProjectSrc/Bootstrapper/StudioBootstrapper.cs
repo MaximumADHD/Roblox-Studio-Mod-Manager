@@ -58,6 +58,7 @@ namespace RobloxStudioModManager
         public static readonly IReadOnlyDictionary<string, string> KnownRoots = new Dictionary<string, string>()
         {
             { "BuiltInPlugins.zip",            @"BuiltInPlugins\"              },
+            { "ApplicationConfig.zip",         @"ApplicationConfig\"           },
             { "BuiltInStandalonePlugins.zip",  @"BuiltInStandalonePlugins\"    },
 
             { "content-qt_translations.zip",   @"content\qt_translations\"     },
@@ -96,7 +97,8 @@ namespace RobloxStudioModManager
         {
             "Qml",
             "Plugins",
-            "StudioFonts"
+            "StudioFonts",
+            "ApplicationConfig"
         };
 
         public int Progress
