@@ -1,36 +1,175 @@
 {
-    "BuiltInPlugins.zip":            "BuiltInPlugins/",
-    "ApplicationConfig.zip":         "ApplicationConfig/",
-    "BuiltInStandalonePlugins.zip":  "BuiltInStandalonePlugins/",
+    "BuiltInPlugins.zip": {
+        "ExtractTo": "BuiltInPlugins",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "ApplicationConfig.zip": {
+        "ExtractTo": "ApplicationConfig",
+        "BadManifest": true,
+        "MinVersion": 532
+    },
+
+    "BuiltInStandalonePlugins.zip": {
+        "ExtractTo": "BuiltInStandalonePlugins",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "content-qt_translations.zip": {
+        "ExtractTo": "content/qt_translations",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "content-platform-fonts.zip": {
+        "ExtractTo": "PlatformContent/pc/fonts",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "content-terrain.zip": {
+        "ExtractTo": "PlatformContent/pc/terrain",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "content-textures3.zip": {
+        "ExtractTo": "PlatformContent/pc/textures",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "extracontent-translations.zip": {
+        "ExtractTo": "ExtraContent/translations",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
     
-    "content-qt_translations.zip":   "content/qt_translations/",
-    "content-platform-fonts.zip":    "PlatformContent/pc/fonts/",
-    "content-terrain.zip":           "PlatformContent/pc/terrain/",
-    "content-textures3.zip":         "PlatformContent/pc/textures/",
+    "extracontent-luapackages.zip": {
+        "ExtractTo": "ExtraContent/LuaPackages",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
 
-    "extracontent-translations.zip": "ExtraContent/translations/",
-    "extracontent-luapackages.zip":  "ExtraContent/LuaPackages/",
-    "extracontent-textures.zip":     "ExtraContent/textures/",
-    "extracontent-scripts.zip":      "ExtraContent/scripts/",
+    "extracontent-textures.zip": {
+        "ExtractTo": "ExtraContent/textures",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
 
-    "content-sky.zip":       "content/sky/",
-    "content-fonts.zip":     "content/fonts/",
-    "content-avatar.zip":    "content/avatar/",
-    "content-models.zip":    "content/models/",
-    "content-sounds.zip":    "content/sounds/",
-    "content-configs.zip":   "content/configs/",
-    "content-api-docs.zip":  "content/api_docs/",
-    "content-textures2.zip": "content/textures/",
+    "extracontent-scripts.zip": {
+        "ExtractTo": "ExtraContent/scripts",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
 
-    "Qml.zip":         "Qml/",
-    "ssl.zip":         "ssl/",
-    "Plugins.zip":     "Plugins/",
-    "shaders.zip":     "shaders/",
-    "StudioFonts.zip": "StudioFonts/",
+    "content-sky.zip": {
+        "ExtractTo": "content/sky",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
 
-    "redist.zip":       "",
-    "WebView2.zip":     "",
-    "Libraries.zip":    "",
-    "LibrariesQt5.zip": "",
-    "RobloxStudio.zip": ""
+    "content-fonts.zip": {
+        "ExtractTo": "content/fonts",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "content-avatar.zip": {
+        "ExtractTo": "content/avatar",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "content-models.zip": {
+        "ExtractTo": "content/models",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "content-sounds.zip": {
+        "ExtractTo": "content/sounds",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "content-configs.zip": {
+        "ExtractTo": "content/configs",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "content-api-docs.zip": {
+        "ExtractTo": "content/api_docs",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "content-textures2.zip": {
+        "ExtractTo": "content/textures",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "Qml.zip": {
+        "ExtractTo": "Qml",
+        "BadManifest": true,
+        "MinVersion": 0
+    },
+
+    "ssl.zip": {
+        "ExtractTo": "ssl",
+        "BadManifest": true,
+        "MinVersion": 0
+    },
+
+    "Plugins.zip": {
+        "ExtractTo": "Plugins",
+        "BadManifest": true,
+        "MinVersion": 0
+    },
+
+    "shaders.zip": {
+        "ExtractTo": "shaders",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "StudioFonts.zip": {
+        "ExtractTo": "StudioFonts",
+        "BadManifest": true,
+        "MinVersion": 0
+    },
+
+    "redist.zip": {
+        "ExtractTo": "",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "WebView2.zip": {
+        "ExtractTo": "",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "Libraries.zip": {
+        "ExtractTo": "",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "LibrariesQt5.zip": {
+        "ExtractTo": "",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "RobloxStudio.zip": {
+        "ExtractTo": "",
+        "BadManifest": false,
+        "MinVersion": 0
+    }
 }
