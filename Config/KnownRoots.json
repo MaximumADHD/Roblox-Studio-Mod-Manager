@@ -121,7 +121,7 @@
 
     "ssl": {
         "ExtractTo": "ssl",
-        "BadManifest": true,
+        "BadManifest": false,
         "MinVersion": 0
     },
 
