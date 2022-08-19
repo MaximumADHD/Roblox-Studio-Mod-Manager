@@ -1,5 +1,9 @@
 {
     "distributors": {
+        "vanilla": {
+            "clientId": "7968549422692352298",
+            "metadataUrl": "https://apis.roblox.com/oauth/.well-known/openid-configuration"
+        },
         "Global": {
             "clientId": "7968549422692352298",
             "metadataUrl": "https://apis.roblox.com/oauth/.well-known/openid-configuration"
