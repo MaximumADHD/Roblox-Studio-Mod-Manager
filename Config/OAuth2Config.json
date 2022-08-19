@@ -1,12 +1,15 @@
 {
     "distributors": {
         "Global": {
+            "clientId": "7968549422692352298",
             "metadataUrl": "https://apis.roblox.com/oauth/.well-known/openid-configuration"
         },
         "cjv": {
+            "clientId": "6154550030602747221",
             "metadataUrl": "https://apis.roblox.qq.com/oauth/.well-known/openid-configuration"
         },
         "ChinaJointVenture": {
+            "clientId": "6154550030602747221",
             "metadataUrl": "https://apis.roblox.qq.com/oauth/.well-known/openid-configuration"
         }
     }
