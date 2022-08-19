@@ -1,0 +1,13 @@
+{
+    "distributors": {
+        "Global": {
+            "metadataUrl": "https://apis.roblox.com/oauth/.well-known/openid-configuration"
+        },
+        "cjv": {
+            "metadataUrl": "https://apis.roblox.qq.com/oauth/.well-known/openid-configuration"
+        },
+        "ChinaJointVenture": {
+            "metadataUrl": "https://apis.roblox.qq.com/oauth/.well-known/openid-configuration"
+        }
+    }
+}
