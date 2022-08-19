@@ -7,7 +7,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -24,11 +23,12 @@ namespace RobloxStudioModManager
         [DllImport("user32.dll")]
         static extern bool FlashWindow(IntPtr hWnd, bool bInvert);
 
-        private const string appSettingsXml =
-            "<Settings>\n" +
-            "   <ContentFolder>content</ContentFolder>\n" +
-            "   <BaseUrl>http://www.roblox.com</BaseUrl>\n" +
-            "</Settings>";
+        private static string AppSettings_XML;
+        private static string OAuth2Config_JSON;
+
+        private const string RepoBranch = "main";
+        private const string RepoOwner = "MaximumADHD";
+        private const string RepoName = "Roblox-Studio-Mod-Manager";
 
         private const string UserAgent = "RobloxStudioModManager";
         public const string StartEvent = "RobloxStudioModManagerStart";
@@ -322,6 +322,9 @@ namespace RobloxStudioModManager
                 {
                     string key = pair.Key,
                            value = pair.Value;
+
+                    if (key == null || value == null)
+                        continue;
 
                     if (fileManifest.ContainsKey(key))
                         continue;
@@ -865,7 +868,8 @@ namespace RobloxStudioModManager
 
             var getVersionInfo = GetCurrentVersionInfo(currentBranch, versionRegistry, targetVersion);
             ClientVersionInfo versionInfo = await getVersionInfo.ConfigureAwait(true);
-            
+
+            string studioDir = GetLocalStudioDirectory();
             buildVersion = versionInfo.VersionGuid;
             
             if (currentVersion != buildVersion || ForceInstall)
@@ -882,7 +886,6 @@ namespace RobloxStudioModManager
                 if (studioClosed)
                 {
                     string binaryType = GetStudioBinaryType();
-                    string studioDir = GetLocalStudioDirectory();
                     string versionId = versionInfo.Version;
 
                     setStatus($"Installing Version {versionId} of Roblox Studio...");
@@ -1005,11 +1008,6 @@ namespace RobloxStudioModManager
                         .WhenAll(taskQueue)
                         .ConfigureAwait(true);
 
-                    echo("Writing AppSettings.xml...");
-
-                    string appSettings = Path.Combine(studioDir, "AppSettings.xml");
-                    File.WriteAllText(appSettings, appSettingsXml);
-
                     setStatus("Deleting unused files...");
                     deleteUnusedFiles();
                     
@@ -1057,6 +1055,23 @@ namespace RobloxStudioModManager
             {
                 echo("This version of Roblox Studio has been installed!");
             }
+
+            using (var http = new WebClient())
+            {
+                var baseUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
+                OAuth2Config_JSON = await http.DownloadStringTaskAsync(baseUrl + "OAuth2Config.json");
+                AppSettings_XML = await http.DownloadStringTaskAsync(baseUrl + "AppSettings.xml");
+            }
+
+            string appSettings = Path.Combine(studioDir, "AppSettings.xml");
+            string oAuth2Config = Path.Combine(studioDir, "ApplicationConfig", "OAuth2Config.json");
+
+            echo("Writing AppSettings.xml...");
+            File.WriteAllText(appSettings, AppSettings_XML);
+
+            echo("Writing OAuth2Config.json...");
+            getDirectory(studioDir, "ApplicationConfig");
+            File.WriteAllText(oAuth2Config, OAuth2Config_JSON);
 
             // Only update the registry protocols if the main registry
             // is the global one assigned to the program itself.
