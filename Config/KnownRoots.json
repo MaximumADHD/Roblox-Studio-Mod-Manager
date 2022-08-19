@@ -1,173 +1,173 @@
 {
-    "BuiltInPlugins.zip": {
+    "BuiltInPlugins": {
         "ExtractTo": "BuiltInPlugins",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "ApplicationConfig.zip": {
+    "ApplicationConfig": {
         "ExtractTo": "ApplicationConfig",
         "BadManifest": true,
         "MinVersion": 532
     },
 
-    "BuiltInStandalonePlugins.zip": {
+    "BuiltInStandalonePlugins": {
         "ExtractTo": "BuiltInStandalonePlugins",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "content-qt_translations.zip": {
+    "content-qt_translations": {
         "ExtractTo": "content/qt_translations",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "content-platform-fonts.zip": {
+    "content-platform-fonts": {
         "ExtractTo": "PlatformContent/pc/fonts",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "content-terrain.zip": {
+    "content-terrain": {
         "ExtractTo": "PlatformContent/pc/terrain",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "content-textures3.zip": {
+    "content-textures3": {
         "ExtractTo": "PlatformContent/pc/textures",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "extracontent-translations.zip": {
+    "extracontent-translations": {
         "ExtractTo": "ExtraContent/translations",
         "BadManifest": false,
         "MinVersion": 0
     },
     
-    "extracontent-luapackages.zip": {
+    "extracontent-luapackages": {
         "ExtractTo": "ExtraContent/LuaPackages",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "extracontent-textures.zip": {
+    "extracontent-textures": {
         "ExtractTo": "ExtraContent/textures",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "extracontent-scripts.zip": {
+    "extracontent-scripts": {
         "ExtractTo": "ExtraContent/scripts",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "content-sky.zip": {
+    "content-sky": {
         "ExtractTo": "content/sky",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "content-fonts.zip": {
+    "content-fonts": {
         "ExtractTo": "content/fonts",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "content-avatar.zip": {
+    "content-avatar": {
         "ExtractTo": "content/avatar",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "content-models.zip": {
+    "content-models": {
         "ExtractTo": "content/models",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "content-sounds.zip": {
+    "content-sounds": {
         "ExtractTo": "content/sounds",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "content-configs.zip": {
+    "content-configs": {
         "ExtractTo": "content/configs",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "content-api-docs.zip": {
+    "content-api-docs": {
         "ExtractTo": "content/api_docs",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "content-textures2.zip": {
+    "content-textures2": {
         "ExtractTo": "content/textures",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "Qml.zip": {
+    "Qml": {
         "ExtractTo": "Qml",
         "BadManifest": true,
         "MinVersion": 0
     },
 
-    "ssl.zip": {
+    "ssl": {
         "ExtractTo": "ssl",
         "BadManifest": true,
         "MinVersion": 0
     },
 
-    "Plugins.zip": {
+    "Plugins": {
         "ExtractTo": "Plugins",
         "BadManifest": true,
         "MinVersion": 0
     },
 
-    "shaders.zip": {
+    "shaders": {
         "ExtractTo": "shaders",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "StudioFonts.zip": {
+    "StudioFonts": {
         "ExtractTo": "StudioFonts",
         "BadManifest": true,
         "MinVersion": 0
     },
 
-    "redist.zip": {
+    "redist": {
         "ExtractTo": "",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "WebView2.zip": {
+    "WebView2": {
         "ExtractTo": "",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "Libraries.zip": {
+    "Libraries": {
         "ExtractTo": "",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "LibrariesQt5.zip": {
+    "LibrariesQt5": {
         "ExtractTo": "",
         "BadManifest": false,
         "MinVersion": 0
     },
 
-    "RobloxStudio.zip": {
+    "RobloxStudio": {
         "ExtractTo": "",
         "BadManifest": false,
         "MinVersion": 0
