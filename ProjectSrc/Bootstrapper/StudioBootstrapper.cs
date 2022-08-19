@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using Newtonsoft.Json;
 using RobloxDeployHistory;
 using Konscious.Security.Cryptography;
 
@@ -55,52 +56,9 @@ namespace RobloxStudioModManager
         private ProgressBarStyle _progressBarStyle;
         private readonly object ProgressLock = new object();
 
-        public static readonly IReadOnlyDictionary<string, string> KnownRoots = new Dictionary<string, string>()
-        {
-            { "BuiltInPlugins.zip",            @"BuiltInPlugins\"              },
-            { "ApplicationConfig.zip",         @"ApplicationConfig\"           },
-            { "BuiltInStandalonePlugins.zip",  @"BuiltInStandalonePlugins\"    },
-
-            { "content-qt_translations.zip",   @"content\qt_translations\"     },
-            { "content-platform-fonts.zip",    @"PlatformContent\pc\fonts\"    },
-            { "content-terrain.zip",           @"PlatformContent\pc\terrain\"  },
-            { "content-textures3.zip",         @"PlatformContent\pc\textures\" },
-
-            { "extracontent-translations.zip", @"ExtraContent\translations\" },
-            { "extracontent-luapackages.zip",  @"ExtraContent\LuaPackages\"  },
-            { "extracontent-textures.zip",     @"ExtraContent\textures\"     },
-            { "extracontent-scripts.zip",      @"ExtraContent\scripts\"      },
-
-            { "content-sky.zip",       @"content\sky\"      },
-            { "content-fonts.zip",     @"content\fonts\"    },
-            { "content-avatar.zip",    @"content\avatar\"   },
-            { "content-models.zip",    @"content\models\"   },
-            { "content-sounds.zip",    @"content\sounds\"   },
-            { "content-configs.zip",   @"content\configs\"  },
-            { "content-api-docs.zip",  @"content\api_docs\" },
-            { "content-textures2.zip", @"content\textures\" },
-
-            { "Qml.zip",          @"Qml\"         },
-            { "ssl.zip",          @"ssl\"         },
-            { "Plugins.zip",      @"Plugins\"     },
-            { "shaders.zip",      @"shaders\"     },
-            { "StudioFonts.zip",  @"StudioFonts\" },
-
-            { "redist.zip",       @"" },
-            { "WebView2.zip",     @"" },
-            { "Libraries.zip",    @"" },
-            { "LibrariesQt5.zip", @"" },
-            { "RobloxStudio.zip", @"" },
-        };
-
-        public static readonly IReadOnlyList<string> BadManifests = new List<string>()
-        {
-            "Qml",
-            "Plugins",
-            "StudioFonts",
-            "ApplicationConfig"
-        };
-
+        public static readonly List<string> BadManifests = new List<string>();
+        public static readonly Dictionary<string, string> KnownRoots = new Dictionary<string, string>();
+        
         public int Progress
         {
             get => _progress;
@@ -858,6 +816,7 @@ namespace RobloxStudioModManager
             setStatus("Checking for updates");
             echo("Checking build installation...");
 
+            string baseConfigUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
             string currentVersion = versionRegistry.VersionGuid;
             string currentBranch;
 
@@ -868,6 +827,7 @@ namespace RobloxStudioModManager
 
             var getVersionInfo = GetCurrentVersionInfo(currentBranch, versionRegistry, targetVersion);
             ClientVersionInfo versionInfo = await getVersionInfo.ConfigureAwait(true);
+
 
             string studioDir = GetLocalStudioDirectory();
             buildVersion = versionInfo.VersionGuid;
@@ -887,6 +847,44 @@ namespace RobloxStudioModManager
                 {
                     string binaryType = GetStudioBinaryType();
                     string versionId = versionInfo.Version;
+
+                    var installVersion = versionId
+                        .Split('.')
+                        .Select(int.Parse)
+                        .Skip(1)
+                        .First();
+
+                    KnownRoots.Clear();
+                    BadManifests.Clear();
+
+                    using (var http = new WebClient())
+                    {
+                        var json = await http
+                            .DownloadStringTaskAsync(baseConfigUrl + "KnownRoots.json")
+                            .ConfigureAwait(false);
+
+                        var knownRoots = JsonConvert.DeserializeObject<Dictionary<string, KnownRoot>>(json);
+
+                        foreach (var pair in knownRoots)
+                        {
+                            string name = pair.Key;
+                            var knownRoot = pair.Value;
+
+                            if (installVersion < knownRoot.MinVersion)
+                                continue;
+
+                            string file = name + ".zip";
+                            string extractPath = knownRoot.ExtractTo;
+
+                            if (!string.IsNullOrEmpty(extractPath))
+                                extractPath += '/';
+
+                            if (knownRoot.BadManifest)
+                                BadManifests.Add(name);
+
+                            KnownRoots.Add(file, extractPath);
+                        }
+                    }
 
                     setStatus($"Installing Version {versionId} of Roblox Studio...");
                     echo("Grabbing package manifest...");
@@ -1058,11 +1056,10 @@ namespace RobloxStudioModManager
 
             using (var http = new WebClient())
             {
-                var baseUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
-                OAuth2Config_JSON = await http.DownloadStringTaskAsync(baseUrl + "OAuth2Config.json");
-                AppSettings_XML = await http.DownloadStringTaskAsync(baseUrl + "AppSettings.xml");
+                OAuth2Config_JSON = await http.DownloadStringTaskAsync(baseConfigUrl + "OAuth2Config.json");
+                AppSettings_XML = await http.DownloadStringTaskAsync(baseConfigUrl + "AppSettings.xml");
             }
-
+            
             string appSettings = Path.Combine(studioDir, "AppSettings.xml");
             string oAuth2Config = Path.Combine(studioDir, "ApplicationConfig", "OAuth2Config.json");
 
