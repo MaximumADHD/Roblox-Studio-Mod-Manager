@@ -25,9 +25,9 @@ namespace RobloxStudioModManager
             InitializeComponent();
         }
 
-        private string getSelectedBranch()
+        private Channel getSelectedChannel()
         {
-            var result = branchSelect.SelectedItem;
+            var result = channelSelect.Text;
             return result.ToString();
         }
 
@@ -36,9 +36,9 @@ namespace RobloxStudioModManager
             if (args != null)
                 openStudioDirectory.Enabled = false;
 
-            string build = Program.State.BuildBranch;
-            int buildIndex = branchSelect.Items.IndexOf(build);
-            branchSelect.SelectedIndex = Math.Max(buildIndex, 0);
+            string channel = Program.State.Channel;
+            int buildIndex = channelSelect.Items.IndexOf(channel);
+            channelSelect.SelectedIndex = Math.Max(buildIndex, 0);
         }
 
         public static string getModPath()
@@ -206,17 +206,17 @@ namespace RobloxStudioModManager
 
             if (allow)
             {
-                string branch = getSelectedBranch();
+                var channel = getSelectedChannel();
 
                 Enabled = false;
                 UseWaitCursor = true;
 
-                var infoTask = StudioBootstrapper.GetCurrentVersionInfo(branch);
+                var infoTask = StudioBootstrapper.GetCurrentVersionInfo(channel);
                 var info = await infoTask.ConfigureAwait(true);
 
                 Hide();
 
-                var updateTask = BootstrapperForm.BringUpToDate(branch, info.VersionGuid, "Some newer flags might be missing.");
+                var updateTask = BootstrapperForm.BringUpToDate(channel, info.VersionGuid, "Some newer flags might be missing.");
                 await updateTask.ConfigureAwait(true);
 
                 using (FlagEditor editor = new FlagEditor())
@@ -235,13 +235,13 @@ namespace RobloxStudioModManager
             Enabled = false;
             UseWaitCursor = true;
 
-            string branch = (string)branchSelect.SelectedItem;
+            Channel channel = getSelectedChannel();
             Hide();
 
-            var infoTask = StudioBootstrapper.GetCurrentVersionInfo(branch);
+            var infoTask = StudioBootstrapper.GetCurrentVersionInfo(channel);
             var info = await infoTask.ConfigureAwait(true);
 
-            var updateTask = BootstrapperForm.BringUpToDate(branch, info.VersionGuid, "The class icons may have received an update.");
+            var updateTask = BootstrapperForm.BringUpToDate(channel, info.VersionGuid, "The class icons may have received an update.");
             await updateTask.ConfigureAwait(true);
 
             using (var editor = new ClassIconEditor())
@@ -256,7 +256,7 @@ namespace RobloxStudioModManager
 
         private async void launchStudio_Click(object sender = null, EventArgs e = null)
         {
-            string branch = getSelectedBranch();
+            var channel = getSelectedChannel();
 
             var bootstrapper = new StudioBootstrapper
             {
@@ -264,7 +264,7 @@ namespace RobloxStudioModManager
                 ApplyModManagerPatches = true,
 
                 SetStartEvent = true,
-                Branch = branch
+                Channel = channel
             };
 
             Hide();
@@ -432,8 +432,8 @@ namespace RobloxStudioModManager
         private async void branchSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Save the user's branch preference.
-            string branch = getSelectedBranch();
-            Program.State.BuildBranch = branch;
+            var channel = getSelectedChannel();
+            Program.State.Channel = channel;
 
             // Grab the version currently being targetted.
             string targetId = Program.State.TargetVersion;
@@ -446,40 +446,46 @@ namespace RobloxStudioModManager
             Enabled = false;
             UseWaitCursor = true;
 
-            var getDeployLogs = StudioDeployLogs.Get(branch);
-            var deployLogs = await getDeployLogs.ConfigureAwait(true);
-
-            Enabled = true;
-            UseWaitCursor = false;
-
-            HashSet<DeployLog> targets;
-
-            if (Environment.Is64BitOperatingSystem)
-                targets = deployLogs.CurrentLogs_x64;
-            else
-                targets = deployLogs.CurrentLogs_x86;
-
-            var items = targets
-                .OrderByDescending(log => log.Changelist)
-                .Cast<object>()
-                .Skip(1)
-                .ToArray();
-
-            targetVersion.Items.AddRange(items);
-
-            // Select the deploy log being targetted.
-            DeployLog target = targets
-                .Where(log => log.VersionId == targetId)
-                .FirstOrDefault();
-
-            if (target != null)
+            try
             {
-                targetVersion.SelectedItem = target;
-                return;
+                var getDeployLogs = StudioDeployLogs.Get(channel);
+                var deployLogs = await getDeployLogs.ConfigureAwait(true);
+
+                Enabled = true;
+                UseWaitCursor = false;
+
+                HashSet<DeployLog> targets;
+
+                if (Environment.Is64BitOperatingSystem)
+                    targets = deployLogs.CurrentLogs_x64;
+                else
+                    targets = deployLogs.CurrentLogs_x86;
+
+                var items = targets
+                    .OrderByDescending(log => log.TimeStamp)
+                    .Cast<object>()
+                    .ToArray();
+
+                targetVersion.Items.AddRange(items);
+
+                // Select the deploy log being targetted.
+                DeployLog target = targets
+                    .Where(log => log.VersionId == targetId)
+                    .FirstOrDefault();
+
+                if (target != null)
+                {
+                    targetVersion.SelectedItem = target;
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debugger.Break();
             }
 
-            // If the target isn't valid, fallback to the latest version.
-            targetVersion.SelectedIndex = 0;
+            // If the target isn't valid, fallback to live.
+            targetVersion.Text = "zLive";
         }
 
         private void targetVersion_SelectedIndexChanged(object sender, EventArgs e)
@@ -492,6 +498,31 @@ namespace RobloxStudioModManager
 
             var target = targetVersion.SelectedItem as DeployLog;
             Program.State.TargetVersion = target.VersionId;
+        }
+
+        private void channelSelect_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode != Keys.Enter)
+                return;
+
+            string text = channelSelect.Text;
+            bool has = false;
+
+            foreach (var item in channelSelect.Items)
+            {
+                var name = item.ToString();
+
+                if (name.ToLowerInvariant() == text.ToLowerInvariant())
+                {
+                    has = true;
+                    text = name;
+                }
+            }
+
+            if (!has)
+                channelSelect.Items.Add(text);
+
+            channelSelect.SelectedIndex = channelSelect.Items.IndexOf(text);
         }
     }
 }

@@ -5,6 +5,8 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
+using RobloxDeployHistory;
+
 namespace RobloxStudioModManager
 {
     [Serializable]
@@ -48,9 +50,12 @@ namespace RobloxStudioModManager
             RawData = data;
         }
 
-        public static async Task<FileManifest> Get(string branch, string versionGuid, bool remapExtraContent = false)
+        public static async Task<FileManifest> Get(ClientVersionInfo info, bool remapExtraContent = false)
         {
-            string fileManifestUrl = $"https://s3.amazonaws.com/setup.{branch}.com/{versionGuid}-rbxManifest.txt";
+            Channel channel = info.Channel;
+            string versionGuid = info.VersionGuid;
+
+            string fileManifestUrl = $"https://setup.rbxcdn.com/channel/{channel}/{versionGuid}-rbxManifest.txt";
             string fileManifestData;
 
             using (WebClient http = new WebClient())
