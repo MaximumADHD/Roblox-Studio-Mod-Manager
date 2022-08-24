@@ -123,6 +123,18 @@ namespace RobloxStudioModManager
         public bool RemapExtraContent { get; set; } = false;
         public bool ApplyModManagerPatches { get; set; } = false;
 
+        public static async Task<string[]> FetchKnownChannels()
+        {
+            using (var http = new WebClient())
+            {
+                var getJson = http.DownloadStringTaskAsync($"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/KnownChannels.json");
+                var json = await getJson.ConfigureAwait(false);
+
+                var result = JsonConvert.DeserializeObject<string[]>(json);
+                return result;
+            }
+        }
+
         public StudioBootstrapper(IBootstrapperState state = null)
         {
             if (state == null)

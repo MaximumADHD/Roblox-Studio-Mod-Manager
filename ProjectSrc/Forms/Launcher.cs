@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Media;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using RobloxDeployHistory;
@@ -30,13 +31,28 @@ namespace RobloxStudioModManager
             return result.ToString();
         }
 
-        private void Launcher_Load(object sender, EventArgs e)
+        private async void Launcher_Load(object sender, EventArgs e)
         {
+            Enabled = false;
+            UseWaitCursor = true;
+
             if (args != null)
                 openStudioDirectory.Enabled = false;
 
-            string channel = Program.State.Channel;
-            selectChannel(channel);
+            var channels = await StudioBootstrapper.FetchKnownChannels();
+
+            var setChannels = new Action(() =>
+            {
+                var items = channelSelect.Items;
+                var channel = Program.State.Channel;
+
+                items.Clear();
+                items.AddRange(channels);
+
+                selectChannel(channel);
+            });
+
+            Invoke(setChannels);
         }
 
         public static string getModPath()
