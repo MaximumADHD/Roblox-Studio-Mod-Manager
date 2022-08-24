@@ -45,6 +45,7 @@ namespace RobloxStudioModManager
         private readonly Dictionary<string, string> fileRegistry;
         private readonly Dictionary<string, PackageState> pkgRegistry;
 
+        private Dictionary<string, string[]> bySignature;
         private Dictionary<string, string> newManifestEntries;
         private HashSet<string> writtenFiles;
         private FileManifest fileManifest;
@@ -110,7 +111,7 @@ namespace RobloxStudioModManager
             }
         }
 
-        public string Branch { get; set; } = "roblox";
+        public Channel Channel { get; set; } = "zLive";
         public string OverrideStudioDirectory { get; set; } = "";
 
         public bool CanShutdownStudio { get; set; } = true;
@@ -128,15 +129,6 @@ namespace RobloxStudioModManager
                 mainState = Program.State;
             else
                 mainState = state;
-
-            if (!mainState.DeprecateMD5)
-            {
-                // The manifest registry needs to be reset.
-                mainState.VersionData = new VersionManifest();
-                mainState.PackageManifest.Clear();
-                mainState.FileManifest.Clear();
-                mainState.DeprecateMD5 = true;
-            }
 
             versionRegistry = mainState.VersionData;
             pkgRegistry = mainState.PackageManifest;
@@ -338,13 +330,13 @@ namespace RobloxStudioModManager
             }
         }
 
-        public static async Task<ClientVersionInfo> GetTargetVersionInfo(string branch, string targetVersion, VersionManifest versionRegistry = null)
+        public static async Task<ClientVersionInfo> GetTargetVersionInfo(Channel channel, string targetVersion, VersionManifest versionRegistry = null)
         {
             if (versionRegistry == null)
                 versionRegistry = Program.State.VersionData;
 
             var logData = await StudioDeployLogs
-                .Get(branch)
+                .Get(channel)
                 .ConfigureAwait(false);
 
             HashSet<DeployLog> targets;
@@ -360,21 +352,21 @@ namespace RobloxStudioModManager
 
             if (target == null)
             {
-                var result = GetCurrentVersionInfo(branch, versionRegistry);
+                var result = GetCurrentVersionInfo(channel, versionRegistry);
                 return await result.ConfigureAwait(false);
             }
 
             return new ClientVersionInfo(target);
         }
 
-        public static async Task<ClientVersionInfo> GetCurrentVersionInfo(string branch, VersionManifest versionRegistry = null, string targetVersion = "")
+        public static async Task<ClientVersionInfo> GetCurrentVersionInfo(Channel channel, VersionManifest versionRegistry = null, string targetVersion = "")
         {
             if (versionRegistry == null)
                 versionRegistry = Program.State.VersionData;
 
             if (!string.IsNullOrEmpty(targetVersion))
             {
-                var result = GetTargetVersionInfo(branch, targetVersion, versionRegistry);
+                var result = GetTargetVersionInfo(channel, targetVersion, versionRegistry);
                 return await result.ConfigureAwait(false);
             }
 
@@ -382,7 +374,7 @@ namespace RobloxStudioModManager
             ClientVersionInfo info;
 
             var logData = await StudioDeployLogs
-                .Get(branch)
+                .Get(channel)
                 .ConfigureAwait(false);
 
             DeployLog build_x86 = logData.CurrentLogs_x86.Last();
@@ -440,7 +432,7 @@ namespace RobloxStudioModManager
             echo($"Verifying availability of: {package.Name}");
 
             string pkgName = package.Name;
-            var zipFileUrl = new Uri($"https://s3.amazonaws.com/setup.{Branch}.com/{buildVersion}-{pkgName}");
+            var zipFileUrl = new Uri($"https://setup.rbxcdn.com/channel/{Channel}/{buildVersion}-{pkgName}");
 
             var request = WebRequest.Create(zipFileUrl) as HttpWebRequest;
             request.Headers.Set("UserAgent", UserAgent);
@@ -461,7 +453,7 @@ namespace RobloxStudioModManager
         {
             byte[] result = null;
             string pkgName = package.Name;
-            string zipFileUrl = $"https://s3.amazonaws.com/setup.{Branch}.com/{buildVersion}-{pkgName}";
+            string zipFileUrl = $"https://setup.rbxcdn.com/channel/{Channel}/{buildVersion}-{pkgName}";
 
             using (var localHttp = new WebClient())
             {
@@ -533,9 +525,6 @@ namespace RobloxStudioModManager
                     .Where(name => !name.EndsWith("/", Program.StringFormat))
                     .Count();
 
-                lock (ProgressLock)
-                    MaxProgress += numFiles;
-                
                 string localRootDir = null;
 
                 if (KnownRoots.ContainsKey(pkgName))
@@ -555,12 +544,7 @@ namespace RobloxStudioModManager
                         skip = true;
 
                     if (skip)
-                    {
-                        lock (ProgressLock)
-                            Progress++;
-
                         continue;
-                    }
                     
                     string newFileSig = null;
                     string entryPath = entry.FullName.Replace('/', '\\');
@@ -601,11 +585,8 @@ namespace RobloxStudioModManager
                         newFileSig = computeSignature(entry);
 
                     // Now check what files this signature corresponds with.
-                    var files = fileManifest
-                        .Where(pair => pair.Value == newFileSig)
-                        .Select(pair => pair.Key);
-
-                    if (files.Any())
+                   
+                    if (bySignature.TryGetValue(newFileSig, out var files))
                     {
                         foreach (string file in files)
                         {
@@ -687,9 +668,6 @@ namespace RobloxStudioModManager
 
                 if (oldFileSig == newFileSig)
                 {
-                    lock (ProgressLock)
-                        Progress++;
-
                     return;
                 }
             }
@@ -713,9 +691,6 @@ namespace RobloxStudioModManager
             {
                 echo($"FILE WRITE FAILED: {filePath} (This build may not run as expected!)");
             }
-
-            lock (ProgressLock)
-                Progress++;
 
             writtenFiles.Add(filePath);
         }
@@ -818,16 +793,15 @@ namespace RobloxStudioModManager
 
             string baseConfigUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
             string currentVersion = versionRegistry.VersionGuid;
-            string currentBranch;
+            string currentChannel;
 
             if (mainState == Program.State)
-                currentBranch = mainState.BuildBranch;
+                currentChannel = mainState.Channel;
             else
-                currentBranch = Branch;
+                currentChannel = Channel;
 
-            var getVersionInfo = GetCurrentVersionInfo(currentBranch, versionRegistry, targetVersion);
+            var getVersionInfo = GetCurrentVersionInfo(currentChannel, versionRegistry, targetVersion);
             ClientVersionInfo versionInfo = await getVersionInfo.ConfigureAwait(true);
-
 
             string studioDir = GetLocalStudioDirectory();
             buildVersion = versionInfo.VersionGuid;
@@ -890,17 +864,24 @@ namespace RobloxStudioModManager
                     echo("Grabbing package manifest...");
 
                     var pkgManifest = await PackageManifest
-                        .Get(Branch, buildVersion)
+                        .Get(versionInfo)
                         .ConfigureAwait(true);
 
                     echo("Grabbing file manifest...");
 
                     fileManifest = await FileManifest
-                        .Get(Branch, buildVersion, RemapExtraContent)
+                        .Get(versionInfo, RemapExtraContent)
                         .ConfigureAwait(true);
 
                     var taskQueue = new List<Task>();
                     writtenFiles = new HashSet<string>();
+
+                    bySignature =
+                        (from pair in fileManifest
+                         let key = pair.Key
+                         let value = pair.Value
+                         group key by value)
+                        .ToDictionary(group => group.Key, group => group.ToArray());
 
                     Progress = 0;
                     MaxProgress = 0;
@@ -1037,7 +1018,7 @@ namespace RobloxStudioModManager
                     ProgressBarStyle = ProgressBarStyle.Marquee;
 
                     if (mainState == Program.State)
-                        mainState.BuildBranch = Branch;
+                        mainState.Channel = Channel;
 
                     versionRegistry.Version = versionId;
                     versionRegistry.VersionGuid = buildVersion;

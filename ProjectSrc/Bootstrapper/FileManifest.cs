@@ -5,6 +5,8 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Threading.Tasks;
 
+using RobloxDeployHistory;
+
 namespace RobloxStudioModManager
 {
     [Serializable]
@@ -41,6 +43,15 @@ namespace RobloxStudioModManager
                     else if (remapExtraContent && path.StartsWith("ExtraContent", Program.StringFormat))
                         path = path.Replace("ExtraContent", "content");
 
+                    // ~~ AWFUL TEMPORARY HACK. ~~
+                    //
+                    // This is necessary because SourceSansPro gets incorrectly listed in the root directory,
+                    // but also MUST be extracted to both 'StudioFonts/' and 'content/fonts/', so I need to
+                    // make sure it unambiguously extracts to the correct locations.
+
+                    if (path.EndsWith(".ttf") && !path.Contains("\\"))
+                        path = "StudioFonts\\" + path;
+
                     Add(path, signature);
                 }
             }
@@ -48,9 +59,12 @@ namespace RobloxStudioModManager
             RawData = data;
         }
 
-        public static async Task<FileManifest> Get(string branch, string versionGuid, bool remapExtraContent = false)
+        public static async Task<FileManifest> Get(ClientVersionInfo info, bool remapExtraContent = false)
         {
-            string fileManifestUrl = $"https://s3.amazonaws.com/setup.{branch}.com/{versionGuid}-rbxManifest.txt";
+            Channel channel = info.Channel;
+            string versionGuid = info.VersionGuid;
+
+            string fileManifestUrl = $"https://setup.rbxcdn.com/channel/{channel}/{versionGuid}-rbxManifest.txt";
             string fileManifestData;
 
             using (WebClient http = new WebClient())

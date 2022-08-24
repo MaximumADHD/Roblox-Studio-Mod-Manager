@@ -4,6 +4,8 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
+using RobloxDeployHistory;
+
 namespace RobloxStudioModManager
 {
     internal class PackageManifest : List<Package>
@@ -68,9 +70,12 @@ namespace RobloxStudioModManager
             RawData = data;
         }
 
-        public static async Task<PackageManifest> Get(string branch, string versionGuid)
+        public static async Task<PackageManifest> Get(ClientVersionInfo info)
         {
-            string pkgManifestUrl = $"https://s3.amazonaws.com/setup.{branch}.com/{versionGuid}-rbxPkgManifest.txt";
+            Channel channel = info.Channel;
+            string versionGuid = info.VersionGuid;
+
+            string pkgManifestUrl = $"https://setup.rbxcdn.com/channel/{channel}/{versionGuid}-rbxPkgManifest.txt";
             string pkgManifestData;
 
             using (WebClient http = new WebClient())

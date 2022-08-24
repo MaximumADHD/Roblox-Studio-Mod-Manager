@@ -3,6 +3,8 @@ using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using RobloxDeployHistory;
+
 namespace RobloxStudioModManager
 {
     public partial class BootstrapperForm : Form
@@ -37,7 +39,7 @@ namespace RobloxStudioModManager
             await bootstrap.ConfigureAwait(true);
         }
 
-        public static async Task BringUpToDate(string branch, string expectedVersion, string updateReason)
+        public static async Task BringUpToDate(Channel channel, string expectedVersion, string updateReason)
         {
             var versionData = Program.State.VersionData;
             string currentVersion = versionData.VersionGuid;
@@ -62,7 +64,7 @@ namespace RobloxStudioModManager
                 
                 if (check == DialogResult.Yes)
                 {
-                    var bootstrapper = new StudioBootstrapper() { Branch = branch };
+                    var bootstrapper = new StudioBootstrapper() { Channel = channel };
 
                     using (var installer = new BootstrapperForm(bootstrapper))
                     {
