@@ -432,6 +432,7 @@ namespace RobloxStudioModManager
             // Save the user's branch preference.
             var channel = getSelectedChannel();
             Program.State.Channel = channel;
+            Program.SaveState();
 
             // Grab the version currently being targetted.
             string targetId = Program.State.TargetVersion;

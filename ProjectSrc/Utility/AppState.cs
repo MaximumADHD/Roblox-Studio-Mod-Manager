@@ -33,7 +33,7 @@ namespace RobloxStudioModManager
 
     public interface IBootstrapperState
     {
-        Channel Channel { get; set; }
+        string Channel { get; set; }
         
         VersionManifest VersionData { get; set; }
         Dictionary<string, string> FileManifest { get; }
@@ -42,7 +42,7 @@ namespace RobloxStudioModManager
 
     public class ModManagerState : IBootstrapperState
     {
-        public Channel Channel { get; set; } = "zLive";
+        public string Channel { get; set; } = "zLive";
         public string TargetVersion { get; set; } = "";
 
         public bool DisableFlagWarning { get; set; } = false;
