@@ -43,6 +43,15 @@ namespace RobloxStudioModManager
                     else if (remapExtraContent && path.StartsWith("ExtraContent", Program.StringFormat))
                         path = path.Replace("ExtraContent", "content");
 
+                    // ~~ AWFUL TEMPORARY HACK. ~~
+                    //
+                    // This is necessary because SourceSansPro gets incorrectly listed in the root directory,
+                    // but also MUST be extracted to both 'StudioFonts/' and 'content/fonts/', so I need to
+                    // make sure it unambiguously extracts to the correct locations.
+
+                    if (path.EndsWith(".ttf") && !path.Contains("\\"))
+                        path = "StudioFonts\\" + path;
+
                     Add(path, signature);
                 }
             }

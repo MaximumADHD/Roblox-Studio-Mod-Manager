@@ -76,19 +76,20 @@
             // 
             // channelSelect
             // 
-            this.channelSelect.AccessibleName = "Branch Selector";
+            this.channelSelect.AccessibleName = "Channel Selector";
             this.channelSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.channelSelect.FormattingEnabled = true;
             this.channelSelect.Items.AddRange(new object[] {
             "zLive",
             "zCanary",
-            "zIntegration"});
+            "zIntegration",
+            "zQtitanStudioRelease"});
             this.channelSelect.Location = new System.Drawing.Point(175, 138);
             this.channelSelect.Name = "channelSelect";
             this.channelSelect.Size = new System.Drawing.Size(152, 21);
             this.channelSelect.TabIndex = 10;
-            this.channelSelect.Text = "zLive";
-            this.channelSelect.SelectedIndexChanged += new System.EventHandler(this.branchSelect_SelectedIndexChanged);
+            this.channelSelect.Text = "";
+            this.channelSelect.SelectedIndexChanged += new System.EventHandler(this.channelSelect_SelectedIndexChanged);
             this.channelSelect.KeyDown += new System.Windows.Forms.KeyEventHandler(this.channelSelect_KeyDown);
             // 
             // channelLabel

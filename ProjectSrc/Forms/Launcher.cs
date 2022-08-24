@@ -7,7 +7,6 @@ using System.Linq;
 using System.Media;
 using System.Windows.Forms;
 
-using Microsoft.Win32;
 using RobloxDeployHistory;
 
 namespace RobloxStudioModManager
@@ -27,7 +26,7 @@ namespace RobloxStudioModManager
 
         private Channel getSelectedChannel()
         {
-            var result = channelSelect.Text;
+            var result = channelSelect.SelectedItem;
             return result.ToString();
         }
 
@@ -37,8 +36,7 @@ namespace RobloxStudioModManager
                 openStudioDirectory.Enabled = false;
 
             string channel = Program.State.Channel;
-            int buildIndex = channelSelect.Items.IndexOf(channel);
-            channelSelect.SelectedIndex = Math.Max(buildIndex, 0);
+            selectChannel(channel);
         }
 
         public static string getModPath()
@@ -429,7 +427,7 @@ namespace RobloxStudioModManager
             }
         }
 
-        private async void branchSelect_SelectedIndexChanged(object sender, EventArgs e)
+        private async void channelSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
             // Save the user's branch preference.
             var channel = getSelectedChannel();
@@ -437,53 +435,48 @@ namespace RobloxStudioModManager
 
             // Grab the version currently being targetted.
             string targetId = Program.State.TargetVersion;
+            var latest = "(Use Latest)";
 
             // Clear the current list of target items.
             targetVersion.Items.Clear();
-            targetVersion.Items.Add("(Use Latest)");
+            targetVersion.Items.Add(latest);
 
             // Populate the items list using the deploy history.
             Enabled = false;
             UseWaitCursor = true;
 
-            try
+            var getDeployLogs = StudioDeployLogs.Get(channel);
+            var deployLogs = await getDeployLogs.ConfigureAwait(true);
+
+            Enabled = true;
+            UseWaitCursor = false;
+
+            HashSet<DeployLog> targets;
+
+            if (Environment.Is64BitOperatingSystem)
+                targets = deployLogs.CurrentLogs_x64;
+            else
+                targets = deployLogs.CurrentLogs_x86;
+
+            var items = targets
+                .OrderByDescending(log => log.TimeStamp)
+                .Cast<object>()
+                .ToArray();
+
+            targetVersion.SelectedItem = latest;
+            targetVersion.Items.AddRange(items);
+
+            // Select the deploy log being targetted.
+            DeployLog target = targets
+                .Where(log => log.VersionId == targetId)
+                .FirstOrDefault();
+
+            if (target != null)
             {
-                var getDeployLogs = StudioDeployLogs.Get(channel);
-                var deployLogs = await getDeployLogs.ConfigureAwait(true);
-
-                Enabled = true;
-                UseWaitCursor = false;
-
-                HashSet<DeployLog> targets;
-
-                if (Environment.Is64BitOperatingSystem)
-                    targets = deployLogs.CurrentLogs_x64;
-                else
-                    targets = deployLogs.CurrentLogs_x86;
-
-                var items = targets
-                    .OrderByDescending(log => log.TimeStamp)
-                    .Cast<object>()
-                    .ToArray();
-
-                targetVersion.Items.AddRange(items);
-
-                // Select the deploy log being targetted.
-                DeployLog target = targets
-                    .Where(log => log.VersionId == targetId)
-                    .FirstOrDefault();
-
-                if (target != null)
-                {
-                    targetVersion.SelectedItem = target;
-                    return;
-                }
+                targetVersion.SelectedItem = target;
+                return;
             }
-            catch (Exception ex)
-            {
-                Debugger.Break();
-            }
-
+            
             // If the target isn't valid, fallback to live.
             targetVersion.Text = "zLive";
         }
@@ -500,29 +493,73 @@ namespace RobloxStudioModManager
             Program.State.TargetVersion = target.VersionId;
         }
 
+        private async void selectChannel(string text)
+        {
+            object existing = null;
+
+            foreach (var item in channelSelect.Items)
+            {
+                string name = item.ToString();
+
+                if (name.ToLowerInvariant() == text.ToLowerInvariant())
+                {
+                    existing = item;
+                    break;
+                }
+            }
+
+            if (existing != null)
+            {
+                var index = channelSelect.Items.IndexOf(existing);
+                channelSelect.SelectedIndex = index;
+                return;
+            }
+            
+            bool valid = false;
+            var channel = new Channel(text);
+
+            try
+            {
+                var getInfo = StudioDeployLogs.Get(channel);
+                await getInfo.ConfigureAwait(true);
+                valid = true;
+            }
+            catch
+            {
+                MessageBox.Show
+                (
+                    $"Channel '{channel}' is not a known channel on Roblox's servers!",
+                    "Invalid channel!",
+
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
+
+                var resetIndex = new Action(() => channelSelect.SelectedIndex = 0);
+                Invoke(resetIndex);
+            }
+
+            if (valid)
+            {
+                var setItem = new Action(() =>
+                {
+                    int index = channelSelect.Items.Add(text);
+                    channelSelect.SelectedIndex = index;
+                });
+
+                Program.State.Channel = channel;
+                Program.SaveState();
+
+                Invoke(setItem);
+            }
+        }
+
         private void channelSelect_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.Enter)
                 return;
 
-            string text = channelSelect.Text;
-            bool has = false;
-
-            foreach (var item in channelSelect.Items)
-            {
-                var name = item.ToString();
-
-                if (name.ToLowerInvariant() == text.ToLowerInvariant())
-                {
-                    has = true;
-                    text = name;
-                }
-            }
-
-            if (!has)
-                channelSelect.Items.Add(text);
-
-            channelSelect.SelectedIndex = channelSelect.Items.IndexOf(text);
+            selectChannel(channelSelect.Text);
         }
     }
 }
