@@ -577,6 +577,7 @@ namespace RobloxStudioModManager
                 return;
 
             selectChannel(channelSelect.Text);
+            e.SuppressKeyPress = true;
         }
     }
 }
