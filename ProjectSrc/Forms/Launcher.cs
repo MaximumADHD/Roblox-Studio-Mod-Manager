@@ -532,42 +532,49 @@ namespace RobloxStudioModManager
                 return;
             }
             
-            bool valid = false;
             var channel = new Channel(text);
 
             try
             {
-                var getInfo = StudioDeployLogs.Get(channel);
-                await getInfo.ConfigureAwait(true);
-                valid = true;
+                var logs = await StudioDeployLogs
+                    .Get(channel)
+                    .ConfigureAwait(true);
+
+                bool valid = Environment.Is64BitOperatingSystem
+                    ? logs.CurrentLogs_x64.Any()
+                    : logs.CurrentLogs_x86.Any();
+
+                if (valid)
+                {
+                    var setItem = new Action(() =>
+                    {
+                        int index = channelSelect.Items.Add(text);
+                        channelSelect.SelectedIndex = index;
+                    });
+
+                    Program.State.Channel = channel;
+                    Program.SaveState();
+
+                    Invoke(setItem);
+                    return;
+                }
+                
+                throw new Exception("No channels to work with!");
             }
             catch
             {
+                var reset = new Action(() => channelSelect.SelectedIndex = 0);
+
                 MessageBox.Show
                 (
-                    $"Channel '{channel}' is not a known channel on Roblox's servers!",
+                    $"Channel '{channel}' had no valid data on Roblox's CDN!",
                     "Invalid channel!",
 
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
 
-                var resetIndex = new Action(() => channelSelect.SelectedIndex = 0);
-                Invoke(resetIndex);
-            }
-
-            if (valid)
-            {
-                var setItem = new Action(() =>
-                {
-                    int index = channelSelect.Items.Add(text);
-                    channelSelect.SelectedIndex = index;
-                });
-
-                Program.State.Channel = channel;
-                Program.SaveState();
-
-                Invoke(setItem);
+                Invoke(reset);
             }
         }
 
