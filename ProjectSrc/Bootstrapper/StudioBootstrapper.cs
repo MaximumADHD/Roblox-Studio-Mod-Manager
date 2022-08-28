@@ -111,7 +111,7 @@ namespace RobloxStudioModManager
             }
         }
 
-        public Channel Channel { get; set; } = "zLive";
+        public Channel Channel { get; set; } = "LIVE";
         public string OverrideStudioDirectory { get; set; } = "";
 
         public bool CanShutdownStudio { get; set; } = true;
@@ -444,7 +444,7 @@ namespace RobloxStudioModManager
             echo($"Verifying availability of: {package.Name}");
 
             string pkgName = package.Name;
-            var zipFileUrl = new Uri($"https://setup.rbxcdn.com/channel/{Channel}/{buildVersion}-{pkgName}");
+            var zipFileUrl = new Uri($"{Channel.BaseUrl}/{buildVersion}-{pkgName}");
 
             var request = WebRequest.Create(zipFileUrl) as HttpWebRequest;
             request.Headers.Set("UserAgent", UserAgent);
@@ -465,7 +465,7 @@ namespace RobloxStudioModManager
         {
             byte[] result = null;
             string pkgName = package.Name;
-            string zipFileUrl = $"https://setup.rbxcdn.com/channel/{Channel}/{buildVersion}-{pkgName}";
+            string zipFileUrl = $"{Channel.BaseUrl}/{buildVersion}-{pkgName}";
 
             using (var localHttp = new WebClient())
             {

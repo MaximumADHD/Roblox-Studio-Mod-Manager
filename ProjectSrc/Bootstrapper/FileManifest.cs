@@ -64,7 +64,7 @@ namespace RobloxStudioModManager
             Channel channel = info.Channel;
             string versionGuid = info.VersionGuid;
 
-            string fileManifestUrl = $"https://setup.rbxcdn.com/channel/{channel}/{versionGuid}-rbxManifest.txt";
+            string fileManifestUrl = $"{channel.BaseUrl}/{versionGuid}-rbxManifest.txt";
             string fileManifestData;
 
             using (WebClient http = new WebClient())

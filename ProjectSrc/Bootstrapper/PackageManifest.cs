@@ -75,7 +75,7 @@ namespace RobloxStudioModManager
             Channel channel = info.Channel;
             string versionGuid = info.VersionGuid;
 
-            string pkgManifestUrl = $"https://setup.rbxcdn.com/channel/{channel}/{versionGuid}-rbxPkgManifest.txt";
+            string pkgManifestUrl = $"{channel.BaseUrl}/{versionGuid}-rbxPkgManifest.txt";
             string pkgManifestData;
 
             using (WebClient http = new WebClient())

@@ -14,7 +14,7 @@ namespace RobloxStudioModManager
 
     public class VersionManifest
     {
-        public string Channel = "zLive";
+        public string Channel = "LIVE";
         public string Version = "";
 
         public string VersionGuid = "";
@@ -42,7 +42,7 @@ namespace RobloxStudioModManager
 
     public class ModManagerState : IBootstrapperState
     {
-        public string Channel { get; set; } = "zLive";
+        public string Channel { get; set; } = "LIVE";
         public string TargetVersion { get; set; } = "";
 
         public bool DisableFlagWarning { get; set; } = false;

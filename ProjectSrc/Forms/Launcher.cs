@@ -495,7 +495,7 @@ namespace RobloxStudioModManager
             }
             
             // If the target isn't valid, fallback to live.
-            targetVersion.Text = "zLive";
+            targetVersion.Text = "LIVE";
         }
 
         private void targetVersion_SelectedIndexChanged(object sender, EventArgs e)

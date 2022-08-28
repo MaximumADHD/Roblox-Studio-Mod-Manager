@@ -80,7 +80,7 @@
             this.channelSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.channelSelect.FormattingEnabled = true;
             this.channelSelect.Items.AddRange(new object[] {
-            "zLive",
+            "LIVE",
             "zCanary",
             "zIntegration",
             "zQtitanStudioRelease"});
