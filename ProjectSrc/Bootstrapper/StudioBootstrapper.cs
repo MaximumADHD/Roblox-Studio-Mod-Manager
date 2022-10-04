@@ -1025,6 +1025,7 @@ namespace RobloxStudioModManager
                         File.WriteAllText(versionGuidPath, buildVersion);
 
                         echo("Dumping API...");
+                        await Task.Delay(2000);
 
                         string studioPath = GetLocalStudioPath();
                         string apiPath = Path.Combine(studioDir, "API-Dump.json");
