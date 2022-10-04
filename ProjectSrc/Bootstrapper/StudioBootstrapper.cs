@@ -300,6 +300,9 @@ namespace RobloxStudioModManager
 
             foreach (string fileName in fileNames)
             {
+                if (fileName == null)
+                    continue;
+
                 string filePath = Path.Combine(studioDir, fileName);
                 string lookupKey = fileName;
 
@@ -389,16 +392,19 @@ namespace RobloxStudioModManager
                 .Get(channel)
                 .ConfigureAwait(false);
 
-            DeployLog build_x86 = logData.CurrentLogs_x86.Last();
-            DeployLog build_x64 = logData.CurrentLogs_x64.Last();
+            DeployLog build_x86 = logData.CurrentLogs_x86.LastOrDefault();
+            DeployLog build_x64 = logData.CurrentLogs_x64.LastOrDefault();
 
             if (is64Bit)
                 info = new ClientVersionInfo(build_x64);
             else
                 info = new ClientVersionInfo(build_x86);
 
-            versionRegistry.LatestGuid_x64 = build_x64.VersionGuid;
-            versionRegistry.LatestGuid_x86 = build_x86.VersionGuid;
+            if (build_x86 != null)
+                versionRegistry.LatestGuid_x86 = build_x86.VersionGuid;
+            
+            if (build_x64 != null)
+                versionRegistry.LatestGuid_x64 = build_x64.VersionGuid;
             
             return info;
         }

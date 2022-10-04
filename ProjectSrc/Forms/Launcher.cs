@@ -5,7 +5,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Media;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using RobloxDeployHistory;
@@ -452,7 +451,7 @@ namespace RobloxStudioModManager
 
             // Grab the version currently being targetted.
             string targetId = Program.State.TargetVersion;
-            var latest = "(Use Latest)";
+            const string latest = "(Use Latest)";
 
             // Clear the current list of target items.
             targetVersion.Items.Clear();
@@ -475,14 +474,20 @@ namespace RobloxStudioModManager
             else
                 targets = deployLogs.CurrentLogs_x86;
 
-            var items = targets
-                .OrderByDescending(log => log.TimeStamp)
-                .Cast<object>()
-                .ToArray();
 
-            targetVersion.SelectedItem = latest;
-            targetVersion.Items.AddRange(items);
+            targetVersion.Enabled = deployLogs.HasHistory;
+            targetVersionLabel.Enabled = deployLogs.HasHistory;
 
+            if (deployLogs.HasHistory)
+            {
+                var items = targets
+                    .OrderByDescending(log => log.TimeStamp)
+                    .Cast<object>()
+                    .ToArray();
+
+                targetVersion.Items.AddRange(items);
+            }
+            
             // Select the deploy log being targetted.
             DeployLog target = targets
                 .Where(log => log.VersionId == targetId)
@@ -493,9 +498,9 @@ namespace RobloxStudioModManager
                 targetVersion.SelectedItem = target;
                 return;
             }
-            
+
             // If the target isn't valid, fallback to live.
-            targetVersion.Text = "LIVE";
+            targetVersion.SelectedItem = latest;
         }
 
         private void targetVersion_SelectedIndexChanged(object sender, EventArgs e)
