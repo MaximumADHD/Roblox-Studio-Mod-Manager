@@ -14,59 +14,44 @@ namespace RobloxStudioModManager
 
         private PackageManifest(string data)
         {
-            using (var reader = new StringReader(data))
+            using (StringReader reader = new StringReader(data))
             {
                 string version = reader.ReadLine();
 
                 if (version != "v0")
+                    throw new NotSupportedException($"Unexpected package manifest version: {version} (expected v0!)");
+
+                while (true)
                 {
-                    string errorMsg = $"Unexpected package manifest version: {version} (expected v0!)\n" +
-                                       "Please contact MaximumADHD if you see this error.";
+                    string fileName = reader.ReadLine();
+                    string signature = reader.ReadLine();
 
-                    throw new NotSupportedException(errorMsg);
-                }
+                    string rawPackedSize = reader.ReadLine();
+                    string rawSize = reader.ReadLine();
 
-                bool eof = false;
-
-                var readLine = new Func<string>(() =>
-                {
-                    string line = reader.ReadLine();
-
-                    if (line == null)
-                        eof = true;
-
-                    return line;
-                });
-
-                while (!eof)
-                {
-                    string fileName = readLine();
-                    string signature = readLine();
-
-                    string rawPackedSize = readLine();
-                    string rawSize = readLine();
-
-                    if (eof)
+                    if (string.IsNullOrEmpty(fileName) ||
+                        string.IsNullOrEmpty(signature) ||
+                        string.IsNullOrEmpty(rawPackedSize) ||
+                        string.IsNullOrEmpty(rawSize))
                         break;
 
-                    if (!int.TryParse(rawPackedSize, out int packedSize))
+                    // ignore launcher
+                    if (fileName == "RobloxPlayerLauncher.exe")
                         break;
 
-                    if (!int.TryParse(rawSize, out int size))
-                        break;
+                    int packedSize = int.Parse(rawPackedSize);
+                    int size = int.Parse(rawSize);
 
-                    var package = new Package()
+                    Add(new Package
                     {
                         Name = fileName,
                         Signature = signature,
                         PackedSize = packedSize,
                         Size = size
-                    };
-
-                    Add(package);
+                    });
                 }
             }
-            
+
             RawData = data;
         }
 
