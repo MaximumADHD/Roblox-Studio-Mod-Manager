@@ -1029,9 +1029,13 @@ namespace RobloxStudioModManager
 
                         string studioPath = GetLocalStudioPath();
                         string apiPath = Path.Combine(studioDir, "API-Dump.json");
+                        string fullApiPath = Path.Combine(studioDir, "Full-API-Dump.json");
 
                         var dumpApi = Process.Start(studioPath, $"-API \"{apiPath}\"");
+                        var dumpFullApi = Process.Start(studioPath, $"-FullAPI \"{fullApiPath}\"");
+
                         dumpApi.WaitForExit();
+                        dumpFullApi.WaitForExit();
                     }
 
                     ProgressBarStyle = ProgressBarStyle.Marquee;
