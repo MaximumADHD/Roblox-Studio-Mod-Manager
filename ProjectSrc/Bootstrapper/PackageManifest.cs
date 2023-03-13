@@ -55,6 +55,9 @@ namespace RobloxStudioModManager
                     if (!int.TryParse(rawSize, out int size))
                         break;
 
+                    if (!fileName.EndsWith(".zip"))
+                        continue;
+
                     var package = new Package()
                     {
                         Name = fileName,
