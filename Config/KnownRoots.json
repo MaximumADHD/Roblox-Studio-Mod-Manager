@@ -64,6 +64,12 @@
         "BadManifest": false,
         "MinVersion": 0
     },
+    
+    "extracontent-models": {
+        "ExtractTo": "ExtraContent/models",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
 
     "content-sky": {
         "ExtractTo": "content/sky",
@@ -109,6 +115,12 @@
 
     "content-textures2": {
         "ExtractTo": "content/textures",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+
+    "content-studio_svg_textures": {
+        "ExtractTo": "content/studio_svg_textures",
         "BadManifest": false,
         "MinVersion": 0
     },
@@ -168,6 +180,12 @@
     },
 
     "RobloxStudio": {
+        "ExtractTo": "",
+        "BadManifest": false,
+        "MinVersion": 0
+    },
+    
+    "WebView2RuntimeInstaller": {
         "ExtractTo": "",
         "BadManifest": false,
         "MinVersion": 0
