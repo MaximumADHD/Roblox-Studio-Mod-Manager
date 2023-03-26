@@ -252,9 +252,10 @@ namespace RobloxStudioModManager
                 string filePath = Path.Combine(studioDir, fileName);
                 string lookupKey = fileName;
 
-                foreach (string pkgName in BadManifests)
-                    if (fileName.StartsWith(pkgName, Program.StringFormat))
-                        lookupKey = fileName.Substring(pkgName.Length + 1);
+                if (!fileManifest.ContainsKey(fileName))
+                    foreach (string pkgName in BadManifests)
+                        if (fileName.StartsWith(pkgName, Program.StringFormat))
+                            lookupKey = fileName.Substring(pkgName.Length + 1);
 
                 if (!fileManifest.ContainsKey(lookupKey))
                 {
