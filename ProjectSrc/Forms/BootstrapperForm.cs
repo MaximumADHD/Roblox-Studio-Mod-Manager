@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Diagnostics.Contracts;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -10,6 +12,7 @@ namespace RobloxStudioModManager
     public partial class BootstrapperForm : Form
     {
         public StudioBootstrapper Bootstrapper { get; private set; }
+        private ConcurrentBag<string> logQueue = new ConcurrentBag<string>();
         private readonly bool exitOnClose = false;
 
         public BootstrapperForm(StudioBootstrapper bootstrapper, bool exitWhenClosed = false)
@@ -20,11 +23,8 @@ namespace RobloxStudioModManager
             Bootstrapper = bootstrapper;
             exitOnClose = exitWhenClosed;
 
-            bootstrapper.EchoFeed += new MessageEventHandler(Bootstrapper_EchoFeed);
-            bootstrapper.StatusChanged += new MessageEventHandler(Bootstrapper_StatusChanged);
-
-            bootstrapper.ProgressChanged += new ChangeEventHandler<int>(Bootstrapper_ProgressChanged);
-            bootstrapper.ProgressBarStyleChanged += new ChangeEventHandler<ProgressBarStyle>(Bootstrapper_ProgressBarStyleChanged);
+            bootstrapper.EchoFeed += new MessageFeed(echo);
+            bootstrapper.StatusFeed += new MessageFeed(setStatus);
 
             Show();
             BringToFront();
@@ -34,6 +34,33 @@ namespace RobloxStudioModManager
         {
             var state = Program.State;
             var targetVersion = state.TargetVersion;
+
+            progressTimer.Tick += new EventHandler((sender, args) =>
+            {
+                var progress = Bootstrapper.Progress;
+                progressBar.Style = Bootstrapper.ProgressBarStyle;
+
+                var maxProgress = Bootstrapper.MaxProgress;
+                progressBar.Maximum = maxProgress;
+
+                if (progress > maxProgress)
+                {
+                    progressBar.Value = Math.Max(0, maxProgress - 1);
+                    return;
+                }
+
+                if (!logQueue.IsEmpty)
+                {
+                    string blob = string.Join("\n", logQueue) + '\n';
+                    var newQueue = new ConcurrentBag<string>();
+
+                    Interlocked.Exchange(ref logQueue, newQueue);
+                    log.AppendText(blob);
+                }
+
+                progressBar.Value = Math.Min(progress, maxProgress);
+                Refresh();
+            });
 
             var bootstrap = Bootstrapper.Bootstrap(targetVersion);
             await bootstrap.ConfigureAwait(true);
@@ -75,105 +102,24 @@ namespace RobloxStudioModManager
             }
         }
 
-        private void UpdateStatusMetric()
-        {
-            string text = "";
-
-            if (progressBar.Style == ProgressBarStyle.Continuous)
-            {
-                int progress = progressBar.Value;
-                int progressMax = progressBar.Maximum;
-
-                text = $"(Progress Metric: {progress}/{progressMax})";
-            }
-
-            if (progressMetric.Text == text)
-                return;
-
-            progressMetric.Text = text;
-            progressMetric.Refresh();
-        }
-
-        private void Bootstrapper_StatusChanged(object sender, MessageEventArgs e)
+        private void setStatus(string status)
         {
             if (statusLbl.InvokeRequired)
             {
-                var inThread = new MessageEventHandler(Bootstrapper_StatusChanged);
-                statusLbl.Invoke(inThread, sender, e);
+                var action = new Action<string>(setStatus);
+                statusLbl.Invoke(action, status);
             }
             else
             {
-                statusLbl.Text = e.Message;
+                statusLbl.Text = status;
                 statusLbl.Refresh();
-
                 BringToFront();
-                UpdateStatusMetric();
             }
         }
 
-        private void Bootstrapper_EchoFeed(object sender, MessageEventArgs e)
+        private void echo(string msg)
         {
-            if (log.InvokeRequired)
-            {
-                var inThread = new MessageEventHandler(Bootstrapper_EchoFeed);
-                log.Invoke(inThread, sender, e);
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(log.Text))
-                    log.AppendText("\n");
-
-                log.AppendText(e.Message);
-            }
-        }
-
-        private void Bootstrapper_ProgressChanged(object sender, ChangeEventArgs<int> e)
-        {
-            if (progressBar.InvokeRequired)
-            {
-                var inThread = new ChangeEventHandler<int>(Bootstrapper_ProgressChanged);
-                progressBar.Invoke(inThread, sender, e);
-            }
-            else
-            {
-                int value = e.Value;
-                var context = e.Context;
-
-                switch (context)
-                {
-                    case "Progress":
-                    {
-                        progressBar.Value = Math.Min(value, progressBar.Maximum);
-                        break;
-                    }
-                    case "MaxProgress":
-                    {
-                        if (progressBar.Value > value)
-                            progressBar.Value = (value - 1);
-
-                        progressBar.Maximum = value;
-                        break;
-                    }
-                }
-
-                UpdateStatusMetric();
-            }
-        }
-
-        private void Bootstrapper_ProgressBarStyleChanged(object sender, ChangeEventArgs<ProgressBarStyle> e)
-        {
-            if (progressBar.InvokeRequired)
-            {
-                var inThread = new ChangeEventHandler<ProgressBarStyle>(Bootstrapper_ProgressBarStyleChanged);
-                progressBar.Invoke(inThread, sender, e);
-            }
-            else
-            {
-                var style = e.Value;
-                progressBar.Style = style;
-
-                UpdateStatusMetric();
-            }
+            logQueue.Add(msg);
         }
 
         private void BootstrapperForm_FormClosed(object sender, FormClosedEventArgs e)

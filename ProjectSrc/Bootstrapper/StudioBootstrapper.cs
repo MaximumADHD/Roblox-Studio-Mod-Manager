@@ -16,6 +16,8 @@ using Konscious.Security.Cryptography;
 
 namespace RobloxStudioModManager
 {
+    public delegate void MessageFeed(string message);
+
     public class StudioBootstrapper
     {
         [DllImport("user32.dll")]
@@ -34,11 +36,8 @@ namespace RobloxStudioModManager
         private const string UserAgent = "RobloxStudioModManager";
         public const string StartEvent = "RobloxStudioModManagerStart";
 
-        public event MessageEventHandler EchoFeed;
-        public event MessageEventHandler StatusChanged;
-
-        public event ChangeEventHandler<int> ProgressChanged;
-        public event ChangeEventHandler<ProgressBarStyle> ProgressBarStyleChanged;
+        public event MessageFeed EchoFeed;
+        public event MessageFeed StatusFeed;
 
         private readonly IBootstrapperState mainState;
         private readonly VersionManifest versionRegistry;
@@ -52,64 +51,13 @@ namespace RobloxStudioModManager
         private string buildVersion;
         private string status;
 
-        private int _progress = -1;
-        private int _maxProgress = -1;
-        private ProgressBarStyle _progressBarStyle;
-        private readonly object ProgressLock = new object();
-
         public static readonly List<string> BadManifests = new List<string>();
         public static readonly Dictionary<string, string> KnownRoots = new Dictionary<string, string>();
-        
-        public int Progress
-        {
-            get => _progress;
 
-            private set
-            {
-                if (_progress == value)
-                    return;
-
-                var change = new ChangeEventArgs<int>(value, "Progress");
-                ProgressChanged?.Invoke(this, change);
-
-                _progress = value;
-            }
-        }
-
-        public int MaxProgress
-        {
-            get => _maxProgress;
-
-            private set
-            {
-                if (_maxProgress == value)
-                    return;
-
-                if (value < Progress)
-                    return;
-
-                var change = new ChangeEventArgs<int>(value, "MaxProgress");
-                ProgressChanged?.Invoke(this, change);
-
-                _maxProgress = value;
-            }
-        }
-
-        public ProgressBarStyle ProgressBarStyle
-        {
-            get => _progressBarStyle;
-
-            private set
-            {
-                if (_progressBarStyle == value)
-                    return;
-
-                var change = new ChangeEventArgs<ProgressBarStyle>(value);
-                ProgressBarStyleChanged?.Invoke(this, change);
-
-                _progressBarStyle = value;
-            }
-        }
+        public int Progress = 0;
+        public int MaxProgress = 0;
+        public ProgressBarStyle ProgressBarStyle = ProgressBarStyle.Continuous;
+        public object ProgressLock = new object();
 
         public Channel Channel { get; set; } = "LIVE";
         public string OverrideStudioDirectory { get; set; } = "";
@@ -149,16 +97,14 @@ namespace RobloxStudioModManager
 
         private void echo(string message)
         {
-            var args = new MessageEventArgs(message);
-            EchoFeed(this, args);
+            EchoFeed.Invoke(message);
         }
 
         private void setStatus(string newStatus)
         {
             if (status != newStatus)
             {
-                var args = new MessageEventArgs(newStatus);
-                StatusChanged(this, args);
+                StatusFeed?.Invoke(newStatus);
                 status = newStatus;
             }
         }
@@ -481,22 +427,19 @@ namespace RobloxStudioModManager
 
                 localHttp.DownloadProgressChanged += new DownloadProgressChangedEventHandler((sender, e) =>
                 {
-                    lock (ProgressLock)
+                    if (!setMaxProgress)
                     {
-                        if (!setMaxProgress)
-                        {
-                            MaxProgress += (int)e.TotalBytesToReceive;
-                            setMaxProgress = true;
-                        }
+                        MaxProgress += (int)e.TotalBytesToReceive;
+                        setMaxProgress = true;
+                    }
 
-                        int progress = (int)e.BytesReceived;
+                    int progress = (int)e.BytesReceived;
 
-                        if (progress > lastProgress)
-                        {
-                            int diff = progress - lastProgress;
-                            lastProgress = progress;
-                            Progress += diff;
-                        }
+                    if (progress > lastProgress)
+                    {
+                        int diff = progress - lastProgress;
+                        lastProgress = progress;
+                        Progress += diff;
                     }
                 });
 
@@ -504,7 +447,7 @@ namespace RobloxStudioModManager
                 
                 var getFile = localHttp.DownloadDataTaskAsync(zipFileUrl);
                 byte[] fileContents = await getFile.ConfigureAwait(false);
-                    
+                
                 // If the size of the file we downloaded does not match the packed 
                 // size specified in the manifest, then this file isn't valid.
 
@@ -532,11 +475,15 @@ namespace RobloxStudioModManager
             string downloads = getDirectory(studioDir, "downloads");
             string zipExtractPath = Path.Combine(downloads, pkgName);
 
+            echo($"Writing {zipExtractPath}...");
             File.WriteAllBytes(zipExtractPath, data);
 
             using (var archive = ZipFile.OpenRead(zipExtractPath))
             {
                 var deferred = new Dictionary<ZipArchiveEntry, string>();
+
+                lock (ProgressLock)
+                    MaxProgress += archive.Entries.Count;
 
                 int numFiles = archive.Entries
                     .Select(entry => entry.FullName)
@@ -551,6 +498,7 @@ namespace RobloxStudioModManager
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
                     bool skip = false;
+                    Progress++;
 
                     if (entry.Length == 0)
                         skip = true;
@@ -563,7 +511,7 @@ namespace RobloxStudioModManager
 
                     if (skip)
                         continue;
-                    
+
                     string newFileSig = null;
                     string entryPath = entry.FullName.Replace('/', '\\');
 
@@ -592,8 +540,16 @@ namespace RobloxStudioModManager
                     }
                     else
                     {
-                        var query = fileManifest.Where(pair => pair.Key.EndsWith(entryPath, Program.StringFormat));
-                        newFileSig = query.Any() ? query.First().Value : null;
+                        if (fileManifest.ContainsKey(entryPath))
+                        {
+                            // rooted?
+                            newFileSig = fileManifest[entryPath];
+                        }
+                        else
+                        {
+                            var query = fileManifest.SkipWhile(pair => !pair.Key.EndsWith(entryPath, Program.StringFormat)).Take(1);
+                            newFileSig = query.Any() ? query.First().Value : null;
+                        }
                     }
 
                     // If we couldn't pre-determine the file signature from the manifest,
@@ -848,6 +804,7 @@ namespace RobloxStudioModManager
 
                     KnownRoots.Clear();
                     BadManifests.Clear();
+                    setStatus($"Fetching Known Roots...");
 
                     using (var http = new WebClient())
                     {
@@ -878,7 +835,7 @@ namespace RobloxStudioModManager
                         }
                     }
 
-                    setStatus($"Installing Version {versionId} of Roblox Studio...");
+                    setStatus($"Installing Packages...");
                     echo("Grabbing package manifest...");
 
                     var pkgManifest = await PackageManifest
@@ -905,6 +862,7 @@ namespace RobloxStudioModManager
                     MaxProgress = 0;
                     ProgressBarStyle = ProgressBarStyle.Continuous;
 
+                    // Verify all of these packages are available to install.
                     foreach (Package package in pkgManifest)
                     {
                         package.ShouldInstall = shouldFetchPackage(package);
@@ -930,6 +888,7 @@ namespace RobloxStudioModManager
 
                     taskQueue.Clear();
 
+                    // Install packages, abort if any of them don't exist.
                     foreach (Package package in pkgManifest)
                     {
                         if (!package.Exists)
@@ -954,8 +913,6 @@ namespace RobloxStudioModManager
                         {
                             var install = installPackage(package);
                             package.Data = await install.ConfigureAwait(false);
-
-                            extractPackage(package);
                             return true;
                         });
 
@@ -966,6 +923,7 @@ namespace RobloxStudioModManager
                         .WhenAll(taskQueue)
                         .ConfigureAwait(true);
 
+                    // Make sure the packages were installed without errors.
                     foreach (var task in taskQueue)
                     {
                         bool passed = true;
@@ -990,15 +948,20 @@ namespace RobloxStudioModManager
                         }
                     }
                     
+                    // Extract all of the packages
+                    setStatus($"Extracting Packages...");
                     taskQueue.Clear();
+
+                    Progress = 0;
+                    MaxProgress = 0;
 
                     foreach (Package package in pkgManifest)
                     {
-                        if (!package.ShouldInstall)
-                            continue;
-
-                        var extract = Task.Run(() => extractPackage(package));
-                        taskQueue.Add(extract);
+                        if (package.ShouldInstall)
+                        {
+                            var extract = Task.Run(() => extractPackage(package));
+                            taskQueue.Add(extract);
+                        }
                     }
 
                     await Task
@@ -1100,10 +1063,14 @@ namespace RobloxStudioModManager
                 // Feel free to patch in your own thing if you want.
 
 #               if ROBLOX_INTERNAL
-                var rbxInternal = Task.Run(() => RobloxInternal.Patch(this));
-                await rbxInternal.ConfigureAwait(false);
+                    var rbxInternal = Task.Run(() => RobloxInternal.Patch(this));
+                    await rbxInternal.ConfigureAwait(false);
 #               endif
             }
+
+            ProgressBarStyle = ProgressBarStyle.Marquee;
+            MaxProgress = 1;
+            Progress = 1;
 
             setStatus("Starting Roblox Studio...");
             echo("Roblox Studio is up to date!");
@@ -1132,6 +1099,7 @@ namespace RobloxStudioModManager
                 });
             }
 
+            await Task.Delay(1000);
             return true;
         }
     }

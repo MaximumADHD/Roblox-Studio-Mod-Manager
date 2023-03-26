@@ -4,10 +4,10 @@ using System.IO;
 using System.Net;
 using System.Windows.Forms;
 
-using Microsoft.Win32;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
+using Microsoft.Win32;
 
 namespace RobloxStudioModManager
 {
@@ -16,7 +16,7 @@ namespace RobloxStudioModManager
         public static readonly RegistryKey LegacyRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
         public static readonly CultureInfo Format = CultureInfo.InvariantCulture;
 
-        public const StringComparison StringFormat = StringComparison.InvariantCulture;
+        public const StringComparison StringFormat = StringComparison.Ordinal;
         public static readonly NumberFormatInfo NumberFormat = NumberFormatInfo.InvariantInfo;
 
         public static string RootDir { get; private set; }

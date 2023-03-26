@@ -112,7 +112,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\*.cs" />
     <Compile Include="Forms\FlagCreator.cs">
       <SubType>Form</SubType>
     </Compile>

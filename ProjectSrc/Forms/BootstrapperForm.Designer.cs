@@ -28,11 +28,12 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.logo = new System.Windows.Forms.PictureBox();
             this.statusLbl = new System.Windows.Forms.Label();
             this.log = new System.Windows.Forms.RichTextBox();
-            this.progressMetric = new System.Windows.Forms.Label();
+            this.progressTimer = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.logo)).BeginInit();
             this.SuspendLayout();
             // 
@@ -40,11 +41,11 @@
             // 
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar.Location = new System.Drawing.Point(9, 291);
-            this.progressBar.Margin = new System.Windows.Forms.Padding(2);
+            this.progressBar.Location = new System.Drawing.Point(6, 194);
+            this.progressBar.Margin = new System.Windows.Forms.Padding(1);
             this.progressBar.MarqueeAnimationSpeed = 1;
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(873, 44);
+            this.progressBar.Size = new System.Drawing.Size(582, 29);
             this.progressBar.Step = 0;
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
             this.progressBar.TabIndex = 1;
@@ -58,9 +59,10 @@
             this.logo.BackgroundImage = global::RobloxStudioModManager.Properties.Resources.Logo;
             this.logo.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.logo.InitialImage = global::RobloxStudioModManager.Properties.Resources.Logo;
-            this.logo.Location = new System.Drawing.Point(9, 12);
+            this.logo.Location = new System.Drawing.Point(6, 8);
+            this.logo.Margin = new System.Windows.Forms.Padding(2);
             this.logo.Name = "logo";
-            this.logo.Size = new System.Drawing.Size(182, 229);
+            this.logo.Size = new System.Drawing.Size(121, 153);
             this.logo.TabIndex = 9;
             this.logo.TabStop = false;
             this.logo.WaitOnLoad = true;
@@ -70,10 +72,10 @@
             this.statusLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.statusLbl.AutoSize = true;
             this.statusLbl.Font = new System.Drawing.Font("Segoe UI Light", 16F);
-            this.statusLbl.Location = new System.Drawing.Point(0, 244);
+            this.statusLbl.Location = new System.Drawing.Point(0, 163);
             this.statusLbl.Margin = new System.Windows.Forms.Padding(0);
             this.statusLbl.Name = "statusLbl";
-            this.statusLbl.Size = new System.Drawing.Size(327, 45);
+            this.statusLbl.Size = new System.Drawing.Size(225, 30);
             this.statusLbl.TabIndex = 11;
             this.statusLbl.Text = "Checking for updates...";
             this.statusLbl.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -86,31 +88,23 @@
             this.log.BackColor = System.Drawing.Color.White;
             this.log.Font = new System.Drawing.Font("Consolas", 8.25F);
             this.log.ForeColor = System.Drawing.Color.Black;
-            this.log.Location = new System.Drawing.Point(197, 12);
+            this.log.Location = new System.Drawing.Point(131, 8);
+            this.log.Margin = new System.Windows.Forms.Padding(2);
             this.log.Name = "log";
             this.log.ReadOnly = true;
-            this.log.Size = new System.Drawing.Size(685, 229);
+            this.log.Size = new System.Drawing.Size(458, 154);
             this.log.TabIndex = 12;
             this.log.Text = "";
             // 
-            // progressMetric
+            // progressTimer
             // 
-            this.progressMetric.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.progressMetric.AutoSize = true;
-            this.progressMetric.BackColor = System.Drawing.Color.Transparent;
-            this.progressMetric.Font = new System.Drawing.Font("Segoe UI Light", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.progressMetric.Location = new System.Drawing.Point(4, 339);
-            this.progressMetric.Name = "progressMetric";
-            this.progressMetric.Size = new System.Drawing.Size(52, 25);
-            this.progressMetric.TabIndex = 13;
-            this.progressMetric.Text = "0/100";
+            this.progressTimer.Enabled = true;
             // 
             // BootstrapperForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(894, 373);
-            this.Controls.Add(this.progressMetric);
+            this.ClientSize = new System.Drawing.Size(596, 249);
             this.Controls.Add(this.log);
             this.Controls.Add(this.statusLbl);
             this.Controls.Add(this.logo);
@@ -119,8 +113,8 @@
             this.Font = new System.Drawing.Font("Consolas", 8.25F);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = global::RobloxStudioModManager.Properties.Resources.Icon;
-            this.Margin = new System.Windows.Forms.Padding(2);
-            this.MinimumSize = new System.Drawing.Size(668, 288);
+            this.Margin = new System.Windows.Forms.Padding(1);
+            this.MinimumSize = new System.Drawing.Size(451, 205);
             this.Name = "BootstrapperForm";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -140,6 +134,6 @@
         private System.Windows.Forms.PictureBox logo;
         private System.Windows.Forms.Label statusLbl;
         private System.Windows.Forms.RichTextBox log;
-        private System.Windows.Forms.Label progressMetric;
+        private System.Windows.Forms.Timer progressTimer;
     }
 }
