@@ -39,6 +39,7 @@
             this.targetVersionLabel = new System.Windows.Forms.Label();
             this.title = new System.Windows.Forms.Label();
             this.targetVersion = new System.Windows.Forms.ComboBox();
+            this.releaseTag = new System.Windows.Forms.Label();
             this.logo = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.logo)).BeginInit();
             this.SuspendLayout();
@@ -88,7 +89,6 @@
             this.channelSelect.Name = "channelSelect";
             this.channelSelect.Size = new System.Drawing.Size(152, 21);
             this.channelSelect.TabIndex = 10;
-            this.channelSelect.Text = "";
             this.channelSelect.SelectedIndexChanged += new System.EventHandler(this.channelSelect_SelectedIndexChanged);
             this.channelSelect.KeyDown += new System.Windows.Forms.KeyEventHandler(this.channelSelect_KeyDown);
             // 
@@ -178,11 +178,10 @@
             // 
             // title
             // 
-            this.title.AutoSize = true;
             this.title.Font = new System.Drawing.Font("Segoe UI Light", 20F);
-            this.title.Location = new System.Drawing.Point(136, 27);
+            this.title.Location = new System.Drawing.Point(135, 18);
             this.title.Name = "title";
-            this.title.Size = new System.Drawing.Size(176, 74);
+            this.title.Size = new System.Drawing.Size(176, 88);
             this.title.TabIndex = 20;
             this.title.Text = "Roblox Studio\r\nMod Manager";
             this.title.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -201,6 +200,17 @@
             this.targetVersion.TabIndex = 18;
             this.targetVersion.SelectedIndexChanged += new System.EventHandler(this.targetVersion_SelectedIndexChanged);
             // 
+            // releaseTag
+            // 
+            this.releaseTag.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.releaseTag.AutoSize = true;
+            this.releaseTag.ForeColor = System.Drawing.Color.DarkGray;
+            this.releaseTag.Location = new System.Drawing.Point(266, 5);
+            this.releaseTag.Name = "releaseTag";
+            this.releaseTag.Size = new System.Drawing.Size(67, 13);
+            this.releaseTag.TabIndex = 23;
+            this.releaseTag.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
             // logo
             // 
             this.logo.BackgroundImage = global::RobloxStudioModManager.Properties.Resources.Logo;
@@ -218,6 +228,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ClientSize = new System.Drawing.Size(335, 250);
+            this.Controls.Add(this.releaseTag);
             this.Controls.Add(this.logo);
             this.Controls.Add(this.title);
             this.Controls.Add(this.targetVersion);
@@ -257,6 +268,7 @@
         private System.Windows.Forms.Label targetVersionLabel;
         private System.Windows.Forms.Label title;
         private System.Windows.Forms.ComboBox targetVersion;
+        private System.Windows.Forms.Label releaseTag;
         private System.Windows.Forms.PictureBox logo;
     }
 }

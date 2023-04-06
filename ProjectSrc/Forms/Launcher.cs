@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Media;
+using System.Net;
 using System.Windows.Forms;
 
 using RobloxDeployHistory;
@@ -15,6 +16,7 @@ namespace RobloxStudioModManager
     {
         private static VersionManifest versionRegistry => Program.State.VersionData;
         private readonly string[] args = null;
+        private bool prompting = false;
 
         public Launcher(params string[] mainArgs)
         {
@@ -22,12 +24,39 @@ namespace RobloxStudioModManager
                 args = mainArgs;
 
             InitializeComponent();
+            releaseTag.Text = Program.ReleaseTag;
         }
 
         private Channel getSelectedChannel()
         {
             var result = channelSelect.SelectedItem;
             return result.ToString();
+        }
+
+        private void promptNewRelease(string releaseTag)
+        {
+            prompting = true;
+            Enabled = false;
+
+            DialogResult result = MessageBox.Show
+            (
+                "There's a new version of the mod manager available!\n" +
+                "This version is likely broken or no longer supported.\n" +
+                "Would you like to check it out?",
+
+                "Update available!",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Information
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                Process.Start($"https://www.github.com/{Program.RepoOwner}/{Program.RepoName}/releases/tag/{releaseTag}");
+                Application.Exit();
+            }
+
+            prompting = false;
+            Enabled = true;
         }
 
         private async void Launcher_Load(object sender, EventArgs e)
@@ -52,6 +81,30 @@ namespace RobloxStudioModManager
             });
 
             Invoke(setChannels);
+
+            using (var http = new WebClient())
+            {
+                var get = http.DownloadStringTaskAsync(Program.BaseConfigUrl + "LatestReleaseTag.txt");
+
+                await get.ContinueWith((task) =>
+                {
+                    if (task.IsFaulted)
+                    {
+                        MessageBox.Show("Could not fetch latest release tag!\nYou may not have an internet connection.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    if (!task.IsCompleted)
+                        return;
+
+                    string releaseTag = task.Result;
+
+                    if (releaseTag == Program.ReleaseTag)
+                        return;
+
+                    Invoke(new Action<string>(promptNewRelease), releaseTag);
+                });
+            }
         }
 
         public static string getModPath()
@@ -464,7 +517,9 @@ namespace RobloxStudioModManager
             var getDeployLogs = StudioDeployLogs.Get(channel);
             var deployLogs = await getDeployLogs.ConfigureAwait(true);
 
-            Enabled = true;
+            if (!prompting)
+                Enabled = true;
+
             UseWaitCursor = false;
 
             HashSet<DeployLog> targets;
@@ -473,7 +528,6 @@ namespace RobloxStudioModManager
                 targets = deployLogs.CurrentLogs_x64;
             else
                 targets = deployLogs.CurrentLogs_x86;
-
 
             targetVersion.Enabled = deployLogs.HasHistory;
             targetVersionLabel.Enabled = deployLogs.HasHistory;

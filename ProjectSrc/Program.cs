@@ -13,6 +13,13 @@ namespace RobloxStudioModManager
 {
     static class Program
     {
+        public const string RepoBranch = "main";
+        public const string RepoOwner = "MaximumADHD";
+        public const string RepoName = "Roblox-Studio-Mod-Manager";
+
+        public const string ReleaseTag = "v2023.04.06";
+        public static readonly string BaseConfigUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
+
         public static readonly RegistryKey LegacyRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
         public static readonly CultureInfo Format = CultureInfo.InvariantCulture;
 

@@ -29,10 +29,6 @@ namespace RobloxStudioModManager
         private static string AppSettings_XML;
         private static string OAuth2Config_JSON;
 
-        private const string RepoBranch = "main";
-        private const string RepoOwner = "MaximumADHD";
-        private const string RepoName = "Roblox-Studio-Mod-Manager";
-
         private const string UserAgent = "RobloxStudioModManager";
         public const string StartEvent = "RobloxStudioModManagerStart";
 
@@ -75,11 +71,8 @@ namespace RobloxStudioModManager
         {
             using (var http = new WebClient())
             {
-                var getJson = http.DownloadStringTaskAsync($"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/KnownChannels.json");
-                var json = await getJson.ConfigureAwait(false);
-
-                var result = JsonConvert.DeserializeObject<string[]>(json);
-                return result;
+                var json = await http.DownloadStringTaskAsync(Program.BaseConfigUrl + "KnownChannels.json");
+                return JsonConvert.DeserializeObject<string[]>(json);
             }
         }
 
@@ -766,7 +759,6 @@ namespace RobloxStudioModManager
             setStatus("Checking for updates");
             echo("Checking build installation...");
 
-            string baseConfigUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
             string currentVersion = versionRegistry.VersionGuid;
             string currentChannel;
 
@@ -810,7 +802,7 @@ namespace RobloxStudioModManager
                     using (var http = new WebClient())
                     {
                         var json = await http
-                            .DownloadStringTaskAsync(baseConfigUrl + "KnownRoots.json")
+                            .DownloadStringTaskAsync(Program.BaseConfigUrl + "KnownRoots.json")
                             .ConfigureAwait(false);
 
                         var knownRoots = JsonConvert.DeserializeObject<Dictionary<string, KnownRoot>>(json);
@@ -1024,8 +1016,8 @@ namespace RobloxStudioModManager
 
             using (var http = new WebClient())
             {
-                OAuth2Config_JSON = await http.DownloadStringTaskAsync(baseConfigUrl + "OAuth2Config.json");
-                AppSettings_XML = await http.DownloadStringTaskAsync(baseConfigUrl + "AppSettings.xml");
+                OAuth2Config_JSON = await http.DownloadStringTaskAsync(Program.BaseConfigUrl + "OAuth2Config.json");
+                AppSettings_XML = await http.DownloadStringTaskAsync(Program.BaseConfigUrl + "AppSettings.xml");
             }
             
             string appSettings = Path.Combine(studioDir, "AppSettings.xml");
