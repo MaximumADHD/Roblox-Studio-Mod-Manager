@@ -52,6 +52,13 @@ namespace RobloxStudioModManager
                     if (path.EndsWith(".ttf") && !path.Contains("\\"))
                         path = "StudioFonts\\" + path;
 
+                    // !! This bug only happens when remapping ExtraContent.
+                    //    I want the exception to throw if this happens in normal conditions,
+                    //    because if that happens... Roblox really fumbled the hell out of something.
+
+                    if (remapExtraContent && ContainsKey(path))
+                        continue;
+
                     Add(path, signature);
                 }
             }
