@@ -9,17 +9,15 @@
 
 # What is this?
 
-The **Roblox Studio Mod Manager** is an open-source alternative bootstrapper for Roblox Studio. It is intended for power users who want to make experimental changes/tweaks to Roblox Studio without those changes being overwritten, and experiment with development builds/features of Roblox Studio before the general public.
+The **Roblox Studio Mod Manager** is an open-source alternative bootstrapper for Roblox Studio. It is intended for power users who want to make experimental changes/tweaks to Roblox Studio without those changes being overwritten, and experiment with new features of Roblox Studio before the general public.
 
 # Features
 * File overrides are sustained between updates.
 * Updates are applied incrementally to a single directory.
-* Smooth transitions between development builds of Roblox Studio.
 * A fast flag editor, allowing you to toggle new unstable features.
 * Support for launching from the website, and from saved _RBXL_ files.
 * File updates from Roblox's deployment servers are only applied where needed.
 * Runs and installs in a separate directory, 100% independent of Roblox Studio's bootstrapper.
-* An editor for adding and editing individual class icons of Roblox Studio's class-icon sprite sheet.
 
 # ANTI-VIRUS DISCLAIMER
 
