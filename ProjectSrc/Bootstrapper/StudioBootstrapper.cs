@@ -53,6 +53,8 @@ namespace RobloxStudioModManager
         public int Progress = 0;
         public int MaxProgress = 0;
         public ProgressBarStyle ProgressBarStyle = ProgressBarStyle.Continuous;
+
+        private Task StartEventTask;
         public object ProgressLock = new object();
 
         public Channel Channel { get; set; } = "LIVE";
@@ -1046,11 +1048,13 @@ namespace RobloxStudioModManager
                 echo("Applying flag configuration...");
                 FlagEditor.ApplyFlags();
 
+                /*
                 echo("Patching explorer icons...");
 
                 await ClassIconEditor
                     .PatchExplorerIcons()
                     .ConfigureAwait(true);
+                */
 
                 // Secret feature only for me :(
                 // Feel free to patch in your own thing if you want.
@@ -1070,7 +1074,7 @@ namespace RobloxStudioModManager
 
             if (SetStartEvent)
             {
-                _ = Task.Run(async () =>
+                StartEventTask = Task.Run(async () =>
                 {
                     var start = new SystemEvent(StartEvent);
 

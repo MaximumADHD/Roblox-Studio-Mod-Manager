@@ -18,6 +18,9 @@ namespace RobloxStudioModManager
         private readonly string[] args = null;
         private bool prompting = false;
 
+        // hopefully temporary? probably not.
+        private const string channel = "LIVE";
+
         public Launcher(params string[] mainArgs)
         {
             if (mainArgs.Length > 0)
@@ -27,11 +30,13 @@ namespace RobloxStudioModManager
             releaseTag.Text = Program.ReleaseTag;
         }
 
+        /*
         private Channel getSelectedChannel()
         {
             var result = channelSelect.SelectedItem;
             return result.ToString();
         }
+        */
 
         private void promptNewRelease(string releaseTag)
         {
@@ -64,24 +69,6 @@ namespace RobloxStudioModManager
             Enabled = false;
             UseWaitCursor = true;
 
-            if (args != null)
-                openStudioDirectory.Enabled = false;
-
-            var channels = await StudioBootstrapper.FetchKnownChannels();
-
-            var setChannels = new Action(() =>
-            {
-                var items = channelSelect.Items;
-                var channel = Program.State.Channel;
-
-                items.Clear();
-                items.AddRange(channels);
-
-                selectChannel(channel);
-            });
-
-            Invoke(setChannels);
-
             using (var http = new WebClient())
             {
                 var get = http.DownloadStringTaskAsync(Program.BaseConfigUrl + "LatestReleaseTag.txt");
@@ -105,6 +92,54 @@ namespace RobloxStudioModManager
                     Invoke(new Action<string>(promptNewRelease), releaseTag);
                 });
             }
+
+            if (args != null)
+                openStudioDirectory.Enabled = false;
+
+            // Grab the version currently being targetted.
+            string targetId = Program.State.TargetVersion;
+            const string latest = "(Use Latest)";
+
+            // Clear the current list of target items.
+            targetVersion.Items.Clear();
+            targetVersion.Items.Add(latest);
+
+            // Populate the items list using the deploy history.
+            var getDeployLogs = StudioDeployLogs.Get(channel);
+            var deployLogs = await getDeployLogs.ConfigureAwait(true);
+
+            HashSet<DeployLog> targets = Environment.Is64BitOperatingSystem
+                ? deployLogs.CurrentLogs_x64
+                : deployLogs.CurrentLogs_x86;
+
+            targetVersion.Enabled = deployLogs.HasHistory;
+            targetVersionLabel.Enabled = deployLogs.HasHistory;
+
+            if (deployLogs.HasHistory)
+            {
+                var items = targets
+                    .OrderByDescending(log => log.TimeStamp)
+                    .Cast<object>()
+                    .ToArray();
+
+                targetVersion.Items.AddRange(items);
+            }
+
+            // Select the deploy log being targetted.
+            DeployLog target = targets
+                .Where(log => log.VersionId == targetId)
+                .FirstOrDefault();
+
+            if (target != null)
+            {
+                targetVersion.SelectedItem = target;
+                return;
+            }
+
+            // If the target isn't valid, fallback to live.
+            targetVersion.SelectedItem = latest;
+            UseWaitCursor = false;
+            Enabled = true;
         }
 
         public static string getModPath()
@@ -272,7 +307,7 @@ namespace RobloxStudioModManager
 
             if (allow)
             {
-                var channel = getSelectedChannel();
+                //var channel = getSelectedChannel();
 
                 Enabled = false;
                 UseWaitCursor = true;
@@ -296,6 +331,7 @@ namespace RobloxStudioModManager
             }
         }
 
+        /*
         private async void editExplorerIcons_Click(object sender, EventArgs e)
         {
             Enabled = false;
@@ -319,10 +355,11 @@ namespace RobloxStudioModManager
             Enabled = true;
             UseWaitCursor = false;
         }
+        */
 
         private async void launchStudio_Click(object sender = null, EventArgs e = null)
         {
-            var channel = getSelectedChannel();
+            // var channel = getSelectedChannel();
 
             var bootstrapper = new StudioBootstrapper
             {
@@ -495,68 +532,6 @@ namespace RobloxStudioModManager
             }
         }
 
-        private async void channelSelect_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            // Save the user's branch preference.
-            var channel = getSelectedChannel();
-            Program.State.Channel = channel;
-            Program.SaveState();
-
-            // Grab the version currently being targetted.
-            string targetId = Program.State.TargetVersion;
-            const string latest = "(Use Latest)";
-
-            // Clear the current list of target items.
-            targetVersion.Items.Clear();
-            targetVersion.Items.Add(latest);
-
-            // Populate the items list using the deploy history.
-            Enabled = false;
-            UseWaitCursor = true;
-
-            var getDeployLogs = StudioDeployLogs.Get(channel);
-            var deployLogs = await getDeployLogs.ConfigureAwait(true);
-
-            if (!prompting)
-                Enabled = true;
-
-            UseWaitCursor = false;
-
-            HashSet<DeployLog> targets;
-
-            if (Environment.Is64BitOperatingSystem)
-                targets = deployLogs.CurrentLogs_x64;
-            else
-                targets = deployLogs.CurrentLogs_x86;
-
-            targetVersion.Enabled = deployLogs.HasHistory;
-            targetVersionLabel.Enabled = deployLogs.HasHistory;
-
-            if (deployLogs.HasHistory)
-            {
-                var items = targets
-                    .OrderByDescending(log => log.TimeStamp)
-                    .Cast<object>()
-                    .ToArray();
-
-                targetVersion.Items.AddRange(items);
-            }
-            
-            // Select the deploy log being targetted.
-            DeployLog target = targets
-                .Where(log => log.VersionId == targetId)
-                .FirstOrDefault();
-
-            if (target != null)
-            {
-                targetVersion.SelectedItem = target;
-                return;
-            }
-
-            // If the target isn't valid, fallback to live.
-            targetVersion.SelectedItem = latest;
-        }
-
         private void targetVersion_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (targetVersion.SelectedIndex == 0)
@@ -569,6 +544,7 @@ namespace RobloxStudioModManager
             Program.State.TargetVersion = target.VersionId;
         }
 
+        /*
         private async void selectChannel(string text)
         {
             object existing = null;
@@ -645,5 +621,6 @@ namespace RobloxStudioModManager
             selectChannel(channelSelect.Text);
             e.SuppressKeyPress = true;
         }
+        */
     }
 }
