@@ -84,7 +84,7 @@ namespace RobloxStudioModManager
                     if (!task.IsCompleted)
                         return;
 
-                    string releaseTag = task.Result;
+                    string releaseTag = task.Result.Trim();
 
                     if (releaseTag == Program.ReleaseTag)
                         return;
