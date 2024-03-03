@@ -28,17 +28,15 @@ namespace RobloxStudioModManager
 
         private static string AppSettings_XML;
         private static string OAuth2Config_JSON;
-
         private const string UserAgent = "RobloxStudioModManager";
-        public const string StartEvent = "RobloxStudioModManagerStart";
 
         public event MessageFeed EchoFeed;
         public event MessageFeed StatusFeed;
 
         private readonly IBootstrapperState mainState;
         private readonly VersionManifest versionRegistry;
-        private readonly Dictionary<string, string> fileRegistry;
-        private readonly Dictionary<string, PackageState> pkgRegistry;
+        private readonly SortedDictionary<string, string> fileRegistry;
+        private readonly SortedDictionary<string, PackageState> pkgRegistry;
 
         private Dictionary<string, string[]> bySignature;
         private Dictionary<string, string> newManifestEntries;
@@ -54,7 +52,6 @@ namespace RobloxStudioModManager
         public int MaxProgress = 0;
         public ProgressBarStyle ProgressBarStyle = ProgressBarStyle.Continuous;
 
-        private Task StartEventTask;
         public object ProgressLock = new object();
 
         public Channel Channel { get; set; } = "LIVE";
@@ -64,7 +61,6 @@ namespace RobloxStudioModManager
         public bool CanForceStudioShutdown { get; set; } = false;
 
         public bool ForceInstall { get; set; } = false;
-        public bool SetStartEvent { get; set; } = false;
         public bool GenerateMetadata { get; set; } = false;
         public bool RemapExtraContent { get; set; } = false;
         public bool ApplyModManagerPatches { get; set; } = false;
@@ -1071,30 +1067,6 @@ namespace RobloxStudioModManager
 
             setStatus("Starting Roblox Studio...");
             echo("Roblox Studio is up to date!");
-
-            if (SetStartEvent)
-            {
-                StartEventTask = Task.Run(async () =>
-                {
-                    var start = new SystemEvent(StartEvent);
-
-                    bool started = await start
-                        .WaitForEvent()
-                        .ConfigureAwait(true);
-
-                    start.Close();
-
-                    if (started)
-                    {
-                        var delay = Task.Delay(3000);
-                        await delay.ConfigureAwait(false);
-
-                        Application.Exit();
-                    }
-
-                    start.Dispose();
-                });
-            }
 
             await Task.Delay(1000);
             return true;

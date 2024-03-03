@@ -16,7 +16,7 @@ namespace RobloxStudioModManager
     public partial class FlagEditor : Form
     {
         private static VersionManifest versionRegistry => Program.State.VersionData;
-        private static Dictionary<string, FVariable> flagRegistry => Program.State.FlagEditor;
+        private static SortedDictionary<string, FVariable> flagRegistry => Program.State.FlagEditor;
 
         private DataTable overrideTable;
         private readonly Dictionary<string, DataRow> overrideRowLookup = new Dictionary<string, DataRow>();

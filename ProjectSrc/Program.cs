@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using Microsoft.Win32;
+using System.Text;
 
 namespace RobloxStudioModManager
 {
@@ -17,7 +18,7 @@ namespace RobloxStudioModManager
         public const string RepoOwner = "MaximumADHD";
         public const string RepoName = "Roblox-Studio-Mod-Manager";
 
-        public const string ReleaseTag = "v2023.11.02";
+        public const string ReleaseTag = "v2024.03.02";
         public static readonly string BaseConfigUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
 
         public static readonly RegistryKey LegacyRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
@@ -28,6 +29,11 @@ namespace RobloxStudioModManager
 
         public static string RootDir { get; private set; }
         public static ModManagerState State { get; private set; }
+
+        private static JsonSerializerSettings JsonSettings = new JsonSerializerSettings()
+        {
+            ContractResolver = new OrdinalSortJson()
+        };
 
         public static RegistryKey GetSubKey(this RegistryKey key, params string[] path)
         {
@@ -115,7 +121,7 @@ namespace RobloxStudioModManager
         public static void SaveState()
         {
             var stateFile = Path.Combine(RootDir, "state.json");
-            string json = JsonConvert.SerializeObject(State, Formatting.Indented);
+            string json = JsonConvert.SerializeObject(State, Formatting.Indented, JsonSettings);
             File.WriteAllText(stateFile, json);
         }
 

@@ -16,7 +16,6 @@ namespace RobloxStudioModManager
     {
         private static VersionManifest versionRegistry => Program.State.VersionData;
         private readonly string[] args = null;
-        private bool prompting = false;
 
         // hopefully temporary? probably not.
         private const string channel = "LIVE";
@@ -40,7 +39,7 @@ namespace RobloxStudioModManager
 
         private void promptNewRelease(string releaseTag)
         {
-            prompting = true;
+            #if !DEBUG
             Enabled = false;
 
             DialogResult result = MessageBox.Show
@@ -60,8 +59,8 @@ namespace RobloxStudioModManager
                 Application.Exit();
             }
 
-            prompting = false;
             Enabled = true;
+            #endif
         }
 
         private async void Launcher_Load(object sender, EventArgs e)
@@ -96,7 +95,7 @@ namespace RobloxStudioModManager
             if (args != null)
                 openStudioDirectory.Enabled = false;
 
-            // Grab the version currently being targetted.
+            // Grab the version currently being targeted.
             string targetId = Program.State.TargetVersion;
             const string latest = "(Use Latest)";
 
@@ -133,6 +132,8 @@ namespace RobloxStudioModManager
             if (target != null)
             {
                 targetVersion.SelectedItem = target;
+                UseWaitCursor = false;
+                Enabled = true;
                 return;
             }
 
@@ -365,8 +366,6 @@ namespace RobloxStudioModManager
             {
                 ForceInstall = forceRebuild.Checked,
                 ApplyModManagerPatches = true,
-
-                SetStartEvent = true,
                 Channel = channel
             };
 
@@ -449,7 +448,7 @@ namespace RobloxStudioModManager
             var robloxStudioInfo = new ProcessStartInfo()
             {
                 FileName = StudioBootstrapper.GetStudioPath(),
-                Arguments = $"-startEvent {StudioBootstrapper.StartEvent}"
+                Arguments = $""
             };
 
             if (args != null)
@@ -459,49 +458,7 @@ namespace RobloxStudioModManager
                 if (firstArg != null && firstArg.StartsWith("roblox-studio", Program.StringFormat))
                 {
                     // Arguments were passed by URI.
-                    var argMap = new Dictionary<string, string>();
-
-                    foreach (string commandPair in firstArg.Split('+'))
-                    {
-                        if (commandPair.Contains(':'))
-                        {
-                            string[] kvPair = commandPair.Split(':');
-
-                            string key = kvPair[0];
-                            string val = kvPair[1];
-
-                            if (key == "gameinfo")
-                            {
-                                // The user is authenticating. This argument is a special case.
-                                robloxStudioInfo.Arguments += " -url https://www.roblox.com/Login/Negotiate.ashx -ticket " + val;
-                            }
-                            else
-                            {
-                                argMap.Add(key, val);
-                                robloxStudioInfo.Arguments += " -" + key + ' ' + val;
-                            }
-                        }
-                    }
-
-                    if (argMap.ContainsKey("launchmode") && !argMap.ContainsKey("task"))
-                    {
-                        string launchMode = argMap["launchmode"];
-
-                        if (launchMode == "plugin")
-                        {
-                            string pluginId = argMap["pluginid"];
-                            robloxStudioInfo.Arguments += "-task InstallPlugin -pluginId " + pluginId;
-                        }
-                        else if (launchMode == "edit")
-                        {
-                            robloxStudioInfo.Arguments += "-task EditPlace";
-                        }
-                        else if (launchMode == "asset")
-                        {
-                            string assetId = argMap["assetid"];
-                            robloxStudioInfo.Arguments += "-task TryAsset -assetId " + assetId;
-                        }
-                    }
+                    robloxStudioInfo.Arguments = firstArg;
                 }
                 else
                 {
@@ -518,10 +475,10 @@ namespace RobloxStudioModManager
                 }
             }
 
+
             if (openStudioDirectory.Checked)
             {
                 Process.Start(studioRoot);
-                Environment.Exit(0);
             }
             else
             {
@@ -530,6 +487,9 @@ namespace RobloxStudioModManager
 
                 Process.Start(robloxStudioInfo);
             }
+
+            Program.SaveState();
+            Environment.Exit(Environment.ExitCode);
         }
 
         private void targetVersion_SelectedIndexChanged(object sender, EventArgs e)

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30914.41
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobloxStudioModManager", "RobloxStudioModManager.csproj", "{FAD2621F-B280-4D6D-A260-F410C5B06E0C}"
 EndProject
@@ -12,22 +12,37 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Internal|Any CPU = Internal|Any CPU
+		Internal|x64 = Internal|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Debug|x64.ActiveCfg = Debug|x64
+		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Debug|x64.Build.0 = Debug|x64
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Internal|Any CPU.ActiveCfg = Internal|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Internal|Any CPU.Build.0 = Internal|Any CPU
+		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Internal|x64.ActiveCfg = Internal|x64
+		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Internal|x64.Build.0 = Internal|x64
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Release|x64.ActiveCfg = Release|x64
+		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Release|x64.Build.0 = Release|x64
 		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Debug|x64.ActiveCfg = Debug|x64
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Debug|x64.Build.0 = Debug|x64
 		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Internal|Any CPU.ActiveCfg = Debug|Any CPU
 		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Internal|Any CPU.Build.0 = Debug|Any CPU
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Internal|x64.ActiveCfg = Release|x64
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Internal|x64.Build.0 = Release|x64
 		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Release|x64.ActiveCfg = Release|x64
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
