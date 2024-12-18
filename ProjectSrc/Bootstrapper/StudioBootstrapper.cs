@@ -56,6 +56,7 @@ namespace RobloxStudioModManager
 
         public Channel Channel { get; set; } = "LIVE";
         public string OverrideStudioDirectory { get; set; } = "";
+        public string OverrideGuid { get; set; } = "";
 
         public bool CanShutdownStudio { get; set; } = true;
         public bool CanForceStudioShutdown { get; set; } = false;
@@ -767,6 +768,9 @@ namespace RobloxStudioModManager
 
             var getVersionInfo = GetCurrentVersionInfo(currentChannel, versionRegistry, targetVersion);
             ClientVersionInfo versionInfo = await getVersionInfo.ConfigureAwait(true);
+
+            if (OverrideGuid != "")
+                versionInfo = new ClientVersionInfo(versionInfo.Channel, versionInfo.Version, OverrideGuid);
 
             string studioDir = GetLocalStudioDirectory();
             buildVersion = versionInfo.VersionGuid;

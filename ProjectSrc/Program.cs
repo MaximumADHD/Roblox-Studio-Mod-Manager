@@ -18,7 +18,7 @@ namespace RobloxStudioModManager
         public const string RepoOwner = "MaximumADHD";
         public const string RepoName = "Roblox-Studio-Mod-Manager";
 
-        public const string ReleaseTag = "v2024.03.02";
+        public const string ReleaseTag = "v2024.12.18";
         public static readonly string BaseConfigUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
 
         public static readonly RegistryKey LegacyRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
@@ -155,14 +155,10 @@ namespace RobloxStudioModManager
                 File.WriteAllText(stateFile, json);
             }
 
-            try
-            {
-                State = JsonConvert.DeserializeObject<ModManagerState>(json);
-            }
-            catch
-            {
+            State = JsonConvert.DeserializeObject<ModManagerState>(json);
+            
+            if (State == null)
                 State = new ModManagerState();
-            }
 
             // Make sure HTTPS uses TLS 1.2
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;

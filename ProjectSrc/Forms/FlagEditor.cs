@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -180,11 +181,15 @@ namespace RobloxStudioModManager
 
         private async void InitializeEditor()
         {
+            var flagNames = new HashSet<string>();
+
+            var studioPath = StudioBootstrapper.GetStudioPath();
+            FlagScanner.PerformScan(studioPath, flagNames);
+
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
-
             string settingsDir = Path.Combine(localAppData, "Roblox", "ClientSettings");
-            string settingsPath = Path.Combine(settingsDir, "StudioAppSettings.json");
 
+            string settingsPath = Path.Combine(settingsDir, "StudioAppSettings.json");
             string lastExecVersion = versionRegistry.LastExecutedVersion;
             string versionGuid = versionRegistry.VersionGuid;
 
@@ -228,7 +233,6 @@ namespace RobloxStudioModManager
             }
 
             // Initialize flag browser
-            string[] flagNames = flagRegistry.Keys.ToArray();
             string[] flagNameStrings = Array.Empty<string>();
 
             string settings = File.ReadAllText(settingsPath);
@@ -239,6 +243,56 @@ namespace RobloxStudioModManager
             {
                 var data = JObject.Load(jsonReader);
                 json = data.ToObject<Dictionary<string, string>>();
+            }
+
+            /*
+            Dictionary<string, string> webJson;
+
+            using (WebClient http = new WebClient())
+            {
+                http.Headers.Set("UserAgent", "RobloxStudioModManager");
+                var rawData = await http.DownloadStringTaskAsync($"https://clientsettingscdn.roblox.com/v2/settings/application/PCStudioApp");
+
+                using (var reader = new StringReader(rawData))
+                using (var jsonReader = new JsonTextReader(reader))
+                {
+                    var data = JObject.Load(jsonReader);
+                    var appSettings = data["applicationSettings"];
+                    webJson = appSettings.ToObject<Dictionary<string, string>>();
+                }
+            }*/
+
+            foreach (var key in flagNames)
+            {
+                if (!json.ContainsKey(key))
+                {
+                    string flagClass = "";
+
+                    if (key.StartsWith("SF"))
+                        flagClass = "SF";
+                    else if (key.StartsWith("DF"))
+                        flagClass = "DF";
+                    else if (key.StartsWith("F"))
+                        flagClass = "F";
+
+                    if (flagClass != "")
+                    {
+                        var prefix = key.Substring(flagClass.Length);
+
+                        foreach (var pair in flagTypes)
+                        {
+                            if (prefix.StartsWith(pair.Key))
+                            {
+                                json.Add(key, pair.Value);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        json.Add(key, "??");
+                    }
+                }
             }
 
             int numFlags = json.Count;
@@ -267,14 +321,17 @@ namespace RobloxStudioModManager
                 if (!flagRegistry.TryGetValue(key, out var flag))
                     flag = new FVariable(key, value);
 
-                autoComplete.Add(flag.Name);
+                if (flag.Type == "")
+                    continue;
+
+                autoComplete.Add(flag.Key);
                 flagSetup.Add(flag);
             }
 
             flagSearchFilter.AutoCompleteCustomSource = autoComplete;
 
             allFlags = flagSetup
-                .OrderBy(flag => flag.Name)
+                .OrderBy(flag => flag.Key)
                 .ToList();
 
             refreshFlags();
@@ -467,10 +524,6 @@ namespace RobloxStudioModManager
             else if (flagType.EndsWith("Int", format))
             {
                 badInput = !int.TryParse(value, out int _);
-            }
-            else if (flagType.EndsWith("Log", format))
-            {
-                badInput = !byte.TryParse(value, out byte _);
             }
 
             if (flagLookup.ContainsKey(flagKey))

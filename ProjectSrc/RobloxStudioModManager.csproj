@@ -172,6 +172,7 @@
     <Compile Include="History\*.cs" />
     <Compile Include="Utility\AppState.cs" />
     <Compile Include="Utility\CustomFlag.cs" />
+    <Compile Include="Utility\FlagScanner.cs" />
     <Compile Include="Utility\FVariable.cs" />
     <Compile Include="Utility\KnownRoot.cs" />
     <Compile Include="Utility\OrdinalSortJson.cs" />

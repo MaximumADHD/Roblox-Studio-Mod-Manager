@@ -361,11 +361,16 @@ namespace RobloxStudioModManager
         private async void launchStudio_Click(object sender = null, EventArgs e = null)
         {
             // var channel = getSelectedChannel();
+            var overrideGuid = "";
+
+            if (args != null && args.Length > 0 && args[0].StartsWith("version-"))
+                overrideGuid = args[0];
 
             var bootstrapper = new StudioBootstrapper
             {
                 ForceInstall = forceRebuild.Checked,
                 ApplyModManagerPatches = true,
+                OverrideGuid = overrideGuid,
                 Channel = channel
             };
 
