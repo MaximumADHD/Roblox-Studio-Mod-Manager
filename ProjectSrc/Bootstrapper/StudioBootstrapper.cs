@@ -664,89 +664,95 @@ namespace RobloxStudioModManager
 
         private async Task<bool> shutdownStudioProcesses()
         {
+            setStatus("Shutting down Roblox Studio...");
+
             bool cancelled = false;
             bool safeToContinue = false;
 
+            // Check if studio processes exist & prompt the user to restart studio
+            List<Process> initialRunning = GetRunningStudioProcesses();
+
+            if (initialRunning.Count > 0)
+            {
+                DialogResult result = DialogResult.OK;
+
+                if (mainState == Program.State)
+                {
+                    result = MessageBox.Show
+                    (
+                        "All Roblox Studio processes need to be closed in order to update Roblox Studio!\n" +
+                        "Press Ok once you've saved your work, or\n" +
+                        "Press Cancel to skip this update temporarily.",
+
+                        "Notice",
+                        MessageBoxButtons.OKCancel,
+                        MessageBoxIcon.Warning,
+                        MessageBoxDefaultButton.Button1,
+                        MessageBoxOptions.DefaultDesktopOnly
+                    );
+                }
+
+                if (result == DialogResult.Cancel)
+                {
+                    safeToContinue = true;
+                    cancelled = true;
+                    return !cancelled;
+                }
+            }
+
+            // Close all running processes
             while (!safeToContinue)
             {
                 List<Process> running = GetRunningStudioProcesses();
 
-                if (running.Count > 0)
+                // No processs open, good to go
+                if (running.Count <= 0)
                 {
-                    setStatus("Shutting down Roblox Studio...");
+                    safeToContinue = true;
+                    continue;
+                }
 
-                    foreach (Process p in running)
+                // Handle process termination
+                foreach (Process p in running)
+                {
+                    if (CanForceStudioShutdown)
                     {
-                        if (CanForceStudioShutdown)
-                        {
-                            tryToKillProcess(p);
-                            continue;
-                        }
+                        tryToKillProcess(p);
+                        continue;
+                    }
 
-                        SetForegroundWindow(p.MainWindowHandle);
-                        FlashWindow(p.MainWindowHandle, true);
+                    SetForegroundWindow(p.MainWindowHandle);
+                    FlashWindow(p.MainWindowHandle, true);
 
-                        var delay = Task.Delay(50);
-                        p.CloseMainWindow();
+                    var delay = Task.Delay(50);
+                    p.CloseMainWindow();
+
+                    await delay.ConfigureAwait(true);
+                }
+
+                const int retries = 10;
+                const int granularity = 300;
+
+                Progress = 0;
+                MaxProgress = retries * granularity;
+                ProgressBarStyle = ProgressBarStyle.Continuous;
+
+                for (int i = 0; i < retries; i++)
+                {
+                    List<Process> runningNow = GetRunningStudioProcesses();
+
+                    if (runningNow.Count == 0)
+                    {
+                        safeToContinue = true;
+                        break;
+                    }
+                    else
+                    {
+                        var delay = Task.Delay(1000);
+                        Progress += granularity;
 
                         await delay.ConfigureAwait(true);
                     }
-
-                    List<Process> runningNow = null;
-
-                    const int retries = 10;
-                    const int granularity = 300;
-
-                    Progress = 0;
-                    MaxProgress = retries * granularity;
-                    ProgressBarStyle = ProgressBarStyle.Continuous;
-
-                    for (int i = 0; i < retries; i++)
-                    {
-                        runningNow = GetRunningStudioProcesses();
-
-                        if (runningNow.Count == 0)
-                        {
-                            safeToContinue = true;
-                            break;
-                        }
-                        else
-                        {
-                            var delay = Task.Delay(1000);
-                            Progress += granularity;
-
-                            await delay.ConfigureAwait(true);
-                        }
-                    }
-
-                    if (runningNow.Count > 0 && !safeToContinue)
-                    {
-                        DialogResult result = DialogResult.OK;
-
-                        if (mainState == Program.State)
-                        {
-                            result = MessageBox.Show
-                            (
-                                "All Roblox Studio processes need to be closed in order to update Roblox Studio!\n" +
-                                "Press Ok once you've saved your work, or\n" +
-                                "Press Cancel to skip this update temporarily.",
-
-                                "Notice",
-                                MessageBoxButtons.OKCancel,
-                                MessageBoxIcon.Warning
-                            );
-                        }
-
-                        if (result == DialogResult.Cancel)
-                        {
-                            safeToContinue = true;
-                            cancelled = true;
-                        }
-                    }
-                }
-                else
-                {
-                    safeToContinue = true;
                 }
             }
 
