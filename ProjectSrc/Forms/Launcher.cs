@@ -68,6 +68,14 @@ namespace RobloxStudioModManager
             Enabled = false;
             UseWaitCursor = true;
 
+            if (args != null)
+            {
+                launchStudio_Click();
+                Hide();
+                return;
+            }
+            
+
             using (var http = new WebClient())
             {
                 var get = http.DownloadStringTaskAsync(Program.BaseConfigUrl + "LatestReleaseTag.txt");
@@ -91,9 +99,6 @@ namespace RobloxStudioModManager
                     Invoke(new Action<string>(promptNewRelease), releaseTag);
                 });
             }
-
-            if (args != null)
-                openStudioDirectory.Enabled = false;
 
             // Grab the version currently being targeted.
             string targetId = Program.State.TargetVersion;

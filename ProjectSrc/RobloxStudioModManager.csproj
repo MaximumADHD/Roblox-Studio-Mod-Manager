@@ -172,7 +172,6 @@
     <Compile Include="History\*.cs" />
     <Compile Include="Utility\AppState.cs" />
     <Compile Include="Utility\CustomFlag.cs" />
-    <Compile Include="Utility\FlagScanner.cs" />
     <Compile Include="Utility\FVariable.cs" />
     <Compile Include="Utility\KnownRoot.cs" />
     <Compile Include="Utility\OrdinalSortJson.cs" />
@@ -240,6 +239,10 @@
     <EmbeddedResource Include="Resources\Icon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\rbxfflagdumper\RbxFFlagDumper.Lib\RbxFFlagDumper.Lib.csproj">
+      <Project>{c92d12e8-7435-4a6b-9c7e-c8e4aef37b1c}</Project>
+      <Name>RbxFFlagDumper.Lib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Roblox-Deploy-History\RobloxDeployHistory.csproj">
       <Project>{1ce1a9df-c2ff-49c4-9b7c-792c962c339f}</Project>
       <Name>RobloxDeployHistory</Name>

@@ -6,16 +6,23 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RbxFFlagDumper.Lib;
 
 namespace RobloxStudioModManager
 {
     public partial class FlagEditor : Form
     {
+        internal class ClientSettings
+        {
+            public Dictionary<string, string> ApplicationSettings = null;
+        }
+
         private static VersionManifest versionRegistry => Program.State.VersionData;
         private static SortedDictionary<string, FVariable> flagRegistry => Program.State.FlagEditor;
 
@@ -38,9 +45,7 @@ namespace RobloxStudioModManager
 
         private static FVariable lastCustomFlag;
         private readonly Dictionary<string, int> flagLookup = new Dictionary<string, int>();
-
         private string currentSearch = "";
-        private bool enterPressed = false;
 
         public FlagEditor()
         {
@@ -67,7 +72,7 @@ namespace RobloxStudioModManager
         private bool confirm(string header, string message)
         {
             DialogResult result = MessageBox.Show(message, header, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-            return (result == DialogResult.Yes);
+            return result == DialogResult.Yes;
         }
 
         private static void applyRowColor(DataGridViewRow row, Color color)
@@ -159,10 +164,10 @@ namespace RobloxStudioModManager
 
         private void refreshFlags()
         {
-            string search = flagSearchFilter.Text;
+            string search = flagSearchFilter.Text.ToLowerInvariant();
 
             flags = allFlags
-                .Where(flag => flag.Name.Contains(search))
+                .Where(flag => flag.Name.ToLowerInvariant().Contains(search))
                 .OrderBy(flag => flag.Name)
                 .ToList();
 
@@ -176,91 +181,72 @@ namespace RobloxStudioModManager
             }
 
             // Start populating flag browser rows.
-            flagDataGridView.RowCount = flags.Count;
+            var currentCount = flagDataGridView.RowCount;
+
+            if (currentCount == 0)
+            {
+                flagDataGridView.Rows.Add();
+                currentCount = 1;
+            }
+
+            var diff = flags.Count - currentCount;
+            flagDataGridView.SuspendLayout();
+
+            if (diff > 0)
+                flagDataGridView.Rows.AddCopies(0, diff);
+            else if (diff < 0)
+                flagDataGridView.RowCount += diff;
+
+            flagDataGridView.ResumeLayout();
         }
 
         private async void InitializeEditor()
         {
             var flagNames = new HashSet<string>();
-
             var studioPath = StudioBootstrapper.GetStudioPath();
-            FlagScanner.PerformScan(studioPath, flagNames);
 
-            string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
-            string settingsDir = Path.Combine(localAppData, "Roblox", "ClientSettings");
+            var studioDir = StudioBootstrapper.GetStudioDirectory();
+            var extraContentDir = Path.Combine(studioDir, "ExtraContent");
 
-            string settingsPath = Path.Combine(settingsDir, "StudioAppSettings.json");
             string lastExecVersion = versionRegistry.LastExecutedVersion;
             string versionGuid = versionRegistry.VersionGuid;
 
-            if (lastExecVersion != versionGuid)
+            var flagDump = Path.Combine(studioDir, "FFlags.json");
+            var flagInfo = new FileInfo(flagDump);
+
+            if (lastExecVersion != versionGuid || !flagInfo.Exists)
             {
-                // Reset the settings file.
-                Directory.CreateDirectory(settingsDir);
-                File.WriteAllText(settingsPath, "");
+                var cppFlags = StudioFFlagDumper.DumpCppFlags(studioPath);
+                cppFlags.ForEach(flag => flagNames.Add(flag));
 
-                // Create some system events for studio so we can hide the splash screen.
-                using (var start = new SystemEvent("FFlagExtract"))
-                using (var show = new SystemEvent("NoSplashScreen"))
-                {
-                    // Run Roblox Studio briefly so we can update the settings file.
-                    ProcessStartInfo studioStartInfo = new ProcessStartInfo()
-                    {
-                        FileName = StudioBootstrapper.GetStudioPath(),
-                        Arguments = $"-startEvent {start.Name} -showEvent {show.Name}"
-                    };
+                var luaFlags = StudioFFlagDumper.DumpLuaFlags(extraContentDir);
+                luaFlags.ForEach(flag => flagNames.Add(flag));
 
-                    Process studio = Process.Start(studioStartInfo);
+                var newJson = JsonConvert.SerializeObject(flagNames);
+                File.WriteAllText(flagDump, newJson);
 
-                    var onStart = start.WaitForEvent();
-                    await onStart.ConfigureAwait(true);
-
-                    FileInfo info = new FileInfo(settingsPath);
-
-                    // Wait for the settings path to be written.
-                    while (info.Length == 0)
-                    {
-                        var delay = Task.Delay(30);
-                        await delay.ConfigureAwait(true);
-
-                        info.Refresh();
-                    }
-
-                    // Nuke studio and flag the version we updated with.
-                    versionRegistry.LastExecutedVersion = versionGuid;
-                    studio.Kill();
-                }
+                versionRegistry.LastExecutedVersion = versionGuid;
+                Program.SaveState();
             }
 
             // Initialize flag browser
-            string[] flagNameStrings = Array.Empty<string>();
+            var json = new Dictionary<string, string>();
 
-            string settings = File.ReadAllText(settingsPath);
-            Dictionary<string, string> json;
-            
-            using (var reader = new StringReader(settings))
-            using (var jsonReader = new JsonTextReader(reader))
+            using (var http = new WebClient())
             {
-                var data = JObject.Load(jsonReader);
-                json = data.ToObject<Dictionary<string, string>>();
-            }
+                var settings = await http.DownloadStringTaskAsync("https://clientsettingscdn.roblox.com/v2/settings/application/PCDesktopClient");
+                var data = JsonConvert.DeserializeObject<ClientSettings>(settings);
 
-            /*
-            Dictionary<string, string> webJson;
-
-            using (WebClient http = new WebClient())
-            {
-                http.Headers.Set("UserAgent", "RobloxStudioModManager");
-                var rawData = await http.DownloadStringTaskAsync($"https://clientsettingscdn.roblox.com/v2/settings/application/PCStudioApp");
-
-                using (var reader = new StringReader(rawData))
-                using (var jsonReader = new JsonTextReader(reader))
+                foreach (var pair in data.ApplicationSettings)
                 {
-                    var data = JObject.Load(jsonReader);
-                    var appSettings = data["applicationSettings"];
-                    webJson = appSettings.ToObject<Dictionary<string, string>>();
+                    string key = pair.Key;
+
+                    if (key.EndsWith("_PlaceFilter"))
+                        continue;
+
+                    json.Add(key, pair.Value);
                 }
-            }*/
+            }
 
             foreach (var key in flagNames)
             {
@@ -334,6 +320,8 @@ namespace RobloxStudioModManager
                 .OrderBy(flag => flag.Key)
                 .ToList();
 
+            var propInfo = typeof(DataGridView).GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
+            propInfo.SetValue(flagDataGridView, true, null);
             refreshFlags();
 
             // Initialize override table.
@@ -392,44 +380,6 @@ namespace RobloxStudioModManager
                 value = flag.Value;
 
             e.Value = value;
-        }
-
-        private void flagSearchFilter_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter)
-            {
-                enterPressed = true;
-                e.Handled = true;
-                ActiveControl = null;
-            }
-        }
-
-        private void flagSearchFilter_Leave(object sender, EventArgs e)
-        {
-            if (enterPressed)
-            {
-                enterPressed = false;
-
-                if (flagSearchFilter.Text != currentSearch)
-                {
-                    currentSearch = flagSearchFilter.Text;
-
-                    Enabled = false;
-                    Cursor = Cursors.WaitCursor;
-
-                    flagDataGridView.RowCount = 0;
-                    flagDataGridView.Refresh();
-
-                    refreshFlags();
-
-                    Enabled = true;
-                    Cursor = Cursors.Default;
-                }
-            }
-            else
-            {
-                flagSearchFilter.Text = currentSearch;
-            }
         }
 
         private void overrideSelected_Click(object sender, EventArgs e)
@@ -539,6 +489,16 @@ namespace RobloxStudioModManager
 
                 // If we have bad input, reset the value to the original value.
                 cell.Value = flag.Reset;
+            }
+        }
+
+        private void flagSearchFilter_TextChanged(object sender, EventArgs e)
+        {
+            if (flagSearchFilter.Text != currentSearch)
+            {
+                currentSearch = flagSearchFilter.Text;
+                flagDataGridView.RowCount = 0;
+                refreshFlags();
             }
         }
 
@@ -675,6 +635,23 @@ namespace RobloxStudioModManager
                     addFlagOverride(newFlag);
                 }
             }
+        }
+
+        private void flagDataGridView_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.ColumnIndex != 2)
+                return;
+
+            if (e.Button != MouseButtons.Right)
+                return;
+
+            var rowIndex = e.RowIndex;
+            FVariable flag = flags[rowIndex];
+            Clipboard.SetText(flag.Value);
+
+            notification.BalloonTipTitle = flag.Name;
+            notification.BalloonTipText = "Value copied to clipboard!";
+            notification.ShowBalloonTip(2000);
         }
     }
 }
