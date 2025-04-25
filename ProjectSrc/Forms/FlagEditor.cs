@@ -369,6 +369,12 @@ namespace RobloxStudioModManager
             int row = e.RowIndex;
             int col = e.ColumnIndex;
 
+            if (flags.Count == 0)
+            {
+                e.Value = "";
+                return;
+            }
+
             FVariable flag = flags[row];
             string value = "?";
 
@@ -558,12 +564,18 @@ namespace RobloxStudioModManager
         private void flagDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
             int index = e.RowIndex;
+            var row = flagDataGridView.Rows[index];
+
+            if (flags.Count == 0)
+            {
+                applyRowColor(row, Color.White);
+                return;
+            }
+
             FVariable flag = flags[index];
 
             if (flag.Dirty)
             {
-                var row = flagDataGridView.Rows[index];
-
                 if (flagRegistry.ContainsKey(flag.Key))
                 {
                     var valueCell = row.Cells[2];
