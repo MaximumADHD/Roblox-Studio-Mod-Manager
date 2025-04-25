@@ -75,7 +75,6 @@ namespace RobloxStudioModManager
                 return;
             }
             
-
             using (var http = new WebClient())
             {
                 var get = http.DownloadStringTaskAsync(Program.BaseConfigUrl + "LatestReleaseTag.txt");

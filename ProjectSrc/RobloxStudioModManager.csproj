@@ -211,6 +211,9 @@
     </EmbeddedResource>
     <None Include=".editorconfig" />
     <None Include="app.manifest" />
+    <None Include="Config\KnownChannels.json" />
+    <None Include="Config\KnownRoots.json" />
+    <None Include="Config\OAuth2Config.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -249,6 +252,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\AppSettings.xml" />
+    <Content Include="Config\LatestReleaseTag.txt" />
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>

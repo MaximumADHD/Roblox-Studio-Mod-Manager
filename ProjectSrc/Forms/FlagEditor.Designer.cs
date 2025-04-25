@@ -294,7 +294,6 @@
             // 
             // notification
             // 
-            this.notification.Icon = ((System.Drawing.Icon)(resources.GetObject("notification.Icon")));
             this.notification.Text = "notification";
             this.notification.Visible = true;
             // 
