@@ -18,7 +18,7 @@ namespace RobloxStudioModManager
         public const string RepoOwner = "MaximumADHD";
         public const string RepoName = "Roblox-Studio-Mod-Manager";
 
-        public const string ReleaseTag = "v2025.04.25";
+        public const string ReleaseTag = "v2025.04.25-patch.1";
         public static readonly string BaseConfigUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
 
         public static readonly RegistryKey LegacyRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
