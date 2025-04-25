@@ -294,6 +294,7 @@
             // 
             // notification
             // 
+            this.notification.Icon = global::RobloxStudioModManager.Properties.Resources.Icon;
             this.notification.Text = "notification";
             this.notification.Visible = true;
             // 
