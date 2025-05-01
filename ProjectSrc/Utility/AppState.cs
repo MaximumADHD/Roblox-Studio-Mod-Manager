@@ -10,6 +10,7 @@ namespace RobloxStudioModManager
 
         public string VersionGuid = "";
         public string VersionOverload = "";
+        public string LastFlagScanVersion = "";
         public string LastExecutedVersion = "";
 
         public string LatestGuid_x64 = "";

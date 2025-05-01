@@ -208,26 +208,29 @@ namespace RobloxStudioModManager
             var studioDir = StudioBootstrapper.GetStudioDirectory();
             var extraContentDir = Path.Combine(studioDir, "ExtraContent");
 
-            string lastExecVersion = versionRegistry.LastExecutedVersion;
+            string lastFlagScanVersion = versionRegistry.LastFlagScanVersion;
             string versionGuid = versionRegistry.VersionGuid;
 
             var flagDump = Path.Combine(studioDir, "FFlags.json");
             var flagInfo = new FileInfo(flagDump);
 
-            if (lastExecVersion != versionGuid || !flagInfo.Exists)
+            if (lastFlagScanVersion != versionGuid || !flagInfo.Exists)
             {
                 var cppFlags = StudioFFlagDumper.DumpCppFlags(studioPath);
                 cppFlags.ForEach(flag => flagNames.Add(flag));
 
-                var luaFlags = StudioFFlagDumper.DumpLuaFlags(extraContentDir);
-                luaFlags.ForEach(flag => flagNames.Add(flag));
-
                 var newJson = JsonConvert.SerializeObject(flagNames);
                 File.WriteAllText(flagDump, newJson);
 
-                versionRegistry.LastExecutedVersion = versionGuid;
+                versionRegistry.LastFlagScanVersion = versionGuid;
                 Program.SaveState();
             }
+            
+            var rawFlagNames = File.ReadAllText(flagDump);
+            var cachedFlagNames = JsonConvert.DeserializeObject<string[]>(rawFlagNames);
+
+            foreach (var name in cachedFlagNames)
+                flagNames.Add(name);
 
             // Initialize flag browser
             var json = new Dictionary<string, string>();
@@ -283,7 +286,6 @@ namespace RobloxStudioModManager
 
             int numFlags = json.Count;
             var flagSetup = new List<FVariable>(numFlags);
-            var autoComplete = new AutoCompleteStringCollection();
 
             foreach (string customFlag in flagNames)
             {
@@ -310,11 +312,8 @@ namespace RobloxStudioModManager
                 if (flag.Type == "")
                     continue;
 
-                autoComplete.Add(flag.Key);
                 flagSetup.Add(flag);
             }
-
-            flagSearchFilter.AutoCompleteCustomSource = autoComplete;
 
             allFlags = flagSetup
                 .OrderBy(flag => flag.Key)
