@@ -125,6 +125,18 @@
         "MinVersion": 0
     },
 
+    "studiocontent-models": {
+        "ExtractTo": "StudioContent/models",
+        "BadManifest": false,
+        "MinVersion": 680
+    },
+
+    "studiocontent-textures": {
+        "ExtractTo": "StudioContent/textures",
+        "BadManifest": false,
+        "MinVersion": 680
+    },
+    
     "Qml": {
         "ExtractTo": "Qml",
         "BadManifest": true,
