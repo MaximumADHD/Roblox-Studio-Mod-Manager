@@ -176,7 +176,10 @@
     <Compile Include="Utility\KnownRoot.cs" />
     <Compile Include="Utility\OrdinalSortJson.cs" />
     <Compile Include="Utility\Package.cs" />
+    <Compile Include="Utility\PatternScanner.cs" />
+    <Compile Include="Utility\RawFFlagData.cs" />
     <Compile Include="Utility\RobloxInternal.cs" />
+    <Compile Include="Utility\StudioFFlagDumper.cs" />
     <Compile Include="Utility\SystemEvent.cs" />
     <Compile Include="Bootstrapper\*.cs" />
     <Compile Include="Forms\BootstrapperForm.cs">
@@ -239,10 +242,6 @@
     <EmbeddedResource Include="Resources\Icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\rbxfflagdumper\RbxFFlagDumper.Lib\RbxFFlagDumper.Lib.csproj">
-      <Project>{c92d12e8-7435-4a6b-9c7e-c8e4aef37b1c}</Project>
-      <Name>RbxFFlagDumper.Lib</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Roblox-Deploy-History\RobloxDeployHistory.csproj">
       <Project>{1ce1a9df-c2ff-49c4-9b7c-792c962c339f}</Project>
       <Name>RobloxDeployHistory</Name>
@@ -263,6 +262,9 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>13.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="PeNet">
+      <Version>5.1.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

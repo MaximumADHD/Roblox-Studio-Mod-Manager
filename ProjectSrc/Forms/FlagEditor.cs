@@ -12,7 +12,6 @@ using System.Windows.Forms;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using RbxFFlagDumper.Lib;
 
 namespace RobloxStudioModManager
 {
@@ -211,12 +210,12 @@ namespace RobloxStudioModManager
             string lastFlagScanVersion = versionRegistry.LastFlagScanVersion;
             string versionGuid = versionRegistry.VersionGuid;
 
+            var cppFlags = StudioFFlagDumper.DumpCppFlags(studioPath);
             var flagDump = Path.Combine(studioDir, "FFlags.json");
             var flagInfo = new FileInfo(flagDump);
 
             if (lastFlagScanVersion != versionGuid || !flagInfo.Exists)
             {
-                var cppFlags = StudioFFlagDumper.DumpCppFlags(studioPath);
                 cppFlags.ForEach(flag => flagNames.Add(flag));
 
                 var newJson = JsonConvert.SerializeObject(flagNames);
