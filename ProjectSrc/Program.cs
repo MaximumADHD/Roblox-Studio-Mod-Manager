@@ -18,7 +18,7 @@ namespace RobloxStudioModManager
         public const string RepoOwner = "MaximumADHD";
         public const string RepoName = "Roblox-Studio-Mod-Manager";
 
-        public const string ReleaseTag = "v2025.12.03";
+        public const string ReleaseTag = "v2025.12.10";
         public static readonly string BaseConfigUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
 
         public static readonly RegistryKey LegacyRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
@@ -43,9 +43,10 @@ namespace RobloxStudioModManager
 
         // This sets up the following:
         // 1: The File Protocol to open .rbxl/.rbxlx files through the mod manager.
-        // 2: The URI Protcol to open places from the website through the mod manager.
+        // 2: The URI Protocol to open places from the website through the mod manager.
+        // 3: The URI Protocol to route OAuth2 login requests to where we write RobloxStudioBeta.exe
 
-        public static void UpdateStudioRegistryProtocols()
+        public static void UpdateStudioRegistryProtocols(string studioPath)
         {
             const string _ = ""; // Default empty key/value.
 
@@ -76,18 +77,27 @@ namespace RobloxStudioModManager
             }
 
             // Setup the URI protocol for opening the mod manager through the website.
-            RegistryKey robloxStudioUrl = GetSubKey(classes, "roblox-studio");
-            robloxStudioUrl.SetValue(_, "URL: Roblox Protocol");
-            robloxStudioUrl.SetValue("URL Protocol", _);
+            RegistryKey robloxStudioUri = GetSubKey(classes, "roblox-studio");
+            robloxStudioUri.SetValue(_, "URL: Roblox Protocol");
+            robloxStudioUri.SetValue("URL Protocol", _);
 
-            RegistryKey studioUrlCmd = GetSubKey(robloxStudioUrl, "shell", "open", "command");
-            studioUrlCmd.SetValue(_, modManagerPath + " %1");
+            RegistryKey studioUriCmd = GetSubKey(robloxStudioUri, "shell", "open", "command");
+            studioUriCmd.SetValue(_, $"\"{modManagerPath}\" %1");
 
-            // Set the default icon for both protocols.
+            // Setup authentication route.
+            RegistryKey robloxStudioAuthUri = GetSubKey(classes, "roblox-studio-auth");
+            robloxStudioAuthUri.SetValue(_, "URL: Roblox Protocol");
+            robloxStudioAuthUri.SetValue("URL Protocol", _);
+
+            RegistryKey studioAuthUriCmd = GetSubKey(robloxStudioAuthUri, "shell", "open", "command");
+            studioAuthUriCmd.SetValue(_, $"\"{studioPath}\" %1");
+
+            // Set the default icon for all protocols.
             RegistryKey[] appReg =
             {
                 robloxPlace,
-                robloxStudioUrl
+                robloxStudioUri,
+                robloxStudioAuthUri,
             };
 
             foreach (RegistryKey app in appReg)

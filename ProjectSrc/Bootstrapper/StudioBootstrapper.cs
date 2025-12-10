@@ -1046,21 +1046,14 @@ namespace RobloxStudioModManager
                 setStatus("Configuring Roblox Studio...");
                 echo("Updating registry protocols...");
 
-                Program.UpdateStudioRegistryProtocols();
+                var studioPath = GetLocalStudioPath();
+                Program.UpdateStudioRegistryProtocols(studioPath);
             }
 
             if (ApplyModManagerPatches && string.IsNullOrEmpty(OverrideStudioDirectory))
             {
                 echo("Applying flag configuration...");
                 FlagEditor.ApplyFlags();
-
-                /*
-                echo("Patching explorer icons...");
-
-                await ClassIconEditor
-                    .PatchExplorerIcons()
-                    .ConfigureAwait(true);
-                */
 
                 // Secret feature only for me :(
                 // Feel free to patch in your own thing if you want.
