@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Windows.Forms;
@@ -18,7 +19,7 @@ namespace RobloxStudioModManager
         public const string RepoOwner = "MaximumADHD";
         public const string RepoName = "Roblox-Studio-Mod-Manager";
 
-        public const string ReleaseTag = "v2025.12.10";
+        public const string ReleaseTag = "v2026.02.07";
         public static readonly string BaseConfigUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
 
         public static readonly RegistryKey LegacyRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
@@ -29,6 +30,8 @@ namespace RobloxStudioModManager
 
         public static string RootDir { get; private set; }
         public static ModManagerState State { get; private set; }
+
+        public static bool AllowUnsupportedVersions { get; private set; }
 
         private static JsonSerializerSettings JsonSettings = new JsonSerializerSettings()
         {
@@ -141,7 +144,7 @@ namespace RobloxStudioModManager
         }
 
         [STAThread]
-        static void Main(string[] args)
+        static void Main(string[] rawArgs)
         {
             // Initialize application state.
             var localAppData = Environment.GetEnvironmentVariable("localappdata");
@@ -165,6 +168,31 @@ namespace RobloxStudioModManager
                 File.WriteAllText(stateFile, json);
             }
 
+            var unprocessedArgs = new List<string>();
+
+            foreach (var rawArg in rawArgs)
+            {
+                var arg = rawArg.ToLowerInvariant();
+
+                switch (arg)
+                {
+                    // This code is setup for multiple launch arguments in the future,
+                    // but right now we only have one.
+
+                    case "-allowunsupported":
+                    {
+                        AllowUnsupportedVersions = true;
+                        break;
+                    }
+                    default:
+                    {
+                        unprocessedArgs.Add(arg);
+                        break;
+                    }
+                }
+            }
+
+            var args = unprocessedArgs.ToArray();
             State = JsonConvert.DeserializeObject<ModManagerState>(json);
             
             if (State == null)

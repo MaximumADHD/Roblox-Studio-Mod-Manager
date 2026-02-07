@@ -29,14 +29,6 @@ namespace RobloxStudioModManager
             releaseTag.Text = Program.ReleaseTag;
         }
 
-        /*
-        private Channel getSelectedChannel()
-        {
-            var result = channelSelect.SelectedItem;
-            return result.ToString();
-        }
-        */
-
         private void promptNewRelease(string releaseTag)
         {
             #if !DEBUG
@@ -108,8 +100,7 @@ namespace RobloxStudioModManager
             targetVersion.Items.Add(latest);
 
             // Populate the items list using the deploy history.
-            var getDeployLogs = StudioDeployLogs.Get(channel);
-            var deployLogs = await getDeployLogs.ConfigureAwait(true);
+            var deployLogs = await StudioDeployLogs.Get(channel, Program.AllowUnsupportedVersions);
 
             HashSet<DeployLog> targets = Environment.Is64BitOperatingSystem
                 ? deployLogs.CurrentLogs_x64
@@ -128,7 +119,7 @@ namespace RobloxStudioModManager
                 targetVersion.Items.AddRange(items);
             }
 
-            // Select the deploy log being targetted.
+            // Select the deploy log being targeted.
             DeployLog target = targets
                 .Where(log => log.VersionId == targetId)
                 .FirstOrDefault();
@@ -312,8 +303,6 @@ namespace RobloxStudioModManager
 
             if (allow)
             {
-                //var channel = getSelectedChannel();
-
                 Enabled = false;
                 UseWaitCursor = true;
 
@@ -336,35 +325,8 @@ namespace RobloxStudioModManager
             }
         }
 
-        /*
-        private async void editExplorerIcons_Click(object sender, EventArgs e)
-        {
-            Enabled = false;
-            UseWaitCursor = true;
-
-            Channel channel = getSelectedChannel();
-            Hide();
-
-            var infoTask = StudioBootstrapper.GetCurrentVersionInfo(channel);
-            var info = await infoTask.ConfigureAwait(true);
-
-            var updateTask = BootstrapperForm.BringUpToDate(channel, info.VersionGuid, "The class icons may have received an update.");
-            await updateTask.ConfigureAwait(true);
-
-            using (var editor = new ClassIconEditor())
-                editor.ShowDialog();
-
-            Show();
-            BringToFront();
-
-            Enabled = true;
-            UseWaitCursor = false;
-        }
-        */
-
         private async void launchStudio_Click(object sender = null, EventArgs e = null)
         {
-            // var channel = getSelectedChannel();
             var overrideGuid = "";
 
             if (args != null && args.Length > 0 && args[0].StartsWith("version-"))
@@ -511,85 +473,17 @@ namespace RobloxStudioModManager
 
             var target = targetVersion.SelectedItem as DeployLog;
             Program.State.TargetVersion = target.VersionId;
-        }
 
-        /*
-        private async void selectChannel(string text)
-        {
-            object existing = null;
-
-            foreach (var item in channelSelect.Items)
+            if (target.Unsupported)
             {
-                string name = item.ToString();
-
-                if (name.ToLowerInvariant() == text.ToLowerInvariant())
-                {
-                    existing = item;
-                    break;
-                }
-            }
-
-            if (existing != null)
-            {
-                var index = channelSelect.Items.IndexOf(existing);
-                channelSelect.SelectedIndex = index;
-                return;
-            }
-            
-            var channel = new Channel(text);
-
-            try
-            {
-                var logs = await StudioDeployLogs
-                    .Get(channel)
-                    .ConfigureAwait(true);
-
-                bool valid = Environment.Is64BitOperatingSystem
-                    ? logs.CurrentLogs_x64.Any()
-                    : logs.CurrentLogs_x86.Any();
-
-                if (valid)
-                {
-                    var setItem = new Action(() =>
-                    {
-                        int index = channelSelect.Items.Add(text);
-                        channelSelect.SelectedIndex = index;
-                    });
-
-                    Program.State.Channel = channel;
-                    Program.SaveState();
-
-                    Invoke(setItem);
-                    return;
-                }
-                
-                throw new Exception("No channels to work with!");
-            }
-            catch
-            {
-                var reset = new Action(() => channelSelect.SelectedIndex = 0);
-
-                MessageBox.Show
-                (
-                    $"Channel '{channel}' had no valid data on Roblox's CDN!",
-                    "Invalid channel!",
+                MessageBox.Show(
+                    "This version of Roblox Studio is no longer supported!\nYou are strongly advised against using it in the future.\nNo technical support will be provided, use it at your own risk!",
+                    "Tread Lightly!",
 
                     MessageBoxButtons.OK,
-                    MessageBoxIcon.Error
+                    MessageBoxIcon.Warning
                 );
-
-                Invoke(reset);
             }
         }
-
-        private void channelSelect_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.Enter)
-                return;
-
-            selectChannel(channelSelect.Text);
-            e.SuppressKeyPress = true;
-        }
-        */
     }
 }

@@ -39,10 +39,10 @@ namespace RobloxStudioModManager
         private const string OVERRIDE_STATUS_OFF = "No local overrides were found on load.";
         private const string OVERRIDE_STATUS_ON = "Values highlighted in red were overridden locally.";
 
-        private List<FVariable> flags;
-        private List<FVariable> allFlags;
+        private List<FVariable> flags = new List<FVariable>();
+        private List<FVariable> allFlags = new List<FVariable>();
 
-        private static FVariable lastCustomFlag;
+        private static FVariable lastCustomFlag = null;
         private readonly Dictionary<string, int> flagLookup = new Dictionary<string, int>();
         private string currentSearch = "";
 
@@ -163,6 +163,9 @@ namespace RobloxStudioModManager
 
         private void refreshFlags()
         {
+            if (allFlags == null)
+                return;
+
             string search = flagSearchFilter.Text.ToLowerInvariant();
 
             flags = allFlags

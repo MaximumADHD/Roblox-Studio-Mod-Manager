@@ -48,7 +48,7 @@
             this.launchStudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.launchStudio.Cursor = System.Windows.Forms.Cursors.Default;
             this.launchStudio.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.launchStudio.Location = new System.Drawing.Point(11, 131);
+            this.launchStudio.Location = new System.Drawing.Point(11, 124);
             this.launchStudio.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
             this.launchStudio.Name = "launchStudio";
             this.launchStudio.Size = new System.Drawing.Size(142, 23);
@@ -63,7 +63,7 @@
             this.manageMods.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.manageMods.Cursor = System.Windows.Forms.Cursors.Default;
             this.manageMods.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.manageMods.Location = new System.Drawing.Point(11, 159);
+            this.manageMods.Location = new System.Drawing.Point(11, 152);
             this.manageMods.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
             this.manageMods.Name = "manageMods";
             this.manageMods.Size = new System.Drawing.Size(142, 23);
@@ -77,7 +77,7 @@
             this.forceRebuild.AccessibleName = "Force Client Rebuild";
             this.forceRebuild.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.forceRebuild.AutoSize = true;
-            this.forceRebuild.Location = new System.Drawing.Point(174, 174);
+            this.forceRebuild.Location = new System.Drawing.Point(174, 167);
             this.forceRebuild.Margin = new System.Windows.Forms.Padding(2);
             this.forceRebuild.Name = "forceRebuild";
             this.forceRebuild.Size = new System.Drawing.Size(119, 17);
@@ -90,7 +90,7 @@
             this.openFlagEditor.AccessibleName = "Open Flag Editor";
             this.openFlagEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.openFlagEditor.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.openFlagEditor.Location = new System.Drawing.Point(11, 189);
+            this.openFlagEditor.Location = new System.Drawing.Point(11, 182);
             this.openFlagEditor.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
             this.openFlagEditor.Name = "openFlagEditor";
             this.openFlagEditor.Size = new System.Drawing.Size(142, 23);
@@ -104,7 +104,7 @@
             this.openStudioDirectory.AccessibleName = "Just Open Studio Path";
             this.openStudioDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.openStudioDirectory.AutoSize = true;
-            this.openStudioDirectory.Location = new System.Drawing.Point(174, 194);
+            this.openStudioDirectory.Location = new System.Drawing.Point(174, 187);
             this.openStudioDirectory.Margin = new System.Windows.Forms.Padding(2);
             this.openStudioDirectory.Name = "openStudioDirectory";
             this.openStudioDirectory.Size = new System.Drawing.Size(152, 17);
@@ -120,7 +120,7 @@
             this.targetVersionLabel.CausesValidation = false;
             this.targetVersionLabel.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.targetVersionLabel.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.targetVersionLabel.Location = new System.Drawing.Point(171, 132);
+            this.targetVersionLabel.Location = new System.Drawing.Point(171, 125);
             this.targetVersionLabel.Name = "targetVersionLabel";
             this.targetVersionLabel.Size = new System.Drawing.Size(83, 15);
             this.targetVersionLabel.TabIndex = 17;
@@ -144,7 +144,7 @@
             this.targetVersion.FormattingEnabled = true;
             this.targetVersion.Items.AddRange(new object[] {
             "(Use Latest)"});
-            this.targetVersion.Location = new System.Drawing.Point(174, 149);
+            this.targetVersion.Location = new System.Drawing.Point(174, 142);
             this.targetVersion.Name = "targetVersion";
             this.targetVersion.Size = new System.Drawing.Size(152, 21);
             this.targetVersion.TabIndex = 18;
@@ -177,7 +177,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(335, 232);
+            this.ClientSize = new System.Drawing.Size(335, 216);
             this.Controls.Add(this.releaseTag);
             this.Controls.Add(this.logo);
             this.Controls.Add(this.title);

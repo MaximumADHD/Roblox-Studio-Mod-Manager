@@ -18,6 +18,12 @@ namespace RobloxStudioModManager
         private readonly int _end;
         private int _pos = 0;
 
+        public int Pos
+        {
+            get => _pos;
+            set => _pos = value;
+        }
+
         public PatternScanner(byte[] binary, string patternStr, int start, int length)
         {
             _binary = binary;

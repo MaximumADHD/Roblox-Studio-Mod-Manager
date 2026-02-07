@@ -994,9 +994,11 @@ namespace RobloxStudioModManager
                         string studioPath = GetLocalStudioPath();
                         string apiPath = Path.Combine(studioDir, "API-Dump.json");
                         string fullApiPath = Path.Combine(studioDir, "Full-API-Dump.json");
+                        string apiV2Path = Path.Combine(studioDir, "UNSTABLE___API-Dump-2.json");
 
                         var dumpApi = Process.Start(studioPath, $"-API \"{apiPath}\"");
                         var dumpFullApi = Process.Start(studioPath, $"-FullAPI \"{fullApiPath}\"");
+                        var dumpApiV2 = Process.Start(studioPath, $"-APIV2 \"{apiV2Path}\"");
 
                         dumpApi.WaitForExit();
                         dumpFullApi.WaitForExit();
