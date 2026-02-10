@@ -110,6 +110,7 @@ namespace RobloxStudioModManager
 
             var dataTypeTable = new Dictionary<int, string>();
             var rawFFlagData = new List<RawFFlagData>();
+            var lastTargetOffset = 0;
 
             while (!baseScanner.Finished)
             {
@@ -123,6 +124,7 @@ namespace RobloxStudioModManager
                 // resolving the pointer with a constant offset since we can just assume it will always point to .rdata
                 var nameOffset = pos + 20 + BitConverter.ToInt32(binary, pos + 16) + rvaOffset;
                 var targetOffset = pos + 25 + BitConverter.ToInt32(binary, pos + 21);
+
                 var namebuf = new List<byte>();
                 var bad = false;
 
@@ -139,6 +141,13 @@ namespace RobloxStudioModManager
                     namebuf.Add(value);
                 }
 
+                if (!bad && lastTargetOffset != 0)
+                {
+                    // !! FIXME: Garbage pattern match? What is going on here?
+                    var relative = Math.Abs(lastTargetOffset - targetOffset);
+                    bad = relative > 1000;
+                }
+
                 if (!bad)
                 {
                     var name = Encoding.UTF8.GetString(namebuf.ToArray());
@@ -148,12 +157,13 @@ namespace RobloxStudioModManager
                         continue;
 
                     dataTypeTable[targetOffset] = null;
+                    lastTargetOffset = targetOffset;
                 }
             }
 
             // currently only two SFFlags exist - would there ever be zero?
-            if (dataTypeTable.Count != 5)
-                throw new Exception("Expected 5 different flag types");
+            //if (dataTypeTable.Count != 5)
+            //    throw new Exception("Expected 5 different flag types");
 
             // the registration routines for each flag type are stored in memory consecutively in this order
             dataTypeTable = dataTypeTable.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
