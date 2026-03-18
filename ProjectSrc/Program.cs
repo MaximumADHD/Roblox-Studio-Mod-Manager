@@ -9,7 +9,6 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using Microsoft.Win32;
-using System.Text;
 
 namespace RobloxStudioModManager
 {
@@ -18,8 +17,9 @@ namespace RobloxStudioModManager
         public const string RepoBranch = "main";
         public const string RepoOwner = "MaximumADHD";
         public const string RepoName = "Roblox-Studio-Mod-Manager";
+        public const string ReleaseTag = "v2026.03.18";
 
-        public const string ReleaseTag = "v2026.02.10_1";
+        public const string BaseUrl = "https://setup.rbxcdn.com";
         public static readonly string BaseConfigUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
 
         public static readonly RegistryKey LegacyRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
@@ -179,11 +179,11 @@ namespace RobloxStudioModManager
                     // This code is setup for multiple launch arguments in the future,
                     // but right now we only have one.
 
-                    case "-allowunsupported":
+                    /*case "-allowunsupported":
                     {
                         AllowUnsupportedVersions = true;
                         break;
-                    }
+                    }*/
                     default:
                     {
                         unprocessedArgs.Add(rawArg);

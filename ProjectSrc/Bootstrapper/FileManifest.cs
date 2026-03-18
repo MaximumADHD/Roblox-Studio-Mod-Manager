@@ -64,10 +64,9 @@ namespace RobloxStudioModManager
 
         public static async Task<FileManifest> Get(ClientVersionInfo info, bool remapExtraContent = false)
         {
-            Channel channel = info.Channel;
             string versionGuid = info.VersionGuid;
 
-            string fileManifestUrl = $"{channel.BaseUrl}/{versionGuid}-rbxManifest.txt";
+            string fileManifestUrl = $"{Program.BaseUrl}/{versionGuid}-rbxManifest.txt";
             string fileManifestData;
 
             using (WebClient http = new WebClient())

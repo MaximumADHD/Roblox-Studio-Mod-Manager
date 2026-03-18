@@ -54,7 +54,6 @@ namespace RobloxStudioModManager
 
         public object ProgressLock = new object();
 
-        public Channel Channel { get; set; } = "LIVE";
         public string OverrideStudioDirectory { get; set; } = "";
         public string OverrideGuid { get; set; } = "";
 
@@ -65,23 +64,10 @@ namespace RobloxStudioModManager
         public bool GenerateMetadata { get; set; } = false;
         public bool RemapExtraContent { get; set; } = false;
         public bool ApplyModManagerPatches { get; set; } = false;
-
-        public static async Task<string[]> FetchKnownChannels()
-        {
-            using (var http = new WebClient())
-            {
-                var json = await http.DownloadStringTaskAsync(Program.BaseConfigUrl + "KnownChannels.json");
-                return JsonConvert.DeserializeObject<string[]>(json);
-            }
-        }
-
+        
         public StudioBootstrapper(IBootstrapperState state = null)
         {
-            if (state == null)
-                mainState = Program.State;
-            else
-                mainState = state;
-
+            mainState = state ?? Program.State;
             versionRegistry = mainState.VersionData;
             pkgRegistry = mainState.PackageManifest;
             fileRegistry = mainState.FileManifest;
@@ -284,21 +270,13 @@ namespace RobloxStudioModManager
             }
         }
 
-        public static async Task<ClientVersionInfo> GetTargetVersionInfo(Channel channel, string targetVersion, VersionManifest versionRegistry = null)
+        public static async Task<ClientVersionInfo> GetTargetVersionInfo(string targetVersion, VersionManifest versionRegistry = null)
         {
             if (versionRegistry == null)
                 versionRegistry = Program.State.VersionData;
 
-            var logData = await StudioDeployLogs
-                .Get(channel)
-                .ConfigureAwait(false);
-
-            HashSet<DeployLog> targets;
-
-            if (Environment.Is64BitOperatingSystem)
-                targets = logData.CurrentLogs_x64;
-            else
-                targets = logData.CurrentLogs_x86;
+            var logData = await StudioDeployLogs.Get();
+            HashSet<DeployLog> targets = logData.CurrentLogs;
 
             DeployLog target = targets
                 .Where(log => log.VersionId == targetVersion)
@@ -306,44 +284,32 @@ namespace RobloxStudioModManager
 
             if (target == null)
             {
-                var result = GetCurrentVersionInfo(channel, versionRegistry);
+                var result = GetCurrentVersionInfo(versionRegistry);
                 return await result.ConfigureAwait(false);
             }
 
             return new ClientVersionInfo(target);
         }
 
-        public static async Task<ClientVersionInfo> GetCurrentVersionInfo(Channel channel, VersionManifest versionRegistry = null, string targetVersion = "")
+        public static async Task<ClientVersionInfo> GetCurrentVersionInfo(VersionManifest versionRegistry = null, string targetVersion = "")
         {
             if (versionRegistry == null)
                 versionRegistry = Program.State.VersionData;
 
             if (!string.IsNullOrEmpty(targetVersion))
             {
-                var result = GetTargetVersionInfo(channel, targetVersion, versionRegistry);
+                var result = GetTargetVersionInfo(targetVersion, versionRegistry);
                 return await result.ConfigureAwait(false);
             }
 
             bool is64Bit = Environment.Is64BitOperatingSystem;
-            ClientVersionInfo info;
+            var logData = await StudioDeployLogs.Get();
 
-            var logData = await StudioDeployLogs
-                .Get(channel)
-                .ConfigureAwait(false);
+            DeployLog build = logData.CurrentLogs.LastOrDefault();
+            ClientVersionInfo info = new ClientVersionInfo(build);
 
-            DeployLog build_x86 = logData.CurrentLogs_x86.LastOrDefault();
-            DeployLog build_x64 = logData.CurrentLogs_x64.LastOrDefault();
-
-            if (is64Bit)
-                info = new ClientVersionInfo(build_x64);
-            else
-                info = new ClientVersionInfo(build_x86);
-
-            if (build_x86 != null)
-                versionRegistry.LatestGuid_x86 = build_x86.VersionGuid;
-            
-            if (build_x64 != null)
-                versionRegistry.LatestGuid_x64 = build_x64.VersionGuid;
+            if (build != null)
+                versionRegistry.LatestGuid_x64 = build.VersionGuid;
             
             return info;
         }
@@ -389,7 +355,7 @@ namespace RobloxStudioModManager
             echo($"Verifying availability of: {package.Name}");
 
             string pkgName = package.Name;
-            var zipFileUrl = new Uri($"{Channel.BaseUrl}/{buildVersion}-{pkgName}");
+            var zipFileUrl = new Uri($"{Program.BaseUrl}/{buildVersion}-{pkgName}");
 
             var request = WebRequest.Create(zipFileUrl) as HttpWebRequest;
             request.Headers.Set("UserAgent", UserAgent);
@@ -410,7 +376,7 @@ namespace RobloxStudioModManager
         {
             byte[] result = null;
             string pkgName = package.Name;
-            string zipFileUrl = $"{Channel.BaseUrl}/{buildVersion}-{pkgName}";
+            string zipFileUrl = $"{Program.BaseUrl}/{buildVersion}-{pkgName}";
 
             using (var localHttp = new WebClient())
             {
@@ -765,18 +731,11 @@ namespace RobloxStudioModManager
             echo("Checking build installation...");
 
             string currentVersion = versionRegistry.VersionGuid;
-            string currentChannel;
-
-            if (mainState == Program.State)
-                currentChannel = mainState.Channel;
-            else
-                currentChannel = Channel;
-
-            var getVersionInfo = GetCurrentVersionInfo(currentChannel, versionRegistry, targetVersion);
+            var getVersionInfo = GetCurrentVersionInfo(versionRegistry, targetVersion);
             ClientVersionInfo versionInfo = await getVersionInfo.ConfigureAwait(true);
 
             if (OverrideGuid != "")
-                versionInfo = new ClientVersionInfo(versionInfo.Channel, versionInfo.Version, OverrideGuid);
+                versionInfo = new ClientVersionInfo(versionInfo.Version, OverrideGuid);
 
             string studioDir = GetLocalStudioDirectory();
             buildVersion = versionInfo.VersionGuid;
@@ -1005,9 +964,6 @@ namespace RobloxStudioModManager
                     }
 
                     ProgressBarStyle = ProgressBarStyle.Marquee;
-
-                    if (mainState == Program.State)
-                        mainState.Channel = Channel;
 
                     versionRegistry.Version = versionId;
                     versionRegistry.VersionGuid = buildVersion;

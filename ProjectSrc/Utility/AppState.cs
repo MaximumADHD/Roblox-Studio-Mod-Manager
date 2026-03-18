@@ -5,9 +5,7 @@ namespace RobloxStudioModManager
 {
     public class VersionManifest
     {
-        public string Channel = "LIVE";
         public string Version = "";
-
         public string VersionGuid = "";
         public string VersionOverload = "";
         public string LastFlagScanVersion = "";
@@ -25,8 +23,6 @@ namespace RobloxStudioModManager
 
     public interface IBootstrapperState
     {
-        string Channel { get; set; }
-        
         VersionManifest VersionData { get; set; }
         SortedDictionary<string, string> FileManifest { get; }
         SortedDictionary<string, PackageState> PackageManifest { get; }
@@ -34,9 +30,7 @@ namespace RobloxStudioModManager
 
     public class ModManagerState : IBootstrapperState
     {
-        public string Channel { get; set; } = "LIVE";
         public string TargetVersion { get; set; } = "";
-
         public bool DisableFlagWarning { get; set; } = false;
         public VersionManifest VersionData { get; set; } = new VersionManifest();
         public SortedDictionary<string, string> FileManifest { get; set; } = new SortedDictionary<string, string>();

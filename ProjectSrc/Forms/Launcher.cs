@@ -17,9 +17,6 @@ namespace RobloxStudioModManager
         private static VersionManifest versionRegistry => Program.State.VersionData;
         private readonly string[] args = null;
 
-        // hopefully temporary? probably not.
-        private const string channel = "LIVE";
-
         public Launcher(params string[] mainArgs)
         {
             if (mainArgs.Length > 0)
@@ -71,7 +68,7 @@ namespace RobloxStudioModManager
             {
                 var get = http.DownloadStringTaskAsync(Program.BaseConfigUrl + "LatestReleaseTag.txt");
 
-                await get.ContinueWith((task) =>
+                await get.ContinueWith(task =>
                 {
                     if (task.IsFaulted)
                     {
@@ -100,11 +97,8 @@ namespace RobloxStudioModManager
             targetVersion.Items.Add(latest);
 
             // Populate the items list using the deploy history.
-            var deployLogs = await StudioDeployLogs.Get(channel, Program.AllowUnsupportedVersions);
-
-            HashSet<DeployLog> targets = Environment.Is64BitOperatingSystem
-                ? deployLogs.CurrentLogs_x64
-                : deployLogs.CurrentLogs_x86;
+            var deployLogs = await StudioDeployLogs.Get(Program.AllowUnsupportedVersions);
+            HashSet<DeployLog> targets = deployLogs.CurrentLogs;
 
             targetVersion.Enabled = deployLogs.HasHistory;
             targetVersionLabel.Enabled = deployLogs.HasHistory;
@@ -112,7 +106,7 @@ namespace RobloxStudioModManager
             if (deployLogs.HasHistory)
             {
                 var items = targets
-                    .OrderByDescending(log => log.TimeStamp)
+                    .OrderByDescending(t => t.CommitId)
                     .Cast<object>()
                     .ToArray();
 
@@ -306,14 +300,11 @@ namespace RobloxStudioModManager
                 Enabled = false;
                 UseWaitCursor = true;
 
-                var infoTask = StudioBootstrapper.GetCurrentVersionInfo(channel);
-                var info = await infoTask.ConfigureAwait(true);
-
+                var info = await StudioBootstrapper.GetCurrentVersionInfo();
                 Hide();
 
-                var updateTask = BootstrapperForm.BringUpToDate(channel, info.VersionGuid, "Some newer flags might be missing.");
-                await updateTask.ConfigureAwait(true);
-
+                await BootstrapperForm.BringUpToDate(info.VersionGuid, "Some newer flags might be missing.");
+                
                 using (FlagEditor editor = new FlagEditor())
                     editor.ShowDialog();
 
@@ -336,18 +327,14 @@ namespace RobloxStudioModManager
             {
                 ForceInstall = forceRebuild.Checked,
                 ApplyModManagerPatches = true,
-                OverrideGuid = overrideGuid,
-                Channel = channel
+                OverrideGuid = overrideGuid
             };
 
             Hide();
 
             using (var installer = new BootstrapperForm(bootstrapper))
-            {
-                var install = installer.Bootstrap();
-                await install.ConfigureAwait(true);
-            }
-            
+                await installer.Bootstrap();
+
             string studioRoot = StudioBootstrapper.GetStudioDirectory();
             string modPath = getModPath();
 
