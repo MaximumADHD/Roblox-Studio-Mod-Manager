@@ -76,7 +76,7 @@ namespace RobloxStudioModManager
         public static async Task<PackageManifest> Get(ClientVersionInfo info)
         {
             string versionGuid = info.VersionGuid;
-            string pkgManifestUrl = $"{Program.BaseUrl}/{versionGuid}-rbxPkgManifest.txt";
+            string pkgManifestUrl = $"{Program.BaseUrl}/channel/common/{versionGuid}-rbxPkgManifest.txt";
             string pkgManifestData;
 
             using (WebClient http = new WebClient())

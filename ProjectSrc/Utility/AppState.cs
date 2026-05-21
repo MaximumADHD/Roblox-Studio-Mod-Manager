@@ -15,6 +15,12 @@ namespace RobloxStudioModManager
         public string LatestGuid_x86 = "";
     }
 
+    public class ChannelManifest
+    {
+        public string ChannelName = "LIVE";
+        public string ChannelToken = "";
+    }
+
     public class PackageState
     {
         public int NumFiles = 0;
@@ -33,6 +39,7 @@ namespace RobloxStudioModManager
         public string TargetVersion { get; set; } = "";
         public bool DisableFlagWarning { get; set; } = false;
         public VersionManifest VersionData { get; set; } = new VersionManifest();
+        public ChannelManifest ChannelData { get; set; } = new ChannelManifest();
         public SortedDictionary<string, string> FileManifest { get; set; } = new SortedDictionary<string, string>();
         public SortedDictionary<string, FVariable> FlagEditor { get; set; } = new SortedDictionary<string, FVariable>();
         public SortedDictionary<string, PackageState> PackageManifest { get; set; } = new SortedDictionary<string, PackageState>();

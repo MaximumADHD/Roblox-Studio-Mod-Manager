@@ -302,8 +302,8 @@ namespace RobloxStudioModManager
                 return await result.ConfigureAwait(false);
             }
 
-            bool is64Bit = Environment.Is64BitOperatingSystem;
-            var logData = await StudioDeployLogs.Get();
+            var channelData = Program.State.ChannelData;
+            var logData = await StudioDeployLogs.Get(Program.AllowUnsupportedVersions, channelData.ChannelName, channelData.ChannelToken);
 
             DeployLog build = logData.CurrentLogs.LastOrDefault();
             ClientVersionInfo info = new ClientVersionInfo(build);
@@ -355,7 +355,7 @@ namespace RobloxStudioModManager
             echo($"Verifying availability of: {package.Name}");
 
             string pkgName = package.Name;
-            var zipFileUrl = new Uri($"{Program.BaseUrl}/{buildVersion}-{pkgName}");
+            var zipFileUrl = new Uri($"{Program.BaseUrl}/channel/common/{buildVersion}-{pkgName}");
 
             var request = WebRequest.Create(zipFileUrl) as HttpWebRequest;
             request.Headers.Set("UserAgent", UserAgent);
@@ -376,7 +376,7 @@ namespace RobloxStudioModManager
         {
             byte[] result = null;
             string pkgName = package.Name;
-            string zipFileUrl = $"{Program.BaseUrl}/{buildVersion}-{pkgName}";
+            string zipFileUrl = $"{Program.BaseUrl}/channel/common/{buildVersion}-{pkgName}";
 
             using (var localHttp = new WebClient())
             {
@@ -403,7 +403,7 @@ namespace RobloxStudioModManager
                 });
 
                 echo($"Installing package {zipFileUrl}");
-                
+
                 var getFile = localHttp.DownloadDataTaskAsync(zipFileUrl);
                 byte[] fileContents = await getFile.ConfigureAwait(false);
                 
@@ -1012,14 +1012,6 @@ namespace RobloxStudioModManager
             {
                 echo("Applying flag configuration...");
                 FlagEditor.ApplyFlags();
-
-                // Secret feature only for me :(
-                // Feel free to patch in your own thing if you want.
-
-#               if ROBLOX_INTERNAL
-                    var rbxInternal = Task.Run(() => RobloxInternal.Patch(this));
-                    await rbxInternal.ConfigureAwait(false);
-#               endif
             }
 
             ProgressBarStyle = ProgressBarStyle.Marquee;

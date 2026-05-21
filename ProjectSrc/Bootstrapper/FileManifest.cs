@@ -66,7 +66,7 @@ namespace RobloxStudioModManager
         {
             string versionGuid = info.VersionGuid;
 
-            string fileManifestUrl = $"{Program.BaseUrl}/{versionGuid}-rbxManifest.txt";
+            string fileManifestUrl = $"{Program.BaseUrl}/channel/common/{versionGuid}-rbxManifest.txt";
             string fileManifestData;
 
             using (WebClient http = new WebClient())
