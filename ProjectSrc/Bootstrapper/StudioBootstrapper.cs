@@ -1012,6 +1012,14 @@ namespace RobloxStudioModManager
             {
                 echo("Applying flag configuration...");
                 FlagEditor.ApplyFlags();
+
+                // Secret feature only for me :(
+                // Feel free to patch in your own thing if you want.
+
+                #if ROBLOX_INTERNAL
+                    var rbxInternal = Task.Run(() => RobloxInternal.Patch(this));
+                    await rbxInternal.ConfigureAwait(false);
+                #endif
             }
 
             ProgressBarStyle = ProgressBarStyle.Marquee;
