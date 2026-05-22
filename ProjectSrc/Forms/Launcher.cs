@@ -68,8 +68,19 @@ namespace RobloxStudioModManager
             targetVersion.Enabled = deployLogs.HasHistory;
             targetVersionLabel.Enabled = deployLogs.HasHistory;
 
-            if (!string.IsNullOrEmpty(channelName)) Program.State.ChannelData.ChannelName = channelName; 
-            if (!string.IsNullOrEmpty(channelToken)) Program.State.ChannelData.ChannelToken = channelToken;
+            if (deployLogs.ChannelName == channelName)
+            {
+                if (!string.IsNullOrEmpty(channelName)) Program.State.ChannelData.ChannelName = channelName;
+                if (!string.IsNullOrEmpty(channelToken)) Program.State.ChannelData.ChannelToken = channelToken;
+            }
+            else
+            {
+                MessageBox.Show("Could not fetch client version info with the channel name and token!\nEnsure you have entered them correctly.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Program.State.ChannelData.ChannelName = "LIVE";
+                Program.State.ChannelData.ChannelToken = "";
+                channelNameBox.Text = "LIVE";
+                channelTokenBox.Text = "";
+            }
 
             if (deployLogs.HasHistory)
             {
@@ -465,7 +476,7 @@ namespace RobloxStudioModManager
                 return;
             }
 
-            var target = targetVersion.SelectedItem as DeployLog;
+            if (!(targetVersion.SelectedItem is DeployLog target)) return;
             Program.State.TargetVersion = target.VersionId;
 
             if (target.Unsupported)
