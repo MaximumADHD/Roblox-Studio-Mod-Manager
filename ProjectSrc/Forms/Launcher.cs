@@ -68,7 +68,7 @@ namespace RobloxStudioModManager
             targetVersion.Enabled = deployLogs.HasHistory;
             targetVersionLabel.Enabled = deployLogs.HasHistory;
 
-            if (deployLogs.ChannelName == channelName)
+            if (deployLogs.ChannelName == channelName || deployLogs.ChannelName == "zbeta")
             {
                 if (!string.IsNullOrEmpty(channelName)) Program.State.ChannelData.ChannelName = channelName;
                 if (!string.IsNullOrEmpty(channelToken)) Program.State.ChannelData.ChannelToken = channelToken;
