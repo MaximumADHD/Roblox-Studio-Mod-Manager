@@ -52,7 +52,7 @@
             this.launchStudio.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.launchStudio.Cursor = System.Windows.Forms.Cursors.Default;
             this.launchStudio.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.launchStudio.Location = new System.Drawing.Point(8, 136);
+            this.launchStudio.Location = new System.Drawing.Point(11, 123);
             this.launchStudio.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
             this.launchStudio.Name = "launchStudio";
             this.launchStudio.Size = new System.Drawing.Size(142, 23);
@@ -67,7 +67,7 @@
             this.manageMods.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.manageMods.Cursor = System.Windows.Forms.Cursors.Default;
             this.manageMods.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.manageMods.Location = new System.Drawing.Point(8, 164);
+            this.manageMods.Location = new System.Drawing.Point(11, 152);
             this.manageMods.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
             this.manageMods.Name = "manageMods";
             this.manageMods.Size = new System.Drawing.Size(142, 23);
@@ -81,7 +81,7 @@
             this.forceRebuild.AccessibleName = "Force Client Rebuild";
             this.forceRebuild.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.forceRebuild.AutoSize = true;
-            this.forceRebuild.Location = new System.Drawing.Point(171, 179);
+            this.forceRebuild.Location = new System.Drawing.Point(11, 234);
             this.forceRebuild.Margin = new System.Windows.Forms.Padding(2);
             this.forceRebuild.Name = "forceRebuild";
             this.forceRebuild.Size = new System.Drawing.Size(119, 17);
@@ -94,7 +94,7 @@
             this.openFlagEditor.AccessibleName = "Open Flag Editor";
             this.openFlagEditor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.openFlagEditor.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.openFlagEditor.Location = new System.Drawing.Point(8, 194);
+            this.openFlagEditor.Location = new System.Drawing.Point(11, 181);
             this.openFlagEditor.Margin = new System.Windows.Forms.Padding(6, 3, 3, 3);
             this.openFlagEditor.Name = "openFlagEditor";
             this.openFlagEditor.Size = new System.Drawing.Size(142, 23);
@@ -108,12 +108,12 @@
             this.openStudioDirectory.AccessibleName = "Just Open Studio Path";
             this.openStudioDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.openStudioDirectory.AutoSize = true;
-            this.openStudioDirectory.Location = new System.Drawing.Point(171, 199);
+            this.openStudioDirectory.Location = new System.Drawing.Point(11, 212);
             this.openStudioDirectory.Margin = new System.Windows.Forms.Padding(2);
             this.openStudioDirectory.Name = "openStudioDirectory";
-            this.openStudioDirectory.Size = new System.Drawing.Size(152, 17);
+            this.openStudioDirectory.Size = new System.Drawing.Size(140, 17);
             this.openStudioDirectory.TabIndex = 14;
-            this.openStudioDirectory.Text = "Just Open Studio Directory";
+            this.openStudioDirectory.Text = "Open Working Directory";
             this.openStudioDirectory.UseVisualStyleBackColor = true;
             // 
             // targetVersionLabel
@@ -124,7 +124,7 @@
             this.targetVersionLabel.CausesValidation = false;
             this.targetVersionLabel.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.targetVersionLabel.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.targetVersionLabel.Location = new System.Drawing.Point(168, 137);
+            this.targetVersionLabel.Location = new System.Drawing.Point(168, 114);
             this.targetVersionLabel.Name = "targetVersionLabel";
             this.targetVersionLabel.Size = new System.Drawing.Size(83, 15);
             this.targetVersionLabel.TabIndex = 17;
@@ -148,7 +148,7 @@
             this.targetVersion.FormattingEnabled = true;
             this.targetVersion.Items.AddRange(new object[] {
             "(Use Latest)"});
-            this.targetVersion.Location = new System.Drawing.Point(171, 154);
+            this.targetVersion.Location = new System.Drawing.Point(171, 131);
             this.targetVersion.Name = "targetVersion";
             this.targetVersion.Size = new System.Drawing.Size(152, 21);
             this.targetVersion.TabIndex = 18;
@@ -178,7 +178,7 @@
             // 
             // channelNameBox
             // 
-            this.channelNameBox.Location = new System.Drawing.Point(8, 248);
+            this.channelNameBox.Location = new System.Drawing.Point(171, 176);
             this.channelNameBox.Name = "channelNameBox";
             this.channelNameBox.Size = new System.Drawing.Size(152, 20);
             this.channelNameBox.TabIndex = 24;
@@ -192,7 +192,7 @@
             this.channelNameTitle.CausesValidation = false;
             this.channelNameTitle.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.channelNameTitle.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.channelNameTitle.Location = new System.Drawing.Point(5, 228);
+            this.channelNameTitle.Location = new System.Drawing.Point(168, 158);
             this.channelNameTitle.Name = "channelNameTitle";
             this.channelNameTitle.Size = new System.Drawing.Size(89, 15);
             this.channelNameTitle.TabIndex = 25;
@@ -206,15 +206,15 @@
             this.channelTokenTitle.CausesValidation = false;
             this.channelTokenTitle.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.channelTokenTitle.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.channelTokenTitle.Location = new System.Drawing.Point(168, 228);
+            this.channelTokenTitle.Location = new System.Drawing.Point(168, 206);
             this.channelTokenTitle.Name = "channelTokenTitle";
-            this.channelTokenTitle.Size = new System.Drawing.Size(88, 15);
+            this.channelTokenTitle.Size = new System.Drawing.Size(127, 15);
             this.channelTokenTitle.TabIndex = 26;
-            this.channelTokenTitle.Text = "Channel Token:";
+            this.channelTokenTitle.Text = "Channel Access Token:";
             // 
             // channelTokenBox
             // 
-            this.channelTokenBox.Location = new System.Drawing.Point(171, 248);
+            this.channelTokenBox.Location = new System.Drawing.Point(171, 221);
             this.channelTokenBox.Name = "channelTokenBox";
             this.channelTokenBox.Size = new System.Drawing.Size(152, 20);
             this.channelTokenBox.TabIndex = 27;
@@ -226,7 +226,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(335, 282);
+            this.ClientSize = new System.Drawing.Size(335, 274);
             this.Controls.Add(this.channelTokenBox);
             this.Controls.Add(this.channelTokenTitle);
             this.Controls.Add(this.channelNameTitle);

@@ -94,7 +94,7 @@ namespace RobloxStudioModManager
             // 13:  48 8D 0D ?? ?? ?? ?? | lea rcx, <addr>    ; fflag name
             // 20:  E9 ?? ?? ?? ??       | jmp <addr>         ; registration routine, determines data type (FFlag, SFFlag, FString, etc)
 
-            const string basePattern = "41 B8 ?? 00 00 00 48 8D 15 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E9";
+            const string basePattern = "41 B8 ?? 00 00 00 48 8D 15 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E9 ?? ?? ?? ?? CC CC CC CC CC CC CC";
             var baseScanner = new PatternScanner(binary, basePattern, textStart, textSize);
 
             // this snippet is present at the bottom of version'd fflag declarations
@@ -171,7 +171,9 @@ namespace RobloxStudioModManager
             dataTypeTable[dataTypeTable.Keys.ElementAt(1)] = "SFFlag";
             dataTypeTable[dataTypeTable.Keys.ElementAt(2)] = "FInt";
             dataTypeTable[dataTypeTable.Keys.ElementAt(3)] = "FLog";
-            dataTypeTable[dataTypeTable.Keys.ElementAt(4)] = "FString";
+
+            // i don't even know anymore
+            //dataTypeTable[dataTypeTable.Keys.ElementAt(4)] = "FString";
 
             // collect fflag versions
             var versions = new Dictionary<string, int>();
@@ -290,7 +292,9 @@ namespace RobloxStudioModManager
 
             foreach (var entry in rawFFlagData)
             {
-                string dataType = dataTypeTable[entry.DataTypeId];
+                if (!dataTypeTable.TryGetValue(entry.DataTypeId, out string dataType))
+                    dataType = "ERROR";
+
                 string name = "";
 
                 if (entry.ByteParam == 2)

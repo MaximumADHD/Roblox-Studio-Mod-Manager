@@ -11,6 +11,9 @@ namespace RobloxStudioModManager
         public string LastFlagScanVersion = "";
         public string LastExecutedVersion = "";
 
+        public string OverrideChannel = "";
+        public string OverrideToken = "";
+
         public string LatestGuid_x64 = "";
         public string LatestGuid_x86 = "";
     }
