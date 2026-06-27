@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RobloxDeployHistory;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -7,8 +8,6 @@ using System.Linq;
 using System.Media;
 using System.Net;
 using System.Windows.Forms;
-
-using RobloxDeployHistory;
 
 namespace RobloxStudioModManager
 {
@@ -52,42 +51,8 @@ namespace RobloxStudioModManager
             #endif
         }
 
-        private async void Launcher_Load(object sender, EventArgs e)
+        private async void setVersionHistory(string channelName = "LIVE", string channelToken = "")
         {
-            Enabled = false;
-            UseWaitCursor = true;
-
-            if (args != null)
-            {
-                launchStudio_Click();
-                Hide();
-                return;
-            }
-            
-            using (var http = new WebClient())
-            {
-                var get = http.DownloadStringTaskAsync(Program.BaseConfigUrl + "LatestReleaseTag.txt");
-
-                await get.ContinueWith(task =>
-                {
-                    if (task.IsFaulted)
-                    {
-                        MessageBox.Show("Could not fetch latest release tag!\nYou may not have an internet connection.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    if (!task.IsCompleted)
-                        return;
-
-                    string releaseTag = task.Result.Trim();
-
-                    if (releaseTag == Program.ReleaseTag)
-                        return;
-
-                    Invoke(new Action<string>(promptNewRelease), releaseTag);
-                });
-            }
-
             // Grab the version currently being targeted.
             string targetId = Program.State.TargetVersion;
             const string latest = "(Use Latest)";
@@ -97,11 +62,25 @@ namespace RobloxStudioModManager
             targetVersion.Items.Add(latest);
 
             // Populate the items list using the deploy history.
-            var deployLogs = await StudioDeployLogs.Get(Program.AllowUnsupportedVersions);
+            var deployLogs = await StudioDeployLogs.Get(Program.AllowUnsupportedVersions, channelName, channelToken);
             HashSet<DeployLog> targets = deployLogs.CurrentLogs;
 
             targetVersion.Enabled = deployLogs.HasHistory;
             targetVersionLabel.Enabled = deployLogs.HasHistory;
+
+            if (deployLogs.ChannelName == channelName || deployLogs.ChannelName == "zbeta")
+            {
+                if (!string.IsNullOrEmpty(channelName)) Program.State.ChannelData.ChannelName = channelName;
+                if (!string.IsNullOrEmpty(channelToken)) Program.State.ChannelData.ChannelToken = channelToken;
+            }
+            else
+            {
+                MessageBox.Show("Could not fetch client version info with the channel name and token!\nEnsure you have entered them correctly.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Program.State.ChannelData.ChannelName = "LIVE";
+                Program.State.ChannelData.ChannelToken = "";
+                channelNameBox.Text = "LIVE";
+                channelTokenBox.Text = "";
+            }
 
             if (deployLogs.HasHistory)
             {
@@ -128,6 +107,45 @@ namespace RobloxStudioModManager
 
             // If the target isn't valid, fallback to live.
             targetVersion.SelectedItem = latest;
+        }
+
+        private async void Launcher_Load(object sender, EventArgs e)
+        {
+            Enabled = false;
+            UseWaitCursor = true;
+
+            if (args != null)
+            {
+                launchStudio_Click();
+                Hide();
+                return;
+            }
+
+            using (var http = new WebClient())
+            {
+                var get = http.DownloadStringTaskAsync(Program.BaseConfigUrl + "LatestReleaseTag.txt");
+
+                await get.ContinueWith(task =>
+                {
+                    if (task.IsFaulted)
+                    {
+                        MessageBox.Show("Could not fetch latest release tag!\nYou may not have an internet connection.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    if (!task.IsCompleted)
+                        return;
+
+                    string releaseTag = task.Result.Trim();
+
+                    if (releaseTag == Program.ReleaseTag)
+                        return;
+
+                    Invoke(new Action<string>(promptNewRelease), releaseTag);
+                });
+            }
+
+            setVersionHistory();
             UseWaitCursor = false;
             Enabled = true;
         }
@@ -458,7 +476,7 @@ namespace RobloxStudioModManager
                 return;
             }
 
-            var target = targetVersion.SelectedItem as DeployLog;
+            if (!(targetVersion.SelectedItem is DeployLog target)) return;
             Program.State.TargetVersion = target.VersionId;
 
             if (target.Unsupported)
@@ -471,6 +489,11 @@ namespace RobloxStudioModManager
                     MessageBoxIcon.Warning
                 );
             }
+        }
+
+        private void channelTokenBox_Leave(object sender, EventArgs e)
+        {
+            setVersionHistory(channelNameBox.Text, channelTokenBox.Text);
         }
     }
 }
