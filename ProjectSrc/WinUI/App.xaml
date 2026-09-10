@@ -1,0 +1,22 @@
+<Application
+    x:Class="RobloxStudioModManager.WinUI.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Red accent, matching the app's checkered logo. -->
+            <Color x:Key="SystemAccentColor">#E4212D</Color>
+            <Color x:Key="SystemAccentColorLight1">#E9424C</Color>
+            <Color x:Key="SystemAccentColorLight2">#ED6169</Color>
+            <Color x:Key="SystemAccentColorLight3">#F28086</Color>
+            <Color x:Key="SystemAccentColorDark1">#C41E29</Color>
+            <Color x:Key="SystemAccentColorDark2">#A31A23</Color>
+            <Color x:Key="SystemAccentColorDark3">#82151C</Color>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

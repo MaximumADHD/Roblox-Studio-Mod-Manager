@@ -8,7 +8,6 @@ using System.IO.Compression;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 using Newtonsoft.Json;
 using RobloxDeployHistory;
@@ -17,6 +16,7 @@ using Konscious.Security.Cryptography;
 namespace RobloxStudioModManager
 {
     public delegate void MessageFeed(string message);
+    public delegate Task<bool> ConfirmPrompt(string message, string title);
 
     public class StudioBootstrapper
     {
@@ -32,6 +32,7 @@ namespace RobloxStudioModManager
 
         public event MessageFeed EchoFeed;
         public event MessageFeed StatusFeed;
+        public event ConfirmPrompt ConfirmFeed;
 
         private readonly IBootstrapperState mainState;
         private readonly VersionManifest versionData;
@@ -51,7 +52,7 @@ namespace RobloxStudioModManager
 
         public int Progress = 0;
         public int MaxProgress = 0;
-        public ProgressBarStyle ProgressBarStyle = ProgressBarStyle.Continuous;
+        public BootstrapProgressStyle ProgressBarStyle = BootstrapProgressStyle.Determinate;
 
         public object ProgressLock = new object();
 
@@ -646,25 +647,21 @@ namespace RobloxStudioModManager
 
             if (initialRunning.Count > 0)
             {
-                DialogResult result = DialogResult.OK;
+                bool proceed = true;
 
                 if (mainState == Program.State)
                 {
-                    result = MessageBox.Show
+                    proceed = ConfirmFeed == null || await ConfirmFeed.Invoke
                     (
                         "All Roblox Studio processes need to be closed in order to update Roblox Studio!\n" +
                         "Press Ok once you've saved your work, or\n" +
                         "Press Cancel to skip this update temporarily.",
 
-                        "Notice",
-                        MessageBoxButtons.OKCancel,
-                        MessageBoxIcon.Warning,
-                        MessageBoxDefaultButton.Button1,
-                        MessageBoxOptions.DefaultDesktopOnly
-                    );
+                        "Notice"
+                    ).ConfigureAwait(true);
                 }
 
-                if (result == DialogResult.Cancel)
+                if (!proceed)
                 {
                     safeToContinue = true;
                     cancelled = true;
@@ -707,7 +704,7 @@ namespace RobloxStudioModManager
 
                 Progress = 0;
                 MaxProgress = retries * granularity;
-                ProgressBarStyle = ProgressBarStyle.Continuous;
+                ProgressBarStyle = BootstrapProgressStyle.Determinate;
 
                 for (int i = 0; i < retries; i++)
                 {
@@ -826,7 +823,7 @@ namespace RobloxStudioModManager
 
                     Progress = 0;
                     MaxProgress = 0;
-                    ProgressBarStyle = ProgressBarStyle.Continuous;
+                    ProgressBarStyle = BootstrapProgressStyle.Determinate;
 
                     // Verify all of these packages are available to install.
                     foreach (Package package in pkgManifest)
@@ -864,7 +861,7 @@ namespace RobloxStudioModManager
 
                             Progress = 1;
                             MaxProgress = 1;
-                            ProgressBarStyle = ProgressBarStyle.Marquee;
+                            ProgressBarStyle = BootstrapProgressStyle.Indeterminate;
 
                             var timeout = Task.Delay(2000);
                             await timeout.ConfigureAwait(false);
@@ -974,11 +971,11 @@ namespace RobloxStudioModManager
                     versionData.VersionGuid = buildVersion;
                     versionData.VersionOverload = targetVersion;
 
-                    ProgressBarStyle = ProgressBarStyle.Marquee;
+                    ProgressBarStyle = BootstrapProgressStyle.Indeterminate;
                 }
                 else
                 {
-                    ProgressBarStyle = ProgressBarStyle.Marquee;
+                    ProgressBarStyle = BootstrapProgressStyle.Indeterminate;
                     echo("Update cancelled. Launching on current version.");
                 }
             }
@@ -1018,7 +1015,7 @@ namespace RobloxStudioModManager
             if (ApplyModManagerPatches && string.IsNullOrEmpty(OverrideStudioDirectory))
             {
                 echo("Applying flag configuration...");
-                FlagEditor.ApplyFlags();
+                FlagManager.ApplyFlags();
 
                 // Secret feature only for me :(
                 // Feel free to patch in your own thing if you want.
@@ -1029,7 +1026,7 @@ namespace RobloxStudioModManager
                 #endif
             }
 
-            ProgressBarStyle = ProgressBarStyle.Marquee;
+            ProgressBarStyle = BootstrapProgressStyle.Indeterminate;
             MaxProgress = 1;
             Progress = 1;
 

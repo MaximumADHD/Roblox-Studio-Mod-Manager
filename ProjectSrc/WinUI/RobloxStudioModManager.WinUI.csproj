@@ -1,0 +1,72 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <RootNamespace>RobloxStudioModManager.WinUI</RootNamespace>
+    <AssemblyName>RobloxStudioModManager.WinUI</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\Icon.ico</ApplicationIcon>
+    <UseWinUI>true</UseWinUI>
+	<!--
+	    Using Platforms property here causes a redundant "x64" folder being created.
+	    RuntimeIdentifier alone already fully determines the build target.
+	-->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <WindowsPackageType>None</WindowsPackageType>
+    <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+  </PropertyGroup>
+
+  <!--
+      The configured Release option produces a single distributable .exe,
+	  placing the contents into a temp cache folder at first run.
+      The Debug option isn't affected by this, however.
+  -->
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugType>none</DebugType>
+    <AllowedReferenceRelatedFileExtensions>none</AllowedReferenceRelatedFileExtensions>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <EnableMsixTooling>true</EnableMsixTooling>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.4.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="PeNet" Version="5.1.0" />
+    <PackageReference Include="Konscious.Security.Cryptography.Blake2" Version="1.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Roblox-Deploy-History\RobloxDeployHistory.csproj" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <Compile Include="..\Utility\AppState.cs" Link="Shared\Utility\AppState.cs" />
+    <Compile Include="..\Utility\BootstrapProgressStyle.cs" Link="Shared\Utility\BootstrapProgressStyle.cs" />
+    <Compile Include="..\Utility\CustomFlag.cs" Link="Shared\Utility\CustomFlag.cs" />
+    <Compile Include="..\Utility\FlagManager.cs" Link="Shared\Utility\FlagManager.cs" />
+    <Compile Include="..\Utility\FVariable.cs" Link="Shared\Utility\FVariable.cs" />
+    <Compile Include="..\Utility\KnownRoot.cs" Link="Shared\Utility\KnownRoot.cs" />
+    <Compile Include="..\Utility\ModManagerEnvironment.cs" Link="Shared\Utility\ModManagerEnvironment.cs" />
+    <Compile Include="..\Utility\OrdinalSortJson.cs" Link="Shared\Utility\OrdinalSortJson.cs" />
+    <Compile Include="..\Utility\Package.cs" Link="Shared\Utility\Package.cs" />
+    <Compile Include="..\Utility\PatternScanner.cs" Link="Shared\Utility\PatternScanner.cs" />
+    <Compile Include="..\Utility\RawFFlagData.cs" Link="Shared\Utility\RawFFlagData.cs" />
+    <Compile Include="..\Utility\StudioFFlagDumper.cs" Link="Shared\Utility\StudioFFlagDumper.cs" />
+    <Compile Include="..\Utility\SystemEvent.cs" Link="Shared\Utility\SystemEvent.cs" />
+
+    <Compile Include="..\Bootstrapper\FileManifest.cs" Link="Shared\Bootstrapper\FileManifest.cs" />
+    <Compile Include="..\Bootstrapper\PackageManifest.cs" Link="Shared\Bootstrapper\PackageManifest.cs" />
+    <Compile Include="..\Bootstrapper\StudioBootstrapper.cs" Link="Shared\Bootstrapper\StudioBootstrapper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\Logo.png" />
+    <Content Include="Assets\Icon.ico" />
+  </ItemGroup>
+
+</Project>

@@ -1,9 +1,9 @@
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Windows.Forms;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,7 +12,8 @@ using Microsoft.Win32;
 
 namespace RobloxStudioModManager
 {
-    static class Program
+    // Moved some of the Program here, to make the functionality more agnostic.
+    static partial class Program
     {
         public const string RepoBranch = "main";
         public const string RepoOwner = "MaximumADHD";
@@ -53,7 +54,7 @@ namespace RobloxStudioModManager
         {
             const string _ = ""; // Default empty key/value.
 
-            string modManagerPath = Application.ExecutablePath
+            string modManagerPath = Process.GetCurrentProcess().MainModule.FileName
                 .Replace('"', ' ')
                 .Trim();
 
@@ -138,15 +139,9 @@ namespace RobloxStudioModManager
             File.WriteAllText(stateFile, json);
         }
 
-        static void OnExiting(object sender, EventArgs e)
+        // Loads/migrates persisted app state and parses launch arguments.
+        public static string[] Initialize(string[] rawArgs)
         {
-            SaveState();
-        }
-
-        [STAThread]
-        static void Main(string[] rawArgs)
-        {
-            // Initialize application state.
             var localAppData = Environment.GetEnvironmentVariable("localappdata");
             RootDir = Path.Combine(localAppData, "Roblox Studio Mod Manager");
 
@@ -194,19 +189,14 @@ namespace RobloxStudioModManager
 
             var args = unprocessedArgs.ToArray();
             State = JsonConvert.DeserializeObject<ModManagerState>(json);
-            
+
             if (State == null)
                 State = new ModManagerState();
 
             // Make sure HTTPS uses TLS 1.2
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            // Standard windows form jank
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
-            Application.ApplicationExit += new EventHandler(OnExiting);
-            Application.Run(new Launcher(args));
+            return args;
         }
     }
 }

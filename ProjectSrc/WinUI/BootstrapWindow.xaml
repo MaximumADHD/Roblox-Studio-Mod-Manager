@@ -1,0 +1,81 @@
+<Window
+    x:Class="RobloxStudioModManager.WinUI.BootstrapWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid Padding="12" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <Grid Grid.Row="0" ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Image
+                Grid.Column="0"
+                Source="/Assets/Logo.png"
+                Width="40"
+                Height="40"
+                Stretch="Uniform" />
+
+            <TextBlock
+                x:Name="StatusText"
+                Grid.Column="1"
+                Text="Checking for updates..."
+                FontSize="18"
+                FontWeight="SemiBold"
+                VerticalAlignment="Center"
+                TextWrapping="Wrap" />
+        </Grid>
+
+        <!-- Divider between the title and the progress log -->
+        <Border Grid.Row="1" BorderThickness="0,0,0,1" BorderBrush="Gray" Opacity="0.4" />
+        
+        <!-- 
+            Terminal-styled log that is constructed via ListView instead of TextBox,
+            because TextBox.Text relays-out the entire text on every update, causing it to be
+            incredibly slow. ListView on the other hand uses a virtual list.
+        -->
+        <Border Grid.Row="2" Background="#0C0C0C" CornerRadius="6" Padding="10,6">
+            <ListView
+                x:Name="LogListView"
+                SelectionMode="None"
+                IsItemClickEnabled="False"
+                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                ScrollViewer.HorizontalScrollMode="Enabled"
+                ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Padding" Value="0,1" />
+                        <Setter Property="MinHeight" Value="0" />
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock
+                            Text="{Binding}"
+                            FontFamily="Consolas"
+                            FontSize="12"
+                            Foreground="#D4D4D4"
+                            TextWrapping="NoWrap" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
+
+        <ProgressBar
+            x:Name="Progress"
+            Grid.Row="3"
+            IsIndeterminate="True" />
+    </Grid>
+</Window>
