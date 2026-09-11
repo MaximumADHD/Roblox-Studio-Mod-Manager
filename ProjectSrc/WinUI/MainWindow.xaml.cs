@@ -10,17 +10,15 @@ using System.Threading.Tasks;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 
 using RobloxDeployHistory;
-using RobloxStudioModManager;
 
-namespace RobloxStudioModManager.WinUI
+namespace RobloxStudioModManager
 {
     // The main Window class for the Mod Manager.
     public sealed partial class MainWindow : Window
     {
-        private static VersionManifest versionRegistry => RobloxStudioModManager.Program.State.VersionData;
+        private static VersionManifest versionRegistry => App.State.VersionData;
         private readonly string[] args;
 
         public MainWindow(string[] mainArgs = null)
@@ -31,19 +29,12 @@ namespace RobloxStudioModManager.WinUI
             if (mainArgs != null && mainArgs.Length > 0)
                 args = mainArgs;
 
-            ApplyBackdrop();
+            this.ApplyBackdrop();
             configureWindow();
 
-            ReleaseTagText.Text = RobloxStudioModManager.Program.ReleaseTag;
+            ReleaseTagText.Text = App.ReleaseTag;
 
             Activated += MainWindow_Activated;
-        }
-
-        private void ApplyBackdrop()
-        {
-            SystemBackdrop = BackdropHelper.IsWindows11
-                ? (SystemBackdrop)new MicaBackdrop()
-                : new DesktopAcrylicBackdrop();
         }
 
         private void configureWindow()
@@ -90,10 +81,10 @@ namespace RobloxStudioModManager.WinUI
             {
                 using (var http = new WebClient())
                 {
-                    string releaseTag = await http.DownloadStringTaskAsync(RobloxStudioModManager.Program.BaseConfigUrl + "LatestReleaseTag.txt");
+                    string releaseTag = await http.DownloadStringTaskAsync(App.BaseConfigUrl + "LatestReleaseTag.txt");
                     releaseTag = releaseTag.Trim();
 
-                    if (releaseTag != RobloxStudioModManager.Program.ReleaseTag)
+                    if (releaseTag != App.ReleaseTag)
                         await promptNewRelease(releaseTag);
                 }
             }
@@ -109,27 +100,18 @@ namespace RobloxStudioModManager.WinUI
         private async Task promptNewRelease(string releaseTag)
         {
 #if !DEBUG
-            var dialog = new ContentDialog
-            {
-                XamlRoot = Content.XamlRoot,
-                Title = "Update available!",
-
-                Content = "There's a new version of the mod manager available!\n" +
+            var result = await DialogWindow.ShowAsync(
+                "Update available!",
+                "There's a new version of the mod manager available!\n" +
                     "This version is likely broken or no longer supported.\n" +
                     "Would you like to check it out?",
-
-                PrimaryButtonText = "Yes",
-                CloseButtonText = "No",
-                DefaultButton = ContentDialogButton.Primary
-            };
-
-            var result = await dialog.ShowWithSoundAsync();
+                "Yes", "No", ContentDialogButton.Primary, DialogIcon.Information);
 
             if (result == ContentDialogResult.Primary)
             {
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = $"https://www.github.com/{RobloxStudioModManager.Program.RepoOwner}/{RobloxStudioModManager.Program.RepoName}/releases/tag/{releaseTag}",
+                    FileName = $"https://www.github.com/{App.RepoOwner}/{App.RepoName}/releases/tag/{releaseTag}",
                     UseShellExecute = true
                 });
 
@@ -142,26 +124,18 @@ namespace RobloxStudioModManager.WinUI
 
         private async Task showError(string message)
         {
-            var dialog = new ContentDialog
-            {
-                XamlRoot = Content.XamlRoot,
-                Title = "Error",
-                Content = message,
-                CloseButtonText = "OK"
-            };
-
-            await dialog.ShowWithSoundAsync();
+            await DialogWindow.ShowAsync("Error", message, null, "OK", ContentDialogButton.Close, DialogIcon.Error);
         }
 
         private async Task setVersionHistory(string channelName = "LIVE", string channelToken = "")
         {
-            string targetId = RobloxStudioModManager.Program.State.TargetVersion;
+            string targetId = App.State.TargetVersion;
             const string latest = "(Use Latest)";
 
             TargetVersionBox.Items.Clear();
             TargetVersionBox.Items.Add(latest);
 
-            var deployLogs = await StudioDeployLogs.Get(RobloxStudioModManager.Program.AllowUnsupportedVersions, channelName, channelToken);
+            var deployLogs = await StudioDeployLogs.Get(App.AllowUnsupportedVersions, channelName, channelToken);
             HashSet<DeployLog> targets = deployLogs.CurrentLogs;
 
             TargetVersionBox.IsEnabled = deployLogs.HasHistory;
@@ -169,15 +143,15 @@ namespace RobloxStudioModManager.WinUI
 
             if (deployLogs.ChannelName == channelName || deployLogs.ChannelName == "zbeta")
             {
-                if (!string.IsNullOrEmpty(channelName)) RobloxStudioModManager.Program.State.ChannelData.ChannelName = channelName;
-                if (!string.IsNullOrEmpty(channelToken)) RobloxStudioModManager.Program.State.ChannelData.ChannelToken = channelToken;
+                if (!string.IsNullOrEmpty(channelName)) App.State.ChannelData.ChannelName = channelName;
+                if (!string.IsNullOrEmpty(channelToken)) App.State.ChannelData.ChannelToken = channelToken;
             }
             else
             {
                 await showError("Could not fetch client version info with the channel name and token!\nEnsure you have entered them correctly.");
 
-                RobloxStudioModManager.Program.State.ChannelData.ChannelName = "LIVE";
-                RobloxStudioModManager.Program.State.ChannelData.ChannelToken = "";
+                App.State.ChannelData.ChannelName = "LIVE";
+                App.State.ChannelData.ChannelToken = "";
 
                 ChannelNameBox.Text = "LIVE";
                 ChannelTokenBox.Password = "";
@@ -204,7 +178,7 @@ namespace RobloxStudioModManager.WinUI
 
         public static string GetModPath()
         {
-            string root = Path.Combine(RobloxStudioModManager.Program.RootDir, "ModFiles");
+            string root = Path.Combine(App.RootDir, "ModFiles");
 
             if (!Directory.Exists(root))
             {
@@ -251,36 +225,31 @@ namespace RobloxStudioModManager.WinUI
         private async Task<bool> showFlagWarningPrompt()
         {
             var dontShowAgain = new CheckBox { Content = "Do not show this warning again." };
-            var dialog = new ContentDialog
+
+            var content = new StackPanel
             {
-                XamlRoot = Content.XamlRoot,
-                Title = "WARNING: HERE BE DRAGONS",
-                PrimaryButtonText = "Yes",
-                CloseButtonText = "No",
-                DefaultButton = ContentDialogButton.Close,
-
-                Content = new StackPanel
+                Spacing = 12,
+                Children =
                 {
-                    Spacing = 12,
-                    Children =
+                    new TextBlock
                     {
-                        new TextBlock
-                        {
-                            TextWrapping = TextWrapping.Wrap,
+                        TextWrapping = TextWrapping.Wrap,
 
-                            Text = "Editing flags can make Roblox Studio unstable, and could potentially corrupt your places and game data.\n\n" +
-                                "You should not edit them unless you are just experimenting with new features locally, and you know what you're doing.\n\n" +
-                                "Are you sure you would like to continue?"
-                        },
-                        dontShowAgain
-                    }
+                        Text = "Editing flags can make Roblox Studio unstable, and could potentially corrupt your places and game data.\n\n" +
+                            "You should not edit them unless you are just experimenting with new features locally, and you know what you're doing.\n\n" +
+                            "Are you sure you would like to continue?"
+                    },
+                    dontShowAgain
                 }
             };
 
-            var result = await dialog.ShowWithSoundAsync();
+            var result = await DialogWindow.ShowAsync(
+                "WARNING: HERE BE DRAGONS", content, "Yes", "No",
+                ContentDialogButton.Close, DialogIcon.Error);
+
             if (result == ContentDialogResult.Primary)
             {
-                RobloxStudioModManager.Program.State.DisableFlagWarning = dontShowAgain.IsChecked == true;
+                App.State.DisableFlagWarning = dontShowAgain.IsChecked == true;
                 return true;
             }
 
@@ -289,7 +258,7 @@ namespace RobloxStudioModManager.WinUI
 
         private async void EditFlagsButton_Click(object sender, RoutedEventArgs e)
         {
-            bool allow = RobloxStudioModManager.Program.State.DisableFlagWarning;
+            bool allow = App.State.DisableFlagWarning;
 
             if (!allow)
                 allow = await showFlagWarningPrompt();
@@ -302,7 +271,7 @@ namespace RobloxStudioModManager.WinUI
             var info = await StudioBootstrapper.GetCurrentVersionInfo();
             AppWindow.Hide();
 
-            await BootstrapWindow.BringUpToDate(info.VersionGuid, "Some newer flags might be missing.", Content.XamlRoot);
+            await BootstrapWindow.BringUpToDate(info.VersionGuid, "Some newer flags might be missing.");
 
             var editor = new FlagEditorWindow();
             var editorClosed = new TaskCompletionSource<bool>();
@@ -417,7 +386,7 @@ namespace RobloxStudioModManager.WinUI
             {
                 string firstArg = args[0];
 
-                if (firstArg != null && firstArg.StartsWith("roblox-studio", RobloxStudioModManager.Program.StringFormat))
+                if (firstArg != null && firstArg.StartsWith("roblox-studio", App.StringFormat))
                 {
                     // Arguments were passed by URI.
                     robloxStudioInfo.Arguments = firstArg;
@@ -449,7 +418,7 @@ namespace RobloxStudioModManager.WinUI
                 Process.Start(robloxStudioInfo);
             }
 
-            RobloxStudioModManager.Program.SaveState();
+            App.SaveState();
             Environment.Exit(Environment.ExitCode);
         }
 
@@ -457,30 +426,23 @@ namespace RobloxStudioModManager.WinUI
         {
             if (TargetVersionBox.SelectedIndex == 0)
             {
-                RobloxStudioModManager.Program.State.TargetVersion = "";
+                App.State.TargetVersion = "";
                 return;
             }
 
             if (!(TargetVersionBox.SelectedItem is DeployLog target))
                 return;
 
-            RobloxStudioModManager.Program.State.TargetVersion = target.VersionId;
+            App.State.TargetVersion = target.VersionId;
 
             if (target.Unsupported)
             {
-                var dialog = new ContentDialog
-                {
-                    XamlRoot = Content.XamlRoot,
-                    Title = "Tread Lightly!",
-
-                    Content = "This version of Roblox Studio is no longer supported!\n" +
+                await DialogWindow.ShowAsync(
+                    "Tread Lightly!",
+                    "This version of Roblox Studio is no longer supported!\n" +
                         "You are strongly advised against using it in the future.\n" +
                         "No technical support will be provided, use it at your own risk!",
-
-                    CloseButtonText = "OK"
-                };
-
-                await dialog.ShowWithSoundAsync();
+                    null, "OK", ContentDialogButton.Close, DialogIcon.Warning);
             }
         }
 

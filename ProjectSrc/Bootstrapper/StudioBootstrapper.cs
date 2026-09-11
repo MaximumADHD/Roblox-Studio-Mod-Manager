@@ -69,7 +69,7 @@ namespace RobloxStudioModManager
         
         public StudioBootstrapper(IBootstrapperState state = null)
         {
-            mainState = state ?? Program.State;
+            mainState = state ?? App.State;
             versionData = mainState.VersionData;
             channelData = mainState.ChannelData;
             fileRegistry = mainState.FileManifest;
@@ -109,7 +109,7 @@ namespace RobloxStudioModManager
                 string result = BitConverter
                     .ToString(hash)
                     .Replace("-", "")
-                    .ToLower(Program.Format);
+                    .ToLower(App.Format);
 
                 return result;
             }
@@ -235,7 +235,7 @@ namespace RobloxStudioModManager
 
                 if (!fileManifest.ContainsKey(fileName))
                     foreach (string pkgName in BadManifests)
-                        if (fileName.StartsWith(pkgName, Program.StringFormat))
+                        if (fileName.StartsWith(pkgName, App.StringFormat))
                             lookupKey = fileName.Substring(pkgName.Length + 1);
 
                 if (!fileManifest.ContainsKey(lookupKey))
@@ -276,10 +276,10 @@ namespace RobloxStudioModManager
         public static async Task<ClientVersionInfo> GetTargetVersionInfo(string targetVersion = "", VersionManifest versionData = null, ChannelManifest channelData = null)
         {
             if (versionData == null)
-                versionData = Program.State.VersionData;
+                versionData = App.State.VersionData;
 
             if (channelData == null)
-                channelData = Program.State.ChannelData;
+                channelData = App.State.ChannelData;
 
             var logData = await StudioDeployLogs.Get();
             HashSet<DeployLog> targets = logData.CurrentLogs;
@@ -300,10 +300,10 @@ namespace RobloxStudioModManager
         public static async Task<ClientVersionInfo> GetCurrentVersionInfo(string targetVersion = "", VersionManifest versionData = null, ChannelManifest channelData = null)
         {
             if (versionData == null)
-                versionData = Program.State.VersionData;
+                versionData = App.State.VersionData;
 
             if (channelData == null)
-                channelData = Program.State.ChannelData;
+                channelData = App.State.ChannelData;
 
             if (!string.IsNullOrEmpty(targetVersion))
             {
@@ -311,7 +311,7 @@ namespace RobloxStudioModManager
                 return await result.ConfigureAwait(false);
             }
 
-            var logData = await StudioDeployLogs.Get(Program.AllowUnsupportedVersions, channelData.ChannelName, channelData.ChannelToken);
+            var logData = await StudioDeployLogs.Get(App.AllowUnsupportedVersions, channelData.ChannelName, channelData.ChannelToken);
             var build = logData.CurrentLogs.LastOrDefault();
             var info = new ClientVersionInfo(build);
 
@@ -326,7 +326,7 @@ namespace RobloxStudioModManager
             string pkgDir = pkgName.Replace(".zip", "");
 
             if (BadManifests.Contains(pkgDir))
-                if (!filePath.StartsWith(pkgDir, Program.StringFormat))
+                if (!filePath.StartsWith(pkgDir, App.StringFormat))
                     filePath = pkgDir + '\\' + filePath;
 
             if (RemapExtraContent)
@@ -362,7 +362,7 @@ namespace RobloxStudioModManager
             echo($"Verifying availability of: {package.Name}");
 
             string pkgName = package.Name;
-            var zipFileUrl = new Uri($"{Program.BaseUrl}/channel/common/{buildVersion}-{pkgName}");
+            var zipFileUrl = new Uri($"{App.BaseUrl}/channel/common/{buildVersion}-{pkgName}");
 
             var request = WebRequest.Create(zipFileUrl) as HttpWebRequest;
             request.Headers.Set("UserAgent", UserAgent);
@@ -383,7 +383,7 @@ namespace RobloxStudioModManager
         {
             byte[] result = null;
             string pkgName = package.Name;
-            string zipFileUrl = $"{Program.BaseUrl}/channel/common/{buildVersion}-{pkgName}";
+            string zipFileUrl = $"{App.BaseUrl}/channel/common/{buildVersion}-{pkgName}";
 
             using (var localHttp = new WebClient())
             {
@@ -453,7 +453,7 @@ namespace RobloxStudioModManager
 
                 int numFiles = archive.Entries
                     .Select(entry => entry.FullName)
-                    .Where(name => !name.EndsWith("/", Program.StringFormat))
+                    .Where(name => !name.EndsWith("/", App.StringFormat))
                     .Count();
 
                 string localRootDir = null;
@@ -469,10 +469,10 @@ namespace RobloxStudioModManager
                     if (entry.Length == 0)
                         skip = true;
 
-                    if (entry.Name.EndsWith(".robloxrc", Program.StringFormat))
+                    if (entry.Name.EndsWith(".robloxrc", App.StringFormat))
                         skip = true;
 
-                    if (entry.Name.EndsWith(".luarc", Program.StringFormat))
+                    if (entry.Name.EndsWith(".luarc", App.StringFormat))
                         skip = true;
 
                     if (skip)
@@ -513,7 +513,7 @@ namespace RobloxStudioModManager
                         }
                         else
                         {
-                            var query = fileManifest.SkipWhile(pair => !pair.Key.EndsWith(entryPath, Program.StringFormat)).Take(1);
+                            var query = fileManifest.SkipWhile(pair => !pair.Key.EndsWith(entryPath, App.StringFormat)).Take(1);
                             newFileSig = query.Any() ? query.First().Value : null;
                         }
                     }
@@ -540,7 +540,7 @@ namespace RobloxStudioModManager
                                 if (filePath != file)
                                     appendNewManifestEntry(filePath, newFileSig);
                                 
-                                if (filePath.EndsWith(entryPath, Program.StringFormat))
+                                if (filePath.EndsWith(entryPath, App.StringFormat))
                                 {
                                     // We can infer what the root extraction  
                                     // directory is for the files in this package!                                 
@@ -649,7 +649,7 @@ namespace RobloxStudioModManager
             {
                 bool proceed = true;
 
-                if (mainState == Program.State)
+                if (mainState == App.State)
                 {
                     proceed = ConfirmFeed == null || await ConfirmFeed.Invoke
                     (
@@ -772,7 +772,7 @@ namespace RobloxStudioModManager
                     using (var http = new WebClient())
                     {
                         var json = await http
-                            .DownloadStringTaskAsync(Program.BaseConfigUrl + "KnownRoots.json")
+                            .DownloadStringTaskAsync(App.BaseConfigUrl + "KnownRoots.json")
                             .ConfigureAwait(false);
 
                         var knownRoots = JsonConvert.DeserializeObject<Dictionary<string, KnownRoot>>(json);
@@ -986,8 +986,8 @@ namespace RobloxStudioModManager
 
             using (var http = new WebClient())
             {
-                OAuth2Config_JSON = await http.DownloadStringTaskAsync(Program.BaseConfigUrl + "OAuth2Config.json");
-                AppSettings_XML = await http.DownloadStringTaskAsync(Program.BaseConfigUrl + "AppSettings.xml");
+                OAuth2Config_JSON = await http.DownloadStringTaskAsync(App.BaseConfigUrl + "OAuth2Config.json");
+                AppSettings_XML = await http.DownloadStringTaskAsync(App.BaseConfigUrl + "AppSettings.xml");
             }
             
             string appSettings = Path.Combine(studioDir, "AppSettings.xml");
@@ -1003,13 +1003,13 @@ namespace RobloxStudioModManager
             // Only update the registry protocols if the main registry
             // is the global one assigned to the program itself.
 
-            if (mainState == Program.State)
+            if (mainState == App.State)
             {
                 setStatus("Configuring Roblox Studio...");
                 echo("Updating registry protocols...");
 
                 var studioPath = GetLocalStudioPath();
-                Program.UpdateStudioRegistryProtocols(studioPath);
+                App.UpdateStudioRegistryProtocols(studioPath);
             }
 
             if (ApplyModManagerPatches && string.IsNullOrEmpty(OverrideStudioDirectory))

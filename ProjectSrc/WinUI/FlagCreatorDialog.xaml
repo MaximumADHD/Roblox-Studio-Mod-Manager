@@ -1,12 +1,7 @@
-<ContentDialog
-    x:Class="RobloxStudioModManager.WinUI.FlagCreatorDialog"
+<UserControl
+    x:Class="RobloxStudioModManager.FlagCreatorDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="Add Custom Flag"
-    PrimaryButtonText="Create"
-    CloseButtonText="Cancel"
-    DefaultButton="Primary"
-    PrimaryButtonClick="ContentDialog_PrimaryButtonClick">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <StackPanel Spacing="12" Width="320">
         <StackPanel Spacing="4">
@@ -39,4 +34,4 @@
             TextWrapping="Wrap"
             Visibility="Collapsed" />
     </StackPanel>
-</ContentDialog>
+</UserControl>

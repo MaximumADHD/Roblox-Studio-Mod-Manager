@@ -9,11 +9,8 @@ using System.Threading.Tasks;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media;
 
-using RobloxStudioModManager;
-
-namespace RobloxStudioModManager.WinUI
+namespace RobloxStudioModManager
 {
     public sealed partial class BootstrapWindow : Window
     {
@@ -35,7 +32,7 @@ namespace RobloxStudioModManager.WinUI
             exitOnClose = exitWhenClosed;
 
             Title = "Roblox Studio Bootstrapper";
-            ApplyBackdrop();
+            this.ApplyBackdrop();
             configureWindow();
 
             LogListView.ItemsSource = logLines;
@@ -48,14 +45,6 @@ namespace RobloxStudioModManager.WinUI
             Closed += bootstrapWindow_Closed;
 
             Activate();
-        }
-
-        // Applies a pretty backdrop to the background.
-        private void ApplyBackdrop()
-        {
-            SystemBackdrop = BackdropHelper.IsWindows11
-                ? (SystemBackdrop)new MicaBackdrop()
-                : new DesktopAcrylicBackdrop();
         }
 
         private void configureWindow()
@@ -75,7 +64,7 @@ namespace RobloxStudioModManager.WinUI
 
         public async Task Bootstrap()
         {
-            var state = RobloxStudioModManager.Program.State;
+            var state = App.State;
             var targetVersion = state.TargetVersion;
 
             progressTimer = new DispatcherTimer
@@ -125,9 +114,9 @@ namespace RobloxStudioModManager.WinUI
             Close();
         }
 
-        public static async Task BringUpToDate(string expectedVersion, string updateReason, XamlRoot xamlRoot)
+        public static async Task BringUpToDate(string expectedVersion, string updateReason)
         {
-            var versionData = RobloxStudioModManager.Program.State.VersionData;
+            var versionData = App.State.VersionData;
             string currentVersion = versionData.VersionGuid;
 
             if (currentVersion != expectedVersion)
@@ -136,21 +125,11 @@ namespace RobloxStudioModManager.WinUI
 
                 if (!string.IsNullOrEmpty(currentVersion))
                 {
-                    var dialog = new ContentDialog
-                    {
-                        XamlRoot = xamlRoot,
-                        Title = "Out of date!",
+                    var result = await DialogWindow.ShowAsync(
+                        "Out of date!",
+                        "Roblox Studio is out of date!\n" + updateReason + "\nWould you like to update now?",
+                        "Yes", "No", ContentDialogButton.Primary, DialogIcon.Warning);
 
-                        Content = "Roblox Studio is out of date!\n"
-                            + updateReason +
-                            "\nWould you like to update now?",
-
-                        PrimaryButtonText = "Yes",
-                        CloseButtonText = "No",
-                        DefaultButton = ContentDialogButton.Primary
-                    };
-
-                    var result = await dialog.ShowWithSoundAsync();
                     proceed = result == ContentDialogResult.Primary;
                 }
 
@@ -178,8 +157,8 @@ namespace RobloxStudioModManager.WinUI
             logQueue.Add(msg);
         }
 
-        // Backs StudioBootstrapper.ConfirmFeed. ContentDialog.ShowAsync() must
-        // run on this window's UI thread, so this always marshals through
+        // Backs StudioBootstrapper.ConfirmFeed. Showing a DialogWindow must
+        // happen on this window's UI thread, so this always marshals through
         // DispatcherQueue rather than assuming the caller is already there.
         private Task<bool> confirm(string message, string title)
         {
@@ -189,17 +168,7 @@ namespace RobloxStudioModManager.WinUI
             {
                 try
                 {
-                    var dialog = new ContentDialog
-                    {
-                        XamlRoot = Content.XamlRoot,
-                        Title = title,
-                        Content = message,
-                        PrimaryButtonText = "OK",
-                        CloseButtonText = "Cancel",
-                        DefaultButton = ContentDialogButton.Primary
-                    };
-
-                    var result = await dialog.ShowWithSoundAsync();
+                    var result = await DialogWindow.ShowAsync(title, message, "OK", "Cancel", ContentDialogButton.Primary, DialogIcon.Warning);
                     tcs.SetResult(result == ContentDialogResult.Primary);
                 }
                 catch (Exception ex)
@@ -223,21 +192,12 @@ namespace RobloxStudioModManager.WinUI
             // so we pause the close, ask and then either let it through or just cancel it.
             args.Cancel = true;
 
-            var dialog = new ContentDialog
-            {
-                XamlRoot = Content.XamlRoot,
-                Title = "Warning",
-
-                Content = "The installation has not finished yet!\n" +
+            var result = await DialogWindow.ShowAsync(
+                "Warning",
+                "The installation has not finished yet!\n" +
                     "Closing this window will exit the mod manager.\n" +
                     "Are you sure you want to continue?",
-
-                PrimaryButtonText = "Yes",
-                CloseButtonText = "No",
-                DefaultButton = ContentDialogButton.Close
-            };
-
-            var result = await dialog.ShowWithSoundAsync();
+                "Yes", "No", ContentDialogButton.Close, DialogIcon.Warning);
 
             if (result == ContentDialogResult.Primary)
                 Environment.Exit(0);
@@ -246,7 +206,7 @@ namespace RobloxStudioModManager.WinUI
         private void bootstrapWindow_Closed(object sender, WindowEventArgs args)
         {
             progressTimer?.Stop();
-            RobloxStudioModManager.Program.SaveState();
+            App.SaveState();
 
             if (exitOnClose)
                 Environment.Exit(0);

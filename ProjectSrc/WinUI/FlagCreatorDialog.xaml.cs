@@ -3,11 +3,9 @@ using System.Text.RegularExpressions;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
-using RobloxStudioModManager;
-
-namespace RobloxStudioModManager.WinUI
+namespace RobloxStudioModManager
 {
-    public sealed partial class FlagCreatorDialog : ContentDialog
+    public sealed partial class FlagCreatorDialog : UserControl
     {
         private static readonly string[] classes = { "F", "DF", "SF" };
 
@@ -20,7 +18,10 @@ namespace RobloxStudioModManager.WinUI
             FlagTypeBox.SelectedIndex = 0;
         }
 
-        private void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        // Validates the form and sets Result on success. Returns false (and
+        // shows an inline error) when the input isn't ready, the hosting
+        // DialogWindow's primary button uses this to cancel its own close.
+        public bool Validate()
         {
             string classType = classes[FlagClassBox.SelectedIndex];
             string typeItem = ((ComboBoxItem)FlagTypeBox.SelectedItem).Content.ToString();
@@ -34,11 +35,11 @@ namespace RobloxStudioModManager.WinUI
             {
                 ErrorText.Text = $"Please enter a name for the {type}!";
                 ErrorText.Visibility = Visibility.Visible;
-                args.Cancel = true;
-                return;
+                return false;
             }
 
             Result = new CustomFlag(type, name);
+            return true;
         }
     }
 }

@@ -16,9 +16,7 @@ using Newtonsoft.Json;
 
 using Windows.ApplicationModel.DataTransfer;
 
-using RobloxStudioModManager;
-
-namespace RobloxStudioModManager.WinUI
+namespace RobloxStudioModManager
 {
     public sealed partial class FlagEditorWindow : Window
     {
@@ -27,8 +25,8 @@ namespace RobloxStudioModManager.WinUI
             public Dictionary<string, string> ApplicationSettings = null;
         }
 
-        private static SortedDictionary<string, FVariable> flagRegistry => RobloxStudioModManager.Program.State.FlagEditor;
-        private static VersionManifest versionRegistry => RobloxStudioModManager.Program.State.VersionData;
+        private static SortedDictionary<string, FVariable> flagRegistry => App.State.FlagEditor;
+        private static VersionManifest versionRegistry => App.State.VersionData;
 
         private static readonly IReadOnlyDictionary<string, string> flagTypes = new Dictionary<string, string>()
         {
@@ -60,18 +58,11 @@ namespace RobloxStudioModManager.WinUI
             InitializeComponent();
             Title = "Flag Editor";
 
-            ApplyBackdrop();
+            this.ApplyBackdrop();
             WindowPositioning.ResizeAndCenter(AppWindow, 560, 760);
 
             Closed += FlagEditorWindow_Closed;
             Activated += FlagEditorWindow_Activated;
-        }
-
-        private void ApplyBackdrop()
-        {
-            SystemBackdrop = BackdropHelper.IsWindows11
-                ? (SystemBackdrop)new MicaBackdrop()
-                : new DesktopAcrylicBackdrop();
         }
 
         private bool loaded;
@@ -100,7 +91,7 @@ namespace RobloxStudioModManager.WinUI
 
         private void FlagEditorWindow_Closed(object sender, WindowEventArgs args)
         {
-            RobloxStudioModManager.Program.SaveState();
+            App.SaveState();
         }
 
         private static string getFlagKey(string type, string name) => type + name;
@@ -133,13 +124,13 @@ namespace RobloxStudioModManager.WinUI
 
             if (!overrideLookup.ContainsKey(key))
             {
-                if (!init && flag.Type.EndsWith("Flag", RobloxStudioModManager.Program.StringFormat))
+                if (!init && flag.Type.EndsWith("Flag", App.StringFormat))
                 {
                     if (bool.TryParse(flag.Value, out bool value))
                     {
                         string str = (!value)
-                            .ToString(RobloxStudioModManager.Program.Format)
-                            .ToLower(RobloxStudioModManager.Program.Format);
+                            .ToString(App.Format)
+                            .ToLower(App.Format);
 
                         flag.SetValue(str);
                     }
@@ -202,7 +193,7 @@ namespace RobloxStudioModManager.WinUI
                 File.WriteAllText(flagDump, newJson);
 
                 versionRegistry.LastFlagScanVersion = versionGuid;
-                RobloxStudioModManager.Program.SaveState();
+                App.SaveState();
             }
 
             var rawFlagNames = File.ReadAllText(flagDump);
@@ -351,17 +342,10 @@ namespace RobloxStudioModManager.WinUI
 
         private async void RemoveAllButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new ContentDialog
-            {
-                XamlRoot = Content.XamlRoot,
-                Title = "Confirmation",
-                Content = "Are you sure you would like to remove all flag overrides?\nThis will also delete any custom flags!",
-                PrimaryButtonText = "Yes",
-                CloseButtonText = "No",
-                DefaultButton = ContentDialogButton.Close
-            };
-
-            var result = await dialog.ShowWithSoundAsync();
+            var result = await DialogWindow.ShowAsync(
+                "Confirmation",
+                "Are you sure you would like to remove all flag overrides?\nThis will also delete any custom flags!",
+                "Yes", "No", ContentDialogButton.Close, DialogIcon.Warning);
 
             if (result != ContentDialogResult.Primary)
                 return;
@@ -391,7 +375,7 @@ namespace RobloxStudioModManager.WinUI
             string value = textBox.Text;
             bool badInput = false;
 
-            if (flag.Type.EndsWith("Int", RobloxStudioModManager.Program.StringFormat))
+            if (flag.Type.EndsWith("Int", App.StringFormat))
                 badInput = !int.TryParse(value, out _);
 
             if (badInput)
@@ -402,22 +386,32 @@ namespace RobloxStudioModManager.WinUI
 
         private async void AddCustomButton_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new FlagCreatorDialog
+            var form = new FlagCreatorDialog();
+
+            var dialog = new DialogWindow
             {
-                XamlRoot = Content.XamlRoot
+                Title = "Add Custom Flag",
+                DialogContent = form,
+                PrimaryButtonText = "Create",
+                CloseButtonText = "Cancel",
+                DefaultButton = ContentDialogButton.Primary
             };
 
-            var result = await dialog.ShowWithSoundAsync();
+            dialog.PrimaryButtonClick += (s, args) => args.Cancel = !form.Validate();
 
-            if (result != ContentDialogResult.Primary || dialog.Result == null)
+            // No notification sound for this one since it's opened directly by a
+            // button click, so the extra sound is unnecessary.
+            var result = await dialog.ShowAsync(playSound: false);
+
+            if (result != ContentDialogResult.Primary || form.Result == null)
                 return;
 
-            var customFlag = dialog.Result;
+            var customFlag = form.Result;
             string flagType = customFlag.Type;
 
             string flagValue = flagTypes
                 .Select(pair => pair.Key)
-                .Where(key => flagType.EndsWith(key, RobloxStudioModManager.Program.StringFormat))
+                .Where(key => flagType.EndsWith(key, App.StringFormat))
                 .Select(key => flagTypes[key])
                 .FirstOrDefault();
 
@@ -481,7 +475,7 @@ namespace RobloxStudioModManager.WinUI
             nameText.Text = flag.Name;
             typeText.Text = flag.Type;
 
-            bool isBoolFlag = flag.Type.EndsWith("Flag", RobloxStudioModManager.Program.StringFormat);
+            bool isBoolFlag = flag.Type.EndsWith("Flag", App.StringFormat);
 
             valueBox.Tag = flag;
             valueCombo.Tag = flag;

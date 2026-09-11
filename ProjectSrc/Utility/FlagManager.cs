@@ -11,7 +11,7 @@ namespace RobloxStudioModManager
         public static void ApplyFlags()
         {
             var json = new JObject();
-            var flagRegistry = Program.State.FlagEditor;
+            var flagRegistry = App.State.FlagEditor;
 
             foreach (string flagName in flagRegistry.Keys)
             {

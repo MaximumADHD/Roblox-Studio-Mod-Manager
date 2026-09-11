@@ -1,11 +1,44 @@
-using Microsoft.UI.Xaml;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Net;
 
-// Using RobloxStudioModManager.WinUI here instead of just RobloxStudioModManager
-// to prevent shadowing since WinUI compiler generates its own Program class.
-namespace RobloxStudioModManager.WinUI
+using Microsoft.UI.Xaml;
+using Microsoft.Win32;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+namespace RobloxStudioModManager
 {
     public partial class App : Application
     {
+        public const string RepoBranch = "main";
+        public const string RepoOwner = "MaximumADHD";
+        public const string RepoName = "Roblox-Studio-Mod-Manager";
+        public const string ReleaseTag = "v2026.09.02";
+
+        public const string BaseUrl = "https://setup.rbxcdn.com";
+        public static readonly string BaseConfigUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
+
+        public static readonly RegistryKey LegacyRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
+        public static readonly CultureInfo Format = CultureInfo.InvariantCulture;
+
+        public const StringComparison StringFormat = StringComparison.Ordinal;
+        public static readonly NumberFormatInfo NumberFormat = NumberFormatInfo.InvariantInfo;
+
+        public static string RootDir { get; private set; }
+        public static ModManagerState State { get; private set; }
+
+        public static bool AllowUnsupportedVersions { get; private set; }
+
+        private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings()
+        {
+            ContractResolver = new OrdinalSortJson()
+        };
+
         private Window mainWindow;
 
         public App()
@@ -15,13 +48,167 @@ namespace RobloxStudioModManager.WinUI
 
         protected override void OnLaunched(LaunchActivatedEventArgs args)
         {
-            var rawArgs = System.Environment.GetCommandLineArgs();
-            var unprocessedArgs = RobloxStudioModManager.Program.Initialize(rawArgs[1..]);
+            var rawArgs = Environment.GetCommandLineArgs();
+            var unprocessedArgs = Initialize(rawArgs[1..]);
 
-            System.AppDomain.CurrentDomain.ProcessExit += (sender, e) => RobloxStudioModManager.Program.SaveState();
+            AppDomain.CurrentDomain.ProcessExit += (sender, e) => SaveState();
 
             mainWindow = new MainWindow(unprocessedArgs);
             mainWindow.Activate();
+        }
+
+        // This sets up the following:
+        // 1: The File Protocol to open .rbxl/.rbxlx files through the mod manager.
+        // 2: The URI Protocol to open places from the website through the mod manager.
+        // 3: The URI Protocol to route OAuth2 login requests to where we write RobloxStudioBeta.exe
+
+        public static void UpdateStudioRegistryProtocols(string studioPath)
+        {
+            const string _ = ""; // Default empty key/value.
+
+            string modManagerPath = Process.GetCurrentProcess().MainModule.FileName
+                .Replace('"', ' ')
+                .Trim();
+
+            // Register the base "Roblox.Place" open protocol.
+            RegistryKey classes = Registry.CurrentUser.GetSubKey("SOFTWARE", "Classes");
+
+            RegistryKey robloxPlace = classes.GetSubKey("Roblox.Place");
+            robloxPlace.SetValue(_, "Roblox Place");
+
+            RegistryKey robloxPlaceCmd = robloxPlace.GetSubKey("shell", "open", "command");
+            robloxPlaceCmd.SetValue(_, $"\"{modManagerPath}\" -task EditFile -localPlaceFile \"%1\"");
+
+            // Pass the .rbxl and .rbxlx file formats to Roblox.Place
+            RegistryKey[] robloxLevelPass =
+            {
+                classes.GetSubKey(".rbxl"),
+                classes.GetSubKey(".rbxlx")
+            };
+
+            foreach (RegistryKey rbxLevel in robloxLevelPass)
+            {
+                rbxLevel.SetValue(_, "Roblox.Place");
+                rbxLevel.GetSubKey("Roblox.Place", "ShellNew");
+            }
+
+            // Setup the URI protocol for opening the mod manager through the website.
+            RegistryKey robloxStudioUri = classes.GetSubKey("roblox-studio");
+            robloxStudioUri.SetValue(_, "URL: Roblox Protocol");
+            robloxStudioUri.SetValue("URL Protocol", _);
+
+            RegistryKey studioUriCmd = robloxStudioUri.GetSubKey("shell", "open", "command");
+            studioUriCmd.SetValue(_, $"\"{modManagerPath}\" %1");
+
+            // Setup authentication route.
+            RegistryKey robloxStudioAuthUri = classes.GetSubKey("roblox-studio-auth");
+            robloxStudioAuthUri.SetValue(_, "URL: Roblox Protocol");
+            robloxStudioAuthUri.SetValue("URL Protocol", _);
+
+            RegistryKey studioAuthUriCmd = robloxStudioAuthUri.GetSubKey("shell", "open", "command");
+            studioAuthUriCmd.SetValue(_, $"\"{studioPath}\" %1");
+
+            // Set the default icon for all protocols.
+            RegistryKey[] appReg =
+            {
+                robloxPlace,
+                robloxStudioUri,
+                robloxStudioAuthUri,
+            };
+
+            foreach (RegistryKey app in appReg)
+            {
+                RegistryKey defaultIcon = app.GetSubKey("DefaultIcon");
+                defaultIcon.SetValue(_, $"{modManagerPath},0");
+            }
+        }
+
+        private static void ConvertLegacy(RegistryKey regKey, JObject node)
+        {
+            foreach (var name in regKey.GetValueNames())
+            {
+                string key = name.Replace(" ", "");
+                object value = regKey.GetValue(name);
+
+                var token = JToken.FromObject(value);
+                node.Add(key, token);
+            }
+
+            foreach (var subKeyName in regKey.GetSubKeyNames())
+            {
+                var subKey = regKey.OpenSubKey(subKeyName);
+                var child = new JObject();
+
+                ConvertLegacy(subKey, child);
+                node.Add(subKeyName, child);
+            }
+        }
+
+        public static void SaveState()
+        {
+            var stateFile = Path.Combine(RootDir, "state.json");
+            string json = JsonConvert.SerializeObject(State, Formatting.Indented, JsonSettings);
+            File.WriteAllText(stateFile, json);
+        }
+
+        // Loads/migrates persisted app state and parses launch arguments.
+        public static string[] Initialize(string[] rawArgs)
+        {
+            var localAppData = Environment.GetEnvironmentVariable("localappdata");
+            RootDir = Path.Combine(localAppData, "Roblox Studio Mod Manager");
+
+            if (!Directory.Exists(RootDir))
+                Directory.CreateDirectory(RootDir);
+
+            var stateFile = Path.Combine(RootDir, "state.json");
+            string json = "";
+
+            if (File.Exists(stateFile))
+                json = File.ReadAllText(stateFile);
+
+            if (string.IsNullOrEmpty(json))
+            {
+                var root = new JObject();
+                ConvertLegacy(LegacyRegistry, root);
+
+                json = root.ToString();
+                File.WriteAllText(stateFile, json);
+            }
+
+            var unprocessedArgs = new List<string>();
+
+            foreach (var rawArg in rawArgs)
+            {
+                var arg = rawArg.ToLowerInvariant();
+
+                switch (arg)
+                {
+                    // This code is setup for multiple launch arguments in the future,
+                    // but right now we only have one.
+
+                    /*case "-allowunsupported":
+                    {
+                        AllowUnsupportedVersions = true;
+                        break;
+                    }*/
+                    default:
+                    {
+                        unprocessedArgs.Add(rawArg);
+                        break;
+                    }
+                }
+            }
+
+            var args = unprocessedArgs.ToArray();
+            State = JsonConvert.DeserializeObject<ModManagerState>(json);
+
+            if (State == null)
+                State = new ModManagerState();
+
+            // Make sure HTTPS uses TLS 1.2
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            return args;
         }
     }
 }

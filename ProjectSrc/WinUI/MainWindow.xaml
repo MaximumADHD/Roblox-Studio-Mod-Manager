@@ -1,5 +1,5 @@
 <Window
-    x:Class="RobloxStudioModManager.WinUI.MainWindow"
+    x:Class="RobloxStudioModManager.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 

@@ -4,8 +4,8 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-    <RootNamespace>RobloxStudioModManager.WinUI</RootNamespace>
-    <AssemblyName>RobloxStudioModManager.WinUI</AssemblyName>
+    <RootNamespace>RobloxStudioModManager</RootNamespace>
+    <AssemblyName>RobloxStudioModManager</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\Icon.ico</ApplicationIcon>
     <UseWinUI>true</UseWinUI>
@@ -46,18 +46,20 @@
 	
   <ItemGroup>
     <Compile Include="..\Utility\AppState.cs" Link="Shared\Utility\AppState.cs" />
+    <Compile Include="..\Utility\BackdropHelper.cs" Link="Shared\Utility\BackdropHelper.cs" />
     <Compile Include="..\Utility\BootstrapProgressStyle.cs" Link="Shared\Utility\BootstrapProgressStyle.cs" />
     <Compile Include="..\Utility\CustomFlag.cs" Link="Shared\Utility\CustomFlag.cs" />
     <Compile Include="..\Utility\FlagManager.cs" Link="Shared\Utility\FlagManager.cs" />
     <Compile Include="..\Utility\FVariable.cs" Link="Shared\Utility\FVariable.cs" />
     <Compile Include="..\Utility\KnownRoot.cs" Link="Shared\Utility\KnownRoot.cs" />
-    <Compile Include="..\Utility\ModManagerEnvironment.cs" Link="Shared\Utility\ModManagerEnvironment.cs" />
     <Compile Include="..\Utility\OrdinalSortJson.cs" Link="Shared\Utility\OrdinalSortJson.cs" />
     <Compile Include="..\Utility\Package.cs" Link="Shared\Utility\Package.cs" />
     <Compile Include="..\Utility\PatternScanner.cs" Link="Shared\Utility\PatternScanner.cs" />
     <Compile Include="..\Utility\RawFFlagData.cs" Link="Shared\Utility\RawFFlagData.cs" />
+    <Compile Include="..\Utility\RegistryExtensions.cs" Link="Shared\Utility\RegistryExtensions.cs" />
     <Compile Include="..\Utility\StudioFFlagDumper.cs" Link="Shared\Utility\StudioFFlagDumper.cs" />
     <Compile Include="..\Utility\SystemEvent.cs" Link="Shared\Utility\SystemEvent.cs" />
+    <Compile Include="..\Utility\WindowPositioning.cs" Link="Shared\Utility\WindowPositioning.cs" />
 
     <Compile Include="..\Bootstrapper\FileManifest.cs" Link="Shared\Bootstrapper\FileManifest.cs" />
     <Compile Include="..\Bootstrapper\PackageManifest.cs" Link="Shared\Bootstrapper\PackageManifest.cs" />
