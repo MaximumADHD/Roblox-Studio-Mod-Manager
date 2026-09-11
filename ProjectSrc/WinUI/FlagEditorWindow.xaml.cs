@@ -514,7 +514,7 @@ namespace RobloxStudioModManager
                 return;
 
             var dataPackage = new DataPackage();
-            dataPackage.SetText(flag.Value);
+            dataPackage.SetText(flag.Key);
             Clipboard.SetContent(dataPackage);
 
             showCopyToast();

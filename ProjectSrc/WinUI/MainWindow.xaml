@@ -54,7 +54,12 @@
                         Click="EditFlagsButton_Click"
                         HorizontalAlignment="Stretch" />
 
-                    <CheckBox x:Name="OpenStudioDirectoryCheck" Content="Open Working Directory" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="8,0,0,0" />
+                    <Button
+                        x:Name="OpenStudioDirectoryButton"
+                        Content="Open Studio Directory"
+                        Click="OpenStudioDirectoryButton_Click"
+                        HorizontalAlignment="Stretch" />
+
                     <CheckBox x:Name="ForceRebuildCheck" Content="Force Reinstallation" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="8,0,0,0" />
                 </StackPanel>
 

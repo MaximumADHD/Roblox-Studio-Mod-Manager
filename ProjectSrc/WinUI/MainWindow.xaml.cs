@@ -222,6 +222,18 @@ namespace RobloxStudioModManager
             });
         }
 
+        private void OpenStudioDirectoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            string studioRoot = StudioBootstrapper.GetStudioDirectory();
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = studioRoot,
+                UseShellExecute = true,
+                Verb = "open"
+            });
+        }
+
         private async Task<bool> showFlagWarningPrompt()
         {
             var dontShowAgain = new CheckBox { Content = "Do not show this warning again." };
@@ -406,17 +418,10 @@ namespace RobloxStudioModManager
                 }
             }
 
-            if (OpenStudioDirectoryCheck.IsChecked == true)
-            {
-                Process.Start(new ProcessStartInfo { FileName = studioRoot, UseShellExecute = true });
-            }
-            else
-            {
-                string currentVersion = versionRegistry.VersionGuid;
-                versionRegistry.LastExecutedVersion = currentVersion;
+            string currentVersion = versionRegistry.VersionGuid;
+            versionRegistry.LastExecutedVersion = currentVersion;
 
-                Process.Start(robloxStudioInfo);
-            }
+            Process.Start(robloxStudioInfo);
 
             App.SaveState();
             Environment.Exit(Environment.ExitCode);
