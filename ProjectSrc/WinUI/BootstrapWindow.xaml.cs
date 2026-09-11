@@ -114,7 +114,7 @@ namespace RobloxStudioModManager
             Close();
         }
 
-        public static async Task BringUpToDate(string expectedVersion, string updateReason)
+        public static async Task BringUpToDate(string expectedVersion, string updateReason, Window owner = null)
         {
             var versionData = App.State.VersionData;
             string currentVersion = versionData.VersionGuid;
@@ -128,7 +128,7 @@ namespace RobloxStudioModManager
                     var result = await DialogWindow.ShowAsync(
                         "Out of date!",
                         "Roblox Studio is out of date!\n" + updateReason + "\nWould you like to update now?",
-                        "Yes", "No", ContentDialogButton.Primary, DialogIcon.Warning);
+                        "Yes", "No", ContentDialogButton.Primary, DialogIcon.Warning, owner);
 
                     proceed = result == ContentDialogResult.Primary;
                 }
@@ -168,7 +168,7 @@ namespace RobloxStudioModManager
             {
                 try
                 {
-                    var result = await DialogWindow.ShowAsync(title, message, "OK", "Cancel", ContentDialogButton.Primary, DialogIcon.Warning);
+                    var result = await DialogWindow.ShowAsync(title, message, "OK", "Cancel", ContentDialogButton.Primary, DialogIcon.Warning, this);
                     tcs.SetResult(result == ContentDialogResult.Primary);
                 }
                 catch (Exception ex)
@@ -197,7 +197,7 @@ namespace RobloxStudioModManager
                 "The installation has not finished yet!\n" +
                     "Closing this window will exit the mod manager.\n" +
                     "Are you sure you want to continue?",
-                "Yes", "No", ContentDialogButton.Close, DialogIcon.Warning);
+                "Yes", "No", ContentDialogButton.Close, DialogIcon.Warning, this);
 
             if (result == ContentDialogResult.Primary)
                 Environment.Exit(0);

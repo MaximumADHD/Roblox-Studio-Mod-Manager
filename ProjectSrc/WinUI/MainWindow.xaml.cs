@@ -105,7 +105,7 @@ namespace RobloxStudioModManager
                 "There's a new version of the mod manager available!\n" +
                     "This version is likely broken or no longer supported.\n" +
                     "Would you like to check it out?",
-                "Yes", "No", ContentDialogButton.Primary, DialogIcon.Information);
+                "Yes", "No", ContentDialogButton.Primary, DialogIcon.Information, this);
 
             if (result == ContentDialogResult.Primary)
             {
@@ -124,7 +124,7 @@ namespace RobloxStudioModManager
 
         private async Task showError(string message)
         {
-            await DialogWindow.ShowAsync("Error", message, null, "OK", ContentDialogButton.Close, DialogIcon.Error);
+            await DialogWindow.ShowAsync("Error", message, null, "OK", ContentDialogButton.Close, DialogIcon.Error, this);
         }
 
         private async Task setVersionHistory(string channelName = "LIVE", string channelToken = "")
@@ -245,7 +245,7 @@ namespace RobloxStudioModManager
 
             var result = await DialogWindow.ShowAsync(
                 "WARNING: HERE BE DRAGONS", content, "Yes", "No",
-                ContentDialogButton.Close, DialogIcon.Error);
+                ContentDialogButton.Close, DialogIcon.Error, this);
 
             if (result == ContentDialogResult.Primary)
             {
@@ -271,7 +271,7 @@ namespace RobloxStudioModManager
             var info = await StudioBootstrapper.GetCurrentVersionInfo();
             AppWindow.Hide();
 
-            await BootstrapWindow.BringUpToDate(info.VersionGuid, "Some newer flags might be missing.");
+            await BootstrapWindow.BringUpToDate(info.VersionGuid, "Some newer flags might be missing.", this);
 
             var editor = new FlagEditorWindow();
             var editorClosed = new TaskCompletionSource<bool>();
@@ -442,7 +442,7 @@ namespace RobloxStudioModManager
                     "This version of Roblox Studio is no longer supported!\n" +
                         "You are strongly advised against using it in the future.\n" +
                         "No technical support will be provided, use it at your own risk!",
-                    null, "OK", ContentDialogButton.Close, DialogIcon.Warning);
+                    null, "OK", ContentDialogButton.Close, DialogIcon.Warning, this);
             }
         }
 

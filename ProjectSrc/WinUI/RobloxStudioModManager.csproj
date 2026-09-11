@@ -33,6 +33,15 @@
     <EnableMsixTooling>true</EnableMsixTooling>
   </PropertyGroup>
 
+  <!--
+      PublishSingleFile only bundles everything into one executable
+	  during an actual publish, a normal build skips over that step.
+	  This makes a release build also run publish right after automatically.
+  -->
+  <Target Name="PublishOnRelease" AfterTargets="Build" Condition="'$(Configuration)'=='Release'">
+    <CallTarget Targets="Publish" />
+  </Target>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="2.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

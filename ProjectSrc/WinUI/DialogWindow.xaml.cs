@@ -80,6 +80,10 @@ namespace RobloxStudioModManager
 
         public ContentDialogButton DefaultButton { get; set; } = ContentDialogButton.Close;
 
+        // The window this dialog belongs to, when set, the owner is disabled
+        // for input while the dialog stays open.
+        public Window Owner { get; set; }
+
         public DialogIcon Icon
         {
             set
@@ -122,7 +126,18 @@ namespace RobloxStudioModManager
                 presenter.IsAlwaysOnTop = true;
             }
 
-            Closed += (s, e) => complete(ContentDialogResult.None);
+            Closed += dialogWindow_Closed;
+        }
+
+        private void dialogWindow_Closed(object sender, WindowEventArgs args)
+        {
+            complete(ContentDialogResult.None);
+
+            if (Owner != null)
+            {
+                WindowPositioning.SetEnabled(Owner, true);
+                Owner.Activate();
+            }
         }
 
         private void complete(ContentDialogResult result)
@@ -167,7 +182,13 @@ namespace RobloxStudioModManager
             int width = (int)Math.Ceiling(Math.Max(minContentWidth, Math.Min(maxContentWidth, desired.Width)));
             int height = (int)Math.Ceiling(Math.Max(minContentHeight, desired.Height));
 
-            WindowPositioning.ResizeClientAndCenter(AppWindow, width, height);
+            if (Owner != null)
+            {
+                WindowPositioning.SetOwner(this, Owner);
+                WindowPositioning.SetEnabled(Owner, false);
+            }
+
+            WindowPositioning.ResizeClientAndCenter(AppWindow, width, height, Owner?.AppWindow);
 
             if (playSound)
                 Sound.PlayNotification();
@@ -194,6 +215,7 @@ namespace RobloxStudioModManager
             string closeButtonText,
             ContentDialogButton defaultButton = ContentDialogButton.Close,
             DialogIcon icon = DialogIcon.None,
+            Window owner = null,
             bool playSound = true)
         {
             var dialog = new DialogWindow
@@ -203,7 +225,8 @@ namespace RobloxStudioModManager
                 PrimaryButtonText = primaryButtonText,
                 CloseButtonText = closeButtonText,
                 DefaultButton = defaultButton,
-                Icon = icon
+                Icon = icon,
+                Owner = owner
             };
 
             return dialog.ShowAsync(playSound);

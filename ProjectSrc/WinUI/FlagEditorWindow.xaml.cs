@@ -345,7 +345,7 @@ namespace RobloxStudioModManager
             var result = await DialogWindow.ShowAsync(
                 "Confirmation",
                 "Are you sure you would like to remove all flag overrides?\nThis will also delete any custom flags!",
-                "Yes", "No", ContentDialogButton.Close, DialogIcon.Warning);
+                "Yes", "No", ContentDialogButton.Close, DialogIcon.Warning, this);
 
             if (result != ContentDialogResult.Primary)
                 return;
@@ -394,7 +394,8 @@ namespace RobloxStudioModManager
                 DialogContent = form,
                 PrimaryButtonText = "Create",
                 CloseButtonText = "Cancel",
-                DefaultButton = ContentDialogButton.Primary
+                DefaultButton = ContentDialogButton.Primary,
+                Owner = this
             };
 
             dialog.PrimaryButtonClick += (s, args) => args.Cancel = !form.Validate();
