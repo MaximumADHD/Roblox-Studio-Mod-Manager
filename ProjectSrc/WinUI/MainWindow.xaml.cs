@@ -138,8 +138,11 @@ namespace RobloxStudioModManager
             var deployLogs = await StudioDeployLogs.Get(App.AllowUnsupportedVersions, channelName, channelToken);
             HashSet<DeployLog> targets = deployLogs.CurrentLogs;
 
-            TargetVersionBox.IsEnabled = deployLogs.HasHistory;
-            TargetVersionLabel.Opacity = deployLogs.HasHistory ? 1.0 : 0.5;
+            bool isDefaultChannel = deployLogs.ChannelName == "LIVE" || deployLogs.ChannelName == "zbeta";
+            bool allowTargetSelection = deployLogs.HasHistory && isDefaultChannel;
+
+            TargetVersionBox.IsEnabled = allowTargetSelection;
+            TargetVersionLabel.Opacity = allowTargetSelection ? 1.0 : 0.5;
 
             if (deployLogs.ChannelName == channelName || deployLogs.ChannelName == "zbeta")
             {
