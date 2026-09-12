@@ -1,18 +1,19 @@
 using System;
-using System.Globalization;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Windows.Forms;
+
+using Microsoft.UI.Xaml;
+using Microsoft.Win32;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using Microsoft.Win32;
-
 namespace RobloxStudioModManager
 {
-    static class Program
+    public partial class App : Application
     {
         public const string RepoBranch = "main";
         public const string RepoOwner = "MaximumADHD";
@@ -33,15 +34,27 @@ namespace RobloxStudioModManager
 
         public static bool AllowUnsupportedVersions { get; private set; }
 
-        private static JsonSerializerSettings JsonSettings = new JsonSerializerSettings()
+        private static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings()
         {
             ContractResolver = new OrdinalSortJson()
         };
 
-        public static RegistryKey GetSubKey(this RegistryKey key, params string[] path)
+        private Window mainWindow;
+
+        public App()
         {
-            string constructedPath = Path.Combine(path);
-            return key.CreateSubKey(constructedPath, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryOptions.None);
+            InitializeComponent();
+        }
+
+        protected override void OnLaunched(LaunchActivatedEventArgs args)
+        {
+            var rawArgs = Environment.GetCommandLineArgs();
+            var unprocessedArgs = Initialize(rawArgs[1..]);
+
+            AppDomain.CurrentDomain.ProcessExit += (sender, e) => SaveState();
+
+            mainWindow = new MainWindow(unprocessedArgs);
+            mainWindow.Activate();
         }
 
         // This sets up the following:
@@ -53,7 +66,7 @@ namespace RobloxStudioModManager
         {
             const string _ = ""; // Default empty key/value.
 
-            string modManagerPath = Application.ExecutablePath
+            string modManagerPath = Process.GetCurrentProcess().MainModule.FileName
                 .Replace('"', ' ')
                 .Trim();
 
@@ -80,19 +93,19 @@ namespace RobloxStudioModManager
             }
 
             // Setup the URI protocol for opening the mod manager through the website.
-            RegistryKey robloxStudioUri = GetSubKey(classes, "roblox-studio");
+            RegistryKey robloxStudioUri = classes.GetSubKey("roblox-studio");
             robloxStudioUri.SetValue(_, "URL: Roblox Protocol");
             robloxStudioUri.SetValue("URL Protocol", _);
 
-            RegistryKey studioUriCmd = GetSubKey(robloxStudioUri, "shell", "open", "command");
+            RegistryKey studioUriCmd = robloxStudioUri.GetSubKey("shell", "open", "command");
             studioUriCmd.SetValue(_, $"\"{modManagerPath}\" %1");
 
             // Setup authentication route.
-            RegistryKey robloxStudioAuthUri = GetSubKey(classes, "roblox-studio-auth");
+            RegistryKey robloxStudioAuthUri = classes.GetSubKey("roblox-studio-auth");
             robloxStudioAuthUri.SetValue(_, "URL: Roblox Protocol");
             robloxStudioAuthUri.SetValue("URL Protocol", _);
 
-            RegistryKey studioAuthUriCmd = GetSubKey(robloxStudioAuthUri, "shell", "open", "command");
+            RegistryKey studioAuthUriCmd = robloxStudioAuthUri.GetSubKey("shell", "open", "command");
             studioAuthUriCmd.SetValue(_, $"\"{studioPath}\" %1");
 
             // Set the default icon for all protocols.
@@ -105,12 +118,12 @@ namespace RobloxStudioModManager
 
             foreach (RegistryKey app in appReg)
             {
-                RegistryKey defaultIcon = GetSubKey(app, "DefaultIcon");
+                RegistryKey defaultIcon = app.GetSubKey("DefaultIcon");
                 defaultIcon.SetValue(_, $"{modManagerPath},0");
             }
         }
 
-        static void ConvertLegacy(RegistryKey regKey, JObject node)
+        private static void ConvertLegacy(RegistryKey regKey, JObject node)
         {
             foreach (var name in regKey.GetValueNames())
             {
@@ -138,15 +151,9 @@ namespace RobloxStudioModManager
             File.WriteAllText(stateFile, json);
         }
 
-        static void OnExiting(object sender, EventArgs e)
+        // Loads/migrates persisted app state and parses launch arguments.
+        public static string[] Initialize(string[] rawArgs)
         {
-            SaveState();
-        }
-
-        [STAThread]
-        static void Main(string[] rawArgs)
-        {
-            // Initialize application state.
             var localAppData = Environment.GetEnvironmentVariable("localappdata");
             RootDir = Path.Combine(localAppData, "Roblox Studio Mod Manager");
 
@@ -194,19 +201,14 @@ namespace RobloxStudioModManager
 
             var args = unprocessedArgs.ToArray();
             State = JsonConvert.DeserializeObject<ModManagerState>(json);
-            
+
             if (State == null)
                 State = new ModManagerState();
 
             // Make sure HTTPS uses TLS 1.2
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
-            // Standard windows form jank
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-
-            Application.ApplicationExit += new EventHandler(OnExiting);
-            Application.Run(new Launcher(args));
+            return args;
         }
     }
 }

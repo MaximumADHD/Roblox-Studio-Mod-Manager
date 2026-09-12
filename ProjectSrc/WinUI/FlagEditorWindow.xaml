@@ -1,0 +1,212 @@
+<Window
+    x:Class="RobloxStudioModManager.FlagEditorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Grid x:Name="RootGrid">
+        <TabView
+            x:Name="Tabs"
+            IsAddTabButtonVisible="False"
+            SelectedIndex="0">
+
+            <TabViewItem Header="View Flags" IsClosable="False">
+                <Grid Padding="12" RowSpacing="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="Search:" VerticalAlignment="Center" />
+                        <TextBox Grid.Column="1" x:Name="SearchBox" TextChanged="SearchBox_TextChanged" />
+                        <Button Grid.Column="2" x:Name="OverrideSelectedButton" Content="Override Selected" Click="OverrideSelectedButton_Click">
+                            <!-- Scoped to just this button  -->
+                            <Button.Resources>
+                                <SolidColorBrush x:Key="ButtonBackground" Color="#8F1D23" />
+                                <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="#A12E35" />
+                                <SolidColorBrush x:Key="ButtonBackgroundPressed" Color="#70171D" />
+                                <SolidColorBrush x:Key="ButtonForeground" Color="White" />
+                                <SolidColorBrush x:Key="ButtonForegroundPointerOver" Color="White" />
+                                <SolidColorBrush x:Key="ButtonForegroundPressed" Color="White" />
+                            </Button.Resources>
+                        </Button>
+                        <Button Grid.Column="3" x:Name="AddCustomButton" Content="Add Custom" Click="AddCustomButton_Click" />
+                    </Grid>
+
+                    <Border
+                        Grid.Row="1"
+                        x:Name="OverrideStatusBar"
+                        Background="#26FFB900"
+                        BorderBrush="#66FFB900"
+                        BorderThickness="1"
+                        CornerRadius="4"
+                        Padding="8,5"
+                        Visibility="Collapsed">
+
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <FontIcon Glyph="&#xE7BA;" FontSize="12" Foreground="#B88400" VerticalAlignment="Center" />
+                            <TextBlock
+                                x:Name="OverrideStatusMessage"
+                                Text="Values highlighted in red were overridden locally."
+                                FontSize="12"
+                                VerticalAlignment="Center"
+                                TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Row="2" BorderThickness="0,0,0,1" BorderBrush="Gray" Padding="12,0,12,6">
+                        <Grid ColumnSpacing="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="Name" FontWeight="SemiBold" />
+                            <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="Gray" Padding="8,0">
+                                <TextBlock Text="Type" FontWeight="SemiBold" />
+                            </Border>
+                            <Border Grid.Column="2" BorderThickness="1,0,0,0" BorderBrush="Gray" Padding="8,0">
+                                <TextBlock Text="Value" FontWeight="SemiBold" />
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <ListView
+                        Grid.Row="3"
+                        x:Name="FlagListView"
+                        SelectionMode="Single"
+                        ContainerContentChanging="FlagListView_ContainerContentChanging">
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <!-- 
+                                        Highlight layer is separate from the text
+                                        content below so it can span the full row. 
+                                    -->
+                                    <Border x:Name="HighlightBorder" CornerRadius="4" Margin="4,1" />
+
+                                    <Grid ColumnSpacing="0" Padding="12,4" RightTapped="FlagRow_RightTapped">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="3*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="2*" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Column="0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Padding="0,0,8,0" />
+                                        <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="Gray" Padding="8,0">
+                                            <TextBlock VerticalAlignment="Center" />
+                                        </Border>
+                                        <Border Grid.Column="2" BorderThickness="1,0,0,0" BorderBrush="Gray" Padding="8,0">
+                                            <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                        </Border>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </TabViewItem>
+
+            <TabViewItem Header="Overrides" IsClosable="False">
+                <Grid Padding="12" RowSpacing="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="Overrides" FontSize="16" VerticalAlignment="Center" />
+                        <Button Grid.Column="1" x:Name="RemoveSelectedButton" Content="Remove Selected" Click="RemoveSelectedButton_Click" />
+                        <Button Grid.Column="2" x:Name="RemoveAllButton" Content="Remove All" Click="RemoveAllButton_Click" />
+                    </Grid>
+
+                    <Border Grid.Row="1" BorderThickness="0,0,0,1" BorderBrush="Gray" Padding="12,0,12,6">
+                        <Grid ColumnSpacing="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="2*" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="Name" FontWeight="SemiBold" />
+                            <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="Gray" Padding="8,0">
+                                <TextBlock Text="Type" FontWeight="SemiBold" />
+                            </Border>
+                            <Border Grid.Column="2" BorderThickness="1,0,0,0" BorderBrush="Gray" Padding="8,0">
+                                <TextBlock Text="Value" FontWeight="SemiBold" />
+                            </Border>
+                        </Grid>
+                    </Border>
+
+                    <ListView
+                        Grid.Row="2"
+                        x:Name="OverrideListView"
+                        SelectionMode="Single"
+                        ContainerContentChanging="OverrideListView_ContainerContentChanging">
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnSpacing="0" Padding="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="2*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Padding="0,0,8,0" />
+
+                                    <Border Grid.Column="1" BorderThickness="1,0,0,0" BorderBrush="Gray" Padding="8,0">
+                                        <TextBlock VerticalAlignment="Center" />
+                                    </Border>
+
+                                    <Border Grid.Column="2" BorderThickness="1,0,0,0" BorderBrush="Gray" Padding="8,0">
+                                        <Grid>
+                                            <TextBox LostFocus="ValueBox_LostFocus" />
+                                            <ComboBox HorizontalAlignment="Stretch" SelectionChanged="ValueCombo_SelectionChanged">
+                                                <ComboBoxItem Content="true" />
+                                                <ComboBoxItem Content="false" />
+                                            </ComboBox>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </TabViewItem>
+        </TabView>
+
+        <Border
+            x:Name="CopyToast"
+            Background="SeaGreen"
+            Padding="10,6"
+            CornerRadius="4"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Margin="0,0,16,16"
+            Visibility="Collapsed">
+
+            <TextBlock Text="Flag name copied to clipboard!" Foreground="White" />
+        </Border>
+
+        <ProgressRing x:Name="LoadingRing" IsActive="False" Width="48" Height="48" />
+    </Grid>
+</Window>

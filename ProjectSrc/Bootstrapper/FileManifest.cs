@@ -36,7 +36,7 @@ namespace RobloxStudioModManager
 
                     if (eof)
                         break;
-                    else if (remapExtraContent && path.StartsWith("ExtraContent", Program.StringFormat))
+                    else if (remapExtraContent && path.StartsWith("ExtraContent", App.StringFormat))
                         path = path.Replace("ExtraContent", "content");
 
                     // ~~ AWFUL TEMPORARY HACK. ~~
@@ -66,7 +66,7 @@ namespace RobloxStudioModManager
         {
             string versionGuid = info.VersionGuid;
 
-            string fileManifestUrl = $"{Program.BaseUrl}/channel/common/{versionGuid}-rbxManifest.txt";
+            string fileManifestUrl = $"{App.BaseUrl}/channel/common/{versionGuid}-rbxManifest.txt";
             string fileManifestData;
 
             using (WebClient http = new WebClient())
