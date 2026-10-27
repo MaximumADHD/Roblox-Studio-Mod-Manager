@@ -13,22 +13,22 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RobloxStudioModManager</RootNamespace>
     <AssemblyName>RobloxStudioModManager</AssemblyName>
-    <TargetFramework Condition="'$(CliBuild)' != 'true'">net10.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework Condition="'$(CliBuild)' != 'true'">net10.0-windows</TargetFramework>
     <TargetFramework Condition="'$(CliBuild)' == 'true'">net10.0</TargetFramework>
     <UseWindowsForms Condition="'$(CliBuild)' != 'true'">true</UseWindowsForms>
     <EnableWindowsTargeting Condition="'$(CliBuild)' != 'true'">true</EnableWindowsTargeting>
-    <SupportedOSPlatformVersion Condition="'$(CliBuild)' != 'true'">10.0.17763.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="'$(CliBuild)' != 'true'">7.0</SupportedOSPlatformVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <LangVersion>9.0</LangVersion>
     <PlatformTarget>x64</PlatformTarget>
     <RuntimeIdentifier Condition="'$(CliBuild)' != 'true'">win-x64</RuntimeIdentifier>
-    <SelfContained Condition="'$(CliBuild)' != 'true'">true</SelfContained>
+    <SelfContained Condition="'$(CliBuild)' != 'true'">false</SelfContained>
     <PublishSingleFile Condition="'$(CliBuild)' != 'true'">true</PublishSingleFile>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <EnableCompressionInSingleFile Condition="'$(SelfContained)' == 'true'">true</EnableCompressionInSingleFile>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <NuGetPackageImportStamp>

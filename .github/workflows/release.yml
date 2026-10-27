@@ -106,17 +106,23 @@ jobs:
       matrix:
         include:
           - name: Gui-win-x64
+            executable: RobloxStudioModManager.exe
             runner: windows-latest
             runtime: win-x64
             cli: "false"
+            selfContained: "false"
           - name: Cli-win-x64
+            executable: RobloxStudioModManager.CLI.exe
             runner: windows-latest
             runtime: win-x64
             cli: "true"
+            selfContained: "true"
           - name: Cli-linux-x64
+            executable: RobloxStudioModManagerCLI
             runner: ubuntu-latest
             runtime: linux-x64
             cli: "true"
+            selfContained: "true"
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
@@ -143,17 +149,15 @@ jobs:
         env:
           BUILD_RUNTIME: ${{ matrix.runtime }}
           CLI_BUILD: ${{ matrix.cli }}
+          SELF_CONTAINED: ${{ matrix.selfContained }}
         run: |
           dotnet publish source/Roblox-Studio-Mod-Manager/ProjectSrc/RobloxStudioModManager.csproj `
-              --configuration Release --runtime $env:BUILD_RUNTIME --self-contained true `
+              --configuration Release --runtime $env:BUILD_RUNTIME --self-contained $env:SELF_CONTAINED `
               "-p:CliBuild=$env:CLI_BUILD" -p:PublishSingleFile=true --output publish
           
           if ($LASTEXITCODE -ne 0) {
               throw 'Publish failed.'
           }
-          
-          Copy-Item source/Roblox-Studio-Mod-Manager/Config/LatestReleaseTag.txt publish/LatestReleaseTag.txt
-          Copy-Item source/Roblox-Studio-Mod-Manager/LICENSE publish/LICENSE
 
       - name: Check CLI help
         if: matrix.cli == 'true'
@@ -170,23 +174,14 @@ jobs:
               throw 'CLI help failed.'
           }
 
-      - name: Package release
+      - name: Stage release executable
         shell: pwsh
         env:
-          BUILD_NAME: ${{ matrix.name }}
+          RELEASE_EXECUTABLE: ${{ matrix.executable }}
         run: |
           New-Item -ItemType Directory -Path artifacts | Out-Null
-          $name = "RobloxStudioModManager-$env:BUILD_NAME"
-
-          if ($env:RUNNER_OS -eq 'Linux') {
-              tar -czf "artifacts/$name.tar.gz" -C publish .
-
-              if ($LASTEXITCODE -ne 0) {
-                  throw 'Archive creation failed.'
-              }
-          } else {
-              Compress-Archive -Path publish/* -DestinationPath "artifacts/$name.zip"
-          }
+          $extension = if ($env:RUNNER_OS -eq 'Windows') { '.exe' } else { '' }
+          Copy-Item "publish/RobloxStudioModManager$extension" "artifacts/$env:RELEASE_EXECUTABLE"
 
       - uses: actions/upload-artifact@v4
         with:
