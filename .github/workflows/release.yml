@@ -74,6 +74,8 @@ jobs:
               throw 'Could not inspect staged changes.'
           }
 
+          git config --global user.email "3926900+MaximumADHD@users.noreply.github.com"
+          git config --global user.name "MaximumADHD"
           git push origin "HEAD:$env:DEFAULT_BRANCH"
           
           if ($LASTEXITCODE -ne 0) {
