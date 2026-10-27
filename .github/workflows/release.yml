@@ -59,6 +59,8 @@ jobs:
           [IO.File]::WriteAllText($path, $source, $utf8)
           [IO.File]::WriteAllText((Join-Path $PWD 'Config/LatestReleaseTag.txt'), "$tag`n", $utf8)
           
+          git config --local user.name "MaximumADHD"
+          git config --local user.email "3926900+MaximumADHD@users.noreply.github.com"
           git add -- ProjectSrc/Program.cs Config/LatestReleaseTag.txt
           
           if ($LASTEXITCODE -ne 0) {
@@ -74,8 +76,6 @@ jobs:
               throw 'Could not inspect staged changes.'
           }
 
-          git config --global user.email "3926900+MaximumADHD@users.noreply.github.com"
-          git config --global user.name "MaximumADHD"
           git push origin "HEAD:$env:DEFAULT_BRANCH"
           
           if ($LASTEXITCODE -ne 0) {
