@@ -1,6 +1,13 @@
 name: Release Roblox Studio Mod Manager
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - "**/*.cs"
+      - "**/*.csproj"
+      - "**/*.sln"
   workflow_dispatch:
 
 permissions:
@@ -156,7 +163,8 @@ jobs:
               'RobloxStudioModManager.exe' 
           } else {
               'RobloxStudioModManager'
-          } & (Join-Path $PWD "publish/$executable") --help
+            }
+            & (Join-Path $PWD "publish/$executable") --help
           
           if ($LASTEXITCODE -ne 0) {
               throw 'CLI help failed.'
@@ -215,6 +223,7 @@ jobs:
           set -euo pipefail
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
               gh release upload "$RELEASE_TAG" artifacts/* --clobber
+              gh release edit "$RELEASE_TAG" --draft=false --prerelease=false --latest
           else
               gh release create "$RELEASE_TAG" artifacts/* \
                 --target "$RELEASE_COMMIT" --title "$RELEASE_LABEL" \
