@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobloxDeployHistory", "..\.
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Cli|Any CPU = Cli|Any CPU
+		Cli|x64 = Cli|x64
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Internal|Any CPU = Internal|Any CPU
@@ -19,6 +21,14 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Cli|Any CPU.ActiveCfg = Cli|Any CPU
+		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Cli|Any CPU.Build.0 = Cli|Any CPU
+		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Cli|x64.ActiveCfg = Cli|x64
+		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Cli|x64.Build.0 = Cli|x64
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Cli|Any CPU.ActiveCfg = Release|Any CPU
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Cli|Any CPU.Build.0 = Release|Any CPU
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Cli|x64.ActiveCfg = Release|x64
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Cli|x64.Build.0 = Release|x64
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Debug|x64.ActiveCfg = Debug|x64

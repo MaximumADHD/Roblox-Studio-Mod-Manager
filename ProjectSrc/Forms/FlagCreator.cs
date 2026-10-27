@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace RobloxStudioModManager
 {
+    [SupportedOSPlatform("windows")]
     public partial class FlagCreator : Form
     {
         public CustomFlag Result { get; private set; }

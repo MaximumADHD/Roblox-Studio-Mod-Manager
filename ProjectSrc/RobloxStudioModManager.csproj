@@ -3,23 +3,29 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Configurations>Debug;Release;Internal;DebugInternal;Cli</Configurations>
+    <Platforms>AnyCPU;x64</Platforms>
+    <CliBuild Condition="'$(CliBuild)' == '' and '$(Configuration)' == 'Cli'">true</CliBuild>
+    <CliBuild Condition="'$(CliBuild)' == ''">false</CliBuild>
     <ProjectGuid>{FAD2621F-B280-4D6D-A260-F410C5B06E0C}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType Condition="'$(CliBuild)' != 'true'">WinExe</OutputType>
+    <OutputType Condition="'$(CliBuild)' == 'true'">Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RobloxStudioModManager</RootNamespace>
     <AssemblyName>RobloxStudioModManager</AssemblyName>
-    <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
-    <UseWindowsForms>true</UseWindowsForms>
-    <EnableWindowsTargeting>true</EnableWindowsTargeting>
-    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <TargetFramework Condition="'$(CliBuild)' != 'true'">net10.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework Condition="'$(CliBuild)' == 'true'">net10.0</TargetFramework>
+    <UseWindowsForms Condition="'$(CliBuild)' != 'true'">true</UseWindowsForms>
+    <EnableWindowsTargeting Condition="'$(CliBuild)' != 'true'">true</EnableWindowsTargeting>
+    <SupportedOSPlatformVersion Condition="'$(CliBuild)' != 'true'">10.0.17763.0</SupportedOSPlatformVersion>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
     <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <LangVersion>7.3</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <PlatformTarget>x64</PlatformTarget>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <SelfContained>true</SelfContained>
-    <PublishSingleFile>true</PublishSingleFile>
+    <RuntimeIdentifier Condition="'$(CliBuild)' != 'true'">win-x64</RuntimeIdentifier>
+    <SelfContained Condition="'$(CliBuild)' != 'true'">true</SelfContained>
+    <PublishSingleFile Condition="'$(CliBuild)' != 'true'">true</PublishSingleFile>
     <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
@@ -69,7 +75,7 @@
     </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Resources\Icon.ico</ApplicationIcon>
+    <ApplicationIcon Condition="'$(CliBuild)' != 'true'">Resources\Icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
@@ -89,11 +95,11 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationManifest Condition="'$(CliBuild)' != 'true'">app.manifest</ApplicationManifest>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
@@ -102,7 +108,6 @@
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
-    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
@@ -111,7 +116,6 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Internal|x64'">
@@ -120,7 +124,6 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugInternal|AnyCPU'">
@@ -129,7 +132,6 @@
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugInternal|x64'">
@@ -138,7 +140,6 @@
     <Optimize>false</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>x64</PlatformTarget>
-    <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
@@ -184,9 +185,10 @@
     <Compile Include="Forms\Launcher.Designer.cs">
       <DependentUpon>Launcher.cs</DependentUpon>
     </Compile>
-    <Compile Include="Program.cs" />
+    <Compile Include="Program.cs" Condition="'$(CliBuild)' != 'true'" />
+    <Compile Include="CliProgram.cs" Condition="'$(CliBuild)' == 'true'" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Include="Properties\Resources.resx" Condition="'$(CliBuild)' != 'true'">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -196,10 +198,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Logo.png" />
+    <EmbeddedResource Include="Resources\Logo.png" Condition="'$(CliBuild)' != 'true'" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Icon.ico" />
+    <EmbeddedResource Include="Resources\Icon.ico" Condition="'$(CliBuild)' != 'true'" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Roblox-Deploy-History\RobloxDeployHistory.csproj">
@@ -209,13 +211,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Konscious.Security.Cryptography.Blake2">
-      <Version>1.0.9</Version>
+      <Version>1.1.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>13.0.3</Version>
+      <Version>13.0.4</Version>
     </PackageReference>
-    <PackageReference Include="PeNet">
-      <Version>5.1.0</Version>
+    <PackageReference Include="PeNet" Condition="'$(CliBuild)' != 'true'">
+      <Version>6.1.2</Version>
     </PackageReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -228,4 +230,12 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <DebugType>embedded</DebugType>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(CliBuild)' == 'true'">
+    <DefineConstants>$(DefineConstants);CLI</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(CliBuild)' == 'true'">
+    <Compile Remove="Forms\**\*.cs;Properties\Resources.Designer.cs;Utility\RobloxInternal.cs;Utility\SystemEvent.cs;Utility\StudioFFlagDumper.cs;Utility\PatternScanner.cs" />
+  </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 using RobloxDeployHistory;
@@ -75,15 +75,11 @@ namespace RobloxStudioModManager
 
         public static async Task<PackageManifest> Get(ClientVersionInfo info)
         {
+            using var http = new HttpClient();
+
             string versionGuid = info.VersionGuid;
             string pkgManifestUrl = $"{Program.BaseUrl}/channel/common/{versionGuid}-rbxPkgManifest.txt";
-            string pkgManifestData;
-
-            using (WebClient http = new WebClient())
-            {
-                var getData = http.DownloadStringTaskAsync(pkgManifestUrl);
-                pkgManifestData = await getData.ConfigureAwait(false);
-            }
+            string pkgManifestData = await http.GetStringAsync(pkgManifestUrl);
 
             return new PackageManifest(pkgManifestData);
         }

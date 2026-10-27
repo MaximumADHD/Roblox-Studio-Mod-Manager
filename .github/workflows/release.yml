@@ -1,0 +1,220 @@
+name: Release Roblox Studio Mod Manager
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-rsmm
+  cancel-in-progress: false
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    outputs:
+      label: ${{ steps.stamp.outputs.label }}
+      tag: ${{ steps.stamp.outputs.tag }}
+      commit: ${{ steps.stamp.outputs.commit }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Stamp and commit release version
+        id: stamp
+        shell: pwsh
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $hash = (git rev-parse --short=7 HEAD).Trim()
+          
+          if ($LASTEXITCODE -ne 0) {
+              throw 'Could not resolve source commit.'
+          }
+          
+          $date = [DateTime]::UtcNow.ToString("'v'yyyy.MM.dd", [Globalization.CultureInfo]::InvariantCulture)
+          $label = "$date.$hash"
+          $tag = $label
+          $path = Join-Path $PWD 'ProjectSrc/Program.cs'
+          $source = [IO.File]::ReadAllText($path)
+          $pattern = [regex]'(?m)^(\s*public const string ReleaseTag\s*=\s*)"[^"]*";'
+          
+          if ($pattern.Matches($source).Count -ne 1) {
+              throw 'Expected exactly one ReleaseTag constant.'
+          }
+          
+          $source = $pattern.Replace($source, [Text.RegularExpressions.MatchEvaluator]{
+              param($match)
+              $match.Groups[1].Value + '"' + $label + '";'
+          })
+          
+          $utf8 = [Text.UTF8Encoding]::new($false)
+          
+          [IO.File]::WriteAllText($path, $source, $utf8)
+          [IO.File]::WriteAllText((Join-Path $PWD 'Config/LatestReleaseTag.txt'), "$tag`n", $utf8)
+          
+          git add -- ProjectSrc/Program.cs Config/LatestReleaseTag.txt
+          
+          if ($LASTEXITCODE -ne 0) {
+              throw 'Could not stage version files.'
+          }
+
+          git diff --cached --quiet
+          
+          if ($LASTEXITCODE -eq 1) {
+              git commit -m "Release $label"
+              if ($LASTEXITCODE -ne 0) { throw 'Could not commit version files.' }
+          } elseif ($LASTEXITCODE -ne 0) {
+              throw 'Could not inspect staged changes.'
+          }
+
+          git push origin "HEAD:$env:DEFAULT_BRANCH"
+          
+          if ($LASTEXITCODE -ne 0) {
+              throw 'Could not push release commit.'
+          }
+          
+          $commit = (git rev-parse HEAD).Trim()
+          
+          if ($LASTEXITCODE -ne 0) {
+              throw 'Could not resolve release commit.'
+          }
+
+          "label=$label" >> $env:GITHUB_OUTPUT
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "commit=$commit" >> $env:GITHUB_OUTPUT
+
+  build:
+    needs: version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Gui-win-x64
+            runner: windows-latest
+            runtime: win-x64
+            cli: "false"
+          - name: Cli-win-x64
+            runner: windows-latest
+            runtime: win-x64
+            cli: "true"
+          - name: Cli-linux-x64
+            runner: ubuntu-latest
+            runtime: linux-x64
+            cli: "true"
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    steps:
+      - name: Check out release commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.version.outputs.commit }}
+          path: source/Roblox-Studio-Mod-Manager
+          persist-credentials: false
+
+      - name: Check out Deploy History dependency
+        uses: actions/checkout@v4
+        with:
+          repository: MaximumADHD/Roblox-Deploy-History
+          path: source/Roblox-Deploy-History
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Publish release build
+        shell: pwsh
+        env:
+          BUILD_RUNTIME: ${{ matrix.runtime }}
+          CLI_BUILD: ${{ matrix.cli }}
+        run: |
+          dotnet publish source/Roblox-Studio-Mod-Manager/ProjectSrc/RobloxStudioModManager.csproj `
+              --configuration Release --runtime $env:BUILD_RUNTIME --self-contained true `
+              "-p:CliBuild=$env:CLI_BUILD" -p:PublishSingleFile=true --output publish
+          
+          if ($LASTEXITCODE -ne 0) {
+              throw 'Publish failed.'
+          }
+          
+          Copy-Item source/Roblox-Studio-Mod-Manager/Config/LatestReleaseTag.txt publish/LatestReleaseTag.txt
+          Copy-Item source/Roblox-Studio-Mod-Manager/LICENSE publish/LICENSE
+
+      - name: Check CLI help
+        if: matrix.cli == 'true'
+        shell: pwsh
+        run: |
+          $executable = if ($env:RUNNER_OS -eq 'Windows') {
+              'RobloxStudioModManager.exe' 
+          } else {
+              'RobloxStudioModManager'
+          } & (Join-Path $PWD "publish/$executable") --help
+          
+          if ($LASTEXITCODE -ne 0) {
+              throw 'CLI help failed.'
+          }
+
+      - name: Package release
+        shell: pwsh
+        env:
+          BUILD_NAME: ${{ matrix.name }}
+        run: |
+          New-Item -ItemType Directory -Path artifacts | Out-Null
+          $name = "RobloxStudioModManager-$env:BUILD_NAME"
+
+          if ($env:RUNNER_OS -eq 'Linux') {
+              tar -czf "artifacts/$name.tar.gz" -C publish .
+
+              if ($LASTEXITCODE -ne 0) {
+                  throw 'Archive creation failed.'
+              }
+          } else {
+              Compress-Archive -Path publish/* -DestinationPath "artifacts/$name.zip"
+          }
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.name }}
+          path: artifacts/*
+          if-no-files-found: error
+
+  release:
+    needs: [version, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.version.outputs.commit }}
+          persist-credentials: false
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: artifacts
+          merge-multiple: true
+
+      - name: Publish GitHub release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_LABEL: ${{ needs.version.outputs.label }}
+          RELEASE_TAG: ${{ needs.version.outputs.tag }}
+          RELEASE_COMMIT: ${{ needs.version.outputs.commit }}
+        run: |
+          set -euo pipefail
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+              gh release upload "$RELEASE_TAG" artifacts/* --clobber
+          else
+              gh release create "$RELEASE_TAG" artifacts/* \
+                --target "$RELEASE_COMMIT" --title "$RELEASE_LABEL" \
+                --generate-notes --latest
+          fi

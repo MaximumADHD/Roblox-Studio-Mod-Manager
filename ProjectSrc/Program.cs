@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using Microsoft.Win32;
+using System.Runtime.Versioning;
 
 namespace RobloxStudioModManager
 {
@@ -22,7 +23,9 @@ namespace RobloxStudioModManager
         public const string BaseUrl = "https://setup.rbxcdn.com";
         public static readonly string BaseConfigUrl = $"https://raw.githubusercontent.com/{RepoOwner}/{RepoName}/{RepoBranch}/Config/";
 
-        public static readonly RegistryKey LegacyRegistry = Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
+        [SupportedOSPlatform("windows")]
+        private static RegistryKey LegacyRegistry => Registry.CurrentUser.GetSubKey("SOFTWARE", "Roblox Studio Mod Manager");
+
         public static readonly CultureInfo Format = CultureInfo.InvariantCulture;
 
         public const StringComparison StringFormat = StringComparison.Ordinal;
@@ -33,12 +36,13 @@ namespace RobloxStudioModManager
 
         public static bool AllowUnsupportedVersions { get; private set; }
 
-        private static JsonSerializerSettings JsonSettings = new JsonSerializerSettings()
+        private readonly static JsonSerializerSettings JsonSettings = new()
         {
             ContractResolver = new OrdinalSortJson()
         };
 
-        public static RegistryKey GetSubKey(this RegistryKey key, params string[] path)
+        [SupportedOSPlatform("windows")]
+        private static RegistryKey GetSubKey(this RegistryKey key, params string[] path)
         {
             string constructedPath = Path.Combine(path);
             return key.CreateSubKey(constructedPath, RegistryKeyPermissionCheck.ReadWriteSubTree, RegistryOptions.None);
@@ -49,6 +53,7 @@ namespace RobloxStudioModManager
         // 2: The URI Protocol to open places from the website through the mod manager.
         // 3: The URI Protocol to route OAuth2 login requests to where we write RobloxStudioBeta.exe
 
+        [SupportedOSPlatform("windows")]
         public static void UpdateStudioRegistryProtocols(string studioPath)
         {
             const string _ = ""; // Default empty key/value.
@@ -110,8 +115,11 @@ namespace RobloxStudioModManager
             }
         }
 
-        static void ConvertLegacy(RegistryKey regKey, JObject node)
+        private static void ConvertLegacy(RegistryKey regKey, JObject node)
         {
+            if (!OperatingSystem.IsWindows())
+                return;
+
             foreach (var name in regKey.GetValueNames())
             {
                 string key = name.Replace(" ", "");
@@ -144,6 +152,7 @@ namespace RobloxStudioModManager
         }
 
         [STAThread]
+        [SupportedOSPlatform("windows")]
         static void Main(string[] rawArgs)
         {
             // Initialize application state.
@@ -162,7 +171,9 @@ namespace RobloxStudioModManager
             if (string.IsNullOrEmpty(json))
             {
                 var root = new JObject();
-                ConvertLegacy(LegacyRegistry, root);
+
+                if (OperatingSystem.IsWindows())
+                    ConvertLegacy(LegacyRegistry, root);
 
                 json = root.ToString();
                 File.WriteAllText(stateFile, json);
@@ -193,13 +204,7 @@ namespace RobloxStudioModManager
             }
 
             var args = unprocessedArgs.ToArray();
-            State = JsonConvert.DeserializeObject<ModManagerState>(json);
-            
-            if (State == null)
-                State = new ModManagerState();
-
-            // Make sure HTTPS uses TLS 1.2
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            State = JsonConvert.DeserializeObject<ModManagerState>(json) ?? new ModManagerState();
 
             // Standard windows form jank
             Application.EnableVisualStyles();

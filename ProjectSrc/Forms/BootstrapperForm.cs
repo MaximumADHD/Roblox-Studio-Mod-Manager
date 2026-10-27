@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.Contracts;
+using System.Runtime.Versioning;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -9,6 +10,7 @@ using RobloxDeployHistory;
 
 namespace RobloxStudioModManager
 {
+    [SupportedOSPlatform("windows")]
     public partial class BootstrapperForm : Form
     {
         public StudioBootstrapper Bootstrapper { get; private set; }
@@ -37,16 +39,14 @@ namespace RobloxStudioModManager
 
             progressTimer.Tick += new EventHandler((sender, args) =>
             {
-                var progress = Bootstrapper.Progress;
-                progressBar.Style = Bootstrapper.ProgressBarStyle;
-
-                var maxProgress = Bootstrapper.MaxProgress;
-                progressBar.Maximum = maxProgress;
-
-                if (progress > maxProgress)
+                long progress;
+                long maxProgress;
+                BarStyle style;
+                lock (Bootstrapper.ProgressLock)
                 {
-                    progressBar.Value = Math.Max(0, maxProgress - 1);
-                    return;
+                    progress = Interlocked.Read(ref Bootstrapper.Progress);
+                    maxProgress = Bootstrapper.MaxProgress;
+                    style = Bootstrapper.ProgressBarStyle;
                 }
 
                 if (!logQueue.IsEmpty)
@@ -58,7 +58,15 @@ namespace RobloxStudioModManager
                     log.AppendText(blob);
                 }
 
-                progressBar.Value = Math.Min(progress, maxProgress);
+                if (style == BarStyle.Continuous)
+                    progressBar.Style = ProgressBarStyle.Continuous;
+                else if (style == BarStyle.Marquee)
+                    progressBar.Style = ProgressBarStyle.Marquee;
+
+                progressBar.Maximum = 1000;
+                progressBar.Value = maxProgress > 0
+                    ? (int)Math.Clamp((double)progress / maxProgress * progressBar.Maximum, 0, progressBar.Maximum)
+                    : 0;
                 Refresh();
             });
 

@@ -6,11 +6,13 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Media;
-using System.Net;
+using System.Net.Http;
+using System.Runtime.Versioning;
 using System.Windows.Forms;
 
 namespace RobloxStudioModManager
 {
+    [SupportedOSPlatform("windows")]
     public partial class Launcher : Form
     {
         private static VersionManifest versionRegistry => Program.State.VersionData;
@@ -43,7 +45,11 @@ namespace RobloxStudioModManager
 
             if (result == DialogResult.Yes)
             {
-                Process.Start($"https://www.github.com/{Program.RepoOwner}/{Program.RepoName}/releases/tag/{releaseTag}");
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = $"https://github.com/{Program.RepoOwner}/{Program.RepoName}/releases/tag/{releaseTag}",
+                    UseShellExecute = true,
+                });
                 Application.Exit();
             }
 
@@ -55,7 +61,7 @@ namespace RobloxStudioModManager
         {
             // Grab the version currently being targeted.
             string targetId = Program.State.TargetVersion;
-            const string latest = "(Use Latest)";
+            const string latest = "(Use Current Version)";
 
             // Clear the current list of target items.
             targetVersion.Items.Clear();
@@ -121,9 +127,9 @@ namespace RobloxStudioModManager
                 return;
             }
 
-            using (var http = new WebClient())
+            using (var http = new HttpClient())
             {
-                var get = http.DownloadStringTaskAsync(Program.BaseConfigUrl + "LatestReleaseTag.txt");
+                var get = http.GetStringAsync(Program.BaseConfigUrl + "LatestReleaseTag.txt");
 
                 await get.ContinueWith(task =>
                 {
@@ -162,8 +168,6 @@ namespace RobloxStudioModManager
                 string[] folderPaths = new string[]
                 {
                     "BuiltInPlugins",
-                    "ClientSettings",
-
                     "content/avatar",
                     "content/fonts",
                     "content/models",
@@ -301,15 +305,13 @@ namespace RobloxStudioModManager
                 SystemSounds.Hand.Play();
                 allow = false;
 
-                using (Form warningPrompt = createFlagWarningPrompt())
-                {
-                    warningPrompt.ShowDialog();
+                using var warningPrompt = createFlagWarningPrompt();
+                warningPrompt.ShowDialog();
 
-                    if (warningPrompt.DialogResult == DialogResult.Yes)
-                    {
-                        Program.State.DisableFlagWarning = warningPrompt.Enabled;
-                        allow = true;
-                    }
+                if (warningPrompt.DialogResult == DialogResult.Yes)
+                {
+                    Program.State.DisableFlagWarning = warningPrompt.Enabled;
+                    allow = true;
                 }
             }
 
@@ -322,9 +324,9 @@ namespace RobloxStudioModManager
                 Hide();
 
                 await BootstrapperForm.BringUpToDate(info.VersionGuid, "Some newer flags might be missing.");
-                
-                using (FlagEditor editor = new FlagEditor())
-                    editor.ShowDialog();
+
+                using var editor = new FlagEditor();
+                editor.ShowDialog();
 
                 Show();
                 BringToFront();
@@ -370,8 +372,7 @@ namespace RobloxStudioModManager
                     {
                         var dir = info.DirectoryName;
 
-                        var realName = info.Name
-                            .Substring(6)
+                        var realName = info.Name[6..]
                             .TrimStart();
 
                         filePath = Path.Combine(dir, realName);
@@ -476,7 +477,7 @@ namespace RobloxStudioModManager
                 return;
             }
 
-            if (!(targetVersion.SelectedItem is DeployLog target)) return;
+            if (targetVersion.SelectedItem is not DeployLog target) return;
             Program.State.TargetVersion = target.VersionId;
 
             if (target.Unsupported)

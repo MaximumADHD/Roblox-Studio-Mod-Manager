@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 using RobloxDeployHistory;
@@ -39,13 +39,13 @@ namespace RobloxStudioModManager
                     else if (remapExtraContent && path.StartsWith("ExtraContent", Program.StringFormat))
                         path = path.Replace("ExtraContent", "content");
 
-                    // ~~ AWFUL TEMPORARY HACK. ~~
+                    // ~~ AWFUL TEMPORARY(?) HACK. ~~
                     //
                     // This is necessary because SourceSansPro gets incorrectly listed in the root directory,
                     // but also MUST be extracted to both 'StudioFonts/' and 'content/fonts/', so I need to
                     // make sure it unambiguously extracts to the correct locations.
 
-                    if (path.EndsWith(".ttf") && !path.Contains("\\"))
+                    if ((path.EndsWith(".ttf") || path.EndsWith(".otf")) && !path.Contains('\\'))
                         path = "StudioFonts\\" + path;
 
                     // !! This bug only happens when remapping ExtraContent.
@@ -64,16 +64,11 @@ namespace RobloxStudioModManager
 
         public static async Task<FileManifest> Get(ClientVersionInfo info, bool remapExtraContent = false)
         {
+            using var http = new HttpClient();
             string versionGuid = info.VersionGuid;
 
             string fileManifestUrl = $"{Program.BaseUrl}/channel/common/{versionGuid}-rbxManifest.txt";
-            string fileManifestData;
-
-            using (WebClient http = new WebClient())
-            {
-                var download = http.DownloadStringTaskAsync(fileManifestUrl);
-                fileManifestData = await download.ConfigureAwait(false);
-            }
+            string fileManifestData = await http.GetStringAsync(fileManifestUrl);
 
             return new FileManifest(fileManifestData, remapExtraContent);
         }

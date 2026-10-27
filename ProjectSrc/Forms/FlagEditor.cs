@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net;
+using System.Net.Http;
 using System.Reflection;
+using System.Runtime.Versioning;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 
 namespace RobloxStudioModManager
 {
+    [SupportedOSPlatform("windows")]
     public partial class FlagEditor : Form
     {
         internal class ClientSettings
@@ -237,9 +238,9 @@ namespace RobloxStudioModManager
             // Initialize flag browser
             var json = new Dictionary<string, string>();
 
-            using (var http = new WebClient())
+            using (var http = new HttpClient())
             {
-                var settings = await http.DownloadStringTaskAsync("https://clientsettingscdn.roblox.com/v2/settings/application/PCDesktopClient");
+                var settings = await http.GetStringAsync("https://clientsettingscdn.roblox.com/v2/settings/application/PCDesktopClient");
                 var data = JsonConvert.DeserializeObject<ClientSettings>(settings);
 
                 foreach (var pair in data.ApplicationSettings)
