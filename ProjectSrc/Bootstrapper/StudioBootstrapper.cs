@@ -383,11 +383,45 @@ namespace RobloxStudioModManager
 
             if (oldSig == newSig && !ForceInstall)
             {
+                if (hasMissingFiles(pkgName))
+                {
+                    echo($"Package '{pkgName}' hasn't changed, but some of its files are missing, reinstalling.");
+                    return true;
+                }
+
                 echo($"Package '{pkgName}' hasn't changed between builds, skipping.");
                 return false;
             }
 
             return true;
+        }
+
+        private bool hasMissingFiles(string pkgName)
+        {
+            if (!KnownRoots.TryGetValue(pkgBane, out string localRootDir) || string.IsNullOrEmpty(localRootDir))
+                return false;
+
+            if (RemapExtraContent)
+                localRootDir = localRootDir.Replace("ExtraContent", "content");
+
+            string studioDir = GetLocalStudioDirectory();
+
+            foreach (string file in fileManifest.Keys)
+            {
+                if (!file.StartsWith(localRootDir, Program.StringFormat))
+                    continue;
+
+                if (file.EndsWith(".robloxrc", Program.StringFormat) || file.EndsWith(".luarc", Program.StringFormat))
+                    continue;
+
+                if (!File.Exists(Path.Combine(studioDir, file)))
+                {
+                    echo($"Missing file: {file}");
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private async Task<bool> packageExists(Package package)
