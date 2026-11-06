@@ -398,7 +398,7 @@ namespace RobloxStudioModManager
 
         private bool hasMissingFiles(string pkgName)
         {
-            if (!KnownRoots.TryGetValue(pkgBane, out string localRootDir) || string.IsNullOrEmpty(localRootDir))
+            if (!KnownRoots.TryGetValue(pkgName, out string localRootDir) || string.IsNullOrEmpty(localRootDir))
                 return false;
 
             if (RemapExtraContent)
