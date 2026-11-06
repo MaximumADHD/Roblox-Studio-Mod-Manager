@@ -383,11 +383,53 @@ namespace RobloxStudioModManager
 
             if (oldSig == newSig && !ForceInstall)
             {
+                if (hasMissingFiles(pkgName))
+                {
+                    echo($"Package '{pkgName}' hasn't changed, but some of its files are missing, reinstalling.");
+                    return true;
+                }
+
                 echo($"Package '{pkgName}' hasn't changed between builds, skipping.");
                 return false;
             }
 
             return true;
+        }
+
+        private bool hasMissingFiles(string pkgName)
+        {
+            if (!KnownRoots.TryGetValue(pkgName, out string localRootDir) || string.IsNullOrEmpty(localRootDir))
+                return false;
+
+            if (RemapExtraContent)
+                localRootDir = localRootDir.Replace("ExtraContent", "content");
+
+            string studioDir = GetLocalStudioDirectory();
+
+            foreach (string file in fileManifest.Keys)
+            {
+                if (!file.StartsWith(localRootDir, Program.StringFormat))
+                    continue;
+
+                if (file.EndsWith(".robloxrc", Program.StringFormat) || file.EndsWith(".luarc", Program.StringFormat))
+                    continue;
+
+                // Manifests can contain bare root markers (e.g. "\") that aren't
+                // real files; Path.Combine also treats a leading separator as an
+                // absolute/rooted path and would otherwise ignore studioDir entirely.
+                string relativePath = file.TrimStart('\\', '/');
+
+                if (string.IsNullOrEmpty(relativePath))
+                    continue;
+
+                if (!File.Exists(Path.Combine(studioDir, relativePath)))
+                {
+                    echo($"Missing file: {file}");
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private async Task<bool> packageExists(Package package)
