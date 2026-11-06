@@ -455,13 +455,16 @@ namespace RobloxStudioModManager
 
             if (openStudioDirectory.Checked)
             {
-                Process.Start(studioRoot);
+                Process.Start(new ProcessStartInfo()
+                {
+                    FileName = studioRoot,
+                    UseShellExecute = true,
+                });
             }
             else
             {
                 string currentVersion = versionRegistry.VersionGuid;
                 versionRegistry.LastExecutedVersion = currentVersion;
-
                 Process.Start(robloxStudioInfo);
             }
 

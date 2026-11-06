@@ -1,13 +1,6 @@
 name: Release Roblox Studio Mod Manager
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "**/*.cs"
-      - "**/*.csproj"
-      - "**/*.sln"
   workflow_dispatch:
 
 permissions:
@@ -118,7 +111,7 @@ jobs:
             cli: "true"
             selfContained: "true"
           - name: Cli-linux-x64
-            executable: RobloxStudioModManagerCLI
+            executable: RobloxStudioModManager-CLI
             runner: ubuntu-latest
             runtime: linux-x64
             cli: "true"
