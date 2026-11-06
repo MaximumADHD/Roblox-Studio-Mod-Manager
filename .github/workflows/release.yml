@@ -105,13 +105,13 @@ jobs:
             cli: "false"
             selfContained: "false"
           - name: Windows CLI
-            executable: x64-cli-win.exe
+            executable: rsmm-cli-win.exe
             runner: windows-latest
             runtime: win-x64
             cli: "true"
             selfContained: "true"
           - name: Linux CLI
-            executable: x64-cli-linux
+            executable: rsmm-cli-linux
             runner: ubuntu-latest
             runtime: linux-x64
             cli: "true"
