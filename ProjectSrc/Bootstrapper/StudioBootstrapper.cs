@@ -43,12 +43,10 @@ namespace RobloxStudioModManager
         [SupportedOSPlatform("windows")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static partial bool FlashWindow(IntPtr hWnd, [MarshalAs(UnmanagedType.Bool)] bool bInvert);
-#endif
-
-    #if !CLI
+        
         private static string AppSettings_XML;
         private static string OAuth2Config_JSON;
-    #endif
+#endif
         private const string UserAgent = "RobloxStudioModManager";
 
         public event MessageFeed EchoFeed;
@@ -96,7 +94,7 @@ namespace RobloxStudioModManager
             pkgRegistry = mainState.PackageManifest;
         }
 
-        private void echo(string message)
+        internal void echo(string message)
         {
             EchoFeed.Invoke(message);
         }
@@ -206,30 +204,27 @@ namespace RobloxStudioModManager
         }
 #endif
 
-        internal static string ResolveFilePath(string root, string relativePath)
+        internal static bool isPathUnsafe(string path)
+        {
+            string normalized = path.Replace('\\', '/');
+            return string.IsNullOrWhiteSpace(normalized) || normalized.StartsWith("/", StringComparison.Ordinal);
+        }
+
+        internal static string resolveFilePath(string root, string relativePath)
         {
             string normalized = relativePath.Replace('\\', '/');
+            root = Path.GetFullPath(root);
 
-            if (string.IsNullOrWhiteSpace(normalized) || normalized.StartsWith("/", StringComparison.Ordinal)
-                || normalized.Contains(':') || normalized.Split('/').Any(part => part == ".." || part == "."))
+            if (isPathUnsafe(normalized))
                 throw new InvalidDataException("Unsafe package path: " + relativePath);
 
-            root = Path.GetFullPath(root);
             string path = Path.GetFullPath(Path.Combine(root, normalized.Replace('/', Path.DirectorySeparatorChar)));
-
             var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
             string prefix = Path.TrimEndingDirectorySeparator(root) + Path.DirectorySeparatorChar;
 
             if (!path.StartsWith(prefix, comparison))
                 throw new InvalidDataException("Package path escapes the output directory: " + relativePath);
             
-            for (string current = path; current != null; current = Path.GetDirectoryName(current))
-            {
-                if (new FileInfo(current).LinkTarget != null || (File.Exists(current) || Directory.Exists(current))
-                    && (File.GetAttributes(current) & FileAttributes.ReparsePoint) != 0)
-                    throw new InvalidDataException("Output paths must not traverse symbolic links: " + current);
-            }
-
             return path;
         }
 
@@ -279,7 +274,11 @@ namespace RobloxStudioModManager
 
                 if (!fileManifest.ContainsKey(lookupKey))
                 {
-                    string filePath = ResolveFilePath(studioDir, fileName);
+                    if (isPathUnsafe(fileName))
+                        continue;
+
+                    string filePath = resolveFilePath(studioDir, fileName);
+                    
                     if (File.Exists(filePath))
                     {
                         var info = new FileInfo(filePath);
@@ -502,7 +501,7 @@ namespace RobloxStudioModManager
             }
             
             string downloads = getDirectory(studioDir, "downloads");
-            string zipExtractPath = ResolveFilePath(downloads, pkgName);
+            string zipExtractPath = resolveFilePath(downloads, pkgName);
 
             echo($"Writing {zipExtractPath}...");
             File.WriteAllBytes(zipExtractPath, data);
@@ -667,19 +666,26 @@ namespace RobloxStudioModManager
                 }
             }
 
-            string extractPath = ResolveFilePath(studioDir, filePath);
+            string extractPath = resolveFilePath(studioDir, filePath);
             string extractDir = Path.GetDirectoryName(extractPath);
 
             getDirectory(extractDir);
 
-            if (File.Exists(extractPath))
-                File.Delete(extractPath);
+            try
+            {
+                if (File.Exists(extractPath))
+                    File.Delete(extractPath);
 
-            echo($"Writing {filePath}...");
-            entry.ExtractToFile(extractPath);
+                echo($"Writing {filePath}...");
+                entry.ExtractToFile(extractPath);
 
-            fileRegistry[filePath] = newFileSig;
-            writtenFiles.Add(filePath);
+                fileRegistry[filePath] = newFileSig;
+                writtenFiles.Add(filePath);
+            }
+            catch
+            {
+                echo($"Failed to write {filePath}!");
+            }
         }
 
     #if !CLI
@@ -1018,16 +1024,16 @@ namespace RobloxStudioModManager
                     {
                         echo("Writing metadata...");
 
-                        string pkgManifestPath = ResolveFilePath(studioDir, "rbxPkgManifest.txt");
+                        string pkgManifestPath = resolveFilePath(studioDir, "rbxPkgManifest.txt");
                         File.WriteAllText(pkgManifestPath, pkgManifest.RawData);
 
-                        string fileManifestPath = ResolveFilePath(studioDir, "rbxManifest.txt");
+                        string fileManifestPath = resolveFilePath(studioDir, "rbxManifest.txt");
                         File.WriteAllText(fileManifestPath, fileManifest.RawData);
 
-                        string versionPath = ResolveFilePath(studioDir, "version.txt");
+                        string versionPath = resolveFilePath(studioDir, "version.txt");
                         File.WriteAllText(versionPath, versionId);
 
-                        string versionGuidPath = ResolveFilePath(studioDir, "version-guid.txt");
+                        string versionGuidPath = resolveFilePath(studioDir, "version-guid.txt");
                         File.WriteAllText(versionGuidPath, buildVersion);
 
 #if !CLI
