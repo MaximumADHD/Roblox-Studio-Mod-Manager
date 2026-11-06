@@ -204,13 +204,13 @@ namespace RobloxStudioModManager
         }
 #endif
 
-        internal static bool isPathUnsafe(string path)
+        private static bool isPathUnsafe(string path)
         {
             string normalized = path.Replace('\\', '/');
             return string.IsNullOrWhiteSpace(normalized) || normalized.StartsWith("/", StringComparison.Ordinal);
         }
 
-        internal static string resolveFilePath(string root, string relativePath)
+        internal static string ResolveFilePath(string root, string relativePath)
         {
             string normalized = relativePath.Replace('\\', '/');
             root = Path.GetFullPath(root);
@@ -277,7 +277,7 @@ namespace RobloxStudioModManager
                     if (isPathUnsafe(fileName))
                         continue;
 
-                    string filePath = resolveFilePath(studioDir, fileName);
+                    string filePath = ResolveFilePath(studioDir, fileName);
                     
                     if (File.Exists(filePath))
                     {
@@ -501,7 +501,7 @@ namespace RobloxStudioModManager
             }
             
             string downloads = getDirectory(studioDir, "downloads");
-            string zipExtractPath = resolveFilePath(downloads, pkgName);
+            string zipExtractPath = ResolveFilePath(downloads, pkgName);
 
             echo($"Writing {zipExtractPath}...");
             File.WriteAllBytes(zipExtractPath, data);
@@ -666,7 +666,7 @@ namespace RobloxStudioModManager
                 }
             }
 
-            string extractPath = resolveFilePath(studioDir, filePath);
+            string extractPath = ResolveFilePath(studioDir, filePath);
             string extractDir = Path.GetDirectoryName(extractPath);
 
             getDirectory(extractDir);
@@ -1024,16 +1024,16 @@ namespace RobloxStudioModManager
                     {
                         echo("Writing metadata...");
 
-                        string pkgManifestPath = resolveFilePath(studioDir, "rbxPkgManifest.txt");
+                        string pkgManifestPath = ResolveFilePath(studioDir, "rbxPkgManifest.txt");
                         File.WriteAllText(pkgManifestPath, pkgManifest.RawData);
 
-                        string fileManifestPath = resolveFilePath(studioDir, "rbxManifest.txt");
+                        string fileManifestPath = ResolveFilePath(studioDir, "rbxManifest.txt");
                         File.WriteAllText(fileManifestPath, fileManifest.RawData);
 
-                        string versionPath = resolveFilePath(studioDir, "version.txt");
+                        string versionPath = ResolveFilePath(studioDir, "version.txt");
                         File.WriteAllText(versionPath, versionId);
 
-                        string versionGuidPath = resolveFilePath(studioDir, "version-guid.txt");
+                        string versionGuidPath = ResolveFilePath(studioDir, "version-guid.txt");
                         File.WriteAllText(versionGuidPath, buildVersion);
 
 #if !CLI
