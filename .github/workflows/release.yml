@@ -104,18 +104,18 @@ jobs:
             runtime: win-x64
             cli: "false"
             selfContained: "false"
-          - name: Windows CLI
-            executable: rsmm-cli-win.exe
-            runner: windows-latest
-            runtime: win-x64
-            cli: "true"
-            selfContained: "true"
-          - name: Linux CLI
-            executable: rsmm-cli-linux
-            runner: ubuntu-latest
-            runtime: linux-x64
-            cli: "true"
-            selfContained: "true"
+#          - name: Windows CLI
+#            executable: rsmm-cli-win.exe
+#            runner: windows-latest
+#            runtime: win-x64
+#            cli: "true"
+#            selfContained: "true"
+#          - name: Linux CLI
+#            executable: rsmm-cli-linux
+#            runner: ubuntu-latest
+#            runtime: linux-x64
+#            cli: "true"
+#            selfContained: "true"
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 30
     steps:
