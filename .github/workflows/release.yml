@@ -98,20 +98,20 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: Gui-win-x64
+          - name: Windows GUI
             executable: RobloxStudioModManager.exe
             runner: windows-latest
             runtime: win-x64
             cli: "false"
             selfContained: "false"
-          - name: Cli-win-x64
-            executable: RobloxStudioModManager.CLI.exe
+          - name: Windows CLI
+            executable: x64-cli-win.exe
             runner: windows-latest
             runtime: win-x64
             cli: "true"
             selfContained: "true"
-          - name: Cli-linux-x64
-            executable: RobloxStudioModManager-CLI
+          - name: Linux CLI
+            executable: x64-cli-linux
             runner: ubuntu-latest
             runtime: linux-x64
             cli: "true"
