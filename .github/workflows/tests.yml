@@ -1,0 +1,34 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          path: source/Roblox-Studio-Mod-Manager
+          persist-credentials: false
+
+      - name: Check out Deploy History dependency
+        uses: actions/checkout@v4
+        with:
+          repository: MaximumADHD/Roblox-Deploy-History
+          path: source/Roblox-Deploy-History
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Run tests
+        run: dotnet test source/Roblox-Studio-Mod-Manager/Tests/RobloxStudioModManager.Tests.csproj --configuration Release

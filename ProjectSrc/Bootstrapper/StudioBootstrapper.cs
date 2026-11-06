@@ -57,6 +57,7 @@ namespace RobloxStudioModManager
         private readonly ChannelManifest channelData;
         private readonly SortedDictionary<string, string> fileRegistry;
         private readonly SortedDictionary<string, PackageState> pkgRegistry;
+        private readonly Func<HttpClient> createHttpClient;
 
         private Dictionary<string, string[]> bySignature;
         private Dictionary<string, string> newManifestEntries;
@@ -86,12 +87,18 @@ namespace RobloxStudioModManager
         public bool ApplyModManagerPatches { get; set; } = false;
         
         public StudioBootstrapper(IBootstrapperState state = null)
+            : this(state, () => new HttpClient())
+        {
+        }
+
+        internal StudioBootstrapper(IBootstrapperState state, Func<HttpClient> httpClientFactory = null)
         {
             mainState = state ?? Program.State;
             versionData = mainState.VersionData;
             channelData = mainState.ChannelData;
             fileRegistry = mainState.FileManifest;
             pkgRegistry = mainState.PackageManifest;
+            createHttpClient = httpClientFactory ?? (() => new HttpClient());
         }
 
         internal void echo(string message)
@@ -438,7 +445,7 @@ namespace RobloxStudioModManager
             var zipFileUrl = new Uri($"{Program.BaseUrl}/channel/common/{buildVersion}-{package.Name}");
             var message = new HttpRequestMessage(HttpMethod.Head, zipFileUrl);
 
-            using var http = new HttpClient();
+            using var http = createHttpClient();
             http.DefaultRequestHeaders.Add("UserAgent", UserAgent);
 
             using var response = await http.SendAsync(message);
@@ -451,7 +458,7 @@ namespace RobloxStudioModManager
             string pkgName = package.Name;
             string zipFileUrl = $"{Program.BaseUrl}/channel/common/{buildVersion}-{pkgName}";
 
-            using (var localHttp = new HttpClient())
+            using (var localHttp = createHttpClient())
             {
                 localHttp.DefaultRequestHeaders.Add("UserAgent", UserAgent);
                 echo($"Installing package {zipFileUrl}");
@@ -832,7 +839,7 @@ namespace RobloxStudioModManager
                     BadManifests.Clear();
                     setStatus($"Fetching Known Roots...");
 
-                    using (var http = new HttpClient())
+                    using (var http = createHttpClient())
                     {
                         var json = await http.GetStringAsync(Program.BaseConfigUrl + "KnownRoots.json");
                         var knownRoots = JsonConvert.DeserializeObject<Dictionary<string, KnownRoot>>(json);
@@ -862,13 +869,13 @@ namespace RobloxStudioModManager
                     echo("Grabbing package manifest...");
 
                     var pkgManifest = await PackageManifest
-                        .Get(versionInfo)
+                        .Get(versionInfo, createHttpClient)
                         .ConfigureAwait(true);
 
                     echo("Grabbing file manifest...");
 
                     fileManifest = await FileManifest
-                        .Get(versionInfo, RemapExtraContent)
+                        .Get(versionInfo, RemapExtraContent, createHttpClient)
                         .ConfigureAwait(true);
 
                     var taskQueue = new List<Task>();
@@ -1073,7 +1080,7 @@ namespace RobloxStudioModManager
             }
 
 #if !CLI
-            using (var http = new HttpClient())
+            using (var http = createHttpClient())
             {
                 OAuth2Config_JSON = await http.GetStringAsync(Program.BaseConfigUrl + "OAuth2Config.json");
                 AppSettings_XML = await http.GetStringAsync(Program.BaseConfigUrl + "AppSettings.xml");

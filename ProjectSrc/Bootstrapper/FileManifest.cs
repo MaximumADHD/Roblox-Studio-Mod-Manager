@@ -62,11 +62,13 @@ namespace RobloxStudioModManager
             RawData = data;
         }
 
-        public static async Task<FileManifest> Get(ClientVersionInfo info, bool remapExtraContent = false)
+        public static async Task<FileManifest> Get(ClientVersionInfo info, bool remapExtraContent = false, Func<HttpClient> createHttpClient = null)
         {
-            using var http = new HttpClient();
-            string versionGuid = info.VersionGuid;
+            using var http = createHttpClient != null 
+                ? createHttpClient()
+                : new HttpClient();
 
+            string versionGuid = info.VersionGuid;
             string fileManifestUrl = $"{Program.BaseUrl}/channel/common/{versionGuid}-rbxManifest.txt";
             string fileManifestData = await http.GetStringAsync(fileManifestUrl);
 

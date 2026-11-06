@@ -73,10 +73,12 @@ namespace RobloxStudioModManager
             RawData = data;
         }
 
-        public static async Task<PackageManifest> Get(ClientVersionInfo info)
+        public static async Task<PackageManifest> Get(ClientVersionInfo info, Func<HttpClient> createHttpClient = null)
         {
-            using var http = new HttpClient();
-
+            using var http = createHttpClient != null 
+                ? createHttpClient() 
+                : new HttpClient();
+            
             string versionGuid = info.VersionGuid;
             string pkgManifestUrl = $"{Program.BaseUrl}/channel/common/{versionGuid}-rbxPkgManifest.txt";
             string pkgManifestData = await http.GetStringAsync(pkgManifestUrl);
