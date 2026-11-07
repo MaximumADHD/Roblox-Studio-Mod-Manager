@@ -19,6 +19,11 @@ The **Roblox Studio Mod Manager** is an open-source alternative bootstrapper for
 * File updates from Roblox's deployment servers are only applied where needed.
 * Runs and installs in a separate directory, 100% independent of Roblox Studio's bootstrapper.
 
+
+# Downloads
+The latest version can be found on the ***Releases*** page of this repository:<br/>
+https://github.com/MaximumADHD/Roblox-Studio-Mod-Manager/releases
+
 # ANTI-VIRUS DISCLAIMER
 
 If you have an anti-virus program installed, there's a non-zero chance it may flag this program as malicious, due to this application being misdiagnosed as a trojan horse.<br/>
@@ -29,12 +34,3 @@ I've attempted to get this cleared several times, but haven't had any luck so fa
 
 In the meantime, you can try this workaround from boatbomber if you'd still like to use it:
 https://twitter.com/BoatbomberRBLX/status/1347262909915738113
-
-# Downloads
-
-The latest version can be found on the ***Releases*** page of this repository:<br/>
-https://github.com/MaximumADHD/Roblox-Studio-Mod-Manager/releases
-
-You can also download the latest committed versions here:
-* <a href="https://github.com/MaximumADHD/Roblox-Studio-Mod-Manager/raw/main/RobloxStudioModManager.exe">Download (.exe)</a></h1>
-* <a href="https://github.com/MaximumADHD/Roblox-Studio-Mod-Manager/archive/main.zip">Download (.zip)</a>
