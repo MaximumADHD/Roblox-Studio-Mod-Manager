@@ -42,6 +42,7 @@ namespace RobloxStudioModManager
                 long progress;
                 long maxProgress;
                 BarStyle style;
+
                 lock (Bootstrapper.ProgressLock)
                 {
                     progress = Interlocked.Read(ref Bootstrapper.Progress);

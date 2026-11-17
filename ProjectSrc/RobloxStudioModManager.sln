@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.3.32929.385
+# Visual Studio Version 18
+VisualStudioVersion = 18.11.12315.225 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobloxStudioModManager", "RobloxStudioModManager.csproj", "{FAD2621F-B280-4D6D-A260-F410C5B06E0C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Include", "Include", "{599F227F-86C3-4CB6-B12D-6CBF086B240E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobloxDeployHistory", "..\..\Roblox-Deploy-History\RobloxDeployHistory.csproj", "{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RobloxStudioModManager.Tests", "..\Tests\RobloxStudioModManager.Tests.csproj", "{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +27,6 @@ Global
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Cli|Any CPU.Build.0 = Cli|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Cli|x64.ActiveCfg = Cli|x64
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Cli|x64.Build.0 = Cli|x64
-		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Cli|Any CPU.ActiveCfg = Release|Any CPU
-		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Cli|Any CPU.Build.0 = Release|Any CPU
-		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Cli|x64.ActiveCfg = Release|x64
-		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Cli|x64.Build.0 = Release|x64
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Debug|x64.ActiveCfg = Debug|x64
@@ -41,6 +39,10 @@ Global
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Release|x64.ActiveCfg = Release|x64
 		{FAD2621F-B280-4D6D-A260-F410C5B06E0C}.Release|x64.Build.0 = Release|x64
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Cli|Any CPU.ActiveCfg = Release|Any CPU
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Cli|Any CPU.Build.0 = Release|Any CPU
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Cli|x64.ActiveCfg = Release|x64
+		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Cli|x64.Build.0 = Release|x64
 		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Debug|x64.ActiveCfg = Debug|x64
@@ -53,6 +55,22 @@ Global
 		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Release|x64.ActiveCfg = Release|x64
 		{1CE1A9DF-C2FF-49C4-9B7C-792C962C339F}.Release|x64.Build.0 = Release|x64
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Cli|Any CPU.ActiveCfg = Debug|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Cli|Any CPU.Build.0 = Debug|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Cli|x64.ActiveCfg = Debug|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Cli|x64.Build.0 = Debug|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Debug|x64.Build.0 = Debug|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Internal|Any CPU.ActiveCfg = Debug|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Internal|Any CPU.Build.0 = Debug|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Internal|x64.ActiveCfg = Debug|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Internal|x64.Build.0 = Debug|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Release|x64.ActiveCfg = Release|Any CPU
+		{A36FE0DE-1A06-9F2E-15D1-6263F4578FF3}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

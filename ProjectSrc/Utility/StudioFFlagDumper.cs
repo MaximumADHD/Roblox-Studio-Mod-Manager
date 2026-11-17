@@ -2,7 +2,6 @@
 // https://github.com/pizzaboxer/rbxfflagdumper/blob/main/RbxFFlagDumper.Lib/StudioFFlagDumper.cs
 
 using PeNet;
-using PeNet.Header.Pe;
 
 using System;
 using System.Collections.Generic;
@@ -16,9 +15,6 @@ namespace RobloxStudioModManager
 {
     public static class StudioFFlagDumper
     {
-        private static int GetRVAOffset(ImageSectionHeader sectionHeader)
-            => (int)(sectionHeader.VirtualAddress - sectionHeader.PointerToRawData);
-
         public static List<string> DumpAllFlags(string studioPath)
         {
             var list = new List<string>();
@@ -80,230 +76,138 @@ namespace RobloxStudioModManager
             byte[] binary = File.ReadAllBytes(studioExePath);
             var exe = new PeFile(binary);
 
+            ulong imageBase = exe.ImageNtHeaders.OptionalHeader.ImageBase;
             var sectionHeaders = exe.ImageSectionHeaders;
-            var textHeader = sectionHeaders.First(x => x.Name == ".text");
-            var rdataHeader = sectionHeaders.First(x => x.Name == ".rdata");
-            int rvaOffset = GetRVAOffset(textHeader) - GetRVAOffset(rdataHeader);
+            var rdata = sectionHeaders.First(x => x.Name == ".rdata");
+            var data = sectionHeaders.First(x => x.Name == ".data");
 
-            var textStart = (int)textHeader.PointerToRawData;
-            var textSize = (int)textHeader.SizeOfRawData;
+            ulong rdataStart = imageBase + rdata.VirtualAddress;
+            ulong rdataEnd = rdataStart + rdata.VirtualSize;
+            ulong dataStart = imageBase + data.VirtualAddress;
+            ulong dataEnd = dataStart + Math.Max(data.VirtualSize, data.SizeOfRawData);
 
-            // this snippet is present for each registered fflag in RobloxStudioBeta.exe
-            // 00:  41 B8 ?? ?? ?? ??    | mov r8d, <val>     ; byte, determines if dynamic
-            // 06:  48 8D 15 ?? ?? ?? ?? | lea rdx, <addr>    ; 
-            // 13:  48 8D 0D ?? ?? ?? ?? | lea rcx, <addr>    ; fflag name
-            // 20:  E9 ?? ?? ?? ??       | jmp <addr>         ; registration routine, determines data type (FFlag, SFFlag, FString, etc)
-
-            const string basePattern = "41 B8 ?? 00 00 00 48 8D 15 ?? ?? ?? ?? 48 8D 0D ?? ?? ?? ?? E9 ?? ?? ?? ?? CC CC CC CC CC CC CC";
-            var baseScanner = new PatternScanner(binary, basePattern, textStart, textSize);
-
-            // this snippet is present at the bottom of version'd fflag declarations
-            // everything that precedes up to the fflag address is variable,
-            // but is a mixture of the instructions: mov, movsd, movzx, and movups
+            // Flags are no longer registered through per-flag code stubs. Instead, .rdata
+            // contains a static table of 8-byte aligned descriptors for each flag:
             //
-            // 00:  BA ?? ?? ?? ??
-            // 05:  48 8D 4C 24 20
-            // 10:  E8 ?? ?? ?? ??
+            // 00:  const char* name     ; absolute pointer into .rdata
+            // 08:  size_t      nameLen  ;
+            // 10:  void*       variable ; absolute pointer into .data
+            // 18:  uint32      scope    ; 1 = F, 2 = DF, 4 = SF
+            // 1C:  uint32      type     ; 0/1 = Flag, 2 = Int, 3 = String, 4 = Log
+            //
+            // Versioned flags additionally have a record somewhere in the same region:
+            //
+            // 00:  const char* name     ;
+            // 08:  size_t      nameLen  ;
+            // 10:  size_t      version  ; small integer, appended to the flag name
 
-            const string endPattern = "BA ?? ?? ?? ?? 48 8D 4C 24 20 E8 ?? ?? ?? ??";
-            var endScanner = new PatternScanner(binary, endPattern, textStart, textSize);
-
-            var dataTypeTable = new Dictionary<int, string>();
-            var rawFFlagData = new List<RawFFlagData>();
-            var lastTargetOffset = 0;
-
-            while (!baseScanner.Finished)
+            var scopes = new Dictionary<uint, string>
             {
-                int pos = baseScanner.FindNext();
+                { 1, "F" },
+                { 2, "DF" },
+                { 4, "SF" },
+            };
 
-                if (pos == -1)
-                    break;
+            var types = new Dictionary<uint, string>
+            {
+                { 0, "Flag" },
+                { 1, "Flag" },
+                { 2, "Int" },
+                { 3, "String" },
+                { 4, "Log" },
+            };
 
-                int param = binary[pos + 2];
+            int rdataOffset = (int)rdata.PointerToRawData;
+            int rdataLength = (int)Math.Min(rdata.SizeOfRawData, (uint)(binary.Length - rdataOffset)) & ~7;
+            int rdataLimit = rdataOffset + rdataLength - 32;
 
-                // resolving the pointer with a constant offset since we can just assume it will always point to .rdata
-                var nameOffset = pos + 20 + BitConverter.ToInt32(binary, pos + 16) + rvaOffset;
-                var targetOffset = pos + 25 + BitConverter.ToInt32(binary, pos + 21);
+            string readName(ulong ptr, ulong length)
+            {
+                if (ptr < rdataStart || ptr >= rdataEnd || length == 0 || length > 256)
+                    return null;
 
-                var namebuf = new List<byte>();
-                var bad = false;
+                long offset = (long)(ptr - imageBase - rdata.VirtualAddress) + rdataOffset;
 
-                for (var i = nameOffset; binary[i] != 0; i++)
+                if (offset + (long)length >= binary.Length)
+                    return null;
+
+                for (long i = offset; i < offset + (long)length; i++)
                 {
-                    var value = binary[i];
+                    byte value = binary[i];
 
-                    if (value > 127 || value < 30)
-                    {
-                        bad = true;
-                        break;
-                    }
+                    bool isWordChar = (value >= '0' && value <= '9')
+                                   || (value >= 'A' && value <= 'Z')
+                                   || (value >= 'a' && value <= 'z')
+                                   || value == '_';
 
-                    namebuf.Add(value);
-                }
-
-                if (!bad && lastTargetOffset != 0)
-                {
-                    // !! FIXME: Garbage pattern match? What is going on here?
-                    var relative = Math.Abs(lastTargetOffset - targetOffset);
-                    bad = relative > 1000;
-                }
-
-                if (!bad)
-                {
-                    var name = Encoding.UTF8.GetString(namebuf.ToArray());
-                    rawFFlagData.Add(new RawFFlagData(targetOffset, param, name));
-
-                    if (dataTypeTable.ContainsKey(targetOffset))
+                    if (isWordChar)
                         continue;
-
-                    dataTypeTable[targetOffset] = null;
-                    lastTargetOffset = targetOffset;
+                    
+                    return null;
                 }
+
+                if (binary[offset + (long)length] != 0)
+                    return null;
+
+                return Encoding.ASCII.GetString(binary, (int)offset, (int)length);
             }
 
-            // currently only two SFFlags exist - would there ever be zero?
-            //if (dataTypeTable.Count != 5)
-            //    throw new Exception("Expected 5 different flag types");
+            var flags = new Dictionary<string, string>();
+            var versions = new Dictionary<string, ulong>();
 
-            // the registration routines for each flag type are stored in memory consecutively in this order
-            dataTypeTable = dataTypeTable.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
-            dataTypeTable[dataTypeTable.Keys.ElementAt(0)] = "FFlag";
-            dataTypeTable[dataTypeTable.Keys.ElementAt(1)] = "SFFlag";
-            dataTypeTable[dataTypeTable.Keys.ElementAt(2)] = "FInt";
-            dataTypeTable[dataTypeTable.Keys.ElementAt(3)] = "FLog";
-
-            // i don't even know anymore
-            //dataTypeTable[dataTypeTable.Keys.ElementAt(4)] = "FString";
-
-            // collect fflag versions
-            var versions = new Dictionary<string, int>();
-
-            while (!endScanner.Finished)
+            for (int pos = rdataOffset; pos <= rdataLimit; pos += 8)
             {
-                int endOffset = endScanner.FindNext();
+                ulong namePtr = BitConverter.ToUInt64(binary, pos);
 
-                if (endOffset < 0)
-                    break;
-
-                // Extract version number at offset + 1
-                int version = BitConverter.ToInt32(binary, endOffset + 1);
-
-                // Work backwards to find first RIP-relative load
-                // Look up to 200 bytes back to handle long strings
-
-                int searchStart = Math.Max(0, endOffset - 200);
-                int firstLoadOffset = -1;
-                int firstLoadLength = 0;
-
-                for (int i = endOffset - 1; i >= searchStart; i--)
-                {
-                    if (i + 7 > binary.Length)
-                        continue;
-
-                    byte b0 = binary[i];
-                    byte b1 = binary[i + 1];
-                    byte b2 = binary[i + 2];
-
-                    bool isRipRelative = false;
-                    int instrLength = 0;
-
-                    // movups xmm, [rip+offset]: 0F 10 05
-                    if (b0 == 0x0F && b1 == 0x10 && b2 == 0x05)
-                    {
-                        isRipRelative = true;
-                        instrLength = 7;
-                    }
-                    // movsd xmm, [rip+offset]: F2 0F 10 05
-                    else if (b0 == 0xF2 && b1 == 0x0F && b2 == 0x10 && i + 8 <= binary.Length && binary[i + 3] == 0x05)
-                    {
-                        isRipRelative = true;
-                        instrLength = 8;
-                    }
-                    // movzx reg, byte/word ptr [rip+offset]: 0F B6/B7 05
-                    else if (b0 == 0x0F && (b1 == 0xB6 || b1 == 0xB7) && b2 == 0x05)
-                    {
-                        isRipRelative = true;
-                        instrLength = 7;
-                    }
-                    // mov reg, [rip+offset]: 8B 0D
-                    else if (b0 == 0x8B && b1 == 0x0D)
-                    {
-                        isRipRelative = true;
-                        instrLength = 6;
-                    }
-
-                    if (isRipRelative)
-                    {
-                        firstLoadOffset = i;
-                        firstLoadLength = instrLength;
-                    }
-                }
-
-                if (firstLoadOffset < 0)
+                if (namePtr < rdataStart || namePtr >= rdataEnd)
                     continue;
 
-                // Parse the RIP-relative address
-                using (var stream = new MemoryStream(binary))
-                using (var reader = new BinaryReader(stream))
+                ulong nameLen = BitConverter.ToUInt64(binary, pos + 8);
+
+                if (nameLen == 0 || nameLen > 256)
+                    continue;
+
+                ulong third = BitConverter.ToUInt64(binary, pos + 16);
+
+                if (third >= dataStart && third < dataEnd)
                 {
-                    // The offset is always the last 4 bytes of the instruction
-                    int offsetPosition = firstLoadOffset + firstLoadLength - 4;
-                    stream.Position = offsetPosition;
+                    uint scope = BitConverter.ToUInt32(binary, pos + 24);
+                    uint type = BitConverter.ToUInt32(binary, pos + 28);
 
-                    // Calculate string RVA: next instruction + offset
-                    int relativeOffset = reader.ReadInt32();
-                    var nameOffset = stream.Position + rvaOffset + relativeOffset;
-
-                    if (nameOffset < 0 || nameOffset >= binary.Length)
+                    if (!scopes.TryGetValue(scope, out string scopePrefix))
                         continue;
 
-                    var nameBuffer = new List<byte>();
-                    var bad = false;
+                    if (!types.TryGetValue(type, out string typeName))
+                        continue;
 
-                    for (var i = nameOffset; binary[i] != 0; i++)
+                    string name = readName(namePtr, nameLen);
+
+                    if (name != null)
                     {
-                        var value = binary[i];
-
-                        if (value > 127 || value < 30)
-                        {
-                            bad = true;
-                            break;
-                        }
-
-                        nameBuffer.Add(value);
+                        flags[name] = scopePrefix + typeName;
                     }
+                }
+                else if (third > 0 && third < 0x10000)
+                {
+                    string name = readName(namePtr, nameLen);
 
-                    if (!bad)
+                    if (name == null)
+                        continue;
+
+                    if (!versions.TryGetValue(name, out ulong existing) || third > existing)
                     {
-                        string name = Encoding.UTF8.GetString(nameBuffer.ToArray());
-
-                        if (string.IsNullOrWhiteSpace(name))
-                            continue;
-
-                        if (versions.ContainsKey(name))
-                            continue;
-
-                        versions.Add(name, version);
+                        versions[name] = third;
                     }
                 }
             }
 
             var finalList = new List<string>();
 
-            foreach (var entry in rawFFlagData)
+            foreach (var pair in flags)
             {
-                if (!dataTypeTable.TryGetValue(entry.DataTypeId, out string dataType))
-                    dataType = "ERROR";
+                string name = pair.Value + pair.Key;
 
-                string name = "";
-
-                if (entry.ByteParam == 2)
-                    name += "D";
-
-                name += dataType;
-                name += entry.Name;
-
-                if (versions.TryGetValue(entry.Name, out int version))
+                if (versions.TryGetValue(pair.Key, out ulong version))
                     name += version;
 
                 finalList.Add(name);
