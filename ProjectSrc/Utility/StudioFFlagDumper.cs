@@ -208,7 +208,8 @@ namespace RobloxStudioModManager
                 string name = pair.Value + pair.Key;
 
                 if (versions.TryGetValue(pair.Key, out ulong version))
-                    name += version;
+                    if (version > 1)
+                        name += version;
 
                 finalList.Add(name);
             }
