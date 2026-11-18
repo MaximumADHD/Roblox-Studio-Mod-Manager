@@ -88,9 +88,10 @@
             // overrideStatus
             // 
             this.overrideStatus.AutoSize = true;
-            this.overrideStatus.Location = new System.Drawing.Point(62, 66);
+            this.overrideStatus.Location = new System.Drawing.Point(62, 64);
             this.overrideStatus.Name = "overrideStatus";
             this.overrideStatus.Size = new System.Drawing.Size(0, 13);
+            this.overrideStatus.Text = "Loading, this will take a moment...";
             this.overrideStatus.TabIndex = 4;
             // 
             // overrideSelected

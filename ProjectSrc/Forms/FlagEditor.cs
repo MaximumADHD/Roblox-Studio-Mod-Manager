@@ -23,6 +23,12 @@ namespace RobloxStudioModManager
             public Dictionary<string, string> ApplicationSettings = null;
         }
 
+        internal class FlagDefaults
+        {
+            public int Format = 0;
+            public Dictionary<string, string> Defaults = null;
+        }
+
         private static VersionManifest versionRegistry => Program.State.VersionData;
         private static SortedDictionary<string, FVariable> flagRegistry => Program.State.FlagEditor;
 
@@ -40,6 +46,11 @@ namespace RobloxStudioModManager
         private const string OVERRIDE_STATUS_OFF = "No local overrides were found on load.";
         private const string OVERRIDE_STATUS_ON = "Values highlighted in red were overridden locally.";
 
+        private const string ENGINE_DEFAULTS_FILE = "FFlagDefaults.json";
+        private const int ENGINE_DEFAULTS_FORMAT = 1;
+
+        private const string CLIENT_SETTINGS_URL = "https://clientsettingscdn.roblox.com/v2/settings/application/PCDesktopClient";
+
         private List<FVariable> flags = new List<FVariable>();
         private List<FVariable> allFlags = new List<FVariable>();
 
@@ -50,11 +61,7 @@ namespace RobloxStudioModManager
         public FlagEditor()
         {
             InitializeComponent();
-
-            overrideStatus.Text = OVERRIDE_STATUS_OFF;
-            overrideStatus.Visible = false;
-
-            overrideStatus.Refresh();
+            UseWaitCursor = true;
         }
 
         protected override void Dispose(bool disposing)
@@ -203,117 +210,122 @@ namespace RobloxStudioModManager
             flagDataGridView.ResumeLayout();
         }
 
-        private async void InitializeEditor()
+        private static string getTypeDefault(string key)
         {
-            var flagNames = new HashSet<string>();
-            var studioPath = StudioBootstrapper.GetStudioPath();
+            string type = new FVariable(key, "").Type;
 
-            var studioDir = StudioBootstrapper.GetStudioDirectory();
+            foreach (var pair in flagTypes)
+                if (type.EndsWith(pair.Key, Program.StringFormat))
+                    return pair.Value;
+
+            return "??";
+        }
+
+        // Maps each known flag to its engine default (null if it couldn't be determined).
+        // Results are cached next to Studio and rescanned whenever the Studio version changes.
+        private static Dictionary<string, string> loadEngineDefaults(string studioPath, string studioDir)
+        {
+            string versionGuid = versionRegistry.VersionGuid;
+            string cachePath = Path.Combine(studioDir, ENGINE_DEFAULTS_FILE);
+
+            if (versionRegistry.LastFlagScanVersion == versionGuid && File.Exists(cachePath))
+            {
+                try
+                {
+                    string json = File.ReadAllText(cachePath);
+                    var data = JsonConvert.DeserializeObject<FlagDefaults>(json);
+
+                    if (data.Format == ENGINE_DEFAULTS_FORMAT)
+                    {
+                        return data.Defaults;
+                    }
+                }
+                catch (JsonException)
+                {
+                    // Fall through and rescan.
+                }
+            }
+
+            var defaults = StudioFFlagDumper.DumpCppFlagDefaults(studioPath);
             var extraContentDir = Path.Combine(studioDir, "ExtraContent");
 
-            string lastFlagScanVersion = versionRegistry.LastFlagScanVersion;
-            string versionGuid = versionRegistry.VersionGuid;
+            if (Directory.Exists(extraContentDir))
+                // DefineFast* only registers a flag if the engine hasn't already, so C++ defaults take priority.
+                foreach (var pair in StudioFFlagDumper.DumpLuaFlagDefaults(extraContentDir))
+                    defaults.TryAdd(pair.Key, pair.Value);
 
-            var cppFlags = StudioFFlagDumper.DumpCppFlags(studioPath);
-            var flagDump = Path.Combine(studioDir, "FFlags.json");
-            var flagInfo = new FileInfo(flagDump);
-
-            if (lastFlagScanVersion != versionGuid || !flagInfo.Exists)
+            var newDefaults = new FlagDefaults()
             {
-                cppFlags.ForEach(flag => flagNames.Add(flag));
+                Format = ENGINE_DEFAULTS_FORMAT,
+                Defaults = defaults
+            };
 
-                var newJson = JsonConvert.SerializeObject(flagNames);
-                File.WriteAllText(flagDump, newJson);
+            File.WriteAllText(cachePath, JsonConvert.SerializeObject(newDefaults));
+            versionRegistry.LastFlagScanVersion = versionGuid;
 
-                versionRegistry.LastFlagScanVersion = versionGuid;
-                Program.SaveState();
+            return defaults;
+        }
+
+        // Values served by the web JSON API, which override the engine defaults at runtime.
+        private static async Task<Dictionary<string, string>> fetchWebOverrides()
+        {
+            var overrides = new Dictionary<string, string>();
+
+            try
+            {
+                using (var http = new HttpClient())
+                {
+                    var settings = await http.GetStringAsync(CLIENT_SETTINGS_URL).ConfigureAwait(false);
+                    var data = JsonConvert.DeserializeObject<ClientSettings>(settings);
+
+                    if (data?.ApplicationSettings == null)
+                        return overrides;
+
+                    foreach (var pair in data.ApplicationSettings)
+                    {
+                        if (pair.Key.EndsWith("_PlaceFilter", Program.StringFormat))
+                            continue;
+
+                        overrides[pair.Key] = pair.Value;
+                    }
+                }
             }
-            
-            var rawFlagNames = File.ReadAllText(flagDump);
-            var cachedFlagNames = JsonConvert.DeserializeObject<string[]>(rawFlagNames);
+            catch (Exception e) when (e is HttpRequestException || e is TaskCanceledException || e is JsonException)
+            {
+                // Offline or unexpected response, fall back to the engine defaults alone.
+            }
 
-            foreach (var name in cachedFlagNames)
-                flagNames.Add(name);
+            return overrides;
+        }
+
+        private async Task InitializeEditor()
+        {
+            var studioPath = StudioBootstrapper.GetStudioPath();
+            var studioDir = StudioBootstrapper.GetStudioDirectory();
+
+            var engineDefaults = await Task.Run(() => loadEngineDefaults(studioPath, studioDir));
+            Program.SaveState();
+
+            var webOverrides = await fetchWebOverrides();
+            var flagSetup = new List<FVariable>(engineDefaults.Count);
 
             // Initialize flag browser
-            var json = new Dictionary<string, string>();
-
-            using (var http = new HttpClient())
+            foreach (var pair in engineDefaults)
             {
-                var settings = await http.GetStringAsync("https://clientsettingscdn.roblox.com/v2/settings/application/PCDesktopClient");
-                var data = JsonConvert.DeserializeObject<ClientSettings>(settings);
+                string name = pair.Key;
 
-                foreach (var pair in data.ApplicationSettings)
-                {
-                    string key = pair.Key;
+                if (!webOverrides.TryGetValue(name, out string value))
+                    value = pair.Value ?? getTypeDefault(name);
 
-                    if (key.EndsWith("_PlaceFilter"))
-                        continue;
+                var defaultFlag = new FVariable(name, value);
 
-                    json.Add(key, pair.Value);
-                }
-            }
-
-            foreach (var key in flagNames)
-            {
-                if (!json.ContainsKey(key))
-                {
-                    string flagClass = "";
-
-                    if (key.StartsWith("SF"))
-                        flagClass = "SF";
-                    else if (key.StartsWith("DF"))
-                        flagClass = "DF";
-                    else if (key.StartsWith("F"))
-                        flagClass = "F";
-
-                    if (flagClass != "")
-                    {
-                        var prefix = key.Substring(flagClass.Length);
-
-                        foreach (var pair in flagTypes)
-                        {
-                            if (prefix.StartsWith(pair.Key))
-                            {
-                                json.Add(key, pair.Value);
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        json.Add(key, "??");
-                    }
-                }
-            }
-
-            int numFlags = json.Count;
-            var flagSetup = new List<FVariable>(numFlags);
-
-            foreach (string customFlag in flagNames)
-            {
-                if (!json.ContainsKey(customFlag))
-                {
-                    if (!flagRegistry.TryGetValue(customFlag, out var flag))
-                        continue;
-
-                    if (!flag.Custom)
-                        continue;
-
-                    flagSetup.Add(flag);
-                }
-            }
-
-            foreach (var pair in json)
-            {
-                string key = pair.Key,
-                       value = pair.Value;
-
-                if (!flagRegistry.TryGetValue(key, out var flag))
-                    flag = new FVariable(key, value);
-
-                if (flag.Type == "")
+                if (defaultFlag.Type == "")
                     continue;
+
+                if (flagRegistry.TryGetValue(defaultFlag.Key, out var flag))
+                    flag.Reset = defaultFlag.Reset;
+                else
+                    flag = defaultFlag;
 
                 flagSetup.Add(flag);
             }
@@ -346,21 +358,14 @@ namespace RobloxStudioModManager
 
         private async void FlagEditor_Load(object sender, EventArgs e)
         {
+            TopMost = true;
             Enabled = false;
             UseWaitCursor = true;
 
-            TopMost = true;
             BringToFront();
-
             Refresh();
 
-            var init = Task.Run(() =>
-            {
-                var initializer = new Action(InitializeEditor);
-                Invoke(initializer);
-            });
-
-            await init.ConfigureAwait(true);
+            await InitializeEditor();
 
             Enabled = true;
             UseWaitCursor = false;
@@ -610,17 +615,11 @@ namespace RobloxStudioModManager
             string studioDir = StudioBootstrapper.GetStudioDirectory();
             string localAppData = Environment.GetEnvironmentVariable("LocalAppData");
 
-            string clientSettings_DEPRECATED = Path.Combine(studioDir, "ClientSettings");
-            Directory.CreateDirectory(clientSettings_DEPRECATED);
+            string clientSettings = Path.Combine(localAppData, "Roblox", "ClientSettings");
+            Directory.CreateDirectory(clientSettings);
 
-            string filePath_DEPRECATED = Path.Combine(clientSettings_DEPRECATED, "ClientAppSettings.json");
-            File.WriteAllText(filePath_DEPRECATED, file);
-
-            string clientSettings_NEW = Path.Combine(localAppData, "Roblox", "ClientSettings");
-            Directory.CreateDirectory(clientSettings_NEW);
-
-            string filePath_NEW = Path.Combine(clientSettings_NEW, "ClientAppSettings.json");
-            File.WriteAllText(filePath_NEW, file);
+            string filePath = Path.Combine(clientSettings, "ClientAppSettings.json");
+            File.WriteAllText(filePath, file);
         }
 
         private void addCustom_Click(object sender, EventArgs e)

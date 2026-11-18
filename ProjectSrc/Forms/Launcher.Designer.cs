@@ -159,7 +159,7 @@
             this.releaseTag.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.releaseTag.AutoSize = true;
             this.releaseTag.ForeColor = System.Drawing.Color.DarkGray;
-            this.releaseTag.Location = new System.Drawing.Point(266, 5);
+            this.releaseTag.Location = new System.Drawing.Point(240, 5);
             this.releaseTag.Name = "releaseTag";
             this.releaseTag.Size = new System.Drawing.Size(0, 13);
             this.releaseTag.TabIndex = 23;
